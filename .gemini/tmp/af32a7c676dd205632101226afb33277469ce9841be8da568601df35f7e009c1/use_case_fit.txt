@@ -1,0 +1,5 @@
+**MedusaJS fits perfectly.**
+-   **Greenfield:** You start fresh with the latest Medusa v2.
+-   **Requirements:** It handles Inventory, Orders, Customers, and B2B natively.
+-   **Constraints:** You can host it on Railway or a cheap VPS to meet the budget.
+-   **Team:** The team can use their Node/React skills to extend it without learning a proprietary language like Liquid (Shopify).

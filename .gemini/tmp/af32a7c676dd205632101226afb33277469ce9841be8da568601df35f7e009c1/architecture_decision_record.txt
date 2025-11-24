@@ -1,0 +1,39 @@
+# ADR-001: Adoption of MedusaJS for E-commerce Platform
+
+## Status
+Accepted
+
+## Context
+The project requires a full-stack e-commerce solution for "Isla Suds" capable of handling both Retail and Wholesale (B2B) channels.
+**Constraints:**
+-   Budget: ~$20/month
+-   Team Stack: Vue/React/Node.js
+-   Features: Inventory, Orders, Payments, Wholesale Price Lists
+
+## Decision Drivers
+1.  **Cost:** Proprietary SaaS B2B features (Shopify Plus) are cost-prohibitive.
+2.  **Stack Alignment:** Team expertise is in JavaScript/TypeScript.
+3.  **Flexibility:** Need for a custom storefront and wholesale logic.
+
+## Considered Options
+-   **MedusaJS** (Selected)
+-   Shopify Basic + Apps
+-   Supabase + Stripe + Custom Build
+
+## Decision
+We will use **MedusaJS** as the core commerce engine.
+
+## Consequences
+**Positive:**
+-   Meets budget constraints.
+-   Native B2B/Wholesale capabilities included free.
+-   Full code ownership and extensibility.
+
+**Negative:**
+-   Self-hosting responsibility (updates, security, backups).
+-   Smaller ecosystem of "one-click" apps compared to Shopify.
+
+## Implementation Notes
+-   Deploy to Railway/DigitalOcean.
+-   Use Next.js or Nuxt.js for the storefront.
+-   Utilize Medusa Admin for staff operations.

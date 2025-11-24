@@ -1,0 +1,5 @@
+- Performance: Fast and responsive. Target <100ms load times, <50ms input latency.
+- Optimization: Implement lazy loading, minimize asset sizes, efficient data structures.
+- Scalability: Not a primary concern initially, but hosting costs should scale with traffic (e.g., serverless or usage-based).
+- Security: Standard e-commerce security practices (PCI compliance via processor).
+- Usability: Easy for non-technical staff to update inventory.

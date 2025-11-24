@@ -1,0 +1,4 @@
+- Tech Stack Preferences: Vue, React, or Node.js.
+- Budget: Target ~$20/month for hosting/services.
+- Hosting Preference: usage-based/scalable (implied by "scale with traffic" and low initial budget).
+- Staff: Must support non-technical users for inventory updates.

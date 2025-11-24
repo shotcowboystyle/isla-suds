@@ -1,0 +1,43 @@
+**MedusaJS (Self-Hosted)**
+
+**Overview:**
+An open-source headless commerce engine built on Node.js. It replaces the monolithic nature of Shopify/WooCommerce with a modular architecture. You own the data and the stack.
+
+**Current Status (2025):**
+-   **B2B Features:** Robust native support (Customer Groups, Price Lists, Company Accounts, RFQ flow).
+-   **Community:** Strong and growing. The ecosystem is active with plugins for major payment gateways (Stripe, PayPal) and CMS integrations.
+-   **Release Cadence:** Active. "Medusa 2.0" introduced powerful workflows and pluggable modules.
+
+**Technical Characteristics:**
+-   **Architecture:** Modular Node.js server + React Admin + Storefront (Next.js/Nuxt starter).
+-   **Performance:** Highly performant API-first design. No frontend bloat (you build what you need).
+-   **Scalability:** Handles large catalogs well. Horizontal scaling possible with containerized deployment (e.g., Railway, K8s).
+
+**Developer Experience:**
+-   **Learning Curve:** Moderate for Node/React devs. Excellent documentation.
+-   **Tooling:** CLI is powerful. "Medusa Admin" is a ready-to-use React app that you can customize.
+-   **Customization:** Complete control. You can extend the core logic, add new endpoints, and subscribe to events effortlessly.
+
+**Operations:**
+-   **Deployment:** Docker-ready. Easy deploy to Railway, DigitalOcean App Platform, or AWS.
+-   **Maintenance:** You are responsible for updating the version and managing the database (Postgres) and cache (Redis).
+
+**Costs:**
+-   **Licensing:** Free (MIT).
+-   **Hosting:** ~$15-25/mo minimum for a decent setup (e.g., Railway Hobby/Pro or DigitalOcean Droplet + Managed DB).
+    -   *Note:* Can start cheaper (~$5-10) on lower tiers during dev, but production needs RAM.
+
+**Why it wins for you:**
+-   **Wholesale:** The "Customer Groups" and "Price Lists" are core features, not expensive apps.
+-   **Budget:** Fits the ~$20/mo target if you manage resources well.
+-   **Stack:** JavaScript/TypeScript everywhere (Backend + Admin + Storefront).
+
+---
+
+**Shopify Basic (Headless comparison)**
+
+**Why it loses for this specific case:**
+-   **Cost:** $39/mo base + transaction fees.
+-   **Wholesale:** Native wholesale (B2B) is locked behind Shopify Plus ($2,000+/mo). You'd need hacky apps or separate stores on Basic.
+-   **Headless Limits:** Rate limits on Basic are tight (40 req/s bucket).
+-   **Checkout:** You can't customize the checkout logic on Basic.

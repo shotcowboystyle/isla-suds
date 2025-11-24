@@ -1,0 +1,3 @@
+- **Community Growth:** Medusa has seen massive adoption by devs migrating away from Shopify due to costs and limits.
+-   **Production Scale:** Used by substantial brands for high-volume sales.
+-   **Gotchas:** Self-hosting means *you* are the devops team. Redis/Postgres management is real work. Medusa Admin is great but sometimes lags behind the core API in edge-case features.

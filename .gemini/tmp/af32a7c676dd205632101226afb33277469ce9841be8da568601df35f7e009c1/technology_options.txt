@@ -1,0 +1,17 @@
+**Option 1: MedusaJS (Self-Hosted) + Nuxt/Next**
+- **Cost:** ~$5-15/mo (hosting on Railway/DigitalOcean).
+- **Stack:** Node.js backend, React/Vue frontend.
+- **Pros:** Fits budget, purpose-built for headless commerce, includes dedicated Admin Dashboard for non-technical staff, native support for Wholesale (Customer Groups/Price Lists).
+- **Cons:** Requires self-hosting and maintenance (updates, backups).
+
+**Option 2: Shopify Basic (Headless) + Hydrogen/Next**
+- **Cost:** ~$39/mo + transaction fees.
+- **Stack:** SaaS backend, React frontend.
+- **Pros:** Industry standard, zero maintenance, excellent Admin UI, massive app ecosystem.
+- **Cons:** Exceeds $20/mo budget, transaction fees add up, less code-level control than Medusa.
+
+**Option 3: Supabase + Stripe + Custom Admin**
+- **Cost:** Free tiers available (pay for usage).
+- **Stack:** Postgres/Node backend.
+- **Pros:** extensive flexibility, lowest initial cost.
+- **Cons:** High effort - you must build the Inventory/Order Management UI from scratch (violates "easy for staff" unless you build a great tool).

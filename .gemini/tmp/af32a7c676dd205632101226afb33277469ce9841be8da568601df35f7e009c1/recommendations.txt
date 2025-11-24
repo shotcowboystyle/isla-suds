@@ -1,0 +1,15 @@
+**Top Recommendation: MedusaJS**
+
+**Rationale:**
+It is the only solution that meets the **Budget** ($20/mo), **Tech Stack** (Node/React), and **Feature** (Wholesale/B2B) requirements simultaneously. It provides a "Shopify-like" admin for your non-technical staff while giving your dev team complete control.
+
+**Implementation Roadmap:**
+1.  **Deploy Backend:** Set up Medusa Server + Postgres + Redis on Railway (easiest start).
+2.  **Admin Portal:** Deploy the Medusa Admin (React) for staff to manage products.
+3.  **Storefront:** Build the customer-facing site using the Next.js or Nuxt.js starter.
+4.  **Configure B2B:** Create "Wholesale" customer group and assign special price lists.
+5.  **Payments:** Connect Stripe plugin.
+
+**Risk Mitigation:**
+-   **DevOps Risk:** Use a managed PaaS like Railway or DigitalOcean App Platform to minimize server management.
+-   **Complexity:** Stick to the "Medusa Starter" templates initially to avoid over-engineering.

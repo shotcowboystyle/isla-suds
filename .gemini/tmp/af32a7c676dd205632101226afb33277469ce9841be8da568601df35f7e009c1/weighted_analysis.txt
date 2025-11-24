@@ -1,0 +1,5 @@
+**MedusaJS is the clear winner** for the "Weighted Analysis."
+
+-   **Cost:** It's the only option that realistically stays under $20/mo for a feature-rich B2B setup.
+-   **Wholesale:** It wins by default because Shopify charges enterprise rates for B2B, and Supabase requires building it from scratch.
+-   **Dev Control:** It perfectly aligns with the Vue/React/Node requirement.

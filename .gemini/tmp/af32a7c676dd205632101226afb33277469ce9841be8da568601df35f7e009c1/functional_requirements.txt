@@ -1,0 +1,5 @@
+- Inventory Management system
+- Payment processing
+- Simple landing page with contact info for orders
+- Single storefront initially (Retail/Wholesale combined or just one for now)
+- **Deferred:** Multiple storefronts, advanced CRM/Lead tracking, detailed reporting

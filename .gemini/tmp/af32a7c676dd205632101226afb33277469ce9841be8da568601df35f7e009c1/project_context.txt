@@ -1,0 +1,1 @@
+Greenfield project. Needs a full stack solution including e-commerce, wholesale portal, inventory, and CRM.

@@ -1,0 +1,9 @@
+| Feature | MedusaJS (Self-Hosted) | Shopify Basic (Headless) | Supabase + Stripe |
+| :--- | :--- | :--- | :--- |
+| **Wholesale (B2B)** | **Native** (Groups, Price Lists) | **Limited** (Needs Apps/Plus) | **Manual** (Build yourself) |
+| **Recurring Cost** | **Low** (~$15-20/mo hosting) | **High** ($39/mo + fees) | **Variable** (Usage based) |
+| **Transaction Fees** | **Gateway only** (e.g. Stripe) | **Gateway + Shopify fee** | **Gateway only** |
+| **Admin UI** | **Included** (React-based) | **Excellent** (SaaS) | **None** (Build yourself) |
+| **Customization** | **Unlimited** (Node.js) | **Restricted** (API limits) | **Unlimited** (Code) |
+| **Maintenance** | **Medium** (Self-hosted) | **Zero** (SaaS) | **High** (Full dev) |
+| **Dev Experience** | **High** (JS/TS Stack) | **Medium** (Proprietary APIs) | **High** (Standard DB) |
