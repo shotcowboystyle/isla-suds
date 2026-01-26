@@ -64,7 +64,11 @@ function FooterMenu({
   const classes =
     'inline-block uppercase text-xs text-black dark:text-white opacity-50 hover:opacity-100 duration-300 transition pointer-events-none line-through';
   return (
-    <nav className="footer-menu grid gap-2 sm:gap-2" role="navigation">
+    <nav
+      className="footer-menu grid gap-2 sm:gap-2"
+      role="navigation"
+      aria-label="Footer Menu"
+    >
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
         if (!item.url) return null;
         // if the url is internal, we strip the domain

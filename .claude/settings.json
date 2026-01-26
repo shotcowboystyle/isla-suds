@@ -1,0 +1,5 @@
+{
+  "enabledPlugins": {
+    "shopify-developer@wookstar-claude-plugins": true
+  }
+}
