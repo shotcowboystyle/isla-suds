@@ -13,6 +13,7 @@ import {
 } from 'react-router';
 import {useState, useEffect, useCallback, useRef} from 'react';
 import {initLenis, destroyLenis} from '~/lib/scroll';
+import {useInitializeSession} from '~/hooks/use-exploration-state';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
@@ -183,6 +184,9 @@ export function Layout({children}: {children?: React.ReactNode}) {
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
   const location = useLocation();
+
+  // Initialize exploration session timestamp (SSR-safe)
+  useInitializeSession();
 
   // Initialize Lenis smooth scroll for desktop (≥1024px)
   // SSR-safe, respects prefers-reduced-motion, graceful fallback
