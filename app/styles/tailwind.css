@@ -30,6 +30,19 @@
   --spacing-xl: var(--space-xl);
   --spacing-2xl: var(--space-2xl);
 
+  /* Fluid typography */
+  --text-fluid-small: var(--type-fluid-small);
+  --text-fluid-small--line-height: var(--leading-fluid-small);
+
+  --text-fluid-body: var(--type-fluid-body);
+  --text-fluid-body--line-height: var(--leading-fluid-body);
+
+  --text-fluid-heading: var(--type-fluid-heading);
+  --text-fluid-heading--line-height: var(--leading-fluid-heading);
+
+  --text-fluid-display: var(--type-fluid-display);
+  --text-fluid-display--line-height: var(--leading-fluid-display);
+
   /* Animation timing functions */
   --ease-out-expo: var(--ease-out-expo);
 

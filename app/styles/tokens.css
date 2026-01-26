@@ -5,6 +5,11 @@
 
 :root {
   /* ========================================
+   * Base Configuration
+   * ======================================== */
+  font-size: 16px;
+
+  /* ========================================
    * Semantic Color Tokens
    * ======================================== */
 
@@ -30,6 +35,22 @@
   --space-lg: 1.5rem; /* Comfortable spacing */
   --space-xl: 2rem; /* Section spacing */
   --space-2xl: 3rem; /* Large section gaps */
+
+  /* ========================================
+   * Typography Tokens
+   * ======================================== */
+
+  /* Fluid type scale (320px → 2560px) - UX spec values */
+  --type-fluid-small: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --type-fluid-body: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --type-fluid-heading: clamp(1.5rem, 1.25rem + 1.25vw, 2.5rem);
+  --type-fluid-display: clamp(2.5rem, 1.75rem + 3.75vw, 6rem);
+
+  /* Default line-heights (unitless) */
+  --leading-fluid-small: 1.4;
+  --leading-fluid-body: 1.6;
+  --leading-fluid-heading: 1.2;
+  --leading-fluid-display: 1.1;
 
   /* ========================================
    * Animation Tokens
