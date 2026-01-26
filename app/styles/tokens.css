@@ -21,9 +21,9 @@
   --text-primary: #2c2416; /* Body text */
   --text-muted: #8c8578; /* Secondary text */
 
-  /* Accent colors (teal from logo) - brand consistency */
-  --accent-primary: #3a8a8c; /* CTAs, links */
-  --accent-hover: #2d6e70; /* Interactive states */
+  /* Accent colors (coral-pink from logo) - brand consistency */
+  --accent-primary: #e8a090; /* CTAs, links */
+  --accent-hover: #d4897a; /* Interactive states */
 
   /* ========================================
    * Spacing Scale
