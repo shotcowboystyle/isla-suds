@@ -45,7 +45,7 @@ development_status:
   # ============================================================================
   epic-1: in-progress
   1-1-initialize-hydrogen-project-with-skeleton-template: done
-  1-2-implement-design-token-system: backlog
+  1-2-implement-design-token-system: ready-for-dev
   1-3-configure-fluid-typography-scale: backlog
   1-4-add-cva-for-component-variants: backlog
   1-5-add-radix-ui-primitives-with-accessibility-verification: backlog
