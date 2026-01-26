@@ -43,6 +43,10 @@ export default [
       'CLAUDE.md',
       'GEMINI.md',
       'AGENTS.md',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
     ],
   },
   ...fixupConfigRules(
