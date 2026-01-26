@@ -10,7 +10,11 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "codegen": "shopify hydrogen codegen && react-router typegen"
+    "codegen": "shopify hydrogen codegen && react-router typegen",
+    "test:smoke": "node scripts/smoke-test-build.mjs && node scripts/smoke-test-typecheck.mjs",
+    "test:smoke:build": "node scripts/smoke-test-build.mjs",
+    "test:smoke:typecheck": "node scripts/smoke-test-typecheck.mjs",
+    "test:smoke:dev": "node scripts/smoke-test-dev-server.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
