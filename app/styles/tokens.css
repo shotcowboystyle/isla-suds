@@ -1,0 +1,44 @@
+/**
+ * Design Token System
+ * Single source of truth for colors, spacing, and animation
+ */
+
+:root {
+  /* ========================================
+   * Semantic Color Tokens
+   * ======================================== */
+
+  /* Canvas colors (cream tones) - warm, natural backgrounds */
+  --canvas-base: #faf7f2; /* Primary background */
+  --canvas-elevated: #f5f0e8; /* Cards, modals */
+
+  /* Text colors (brown tones) - high contrast, readable */
+  --text-primary: #2c2416; /* Body text */
+  --text-muted: #8c8578; /* Secondary text */
+
+  /* Accent colors (teal from logo) - brand consistency */
+  --accent-primary: #3a8a8c; /* CTAs, links */
+  --accent-hover: #2d6e70; /* Interactive states */
+
+  /* ========================================
+   * Spacing Scale
+   * ======================================== */
+
+  --space-xs: 0.25rem; /* Tight spacing for icons, badges */
+  --space-sm: 0.5rem; /* Small gaps, padding */
+  --space-md: 1rem; /* Standard spacing */
+  --space-lg: 1.5rem; /* Comfortable spacing */
+  --space-xl: 2rem; /* Section spacing */
+  --space-2xl: 3rem; /* Large section gaps */
+
+  /* ========================================
+   * Animation Tokens
+   * ======================================== */
+
+  /* Easing functions */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* Smooth deceleration */
+
+  /* Duration values */
+  --duration-reveal: 300ms; /* Texture reveal animation */
+  --duration-micro: 150ms; /* Quick interactive feedback */
+}
