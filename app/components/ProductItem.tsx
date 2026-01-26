@@ -5,7 +5,7 @@ import type {
   CollectionItemFragment,
   RecommendedProductFragment,
 } from 'storefrontapi.generated';
-import {useVariantUrl} from '~/lib/variants';
+import {useVariantUrl} from '~/lib/variant-url';
 
 export function ProductItem({
   product,

@@ -12,6 +12,7 @@
 Bubbles, the implementation of the fluid typography scale is technically correct in terms of CSS values, but the verification process was "trust me bro" level slop. You claimed to have verified it at 4 specific viewports but provided zero evidence or persistent test surface.
 
 **Git vs Story Discrepancies:** 1 found
+
 - `app/routes/_index.tsx` was modified and restored, but no persistent verification route or component was created.
 
 **Issues Found:** 1 High, 1 Medium, 1 Low
@@ -21,6 +22,7 @@ Bubbles, the implementation of the fluid typography scale is technically correct
 ## 🔴 HIGH ISSUES
 
 ### 1. Verification Slop (AC3)
+
 - **Finding:** AC3 requires verification across 320px, 768px, 1440px, and 2560px.
 - **Evidence:** You claim verification in the Dev Agent Record but admitted to removing the verification markup.
 - **Impact:** There is no way for a human reviewer or a future automated test to verify this without re-implementing the test surface.
@@ -31,15 +33,17 @@ Bubbles, the implementation of the fluid typography scale is technically correct
 ## 🟡 MEDIUM ISSUES
 
 ### 2. Incomplete Documentation (File List)
+
 - **Finding:** The File List in `1-3-configure-fluid-typography-scale.md` lists `app/routes/_index.tsx` as "restored to original state".
-- **Evidence:** Git status shows `app/routes/_index.tsx` is NOT currently modified, but the story file should reflect the *final* state of the PR.
-- **Impact:** If the verification markup is gone, the "File List" is technically accurate about the *current* state but highlights the lack of persistent testing.
+- **Evidence:** Git status shows `app/routes/_index.tsx` is NOT currently modified, but the story file should reflect the _final_ state of the PR.
+- **Impact:** If the verification markup is gone, the "File List" is technically accurate about the _current_ state but highlights the lack of persistent testing.
 
 ---
 
 ## 🟢 LOW ISSUES
 
 ### 3. Missing Root Font-Size Base
+
 - **Finding:** Fluid typography depends on `rem` values.
 - **Evidence:** `app/styles/tokens.css` defines `clamp()` using `rem`, but doesn't explicitly set a base font-size on `:root` or `html`.
 - **Impact:** While it defaults to 16px in most browsers, explicit declaration is safer for a "foundation" story.

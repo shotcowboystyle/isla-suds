@@ -19,6 +19,7 @@
   "prettier": "@shopify/prettier-config",
   "dependencies": {
     "@shopify/hydrogen": "2025.7.3",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",

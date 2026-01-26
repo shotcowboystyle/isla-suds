@@ -1,46 +1,28 @@
-import {useLocation} from 'react-router';
-import type {SelectedOption} from '@shopify/hydrogen/storefront-api-types';
-import {useMemo} from 'react';
+import {cva, type VariantProps} from 'class-variance-authority';
 
-export function useVariantUrl(
-  handle: string,
-  selectedOptions?: SelectedOption[],
-) {
-  const {pathname} = useLocation();
+export const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        primary:
+          'bg-accent-primary text-white hover:bg-accent-primary/90 focus-visible:ring-accent-primary',
+        secondary:
+          'bg-canvas-elevated text-text-primary hover:bg-canvas-elevated/80 focus-visible:ring-text-primary',
+        ghost:
+          'hover:bg-canvas-elevated hover:text-text-primary focus-visible:ring-text-primary',
+      },
+      size: {
+        sm: 'h-9 px-3 text-xs',
+        md: 'h-10 px-4 py-2',
+        lg: 'h-11 px-8 text-base',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  },
+);
 
-  return useMemo(() => {
-    return getVariantUrl({
-      handle,
-      pathname,
-      searchParams: new URLSearchParams(),
-      selectedOptions,
-    });
-  }, [handle, selectedOptions, pathname]);
-}
-
-export function getVariantUrl({
-  handle,
-  pathname,
-  searchParams,
-  selectedOptions,
-}: {
-  handle: string;
-  pathname: string;
-  searchParams: URLSearchParams;
-  selectedOptions?: SelectedOption[];
-}) {
-  const match = /(\/[a-zA-Z]{2}-[a-zA-Z]{2}\/)/g.exec(pathname);
-  const isLocalePathname = match && match.length > 0;
-
-  const path = isLocalePathname
-    ? `${match![0]}products/${handle}`
-    : `/products/${handle}`;
-
-  selectedOptions?.forEach((option) => {
-    searchParams.set(option.name, option.value);
-  });
-
-  const searchString = searchParams.toString();
-
-  return path + (searchString ? '?' + searchParams.toString() : '');
-}
+export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
