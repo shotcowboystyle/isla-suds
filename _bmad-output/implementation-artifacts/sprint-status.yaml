@@ -52,7 +52,7 @@ development_status:
   1-6-add-lenis-smooth-scroll-desktop-only: done
   1-7-add-framer-motion-with-dynamic-import: done
   1-8-configure-zustand-store-structure: done
-  1-9-implement-error-boundary-architecture: backlog
+  1-9-implement-error-boundary-architecture: review
   1-10-configure-ci-cd-pipeline-with-quality-gates: backlog
   epic-1-retrospective: optional
 
