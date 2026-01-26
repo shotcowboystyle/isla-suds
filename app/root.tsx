@@ -11,7 +11,9 @@ import {
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
-import {useState, useEffect, useCallback, useRef} from 'react';
+import {useEffect} from 'react';
+
+import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
 import {initLenis, destroyLenis} from '~/lib/scroll';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
 import type {Route} from './+types/root';
@@ -253,27 +255,53 @@ export default function App() {
   );
 }
 
+/**
+ * Route-level error boundary (React Router 7 ErrorBoundary export)
+ * Catches all route errors and displays warm, user-friendly messages.
+ * Uses RouteErrorFallback component for consistent UI and focus trap.
+ * Technical details are logged to console but never exposed to users.
+ */
 export function ErrorBoundary() {
   const error = useRouteError();
-  let errorMessage = 'Unknown error';
-  let errorStatus = 500;
+  const nonce = useNonce();
 
-  if (isRouteErrorResponse(error)) {
-    errorMessage = error?.data?.message ?? error.data;
-    errorStatus = error.status;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  }
+  // Log error details to console for debugging (never show to user)
+  useEffect(() => {
+    if (isRouteErrorResponse(error)) {
+      console.error('Route error (response):', {
+        status: error.status,
+        statusText: error.statusText,
+        data: error.data,
+        timestamp: new Date().toISOString(),
+        boundaryType: 'route',
+      });
+    } else if (error instanceof Error) {
+      console.error('Route error:', {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+        boundaryType: 'route',
+      });
+    } else {
+      console.error('Unknown route error:', error);
+    }
+  }, [error]);
 
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
-    </div>
+    <html lang="en" className="text-base sm:text-[1.12vw] hide-scrollbar">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link rel="stylesheet" href={tailwindCss}></link>
+        <link rel="stylesheet" href={resetStyles}></link>
+        <link rel="stylesheet" href={appStyles}></link>
+        <Meta />
+        <Links />
+      </head>
+      <body className="flex flex-col min-h-[100dvh] bg-white text-black">
+        <RouteErrorFallback fullPage />
+        <Scripts nonce={nonce} />
+      </body>
+    </html>
   );
 }
