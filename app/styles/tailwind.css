@@ -3,4 +3,37 @@
  * https://tailwindcss.com/docs/v4-beta#css-first-configuration
  */
 
+/* Import design tokens first */
+@import './tokens.css';
+
 @import 'tailwindcss';
+
+/* Extend Tailwind theme with design token references */
+@theme {
+  /* Canvas colors */
+  --color-canvas-base: var(--canvas-base);
+  --color-canvas-elevated: var(--canvas-elevated);
+
+  /* Text colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+
+  /* Accent colors */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+
+  /* Spacing scale */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+
+  /* Animation timing functions */
+  --ease-out-expo: var(--ease-out-expo);
+
+  /* Animation durations */
+  --transition-duration-reveal: var(--duration-reveal);
+  --transition-duration-micro: var(--duration-micro);
+}
