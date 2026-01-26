@@ -35,9 +35,12 @@ export default function TypographyVerification() {
   return (
     <div className="p-spacing-xl bg-canvas-base min-h-screen text-text-primary">
       <header className="mb-spacing-2xl border-b border-text-muted/20 pb-spacing-md">
-        <h1 className="text-fluid-heading font-bold">Typography Verification</h1>
+        <h1 className="text-fluid-heading font-bold">
+          Typography Verification
+        </h1>
         <p className="text-fluid-body text-text-muted">
-          Testing fluid scale from 320px to 2560px. Resize your browser to verify smooth scaling.
+          Testing fluid scale from 320px to 2560px. Resize your browser to
+          verify smooth scaling.
         </p>
       </header>
 
@@ -53,7 +56,8 @@ export default function TypographyVerification() {
               </span>
             </div>
             <p className={scale.class}>
-              The quick brown fox jumps over the lazy dog. Isla Suds handcrafted soaps and sustainable suds for a cleaner tomorrow.
+              The quick brown fox jumps over the lazy dog. Isla Suds handcrafted
+              soaps and sustainable suds for a cleaner tomorrow.
             </p>
           </section>
         ))}

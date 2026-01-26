@@ -47,7 +47,7 @@ development_status:
   1-1-initialize-hydrogen-project-with-skeleton-template: done
   1-2-implement-design-token-system: done
   1-3-configure-fluid-typography-scale: done
-  1-4-add-cva-for-component-variants: backlog
+  1-4-add-cva-for-component-variants: done
   1-5-add-radix-ui-primitives-with-accessibility-verification: backlog
   1-6-add-lenis-smooth-scroll-desktop-only: backlog
   1-7-add-framer-motion-with-dynamic-import: backlog

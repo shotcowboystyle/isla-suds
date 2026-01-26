@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /**
  * Smoke test: Verify production build completes successfully
  *
@@ -14,6 +15,7 @@ import {promisify} from 'util';
 const execAsync = promisify(exec);
 
 async function smokeTestBuild() {
+  // eslint-disable-next-line no-console
   console.log('🔨 Running smoke test: Production build...\n');
 
   try {
@@ -29,8 +31,10 @@ async function smokeTestBuild() {
       process.exit(1);
     }
 
+    // eslint-disable-next-line no-console
     console.log('✅ Build completed successfully');
     if (stdout) {
+      // eslint-disable-next-line no-console
       console.log(stdout);
     }
     process.exit(0);

@@ -214,8 +214,8 @@ None - implementation completed without errors.
 
 ### File List
 
-- `app/styles/tokens.css` - Added typography tokens (--type-fluid-*, --leading-fluid-*) and base font-size
-- `app/styles/tailwind.css` - Exposed tokens to Tailwind theme (--text-fluid-* with line-heights)
+- `app/styles/tokens.css` - Added typography tokens (--type-fluid-_, --leading-fluid-_) and base font-size
+- `app/styles/tailwind.css` - Exposed tokens to Tailwind theme (--text-fluid-\* with line-heights)
 - `app/routes/dev.typography.tsx` - Persistent verification route for fluid typography scale
 - `app/routes/_index.tsx` - Restored to original state (temporary testing removed)
 

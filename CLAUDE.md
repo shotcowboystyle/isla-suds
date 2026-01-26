@@ -66,7 +66,8 @@ app/
   │   ├── context.ts    # Hydrogen context setup
   │   ├── session.ts    # Custom session implementation
   │   ├── fragments.ts  # Shared GraphQL fragments
-  │   └── variants.ts   # Product variant utilities
+  │   ├── variant-url.ts # Shopify product variant URL helpers
+  │   └── variants.ts   # CVA component variants (type-safe styling)
   ├── utils/            # Helper functions (cn.ts for classnames)
   ├── graphql/          # GraphQL queries and customer account API
   ├── styles/           # Global CSS and Tailwind
