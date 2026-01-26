@@ -10,20 +10,17 @@
  * Note: This is a basic smoke test. Full E2E testing will be added in Story 1.10 (CI/CD)
  */
 
-import {exec, spawn} from 'child_process';
-import {promisify} from 'util';
+import {spawn} from 'child_process';
 import {setTimeout} from 'timers/promises';
 
-const execAsync = promisify(exec);
-
 async function smokeTestDevServer() {
-  console.log('🚀 Running smoke test: Dev server startup...\n');
+  console.warn('🚀 Running smoke test: Dev server startup...\n');
 
   let serverProcess = null;
 
   try {
     // Start dev server in background
-    console.log('Starting dev server...');
+    console.warn('Starting dev server...');
     serverProcess = spawn('npm', ['run', 'dev'], {
       cwd: process.cwd(),
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -31,7 +28,6 @@ async function smokeTestDevServer() {
     });
 
     let serverOutput = '';
-    let errorOutput = '';
 
     serverProcess.stdout.on('data', (data) => {
       serverOutput += data.toString();
@@ -40,15 +36,14 @@ async function smokeTestDevServer() {
         data.toString().includes('Local:') ||
         data.toString().includes('ready')
       ) {
-        console.log('✅ Dev server started successfully');
-        console.log('Server output:', data.toString().substring(0, 200));
+        console.warn('✅ Dev server started successfully');
+        console.warn('Server output:', data.toString().substring(0, 200));
         serverProcess.kill();
         process.exit(0);
       }
     });
 
     serverProcess.stderr.on('data', (data) => {
-      errorOutput += data.toString();
       // Check for fatal errors
       if (
         data.toString().includes('Error:') ||
@@ -74,7 +69,7 @@ async function smokeTestDevServer() {
     }
 
     // Don't fail - this is a basic smoke test, full testing comes later
-    console.log('✅ Dev server command executed (basic validation passed)');
+    console.warn('✅ Dev server command executed (basic validation passed)');
     process.exit(0);
   } catch (error) {
     console.error('❌ Dev server smoke test failed:');

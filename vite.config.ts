@@ -1,4 +1,4 @@
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vitest/config';
 import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
 import {reactRouter} from '@react-router/dev/vite';
@@ -17,6 +17,15 @@ export default defineConfig({
     // Allow a strict Content-Security-Policy
     // withtout inlining assets as base64:
     assetsInlineLimit: 0,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.ts',
+  },
+  define: {
+    global: {},
+    "process.env": {}
   },
   ssr: {
     optimizeDeps: {

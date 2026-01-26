@@ -14,7 +14,7 @@ import {promisify} from 'util';
 const execAsync = promisify(exec);
 
 async function smokeTestTypecheck() {
-  console.log('🔍 Running smoke test: TypeScript typecheck...\n');
+  console.warn('🔍 Running smoke test: TypeScript typecheck...\n');
 
   try {
     // Run typecheck command
@@ -29,9 +29,9 @@ async function smokeTestTypecheck() {
       process.exit(1);
     }
 
-    console.log('✅ Typecheck passed - no type errors');
+    console.warn('✅ Typecheck passed - no type errors');
     if (stdout) {
-      console.log(stdout);
+      console.warn(stdout);
     }
     process.exit(0);
   } catch (error) {

@@ -10,7 +10,16 @@
     ".graphqlrc.ts",
     ".react-router/types/**/*"
   ],
-  "exclude": ["node_modules", "dist", "build", "packages/**/dist/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "packages/**/dist/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,

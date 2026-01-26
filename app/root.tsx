@@ -9,8 +9,10 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteLoaderData,
+  useLocation,
 } from 'react-router';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback, useRef} from 'react';
+import {initLenis, destroyLenis} from '~/lib/scroll';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
@@ -180,6 +182,53 @@ export function Layout({children}: {children?: React.ReactNode}) {
 
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
+  const location = useLocation();
+
+  // Initialize Lenis smooth scroll for desktop (≥1024px)
+  // SSR-safe, respects prefers-reduced-motion, graceful fallback
+  // B2B routes (/wholesale/*) should NOT use Lenis (native scroll only)
+  useEffect(() => {
+    // Check if current route is a B2B route - Lenis should not initialize for wholesale routes
+    const isWholesaleRoute = location.pathname.startsWith('/wholesale');
+    if (isWholesaleRoute) {
+      // Ensure Lenis is destroyed for B2B routes
+      destroyLenis();
+      return;
+    }
+
+    // Initialize Lenis after hydration (client-side only) for B2C routes
+    initLenis();
+
+    // Debounced resize handler to avoid excessive calls during window resize
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    const handleResize = () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      resizeTimeout = setTimeout(() => {
+        const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+        if (isDesktop) {
+          // On desktop, ensure Lenis is initialized
+          initLenis();
+        } else {
+          // On mobile, ensure Lenis is destroyed
+          destroyLenis();
+        }
+      }, 150); // 150ms debounce
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      window.removeEventListener('resize', handleResize);
+      destroyLenis();
+    };
+  }, [location.pathname]);
 
   if (!data) {
     return <Outlet />;
