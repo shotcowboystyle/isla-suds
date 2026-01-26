@@ -28,6 +28,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 ### Functional Requirements
 
 **Product Discovery & Exploration (FR1-FR9)**
+
 - FR1: Visitors can view all 4 products in a constellation layout on the home page
 - FR2: Visitors can explore products in any order (non-linear discovery)
 - FR3: Visitors can trigger a texture reveal by hovering (desktop) or tapping (mobile) on a product
@@ -39,11 +40,13 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - FR9: Visitors can add the variety pack directly from the collection prompt
 
 **Product Information (FR10-FR12)**
+
 - FR10: Visitors can view product name, price, and brief description for each product
 - FR11: Visitors can view the variety pack bundle as a distinct purchasable option
 - FR12: Visitors can understand the "all 4 soaps" value proposition of the bundle
 
 **Cart & Checkout B2C (FR13-FR22)**
+
 - FR13: Visitors can add individual products to cart via a button within the texture reveal state
 - FR14: Visitors can add the variety pack bundle to cart
 - FR15: Visitors can view cart contents via a slide-out cart drawer
@@ -56,6 +59,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - FR22: Visitors can retry payment after a failed attempt without re-entering cart items
 
 **Wholesale Portal B2B (FR23-FR29)**
+
 - FR23: Wholesale partners can log in to a dedicated wholesale portal
 - FR24: Wholesale partners can view their last order summary on the dashboard
 - FR25: Wholesale partners can reorder their last order with one click
@@ -65,6 +69,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - FR29: Wholesale partners receive wholesale pricing automatically when logged in
 
 **Attribution & Analytics (FR30-FR36)**
+
 - FR30: Visitors can enter a booth attribution code at checkout (e.g., "FARMSTAND")
 - FR31: Visitors can answer "How did you find us?" survey at checkout
 - FR32: Visitors can access a shareable link to send to friends
@@ -74,12 +79,14 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - FR36: System can track time on site
 
 **Post-Purchase Communication (FR37-FR40)**
+
 - FR37: Customers can receive a Day 3 post-purchase email from founder
 - FR38: Customers can respond to "How was your first shower?" question in email
 - FR39: Customers can select emotional response options (e.g., "I slept better")
 - FR40: Customers can respond to story recall question in survey
 
 **Content & Navigation (FR41-FR48)**
+
 - FR41: Visitors can view the hero section with brand logo and tagline
 - FR42: Visitors can scroll to discover the full page experience
 - FR43: Visitors can access sticky header after scrolling past hero
@@ -90,6 +97,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - FR48: Visitors can view footer with navigation links
 
 **Accessibility & Preferences (FR49-FR51)**
+
 - FR49: Visitors can navigate entire site via keyboard
 - FR50: Visitors can use screen readers to access all content
 - FR51: Visitors with reduced motion preferences see simplified animations
@@ -97,6 +105,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 ### Non-Functional Requirements
 
 **Performance (NFR1-NFR7)**
+
 - NFR1: Largest Contentful Paint <2.5s
 - NFR2: First Input Delay <100ms
 - NFR3: Cumulative Layout Shift <0.1
@@ -106,6 +115,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - NFR7: Time to Interactive <3.5s on 4G
 
 **Accessibility (NFR8-NFR14)**
+
 - NFR8: WCAG compliance 2.1 AA
 - NFR9: Keyboard navigation 100% of interactive elements
 - NFR10: Screen reader compatibility - All content accessible
@@ -115,17 +125,20 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - NFR14: Touch targets minimum 44x44px on mobile
 
 **Integration (NFR15-NFR18)**
+
 - NFR15: Shopify Storefront API must support all cart/checkout operations
 - NFR16: Shopify B2B app must integrate for wholesale pricing/portal
 - NFR17: Analytics events must fire reliably for all tracked interactions
 - NFR18: Image CDN must serve optimized images (WebP/AVIF with fallbacks)
 
 **Reliability (NFR19-NFR21)**
+
 - NFR19: Frontend uptime 99.5% (Shopify Oxygen SLA)
 - NFR20: Cart persistence survive browser close/reopen
 - NFR21: Graceful degradation - if Lenis or Framer Motion fails, core commerce works
 
 **UX Tone & Brand Consistency (NFR22-NFR27)**
+
 - NFR22: Error messaging tone warm, non-accusatory ("Your cart is safe - let's try again")
 - NFR23: Loading states subtle, brand-aligned (no harsh spinners)
 - NFR24: Empty cart state friendly message guiding user back to products
@@ -136,6 +149,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 ### Additional Requirements
 
 **From Architecture Document:**
+
 - Shopify Hydrogen skeleton template (NOT demo-store) is the project foundation
 - Post-initialization setup sequence includes: design tokens, CVA, Radix UI, Lenis, Framer Motion (dynamic import), fluid typography, GraphQL codegen, Vitest, Playwright, Lighthouse CI
 - Zustand (~1KB) for UI state management (exploration tracking, texture reveal state, cart drawer state)
@@ -147,6 +161,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - Bundle budget: Lenis ~3KB, Framer Motion ~30-40KB (dynamic), Radix ~15-20KB, App code ~120-140KB
 
 **From UX Design Document:**
+
 - Constellation layout: all 4 products visible, user-driven exploration (not linear scroll)
 - Lenis smooth-scroll (desktop only) + native scroll with CSS scroll-snap (mobile)
 - Fluid typography using CSS clamp() across 4 sizes (fluid-small, fluid-body, fluid-heading, fluid-display)
@@ -160,6 +175,7 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 - Anti-patterns: no pop-ups, no urgency tactics, no dark patterns, no Lenis on mobile
 
 **From Party Mode Collaboration:**
+
 - Epic 1 needs verification gates (design tokens, Radix accessibility, Framer Motion bundle)
 - Accessibility criteria embedded in every story, not just Epic 9
 - About page is fallback for direct traffic, not primary story vehicle
@@ -171,71 +187,71 @@ This document provides the complete epic and story breakdown for Isla Suds, deco
 
 ### FR Coverage Map
 
-| FR | Epic | Description |
-|----|------|-------------|
-| FR1 | Epic 2 | Constellation layout |
-| FR2 | Epic 2 | Non-linear exploration |
-| FR3 | Epic 3 | Texture reveal hover/tap |
-| FR4 | Epic 3 | Macro texture photography |
-| FR5 | Epic 3 | Scent narrative copy |
-| FR6 | Epic 3 | Close/dismiss texture reveal |
-| FR7 | Epic 4 | Story fragments during scroll |
-| FR8 | Epic 4 | Collection prompt after 2+ products |
-| FR9 | Epic 4 | Add variety pack from prompt |
-| FR10 | Epic 3 | Product name, price, description |
-| FR11 | Epic 3 | Variety pack bundle display |
-| FR12 | Epic 3 | Bundle value proposition |
-| FR13 | Epic 5 | Add individual products to cart |
-| FR14 | Epic 5 | Add variety pack to cart |
-| FR15 | Epic 5 | Cart drawer |
-| FR16 | Epic 5 | Modify cart quantities |
-| FR17 | Epic 5 | Remove cart items |
-| FR18 | Epic 5 | Proceed to checkout |
-| FR19 | Epic 6 | Shopify checkout |
-| FR20 | Epic 6 | Order confirmation email |
-| FR21 | Epic 5 | Cart persistence |
-| FR22 | Epic 6 | Payment retry |
-| FR23 | Epic 7 | Wholesale login |
-| FR24 | Epic 7 | Last order dashboard |
-| FR25 | Epic 7 | One-click reorder |
-| FR26 | Epic 7 | Partner acknowledgment |
-| FR27 | Epic 7 | Order history |
-| FR28 | Epic 7 | Invoice request |
-| FR29 | Epic 7 | Wholesale pricing |
-| FR30 | Epic 6 | Booth attribution code |
-| FR31 | Epic 6 | Checkout survey |
-| FR32 | Epic 8 | Shareable link |
-| FR33 | Epic 8 | Share link tracking |
-| FR34 | Epic 8 | Texture reveal tracking |
-| FR35 | Epic 8 | Products explored tracking |
-| FR36 | Epic 8 | Time on site tracking |
+| FR      | Epic   | Description                           |
+| ------- | ------ | ------------------------------------- |
+| FR1     | Epic 2 | Constellation layout                  |
+| FR2     | Epic 2 | Non-linear exploration                |
+| FR3     | Epic 3 | Texture reveal hover/tap              |
+| FR4     | Epic 3 | Macro texture photography             |
+| FR5     | Epic 3 | Scent narrative copy                  |
+| FR6     | Epic 3 | Close/dismiss texture reveal          |
+| FR7     | Epic 4 | Story fragments during scroll         |
+| FR8     | Epic 4 | Collection prompt after 2+ products   |
+| FR9     | Epic 4 | Add variety pack from prompt          |
+| FR10    | Epic 3 | Product name, price, description      |
+| FR11    | Epic 3 | Variety pack bundle display           |
+| FR12    | Epic 3 | Bundle value proposition              |
+| FR13    | Epic 5 | Add individual products to cart       |
+| FR14    | Epic 5 | Add variety pack to cart              |
+| FR15    | Epic 5 | Cart drawer                           |
+| FR16    | Epic 5 | Modify cart quantities                |
+| FR17    | Epic 5 | Remove cart items                     |
+| FR18    | Epic 5 | Proceed to checkout                   |
+| FR19    | Epic 6 | Shopify checkout                      |
+| FR20    | Epic 6 | Order confirmation email              |
+| FR21    | Epic 5 | Cart persistence                      |
+| FR22    | Epic 6 | Payment retry                         |
+| FR23    | Epic 7 | Wholesale login                       |
+| FR24    | Epic 7 | Last order dashboard                  |
+| FR25    | Epic 7 | One-click reorder                     |
+| FR26    | Epic 7 | Partner acknowledgment                |
+| FR27    | Epic 7 | Order history                         |
+| FR28    | Epic 7 | Invoice request                       |
+| FR29    | Epic 7 | Wholesale pricing                     |
+| FR30    | Epic 6 | Booth attribution code                |
+| FR31    | Epic 6 | Checkout survey                       |
+| FR32    | Epic 8 | Shareable link                        |
+| FR33    | Epic 8 | Share link tracking                   |
+| FR34    | Epic 8 | Texture reveal tracking               |
+| FR35    | Epic 8 | Products explored tracking            |
+| FR36    | Epic 8 | Time on site tracking                 |
 | FR37-40 | Manual | Post-purchase (survey link in Epic 6) |
-| FR41 | Epic 2 | Hero section |
-| FR42 | Epic 2 | Scroll experience |
-| FR43 | Epic 2 | Sticky header |
-| FR44 | Epic 5 | Cart from header |
-| FR45 | Epic 4 | About page (fallback) |
-| FR46 | Epic 6 | Contact page |
-| FR47 | Epic 4 | Wholesale portal link |
-| FR48 | Epic 4 | Footer navigation |
-| FR49 | Epic 9 | Keyboard navigation (validation) |
-| FR50 | Epic 9 | Screen reader support (validation) |
-| FR51 | Epic 9 | Reduced motion (validation) |
+| FR41    | Epic 2 | Hero section                          |
+| FR42    | Epic 2 | Scroll experience                     |
+| FR43    | Epic 2 | Sticky header                         |
+| FR44    | Epic 5 | Cart from header                      |
+| FR45    | Epic 4 | About page (fallback)                 |
+| FR46    | Epic 6 | Contact page                          |
+| FR47    | Epic 4 | Wholesale portal link                 |
+| FR48    | Epic 4 | Footer navigation                     |
+| FR49    | Epic 9 | Keyboard navigation (validation)      |
+| FR50    | Epic 9 | Screen reader support (validation)    |
+| FR51    | Epic 9 | Reduced motion (validation)           |
 
 ## Epic List
 
-| Epic | Title | FRs | Stories |
-|------|-------|-----|---------|
-| 1 | Project Foundation & Design System | 0 | 10 |
-| 2 | Landing & Constellation Layout | 5 | 5 |
-| 3 | Texture Reveals & Product Discovery | 7 | 6 |
-| 4 | Story Moments & Site Navigation | 6 | 7 |
-| 5 | Cart Experience | 8 | 10 |
-| 6 | Checkout & Communication | 6 | 7 |
-| 7 | Wholesale Partner Portal | 7 | 9 |
-| 8 | Analytics & Attribution | 5 | 6 |
-| 9 | Accessibility Validation | 3 | 6 |
-| **Total** | | **47 + 4 manual** | **66** |
+| Epic      | Title                               | FRs               | Stories |
+| --------- | ----------------------------------- | ----------------- | ------- |
+| 1         | Project Foundation & Design System  | 0                 | 10      |
+| 2         | Landing & Constellation Layout      | 5                 | 5       |
+| 3         | Texture Reveals & Product Discovery | 7                 | 6       |
+| 4         | Story Moments & Site Navigation     | 6                 | 7       |
+| 5         | Cart Experience                     | 8                 | 10      |
+| 6         | Checkout & Communication            | 6                 | 7       |
+| 7         | Wholesale Partner Portal            | 7                 | 9       |
+| 8         | Analytics & Attribution             | 5                 | 6       |
+| 9         | Accessibility Validation            | 3                 | 6       |
+| **Total** |                                     | **47 + 4 manual** | **66**  |
 
 ## Epic Dependencies
 
@@ -277,12 +293,13 @@ So that **I have a clean foundation without opinionated UI that would conflict w
 **Given** no existing Hydrogen project
 **When** I run the initialization command with skeleton template, TypeScript, and Tailwind options
 **Then** a new Hydrogen project is created with:
+
 - TypeScript configuration
 - Tailwind CSS via PostCSS
 - Vite 6 + React Router 7.x
 - Shopify Storefront API client configured
 - `npm run dev` starts successfully in mock shop mode
-**And** the project structure follows Hydrogen conventions (`/app/routes`, `/app/components`, `/app/lib`)
+  **And** the project structure follows Hydrogen conventions (`/app/routes`, `/app/components`, `/app/lib`)
 
 ---
 
@@ -297,13 +314,14 @@ So that **all components use consistent colors, spacing, and typography from a s
 **Given** the initialized Hydrogen project
 **When** I create the design token system
 **Then** `app/styles/tokens.css` exists with:
+
 - Canvas tokens: `--canvas-base`, `--canvas-elevated` (cream tones)
 - Text tokens: `--text-primary`, `--text-muted` (brown tones)
 - Accent tokens: `--accent-primary`, `--accent-hover` (teal from logo)
 - Spacing scale: `--space-xs` through `--space-2xl`
 - Animation tokens: `--ease-out-expo`, `--duration-reveal`, `--duration-micro`
-**And** Tailwind config extends theme with token references
-**And** tokens render correctly in a test component
+  **And** Tailwind config extends theme with token references
+  **And** tokens render correctly in a test component
 
 ---
 
@@ -318,12 +336,13 @@ So that **text scales smoothly from 320px mobile to 2560px ultrawide without bre
 **Given** the design token system is in place
 **When** I configure fluid typography in Tailwind
 **Then** Tailwind config includes fontSize entries:
+
 - `fluid-small`: scales 0.75rem → 0.875rem
 - `fluid-body`: scales 1rem → 1.25rem
 - `fluid-heading`: scales 1.5rem → 2.5rem
 - `fluid-display`: scales 2.5rem → 6rem
-**And** all sizes use `clamp()` with viewport-relative middle value
-**And** a test page renders readable text at 320px, 768px, 1440px, and 2560px viewports
+  **And** all sizes use `clamp()` with viewport-relative middle value
+  **And** a test page renders readable text at 320px, 768px, 1440px, and 2560px viewports
 
 ---
 
@@ -409,13 +428,14 @@ So that **exploration tracking, texture reveal state, and cart drawer visibility
 **Given** the project has Framer Motion configured
 **When** I configure Zustand
 **Then** `app/stores/exploration.ts` exports an exploration store with:
+
 - `productsExplored: Set<string>`
 - `textureRevealsTriggered: number`
 - `storyMomentShown: boolean`
 - `sessionStartTime: number`
 - `cartDrawerOpen: boolean`
-**And** selector hooks exist in `app/hooks/use-exploration-state.ts`
-**And** bundle contribution is ≤1KB gzipped
+  **And** selector hooks exist in `app/hooks/use-exploration-state.ts`
+  **And** bundle contribution is ≤1KB gzipped
 
 ---
 
@@ -432,10 +452,11 @@ So that **failures are contained and users see warm error messages instead of cr
 **Then** `app/components/errors/RouteErrorBoundary.tsx` exists for page-level errors
 **And** `app/components/errors/ComponentErrorBoundary.tsx` exists for feature isolation
 **And** `app/content/errors.ts` contains warm error messages:
+
 - Route error: "Something's not quite right. Your cart is safe—let's try again."
 - Cart drawer: "Having trouble loading your cart. [View cart page →]"
-**And** error boundaries log errors but display friendly UI
-**And** commerce flow works even when TextureReveal or AnimationLayer fails
+  **And** error boundaries log errors but display friendly UI
+  **And** commerce flow works even when TextureReveal or AnimationLayer fails
 
 ---
 
@@ -450,14 +471,15 @@ So that **performance regressions, test failures, and accessibility issues are c
 **Given** the error boundaries are implemented
 **When** I configure the CI/CD pipeline
 **Then** `.github/workflows/ci.yml` runs on every PR:
+
 - TypeScript type checking
 - ESLint with import order rules
 - Vitest unit tests
 - Lighthouse CI with Core Web Vitals thresholds (LCP <2.5s, FID <100ms, CLS <0.1)
 - axe-core accessibility checks
-**And** `.github/workflows/deploy.yml` deploys to Shopify Oxygen on main branch
-**And** Playwright is configured in `playwright.config.ts` for future E2E tests
-**And** `size-limit` or equivalent verifies bundle ≤200KB gzipped
+  **And** `.github/workflows/deploy.yml` deploys to Shopify Oxygen on main branch
+  **And** Playwright is configured in `playwright.config.ts` for future E2E tests
+  **And** `size-limit` or equivalent verifies bundle ≤200KB gzipped
 
 ---
 
@@ -483,13 +505,14 @@ So that **I immediately feel the warmth and authenticity of the brand before scr
 **Given** I navigate to the home page
 **When** the page loads
 **Then** I see a full-bleed hero section with:
+
 - Brand logo prominently displayed
 - Tagline or brand essence message
 - Warm cream canvas background (#FAF7F2)
 - Hero imagery (placeholder until real assets)
-**And** the hero uses fluid typography (`fluid-display` for headline)
-**And** LCP is <2.5s on mobile 4G connection
-**And** hero is keyboard-focusable with visible focus indicator
+  **And** the hero uses fluid typography (`fluid-display` for headline)
+  **And** LCP is <2.5s on mobile 4G connection
+  **And** hero is keyboard-focusable with visible focus indicator
 
 **FRs addressed:** FR41
 
@@ -526,13 +549,14 @@ So that **I can explore them in any order like at the farmers market booth**.
 **Given** I scroll past the hero section
 **When** the constellation section enters the viewport
 **Then** I see all 4 product cards arranged in:
+
 - Organic, non-grid layout with subtle rotations (desktop)
 - 2-column grid without rotations (mobile)
-**And** products have subtle float/hover animations on desktop
-**And** each product card shows product image (placeholder until Epic 3)
-**And** layout is fluid from 320px to 2560px
-**And** all product cards are keyboard-navigable with Tab key
-**And** focus order follows visual flow
+  **And** products have subtle float/hover animations on desktop
+  **And** each product card shows product image (placeholder until Epic 3)
+  **And** layout is fluid from 320px to 2560px
+  **And** all product cards are keyboard-navigable with Tab key
+  **And** focus order follows visual flow
 
 **FRs addressed:** FR1
 
@@ -549,13 +573,14 @@ So that **I have agency over my discovery journey like at the booth**.
 **Given** I am viewing the constellation
 **When** I hover (desktop) or tap (mobile) on a product card
 **Then** that product enters a "focused" state with:
+
 - Subtle scale increase (1.02x)
 - Elevated shadow
 - Other products slightly dim
-**And** I can move focus to any other product freely
-**And** clicking/tapping elsewhere returns all products to default state
-**And** keyboard users can focus products with Tab and activate with Enter/Space
-**And** Zustand store tracks which products have been explored
+  **And** I can move focus to any other product freely
+  **And** clicking/tapping elsewhere returns all products to default state
+  **And** keyboard users can focus products with Tab and activate with Enter/Space
+  **And** Zustand store tracks which products have been explored
 
 **FRs addressed:** FR2
 
@@ -572,14 +597,15 @@ So that **I can always access navigation and cart without scrolling back up**.
 **Given** I am on the home page
 **When** I scroll past the hero section (hero exits viewport)
 **Then** a sticky header appears with:
+
 - Brand logo (small)
 - Cart icon (placeholder, functionality in Epic 5)
 - Hamburger menu icon (mobile)
-**And** header uses subtle fade-in animation
-**And** header has warm canvas background with slight transparency
-**And** header is accessible: all elements keyboard-focusable
-**And** header respects `prefers-reduced-motion` (no animation if set)
-**And** when I scroll back to hero, header fades out
+  **And** header uses subtle fade-in animation
+  **And** header has warm canvas background with slight transparency
+  **And** header is accessible: all elements keyboard-focusable
+  **And** header respects `prefers-reduced-motion` (no animation if set)
+  **And** when I scroll back to hero, header fades out
 
 **FRs addressed:** FR43
 
@@ -589,7 +615,7 @@ So that **I can always access navigation and cart without scrolling back up**.
 
 **Goal:** Visitors can trigger texture reveals, experience macro photography, read scent narratives, and understand each product's value—including the variety pack bundle.
 
-**User Outcome:** Sarah hovers on the purple soap. Lavender buds fill her screen. *"Close your eyes. A field at dusk."* She wants to touch it.
+**User Outcome:** Sarah hovers on the purple soap. Lavender buds fill her screen. _"Close your eyes. A field at dusk."_ She wants to touch it.
 
 **FRs covered:** FR3, FR4, FR5, FR6, FR10, FR11, FR12 (7 FRs)
 **NFRs addressed:** NFR4 (<100ms texture reveal), NFR18
@@ -628,14 +654,15 @@ So that **I can see the soap's texture up close and feel the tactile promise**.
 **Given** I am viewing the constellation with images preloaded
 **When** I hover (desktop) or tap (mobile) on a product card
 **Then** the texture reveal animates in within <100ms:
+
 - Product card expands smoothly
 - Macro texture image fills the reveal area
 - Animation uses GPU-composited properties only (transform, opacity)
-**And** Performance API marks capture reveal timing
-**And** reveal timing is logged: `performance.measure('texture-reveal', ...)`
-**And** p95 reveal time is <100ms (verified in tests)
-**And** keyboard users can trigger reveal with Enter/Space
-**And** screen readers announce "Texture view expanded for [product name]"
+  **And** Performance API marks capture reveal timing
+  **And** reveal timing is logged: `performance.measure('texture-reveal', ...)`
+  **And** p95 reveal time is <100ms (verified in tests)
+  **And** keyboard users can trigger reveal with Enter/Space
+  **And** screen readers announce "Texture view expanded for [product name]"
 
 **FRs addressed:** FR3, FR4
 
@@ -652,13 +679,14 @@ So that **I can imagine where the scent takes me before I buy**.
 **Given** a texture reveal is active
 **When** the reveal animation completes
 **Then** scent narrative copy fades in with:
+
 - Evocative, sensory copy (e.g., "Close your eyes. A field at dusk.")
 - Fluid typography (`fluid-body` or `fluid-heading`)
 - Positioned to complement the texture image
-**And** copy is fetched from Shopify product metafields
-**And** fallback copy exists in `app/content/products.ts` if metafield missing
-**And** copy has sufficient color contrast (4.5:1) against image
-**And** screen readers read the narrative after image announcement
+  **And** copy is fetched from Shopify product metafields
+  **And** fallback copy exists in `app/content/products.ts` if metafield missing
+  **And** copy has sufficient color contrast (4.5:1) against image
+  **And** screen readers read the narrative after image announcement
 
 **FRs addressed:** FR5
 
@@ -675,14 +703,15 @@ So that **I understand what I'm considering before adding to cart**.
 **Given** a texture reveal is active
 **When** viewing the reveal content
 **Then** I see:
+
 - Product name in `fluid-heading` typography
 - Price formatted with currency symbol
 - Brief product description (1-2 sentences)
 - "Add to Cart" button (styled, placeholder action until Epic 5)
-**And** all product data comes from Shopify Storefront API
-**And** price updates if product has variants
-**And** all text meets WCAG 2.1 AA contrast requirements
-**And** Add to Cart button is keyboard-focusable with visible focus ring
+  **And** all product data comes from Shopify Storefront API
+  **And** price updates if product has variants
+  **And** all text meets WCAG 2.1 AA contrast requirements
+  **And** Add to Cart button is keyboard-focusable with visible focus ring
 
 **FRs addressed:** FR10
 
@@ -720,15 +749,16 @@ So that **I can easily choose to get all 4 soaps together**.
 **Given** I am viewing the constellation
 **When** the variety pack bundle is displayed
 **Then** it appears as a distinct card in the constellation with:
+
 - Visual treatment that differentiates it from individual products
 - "The Collection" or similar title
 - All 4 product images shown (thumbnails or composite)
 - Bundle price displayed
 - Clear "all 4 soaps" messaging
-**And** tapping/hovering triggers a bundle-specific reveal
-**And** bundle reveal shows value proposition copy
-**And** "Add to Cart" button is prominent
-**And** bundle is keyboard-accessible like individual products
+  **And** tapping/hovering triggers a bundle-specific reveal
+  **And** bundle reveal shows value proposition copy
+  **And** "Add to Cart" button is prominent
+  **And** bundle is keyboard-accessible like individual products
 
 **FRs addressed:** FR11, FR12
 
@@ -738,7 +768,7 @@ So that **I can easily choose to get all 4 soaps together**.
 
 **Goal:** Visitors absorb the brand story through scattered fragments, see the collection prompt after exploring, and can navigate to About page, footer links, and wholesale portal.
 
-**User Outcome:** After exploring 2+ soaps, Sarah sees: *"Named for our daughter. Made in our kitchen."* These are her people.
+**User Outcome:** After exploring 2+ soaps, Sarah sees: _"Named for our daughter. Made in our kitchen."_ These are her people.
 
 **FRs covered:** FR7, FR8, FR9, FR45, FR47, FR48 (6 FRs)
 **NFRs addressed:** NFR26 (GDPR - privacy policy)
@@ -756,15 +786,16 @@ So that **I absorb the Isla Suds story naturally without reading an "About" page
 **Given** I am scrolling through the home page
 **When** story fragment elements enter the viewport
 **Then** they fade in with subtle animation:
+
 - "Named for our daughter."
 - "Made in our kitchen."
 - "A family recipe passed down."
-**And** fragments are positioned organically (not in a dedicated section)
-**And** fragments use `fluid-body` or `fluid-heading` typography
-**And** Intersection Observer triggers animations (not scroll listeners)
-**And** fragments respect `prefers-reduced-motion` (appear instantly if set)
-**And** screen readers can access fragment text in reading order
-**And** copy is sourced from `app/content/story.ts`
+  **And** fragments are positioned organically (not in a dedicated section)
+  **And** fragments use `fluid-body` or `fluid-heading` typography
+  **And** Intersection Observer triggers animations (not scroll listeners)
+  **And** fragments respect `prefers-reduced-motion` (appear instantly if set)
+  **And** screen readers can access fragment text in reading order
+  **And** copy is sourced from `app/content/story.ts`
 
 **FRs addressed:** FR7
 
@@ -781,15 +812,16 @@ So that **I'm gently invited to get all 4 without being pressured**.
 **Given** I have explored 2+ products (tracked in Zustand)
 **When** I close the second texture reveal
 **Then** a collection prompt appears with:
+
 - Warm, non-pushy copy: "Loving what you see? Get the whole collection."
 - Visual of all 4 soaps together
 - "Get the Collection" button
 - Easy dismiss option (X or click outside)
-**And** prompt appears only once per session
-**And** prompt does NOT appear if variety pack already in cart
-**And** prompt uses subtle fade-in animation
-**And** prompt respects `prefers-reduced-motion`
-**And** prompt is accessible: focus trapped, Escape to close, screen reader announced
+  **And** prompt appears only once per session
+  **And** prompt does NOT appear if variety pack already in cart
+  **And** prompt uses subtle fade-in animation
+  **And** prompt respects `prefers-reduced-motion`
+  **And** prompt is accessible: focus trapped, Escape to close, screen reader announced
 
 **FRs addressed:** FR8
 
@@ -828,15 +860,16 @@ So that **I understand the brand even if I missed the scroll journey**.
 **Given** I navigate to `/about`
 **When** the page loads
 **Then** I see:
+
 - Extended founder story with personal details
 - Isla's namesake explanation
 - Family recipe heritage
 - Local craftsmanship details
 - Photos of founder/family (placeholder until real assets)
-**And** page uses consistent design tokens and typography
-**And** navigation allows return to home page
-**And** page is accessible: proper heading hierarchy, alt text for images
-**And** page loads with LCP <2.5s
+  **And** page uses consistent design tokens and typography
+  **And** navigation allows return to home page
+  **And** page is accessible: proper heading hierarchy, alt text for images
+  **And** page loads with LCP <2.5s
 
 **FRs addressed:** FR45
 
@@ -853,14 +886,15 @@ So that **I can access utility pages and legal information**.
 **Given** I scroll to the bottom of any page
 **When** the footer is displayed
 **Then** I see:
+
 - Navigation links: Home, About, Contact, Wholesale
 - Legal links: Privacy Policy, Terms of Service
 - Copyright notice
 - Social links (placeholder icons)
-**And** footer uses muted canvas background
-**And** all links are keyboard-accessible with visible focus
-**And** footer is consistent across all pages
-**And** Privacy Policy link exists (content placeholder for GDPR)
+  **And** footer uses muted canvas background
+  **And** all links are keyboard-accessible with visible focus
+  **And** footer is consistent across all pages
+  **And** Privacy Policy link exists (content placeholder for GDPR)
 
 **FRs addressed:** FR48, NFR26
 
@@ -877,12 +911,13 @@ So that **I can access the B2B portal without hunting for it**.
 **Given** I am on any page
 **When** I look for wholesale access
 **Then** "Wholesale" link appears in:
+
 - Footer navigation
 - Mobile hamburger menu
 - (Optional) Small text link in sticky header
-**And** clicking the link navigates to `/wholesale/login`
-**And** link is visible but not prominent (B2C experience is primary)
-**And** link is keyboard-accessible
+  **And** clicking the link navigates to `/wholesale/login`
+  **And** link is visible but not prominent (B2C experience is primary)
+  **And** link is keyboard-accessible
 
 **FRs addressed:** FR47
 
@@ -899,18 +934,19 @@ So that **we catch any integration issues before moving to cart functionality**.
 **Given** the landing, constellation, texture reveals, and story moments are implemented
 **When** I run the smoke test suite
 **Then** tests pass on:
+
 - iPhone SE (375px) - smallest supported mobile
 - Pixel 7 (412px) - common Android
 - Desktop (1440px) - standard desktop
-**And** tests verify:
+  **And** tests verify:
 - Hero loads with LCP <2.5s
 - Constellation displays all 4 products
 - Texture reveal triggers <100ms
 - Story fragments appear on scroll
 - Collection prompt appears after 2+ products
 - Footer navigation works
-**And** no console errors or accessibility violations
-**And** tests run in Playwright CI pipeline
+  **And** no console errors or accessibility violations
+  **And** tests run in Playwright CI pipeline
 
 ---
 
@@ -999,15 +1035,16 @@ So that **I can review my items without leaving the current page**.
 **Given** items are in my cart
 **When** the cart drawer opens (via add-to-cart or header icon click)
 **Then** a drawer slides in from the right within <200ms:
+
 - Radix Dialog for accessibility
 - Semi-transparent backdrop
 - Cart contents displayed
 - Close button (X) in corner
-**And** drawer traps focus (keyboard users can't Tab outside)
-**And** Escape key closes drawer
-**And** clicking backdrop closes drawer
-**And** screen reader announces "Shopping cart, X items"
-**And** drawer respects `prefers-reduced-motion` (no slide animation if set)
+  **And** drawer traps focus (keyboard users can't Tab outside)
+  **And** Escape key closes drawer
+  **And** clicking backdrop closes drawer
+  **And** screen reader announces "Shopping cart, X items"
+  **And** drawer respects `prefers-reduced-motion` (no slide animation if set)
 
 **FRs addressed:** FR15
 
@@ -1024,15 +1061,16 @@ So that **I know exactly what I'm about to purchase**.
 **Given** the cart drawer is open with items
 **When** I view the cart contents
 **Then** each line item shows:
+
 - Product image (thumbnail)
 - Product name
 - Price per item
 - Quantity
 - Line total
-**And** variety pack shows as single line with "The Collection" name
-**And** cart subtotal is displayed at bottom
-**And** all prices are formatted consistently with currency
-**And** line items are announced to screen readers
+  **And** variety pack shows as single line with "The Collection" name
+  **And** cart subtotal is displayed at bottom
+  **And** all prices are formatted consistently with currency
+  **And** line items are announced to screen readers
 
 ---
 
@@ -1091,10 +1129,11 @@ So that **I'm guided back to products instead of seeing a dead end**.
 **Given** the cart drawer opens with no items
 **When** I view the empty cart
 **Then** I see:
+
 - Warm, friendly message: "Your cart is empty. Let's find something you'll love."
 - Button or link: "Explore the Collection" → returns to constellation
-**And** no sad/empty imagery, just warm encouragement
-**And** message is accessible to screen readers
+  **And** no sad/empty imagery, just warm encouragement
+  **And** message is accessible to screen readers
 
 **FRs addressed:** NFR24
 
@@ -1132,12 +1171,13 @@ So that **I can review my cart at any time while browsing**.
 **Given** I have scrolled past the hero and sticky header is visible
 **When** I look at the header
 **Then** I see a cart icon with:
+
 - Item count badge (if items in cart)
 - Badge hidden if cart is empty
-**And** clicking icon opens cart drawer
-**And** icon is keyboard-accessible (Tab + Enter)
-**And** icon has accessible label "Shopping cart, X items"
-**And** count updates in real-time when items added/removed
+  **And** clicking icon opens cart drawer
+  **And** icon is keyboard-accessible (Tab + Enter)
+  **And** icon has accessible label "Shopping cart, X items"
+  **And** count updates in real-time when items added/removed
 
 **FRs addressed:** FR44
 
@@ -1147,7 +1187,7 @@ So that **I can review my cart at any time while browsing**.
 
 **Goal:** Visitors complete purchases via Shopify checkout with attribution tracking, can retry failed payments, access help, and receive follow-up with survey link.
 
-**User Outcome:** Checkout takes 90 seconds. Confirmation arrives with warmth. Day 3: *"How was your first shower?"*
+**User Outcome:** Checkout takes 90 seconds. Confirmation arrives with warmth. Day 3: _"How was your first shower?"_
 
 **FRs covered:** FR19, FR20, FR22, FR30, FR31, FR46 (6 FRs)
 **NFRs addressed:** NFR15, NFR22, NFR25, NFR27
@@ -1165,13 +1205,14 @@ So that **I have a secure, trusted payment experience**.
 **Given** I click "Checkout" from the cart drawer
 **When** I am redirected to Shopify checkout
 **Then** checkout loads with:
+
 - All cart items displayed correctly
 - Correct prices and quantities
 - Shipping options available
 - Payment methods (Shopify Payments)
-**And** checkout URL uses the cart's `checkoutUrl`
-**And** checkout respects Shopify store's theme/branding settings
-**And** checkout completes successfully with test payment
+  **And** checkout URL uses the cart's `checkoutUrl`
+  **And** checkout respects Shopify store's theme/branding settings
+  **And** checkout completes successfully with test payment
 
 **FRs addressed:** FR19
 
@@ -1188,13 +1229,14 @@ So that **I feel good about my purchase and know what to expect**.
 **Given** I complete a purchase
 **When** the order is confirmed
 **Then** I receive an email with:
+
 - Brand-warm subject line (not generic "Order Confirmed")
 - Personalized greeting
 - Order summary with items and total
 - Shipping information
 - Warm closing: "Your soap is on its way. We can't wait for you to try it."
-**And** email is configured in Shopify admin notification templates
-**And** email includes Day 3 survey link (see Story 6.6)
+  **And** email is configured in Shopify admin notification templates
+  **And** email includes Day 3 survey link (see Story 6.6)
 
 **FRs addressed:** FR20, NFR27
 
@@ -1211,11 +1253,12 @@ So that **a payment error doesn't make me start over**.
 **Given** my payment is declined during checkout
 **When** I see the error message
 **Then** the message is warm and non-accusatory:
+
 - "That didn't go through. No worries—let's try again."
-**And** my cart items are preserved
-**And** I can update payment details and retry
-**And** retry works without re-adding items to cart
-**And** error message styling matches brand (no harsh red)
+  **And** my cart items are preserved
+  **And** I can update payment details and retry
+  **And** retry works without re-adding items to cart
+  **And** error message styling matches brand (no harsh red)
 
 **FRs addressed:** FR22, NFR22
 
@@ -1232,11 +1275,12 @@ So that **the founder knows I discovered them at the farmers market**.
 **Given** I am in Shopify checkout
 **When** I look for attribution options
 **Then** I see a field for "Booth Code" or "Referral Code"
+
 - Placeholder text: "e.g., FARMSTAND"
 - Field is optional (not required)
-**And** code is stored with order in Shopify
-**And** founder can view attribution codes in Shopify admin
-**And** field is implemented via Shopify checkout customization or app
+  **And** code is stored with order in Shopify
+  **And** founder can view attribution codes in Shopify admin
+  **And** field is implemented via Shopify checkout customization or app
 
 **FRs addressed:** FR30
 
@@ -1253,11 +1297,12 @@ So that **the founder understands which channels are working**.
 **Given** I am in Shopify checkout
 **When** I look for the survey question
 **Then** I see: "How did you find us?"
+
 - Options: Farmers Market, Friend/Family, Social Media, Search, Other
 - Selection is optional
-**And** response is stored with order in Shopify
-**And** founder can view survey responses in Shopify admin
-**And** implemented via Shopify checkout customization or post-purchase survey app
+  **And** response is stored with order in Shopify
+  **And** founder can view survey responses in Shopify admin
+  **And** implemented via Shopify checkout customization or post-purchase survey app
 
 **FRs addressed:** FR31
 
@@ -1274,14 +1319,15 @@ So that **I can share my experience after trying the soap**.
 **Given** I complete a purchase
 **When** I receive the order confirmation email
 **Then** the email includes:
+
 - Teaser text: "We'd love to hear about your first shower with Isla Suds."
 - Link to external survey (Typeform or similar)
 - Survey link is trackable (UTM parameters or unique ID)
-**And** survey asks:
+  **And** survey asks:
 - "How was your first shower?" (emotional options: "I slept better", "I felt like myself again", etc.)
 - Story recall question: "What do you remember about Isla Suds?" (open text)
-**And** survey is configured in external tool (Typeform/Google Forms)
-**And** link is added to Shopify order confirmation template
+  **And** survey is configured in external tool (Typeform/Google Forms)
+  **And** link is added to Shopify order confirmation template
 
 **FRs addressed:** FR37-40 (enables manual process)
 
@@ -1298,14 +1344,15 @@ So that **I can reach the founder with questions or issues**.
 **Given** I navigate to `/contact`
 **When** the page loads
 **Then** I see:
+
 - Warm heading: "Let's Talk" or "Get in Touch"
 - Contact form with: Name, Email, Message fields
 - Alternative: Direct email address displayed
 - Expected response time: "We'll get back to you within 24-48 hours"
-**And** form submission sends email to founder (Shopify Forms or third-party)
-**And** success message: "Thanks for reaching out! We'll be in touch soon."
-**And** form is accessible: proper labels, error messages, keyboard navigation
-**And** page is linked from footer and checkout error states
+  **And** form submission sends email to founder (Shopify Forms or third-party)
+  **And** success message: "Thanks for reaching out! We'll be in touch soon."
+  **And** form is accessible: proper labels, error messages, keyboard navigation
+  **And** page is linked from footer and checkout error states
 
 **FRs addressed:** FR46
 
@@ -1357,14 +1404,15 @@ So that **I can complete tasks quickly without unnecessary distractions**.
 **Given** I am logged into the wholesale portal
 **When** any `/wholesale/*` page loads
 **Then** the layout includes:
+
 - Minimal header with logo and logout
 - No Lenis smooth scroll (native only)
 - No parallax or fancy animations
 - Clean, functional typography
 - Partner name displayed in header
-**And** layout is consistent across all wholesale pages
-**And** layout is mobile-friendly for on-the-go ordering
-**And** all elements are keyboard-accessible
+  **And** layout is consistent across all wholesale pages
+  **And** layout is mobile-friendly for on-the-go ordering
+  **And** all elements are keyboard-accessible
 
 ---
 
@@ -1379,13 +1427,14 @@ So that **I can access my account and place orders**.
 **Given** I navigate to `/wholesale/login`
 **When** the page loads
 **Then** I see:
+
 - Clean login form (email, password)
 - "Log In" button
 - Link: "Forgot password?"
 - Clear indication this is the wholesale portal
-**And** successful login redirects to `/wholesale` dashboard
-**And** failed login shows friendly error: "That didn't work. Check your email and password."
-**And** form is accessible with proper labels and error announcements
+  **And** successful login redirects to `/wholesale` dashboard
+  **And** failed login shows friendly error: "That didn't work. Check your email and password."
+  **And** form is accessible with proper labels and error announcements
 
 **FRs addressed:** FR23
 
@@ -1402,11 +1451,12 @@ So that **I feel valued as a partner, not just a transaction**.
 **Given** I am logged into the wholesale portal
 **When** I view the dashboard
 **Then** I see a personalized message:
+
 - "Isla Suds is in [X] local stores. Thanks for being one of them, [Partner Name]."
-**And** partner name comes from Shopify B2B customer `firstName`
-**And** store count is configured (hardcoded for MVP: 3)
-**And** message template is in `app/content/wholesale.ts`
-**And** message appears at top of dashboard
+  **And** partner name comes from Shopify B2B customer `firstName`
+  **And** store count is configured (hardcoded for MVP: 3)
+  **And** message template is in `app/content/wholesale.ts`
+  **And** message appears at top of dashboard
 
 **FRs addressed:** FR26
 
@@ -1423,13 +1473,14 @@ So that **I can reorder instantly without searching**.
 **Given** I am logged into the wholesale portal
 **When** I view the dashboard
 **Then** I see my last order displayed prominently:
+
 - Order date
 - Items with quantities (e.g., "12x Lavender, 12x Lemongrass...")
 - Order total
 - Order status (Fulfilled, etc.)
-**And** last order is fetched via Shopify Customer Account API
-**And** if no previous orders, message: "No orders yet. Ready to stock up?"
-**And** last order section is above the fold on desktop
+  **And** last order is fetched via Shopify Customer Account API
+  **And** if no previous orders, message: "No orders yet. Ready to stock up?"
+  **And** last order section is above the fold on desktop
 
 **FRs addressed:** FR24
 
@@ -1468,14 +1519,15 @@ So that **I can reference past orders and track my purchases**.
 **Given** I am logged into the wholesale portal
 **When** I navigate to Order History (link or tab)
 **Then** I see a list of past orders:
+
 - Order date
 - Order number
 - Total amount
 - Status (Fulfilled, Processing, etc.)
 - "View Details" link
-**And** orders are sorted newest first
-**And** pagination or "Load more" if many orders
-**And** clicking "View Details" shows full order breakdown
+  **And** orders are sorted newest first
+  **And** pagination or "Load more" if many orders
+  **And** clicking "View Details" shows full order breakdown
 
 **FRs addressed:** FR27
 
@@ -1547,14 +1599,15 @@ So that **events are captured even when users navigate away or close the tab**.
 **Given** the analytics infrastructure is needed
 **When** I implement the event system
 **Then** `app/lib/analytics.ts` exports:
+
 - `trackEvent(name: string, data: object)` function
 - `flushEvents()` for manual batch send
 - Automatic flush on `beforeunload`
-**And** events use `navigator.sendBeacon` for reliability
-**And** events batch in memory and send periodically (every 30s) or on unload
-**And** events include session ID and timestamp
-**And** analytics endpoint is configurable (placeholder for MVP)
-**And** no third-party trackers (privacy-first approach)
+  **And** events use `navigator.sendBeacon` for reliability
+  **And** events batch in memory and send periodically (every 30s) or on unload
+  **And** events include session ID and timestamp
+  **And** analytics endpoint is configurable (placeholder for MVP)
+  **And** no third-party trackers (privacy-first approach)
 
 ---
 
@@ -1569,13 +1622,14 @@ So that **I can measure if the core UX is engaging users**.
 **Given** the analytics infrastructure is in place
 **When** a visitor triggers a texture reveal
 **Then** an event is tracked with:
+
 - Event name: `texture_reveal`
 - Product ID
 - Reveal duration (how long it stayed open)
 - Reveal timing (Performance API measurement)
-**And** events aggregate per session (total reveals count)
-**And** events fire via the analytics system
-**And** Zustand `textureRevealsTriggered` counter updates
+  **And** events aggregate per session (total reveals count)
+  **And** events fire via the analytics system
+  **And** Zustand `textureRevealsTriggered` counter updates
 
 **FRs addressed:** FR34
 
@@ -1592,14 +1646,15 @@ So that **I can measure discovery depth and identify drop-off points**.
 **Given** the analytics infrastructure is in place
 **When** a visitor explores a product (triggers reveal)
 **Then** an event is tracked with:
+
 - Event name: `product_explored`
 - Product ID
 - Exploration order (1st, 2nd, 3rd, 4th)
-**And** session summary includes:
+  **And** session summary includes:
 - Total products explored
 - List of product IDs explored
 - Whether collection prompt was shown
-**And** Zustand `productsExplored` Set is updated
+  **And** Zustand `productsExplored` Set is updated
 
 **FRs addressed:** FR35
 
@@ -1616,6 +1671,7 @@ So that **I can measure if the "permission to slow down" philosophy is working**
 **Given** the analytics infrastructure is in place
 **When** a visitor's session ends (close tab, navigate away, or 30min idle)
 **Then** a session summary event is tracked with:
+
 - Event name: `session_end`
 - Session duration in seconds
 - Pages viewed
@@ -1623,8 +1679,8 @@ So that **I can measure if the "permission to slow down" philosophy is working**
 - Texture reveals triggered count
 - Whether add-to-cart occurred
 - Whether checkout was reached
-**And** session start time is captured in Zustand `sessionStartTime`
-**And** event fires on `beforeunload` or idle timeout
+  **And** session start time is captured in Zustand `sessionStartTime`
+  **And** event fires on `beforeunload` or idle timeout
 
 **FRs addressed:** FR36
 
@@ -1641,13 +1697,14 @@ So that **I can spread the word about products I love**.
 **Given** I want to share the site
 **When** I look for a share option
 **Then** I find a "Share" or "Tell a Friend" link:
+
 - In footer
 - On order confirmation page
 - (Optional) After add-to-cart
-**And** clicking generates a shareable URL with tracking parameter:
+  **And** clicking generates a shareable URL with tracking parameter:
 - Example: `islasuds.com/?ref=share_[uniqueId]`
-**And** share options include: Copy Link, native share (mobile)
-**And** share modal is accessible (Radix Dialog)
+  **And** share options include: Copy Link, native share (mobile)
+  **And** share modal is accessible (Radix Dialog)
 
 **FRs addressed:** FR32
 
@@ -1664,14 +1721,15 @@ So that **I can measure word-of-mouth effectiveness**.
 **Given** a visitor arrives via a share link (URL contains `ref=share_*`)
 **When** the page loads
 **Then** a tracking event is fired:
+
 - Event name: `share_link_click`
 - Referral ID from URL
-**And** if this visitor makes a purchase, conversion is attributed to share
-**And** founder can see in analytics:
+  **And** if this visitor makes a purchase, conversion is attributed to share
+  **And** founder can see in analytics:
 - Total share link clicks
 - Conversion rate from shares
 - Which share links perform best
-**And** attribution persists across session (stored in localStorage)
+  **And** attribution persists across session (stored in localStorage)
 
 **FRs addressed:** FR33
 
@@ -1701,6 +1759,7 @@ So that **I can browse and purchase without a mouse**.
 **Given** the site is complete through Epic 8
 **When** I audit keyboard navigation
 **Then** I verify:
+
 - Tab order follows logical visual flow on all pages
 - All interactive elements are reachable via Tab
 - Focus indicators are visible on all focusable elements
@@ -1708,9 +1767,9 @@ So that **I can browse and purchase without a mouse**.
 - Enter/Space activates buttons and links
 - Escape closes modals and drawers
 - Arrow keys work for expected controls (quantity +/-)
-**And** any issues found are documented and fixed
-**And** focus indicator styling is consistent with brand (teal outline)
-**And** skip link "Skip to main content" is present for screen reader users
+  **And** any issues found are documented and fixed
+  **And** focus indicator styling is consistent with brand (teal outline)
+  **And** skip link "Skip to main content" is present for screen reader users
 
 **FRs addressed:** FR49, NFR9, NFR11
 
@@ -1727,6 +1786,7 @@ So that **I can understand and use the site without seeing it**.
 **Given** the site is complete through Epic 8
 **When** I audit with VoiceOver (Mac/iOS) and NVDA (Windows)
 **Then** I verify:
+
 - All images have meaningful alt text (or decorative alt="")
 - Headings follow proper hierarchy (h1 → h2 → h3)
 - Form inputs have associated labels
@@ -1735,9 +1795,9 @@ So that **I can understand and use the site without seeing it**.
 - Dynamic content changes are announced (cart updates, reveals)
 - Modals announce their role and title
 - Error messages are announced when they appear
-**And** any issues found are documented and fixed
-**And** ARIA attributes are used only where HTML semantics are insufficient
-**And** product cards announce: name, price, "activate to view details"
+  **And** any issues found are documented and fixed
+  **And** ARIA attributes are used only where HTML semantics are insufficient
+  **And** product cards announce: name, price, "activate to view details"
 
 **FRs addressed:** FR50, NFR10
 
@@ -1754,6 +1814,7 @@ So that **I don't experience discomfort or nausea from animations**.
 **Given** I have `prefers-reduced-motion: reduce` set in OS preferences
 **When** I browse the site
 **Then** I verify:
+
 - Parallax effects are disabled or minimal
 - Texture reveals appear instantly (no scale/fade animation)
 - Story fragments appear instantly (no fade-in)
@@ -1762,8 +1823,8 @@ So that **I don't experience discomfort or nausea from animations**.
 - Lenis smooth scroll is disabled (native scroll only)
 - Collection prompt appears instantly
 - No auto-playing animations or carousels
-**And** site remains fully functional and beautiful without motion
-**And** any missing reduced-motion handling is fixed
+  **And** site remains fully functional and beautiful without motion
+  **And** any missing reduced-motion handling is fixed
 
 **FRs addressed:** FR51, NFR13
 
@@ -1780,14 +1841,15 @@ So that **I can read text and identify interactive elements**.
 **Given** the site is complete through Epic 8
 **When** I audit color contrast
 **Then** I verify:
+
 - All body text meets 4.5:1 contrast ratio against background
 - Large text (≥24px or ≥19px bold) meets 3:1 ratio
 - Interactive element boundaries are distinguishable
 - Error states are not indicated by color alone
 - Focus indicators have 3:1 contrast against adjacent colors
 - Scent narrative text on texture images is readable
-**And** any contrast failures are fixed
-**And** audit is performed with browser devtools or axe-core
+  **And** any contrast failures are fixed
+  **And** audit is performed with browser devtools or axe-core
 
 **FRs addressed:** NFR12
 
@@ -1804,14 +1866,15 @@ So that **I don't accidentally tap the wrong element**.
 **Given** the site is viewed on mobile devices
 **When** I audit touch targets
 **Then** I verify:
+
 - All buttons are at least 44x44px
 - All links have at least 44px tap height
 - Quantity +/- buttons are adequately sized
 - Close (X) buttons are at least 44x44px
 - Form inputs have adequate tap area
 - Spacing between targets prevents mis-taps
-**And** any undersized targets are fixed
-**And** verification includes: iPhone SE, Pixel 7
+  **And** any undersized targets are fixed
+  **And** verification includes: iPhone SE, Pixel 7
 
 **FRs addressed:** NFR14
 
@@ -1828,15 +1891,16 @@ So that **future changes don't introduce accessibility regressions**.
 **Given** the accessibility audits are complete
 **When** the CI pipeline runs
 **Then** axe-core runs on key pages:
+
 - Home page (landing, constellation, reveals)
 - About page
 - Contact page
 - Wholesale login and dashboard
 - Cart drawer (when open)
-**And** CI fails if any critical/serious axe violations are found
-**And** results are reported in PR comments
-**And** baseline is established for acceptable issues (if any)
-**And** Playwright accessibility tests exist for key flows
+  **And** CI fails if any critical/serious axe violations are found
+  **And** results are reported in PR comments
+  **And** baseline is established for acceptable issues (if any)
+  **And** Playwright accessibility tests exist for key flows
 
 **FRs addressed:** NFR8
 
@@ -1844,19 +1908,19 @@ So that **future changes don't introduce accessibility regressions**.
 
 ## Summary
 
-| Epic | Title | FRs | Stories |
-|------|-------|-----|---------|
-| 1 | Project Foundation & Design System | 0 | 10 |
-| 2 | Landing & Constellation Layout | 5 | 5 |
-| 3 | Texture Reveals & Product Discovery | 7 | 6 |
-| 4 | Story Moments & Site Navigation | 6 | 7 |
-| 5 | Cart Experience | 8 | 10 |
-| 6 | Checkout & Communication | 6 | 7 |
-| 7 | Wholesale Partner Portal | 7 | 9 |
-| 8 | Analytics & Attribution | 5 | 6 |
-| 9 | Accessibility Validation | 3 | 6 |
-| **Total** | | **47 + 4 manual** | **66** |
+| Epic      | Title                               | FRs               | Stories |
+| --------- | ----------------------------------- | ----------------- | ------- |
+| 1         | Project Foundation & Design System  | 0                 | 10      |
+| 2         | Landing & Constellation Layout      | 5                 | 5       |
+| 3         | Texture Reveals & Product Discovery | 7                 | 6       |
+| 4         | Story Moments & Site Navigation     | 6                 | 7       |
+| 5         | Cart Experience                     | 8                 | 10      |
+| 6         | Checkout & Communication            | 6                 | 7       |
+| 7         | Wholesale Partner Portal            | 7                 | 9       |
+| 8         | Analytics & Attribution             | 5                 | 6       |
+| 9         | Accessibility Validation            | 3                 | 6       |
+| **Total** |                                     | **47 + 4 manual** | **66**  |
 
 ---
 
-*Document Complete. Ready for final validation.*
+_Document Complete. Ready for final validation._

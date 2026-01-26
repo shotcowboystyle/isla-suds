@@ -32,6 +32,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 The <100ms texture reveal is not merely a performance target—it is the core conversion mechanism that bridges the sensory gap between physical and digital product experience. All architectural decisions must protect this interaction.
 
 **Texture Reveal Performance Contract:**
+
 - Images must be preloaded before hover/tap is possible
 - Animation must use GPU-composited properties only (transform, opacity)
 - No network requests during the reveal interaction
@@ -40,6 +41,7 @@ The <100ms texture reveal is not merely a performance target—it is the core co
 ### Requirements Overview
 
 **Functional Requirements (51 total):**
+
 - Product Discovery & Exploration: 9 FRs (constellation layout, texture reveals, story fragments)
 - Product Information: 3 FRs (product display, bundle presentation)
 - Cart & Checkout (B2C): 10 FRs (Shopify-managed, cart persistence, retry flow)
@@ -50,6 +52,7 @@ The <100ms texture reveal is not merely a performance target—it is the core co
 - Accessibility: 3 FRs (keyboard, screen reader, reduced motion)
 
 **Non-Functional Requirements (27 total):**
+
 - Performance: 7 NFRs (Core Web Vitals, texture reveal <100ms, bundle <200KB)
 - Accessibility: 7 NFRs (WCAG 2.1 AA, keyboard nav, contrast, touch targets)
 - Integration: 4 NFRs (Shopify Storefront API, B2B app, analytics, CDN)
@@ -58,6 +61,7 @@ The <100ms texture reveal is not merely a performance target—it is the core co
 - Compliance: 1 NFR (GDPR basics)
 
 **Scale & Complexity:**
+
 - Primary domain: E-commerce Frontend (Shopify Hydrogen)
 - Complexity level: Low-Medium
 - Estimated architectural components: 15-20 custom components
@@ -65,25 +69,25 @@ The <100ms texture reveal is not merely a performance target—it is the core co
 
 ### Technical Constraints & Dependencies
 
-| Constraint | Source | Impact |
-|------------|--------|--------|
-| Shopify Hydrogen | PRD | Framework choice locked |
-| Shopify Oxygen hosting | PRD | Deployment target fixed |
-| Storefront API | PRD | Cart/checkout integration pattern |
-| Shopify B2B app | PRD | Wholesale portal approach |
-| <200KB JS bundle | NFR6 | Library selection constrained |
-| Framer Motion budget | NFR6 | Must be dynamically imported, <40KB contribution |
-| <100ms texture reveal | NFR4 | Animation/image strategy critical |
-| WCAG 2.1 AA | NFR8 | All components must be accessible |
+| Constraint             | Source | Impact                                           |
+| ---------------------- | ------ | ------------------------------------------------ |
+| Shopify Hydrogen       | PRD    | Framework choice locked                          |
+| Shopify Oxygen hosting | PRD    | Deployment target fixed                          |
+| Storefront API         | PRD    | Cart/checkout integration pattern                |
+| Shopify B2B app        | PRD    | Wholesale portal approach                        |
+| <200KB JS bundle       | NFR6   | Library selection constrained                    |
+| Framer Motion budget   | NFR6   | Must be dynamically imported, <40KB contribution |
+| <100ms texture reveal  | NFR4   | Animation/image strategy critical                |
+| WCAG 2.1 AA            | NFR8   | All components must be accessible                |
 
 ### Bundle Budget Breakdown
 
-| Library | Size (gzipped) | Status |
-|---------|----------------|--------|
-| Lenis | ~3KB | ✅ Acceptable |
-| Framer Motion | ~30-40KB | ⚠️ Dynamic import required |
-| Radix primitives | ~15-20KB | ⚠️ Selective use only |
-| App code budget | ~120-140KB | Remaining after libraries |
+| Library          | Size (gzipped) | Status                     |
+| ---------------- | -------------- | -------------------------- |
+| Lenis            | ~3KB           | ✅ Acceptable              |
+| Framer Motion    | ~30-40KB       | ⚠️ Dynamic import required |
+| Radix primitives | ~15-20KB       | ⚠️ Selective use only      |
+| App code budget  | ~120-140KB     | Remaining after libraries  |
 
 **Constraint:** Framer Motion must be dynamically imported and only loaded after first meaningful paint.
 
@@ -105,11 +109,13 @@ E-commerce Frontend (Shopify Hydrogen) based on project requirements analysis.
 ### Starter Options Considered
 
 #### Demo Store Template (`--template demo-store`)
+
 - ~30 pre-built components, full customer journey
 - Tailwind pre-configured, Shopify Analytics integrated
 - **Rejected:** Pre-built UI conflicts with constellation layout; would remove more than we keep
 
 #### Skeleton Template (default)
+
 - Core Shopify integration without UI opinions
 - TypeScript + Vite 6 + React Router ready
 - **Selected:** Clean slate for custom immersive experience
@@ -144,35 +150,35 @@ npm create @shopify/hydrogen@latest -- \
 
 ### Architectural Decisions Provided by Starter
 
-| Category | What Skeleton Provides |
-|----------|------------------------|
-| **Language & Runtime** | TypeScript, Vite 6, React Router 7.x |
-| **Styling Foundation** | Tailwind CSS via PostCSS |
-| **Shopify Integration** | Storefront API client, cart utilities, checkout redirect |
-| **Build Tooling** | Vite with Hydrogen plugin, codegen for GraphQL types |
-| **Testing** | Vitest configured (needs component testing setup) |
-| **Development Experience** | Hot reload, h2 CLI shortcuts, Oxygen deployment |
-| **Project Structure** | `/app/routes`, `/app/components`, `/app/lib` conventions |
+| Category                   | What Skeleton Provides                                   |
+| -------------------------- | -------------------------------------------------------- |
+| **Language & Runtime**     | TypeScript, Vite 6, React Router 7.x                     |
+| **Styling Foundation**     | Tailwind CSS via PostCSS                                 |
+| **Shopify Integration**    | Storefront API client, cart utilities, checkout redirect |
+| **Build Tooling**          | Vite with Hydrogen plugin, codegen for GraphQL types     |
+| **Testing**                | Vitest configured (needs component testing setup)        |
+| **Development Experience** | Hot reload, h2 CLI shortcuts, Oxygen deployment          |
+| **Project Structure**      | `/app/routes`, `/app/components`, `/app/lib` conventions |
 
 ### What We Add
 
-| Addition | Purpose | Bundle Impact |
-|----------|---------|---------------|
-| Design tokens | Foundation for all styling | 0 (CSS) |
-| CVA | Type-safe component variants | ~2KB |
-| Radix UI | Accessible primitives (Dialog, Navigation) | ~15-20KB |
-| Lenis | Desktop smooth scroll physics | ~3KB |
-| Framer Motion | GPU-accelerated animations | ~30-40KB (dynamic) |
-| Fluid typography | CSS clamp() scale in Tailwind config | 0 (CSS) |
-| Playwright | Visual regression testing | Dev only |
-| Lighthouse CI | Performance regression prevention | CI only |
+| Addition         | Purpose                                    | Bundle Impact      |
+| ---------------- | ------------------------------------------ | ------------------ |
+| Design tokens    | Foundation for all styling                 | 0 (CSS)            |
+| CVA              | Type-safe component variants               | ~2KB               |
+| Radix UI         | Accessible primitives (Dialog, Navigation) | ~15-20KB           |
+| Lenis            | Desktop smooth scroll physics              | ~3KB               |
+| Framer Motion    | GPU-accelerated animations                 | ~30-40KB (dynamic) |
+| Fluid typography | CSS clamp() scale in Tailwind config       | 0 (CSS)            |
+| Playwright       | Visual regression testing                  | Dev only           |
+| Lighthouse CI    | Performance regression prevention          | CI only            |
 
 ### Development Modes
 
-| Mode | Use Case | Command |
-|------|----------|---------|
-| **Mock Shop** | UI development, no Shopify dependency | `npm run dev` (default) |
-| **Connected** | Integration testing with real store | `npm run dev -- --env production` |
+| Mode          | Use Case                              | Command                           |
+| ------------- | ------------------------------------- | --------------------------------- |
+| **Mock Shop** | UI development, no Shopify dependency | `npm run dev` (default)           |
+| **Connected** | Integration testing with real store   | `npm run dev -- --env production` |
 
 **Note:** Project initialization using this command should be the first implementation story.
 
@@ -181,6 +187,7 @@ npm create @shopify/hydrogen@latest -- \
 ### Decision Priority Analysis
 
 **Critical Decisions (Block Implementation):**
+
 - State management approach
 - Image preloading strategy for texture reveals
 - Cart persistence mechanism
@@ -189,12 +196,14 @@ npm create @shopify/hydrogen@latest -- \
 - Performance verification strategy
 
 **Important Decisions (Shape Architecture):**
+
 - Analytics implementation
 - Component file structure
 - Error message content
 - B2B partner data source
 
 **Deferred Decisions (Post-MVP):**
+
 - Subscription billing integration
 - Advanced caching strategies
 - CDN failover configuration
@@ -202,13 +211,14 @@ npm create @shopify/hydrogen@latest -- \
 
 ### State Management
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **UI State** | Zustand (~1KB) | Lightweight, handles exploration tracking, texture reveal state, story moment triggers |
-| **Cart State** | Hydrogen Cart Context | Built-in, optimized for Storefront API |
-| **Server State** | Remix loaders | SSR-first, automatic revalidation |
+| Decision         | Choice                | Rationale                                                                              |
+| ---------------- | --------------------- | -------------------------------------------------------------------------------------- |
+| **UI State**     | Zustand (~1KB)        | Lightweight, handles exploration tracking, texture reveal state, story moment triggers |
+| **Cart State**   | Hydrogen Cart Context | Built-in, optimized for Storefront API                                                 |
+| **Server State** | Remix loaders         | SSR-first, automatic revalidation                                                      |
 
 **Store Structure:**
+
 ```typescript
 // stores/exploration.ts
 interface ExplorationState {
@@ -222,35 +232,37 @@ interface ExplorationState {
 
 ### Image Loading Strategy
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Preload Trigger** | Intersection Observer | Load when constellation enters viewport |
-| **Priority** | `fetchpriority="high"` for first 2 visible | Optimize LCP |
-| **Mobile** | Preload all 4 when visible | No hover intent available |
-| **Format** | WebP/AVIF via Shopify CDN | Automatic optimization |
+| Decision            | Choice                                     | Rationale                               |
+| ------------------- | ------------------------------------------ | --------------------------------------- |
+| **Preload Trigger** | Intersection Observer                      | Load when constellation enters viewport |
+| **Priority**        | `fetchpriority="high"` for first 2 visible | Optimize LCP                            |
+| **Mobile**          | Preload all 4 when visible                 | No hover intent available               |
+| **Format**          | WebP/AVIF via Shopify CDN                  | Automatic optimization                  |
 
 **Implementation Pattern:**
+
 - IO observes constellation container
 - On intersect: inject `<link rel="preload">` for texture macros
 - Texture reveal uses already-cached images → <100ms guaranteed
 
 ### Cart Persistence
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Mechanism** | Shopify cart ID in localStorage | Cart lives on Shopify, survives browser close |
-| **Recovery** | Fetch cart by ID on return visit | Graceful fallback if expired |
-| **Fallback** | Create new cart if ID invalid | No error shown to user |
+| Decision      | Choice                           | Rationale                                     |
+| ------------- | -------------------------------- | --------------------------------------------- |
+| **Mechanism** | Shopify cart ID in localStorage  | Cart lives on Shopify, survives browser close |
+| **Recovery**  | Fetch cart by ID on return visit | Graceful fallback if expired                  |
+| **Fallback**  | Create new cart if ID invalid    | No error shown to user                        |
 
 ### Error Boundary Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Strategy** | Hybrid (route + component) | Granular recovery, warm messaging |
-| **Route-level** | Catches page crashes | Warm full-page fallback |
-| **Component-level** | Texture reveal, cart drawer, animation | Graceful degradation per NFR21 |
+| Decision            | Choice                                 | Rationale                         |
+| ------------------- | -------------------------------------- | --------------------------------- |
+| **Strategy**        | Hybrid (route + component)             | Granular recovery, warm messaging |
+| **Route-level**     | Catches page crashes                   | Warm full-page fallback           |
+| **Component-level** | Texture reveal, cart drawer, animation | Graceful degradation per NFR21    |
 
 **Boundary Placement:**
+
 - `TextureReveal` → fallback: static image reveal (silent)
 - `CartDrawer` → fallback: link to `/cart` page
 - `AnimationLayer` → fallback: no animation, commerce works
@@ -258,42 +270,48 @@ interface ExplorationState {
 
 ### Error Message Content
 
-| Boundary | Fallback Copy |
-|----------|---------------|
-| **Texture Reveal** | (silent—show static image, no message) |
-| **Cart Drawer** | "Having trouble loading your cart. [View cart page →]" |
-| **Route Error** | "Something's not quite right. Your cart is safe—let's try again." |
-| **Payment Retry** | "That didn't go through. No worries—let's try again." |
+| Boundary           | Fallback Copy                                                     |
+| ------------------ | ----------------------------------------------------------------- |
+| **Texture Reveal** | (silent—show static image, no message)                            |
+| **Cart Drawer**    | "Having trouble loading your cart. [View cart page →]"            |
+| **Route Error**    | "Something's not quite right. Your cart is safe—let's try again." |
+| **Payment Retry**  | "That didn't go through. No worries—let's try again."             |
 
 **Location:** `app/content/errors.ts` (centralized, maintainable)
 
 ### Performance Verification
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Texture Timing** | Custom Performance API marks | `performance.mark()` → `performance.measure()` |
-| **CI Verification** | Playwright + Performance API | Headless test measures reveal timing |
-| **Threshold** | p95 < 100ms | Fail CI on consistent regression |
+| Decision            | Choice                       | Rationale                                      |
+| ------------------- | ---------------------------- | ---------------------------------------------- |
+| **Texture Timing**  | Custom Performance API marks | `performance.mark()` → `performance.measure()` |
+| **CI Verification** | Playwright + Performance API | Headless test measures reveal timing           |
+| **Threshold**       | p95 < 100ms                  | Fail CI on consistent regression               |
 
 **Implementation:**
+
 ```typescript
 // Texture reveal timing
 performance.mark('texture-reveal-start');
 // ... reveal animation
 performance.mark('texture-reveal-end');
-performance.measure('texture-reveal', 'texture-reveal-start', 'texture-reveal-end');
+performance.measure(
+  'texture-reveal',
+  'texture-reveal-start',
+  'texture-reveal-end',
+);
 ```
 
 ### Analytics Implementation
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Commerce Events** | Shopify Analytics | Built-in, zero config |
-| **UX Events** | Custom sendBeacon | No third-party tracker, privacy-first |
-| **Performance** | Performance API | Texture reveal timing instrumentation |
-| **Storage** | Zustand → batch on unload | Minimal runtime overhead |
+| Decision            | Choice                    | Rationale                             |
+| ------------------- | ------------------------- | ------------------------------------- |
+| **Commerce Events** | Shopify Analytics         | Built-in, zero config                 |
+| **UX Events**       | Custom sendBeacon         | No third-party tracker, privacy-first |
+| **Performance**     | Performance API           | Texture reveal timing instrumentation |
+| **Storage**         | Zustand → batch on unload | Minimal runtime overhead              |
 
 **Custom Events Tracked:**
+
 - `texture_reveal` (product_id, duration_ms)
 - `products_explored` (count, product_ids)
 - `story_moment_shown` (timestamp)
@@ -302,13 +320,14 @@ performance.measure('texture-reveal', 'texture-reveal-start', 'texture-reveal-en
 
 ### Component File Structure
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Pattern** | Layer-based | Matches Hydrogen conventions |
-| **Primitives** | `/components/ui/` | Radix wrappers with CVA |
-| **Features** | `/components/product/`, `/cart/`, etc. | Clear ownership |
+| Decision       | Choice                                 | Rationale                    |
+| -------------- | -------------------------------------- | ---------------------------- |
+| **Pattern**    | Layer-based                            | Matches Hydrogen conventions |
+| **Primitives** | `/components/ui/`                      | Radix wrappers with CVA      |
+| **Features**   | `/components/product/`, `/cart/`, etc. | Clear ownership              |
 
 **Structure:**
+
 ```
 app/
   components/
@@ -331,13 +350,14 @@ app/
 
 ### B2B Portal Routing
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Pattern** | Path prefix `/wholesale/*` | Single deployment, clean separation |
-| **Layout** | Dedicated minimal layout | No Lenis, no animations, efficiency-first |
-| **Auth** | Middleware gates all `/wholesale` routes | Shopify B2B customer check |
+| Decision    | Choice                                   | Rationale                                 |
+| ----------- | ---------------------------------------- | ----------------------------------------- |
+| **Pattern** | Path prefix `/wholesale/*`               | Single deployment, clean separation       |
+| **Layout**  | Dedicated minimal layout                 | No Lenis, no animations, efficiency-first |
+| **Auth**    | Middleware gates all `/wholesale` routes | Shopify B2B customer check                |
 
 **Route Structure:**
+
 ```
 app/routes/
   _index.tsx              # B2C immersive landing
@@ -352,13 +372,14 @@ app/routes/
 
 ### B2B Partner Data
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Partner Name** | Shopify B2B customer `firstName` | Already available via API |
-| **Store Count** | Hardcoded config (MVP) | 3 partners, manual update |
-| **Acknowledgment** | Template in `app/content/wholesale.ts` | Centralized copy |
+| Decision           | Choice                                 | Rationale                 |
+| ------------------ | -------------------------------------- | ------------------------- |
+| **Partner Name**   | Shopify B2B customer `firstName`       | Already available via API |
+| **Store Count**    | Hardcoded config (MVP)                 | 3 partners, manual update |
+| **Acknowledgment** | Template in `app/content/wholesale.ts` | Centralized copy          |
 
 **Template:**
+
 ```typescript
 // app/content/wholesale.ts
 export const partnerAcknowledgment = (name: string, storeCount: number) =>
@@ -368,6 +389,7 @@ export const partnerAcknowledgment = (name: string, storeCount: number) =>
 ### Decision Impact Analysis
 
 **Implementation Sequence:**
+
 1. Skeleton init + design tokens
 2. Zustand store setup (including cartDrawerOpen)
 3. Component structure scaffold
@@ -380,6 +402,7 @@ export const partnerAcknowledgment = (name: string, storeCount: number) =>
 10. B2B portal routes + partner data
 
 **Cross-Component Dependencies:**
+
 - Zustand exploration state → triggers StoryMoment
 - Zustand cartDrawerOpen → controls CartDrawer visibility
 - IO preloading → enables <100ms texture reveal
@@ -393,22 +416,22 @@ _These patterns ensure AI agents produce consistent, conflict-free code._
 
 ### File Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| **Components** | PascalCase.tsx | `TextureReveal.tsx`, `CartDrawer.tsx` |
-| **Utilities** | kebab-case.ts | `analytics.ts`, `scroll-utils.ts` |
-| **Hooks** | use-camelCase.ts | `use-exploration-state.ts` |
-| **Constants** | SCREAMING_SNAKE_CASE | `TEXTURE_REVEAL_THRESHOLD` |
-| **Types** | PascalCase (no suffix) | `Product`, `CartLine` |
+| Type           | Pattern                | Example                               |
+| -------------- | ---------------------- | ------------------------------------- |
+| **Components** | PascalCase.tsx         | `TextureReveal.tsx`, `CartDrawer.tsx` |
+| **Utilities**  | kebab-case.ts          | `analytics.ts`, `scroll-utils.ts`     |
+| **Hooks**      | use-camelCase.ts       | `use-exploration-state.ts`            |
+| **Constants**  | SCREAMING_SNAKE_CASE   | `TEXTURE_REVEAL_THRESHOLD`            |
+| **Types**      | PascalCase (no suffix) | `Product`, `CartLine`                 |
 
 ### Test File Location
 
-| Pattern | Location | Example |
-|---------|----------|---------|
-| **Unit tests** | Co-located with source | `TextureReveal.test.tsx` |
-| **Integration tests** | `/tests/integration/` | `cart-flow.test.ts` |
-| **E2E tests** | `/tests/e2e/` | `checkout.spec.ts` |
-| **Visual regression** | `/tests/visual/` | `constellation.visual.ts` |
+| Pattern               | Location               | Example                   |
+| --------------------- | ---------------------- | ------------------------- |
+| **Unit tests**        | Co-located with source | `TextureReveal.test.tsx`  |
+| **Integration tests** | `/tests/integration/`  | `cart-flow.test.ts`       |
+| **E2E tests**         | `/tests/e2e/`          | `checkout.spec.ts`        |
+| **Visual regression** | `/tests/visual/`       | `constellation.visual.ts` |
 
 **Co-location Rule:** If test file exceeds 200 lines, move to `/tests/unit/` with matching path structure.
 
@@ -416,25 +439,26 @@ _These patterns ensure AI agents produce consistent, conflict-free code._
 
 ```typescript
 // 1. React/framework imports
-import { useState, useEffect } from 'react';
-import { useLoaderData } from '@remix-run/react';
+import {useState, useEffect} from 'react';
+import {useLoaderData} from '@remix-run/react';
 
 // 2. External libraries
-import { motion } from 'framer-motion';
-import { create } from 'zustand';
+import {motion} from 'framer-motion';
+import {create} from 'zustand';
 
 // 3. Internal absolute imports (@/)
-import { Button } from '@/components/ui/Button';
-import { useExplorationStore } from '@/stores/exploration';
+import {Button} from '@/components/ui/Button';
+import {useExplorationStore} from '@/stores/exploration';
 
 // 4. Relative imports (parent, then sibling)
-import { TextureImage } from './TextureImage';
+import {TextureImage} from './TextureImage';
 
 // 5. Type imports (last)
-import type { Product } from '@/types';
+import type {Product} from '@/types';
 ```
 
 **ESLint Config:**
+
 ```javascript
 // eslint.config.js
 'import/order': ['error', {
@@ -451,20 +475,20 @@ import type { Product } from '@/types';
 
 ### CVA Organization
 
-| Scenario | Location |
-|----------|----------|
+| Scenario             | Location                     |
+| -------------------- | ---------------------------- |
 | **Single component** | Co-located in component file |
-| **Shared variants** | `app/lib/variants.ts` |
+| **Shared variants**  | `app/lib/variants.ts`        |
 
 **20-Line Rule:** If CVA definitions exceed 20 lines, extract to `app/lib/variants/[component].ts`.
 
 ### Event Naming Conventions
 
-| Context | Pattern | Example |
-|---------|---------|---------|
-| **Analytics events** | snake_case | `texture_reveal`, `cart_opened` |
-| **Internal handlers** | camelCase | `handleTextureReveal`, `onCartOpen` |
-| **Custom hooks** | use + camelCase | `useTextureReveal` |
+| Context               | Pattern         | Example                             |
+| --------------------- | --------------- | ----------------------------------- |
+| **Analytics events**  | snake_case      | `texture_reveal`, `cart_opened`     |
+| **Internal handlers** | camelCase       | `handleTextureReveal`, `onCartOpen` |
+| **Custom hooks**      | use + camelCase | `useTextureReveal`                  |
 
 ### Props Interface Pattern
 
@@ -483,26 +507,26 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 ### Loading State Pattern
 
-| Scenario | Pattern |
-|----------|---------|
-| **Route loading** | Remix `useNavigation().state` |
-| **Mutations** | Remix `useFetcher().state` |
-| **Client-only** | Boolean state (`isLoading`) |
+| Scenario          | Pattern                           |
+| ----------------- | --------------------------------- |
+| **Route loading** | Remix `useNavigation().state`     |
+| **Mutations**     | Remix `useFetcher().state`        |
+| **Client-only**   | Boolean state (`isLoading`)       |
 | **UI indication** | Skeleton components, not spinners |
 
 ### Test Naming Convention
 
 ```typescript
 // ✅ Behavior-focused, readable as documentation
-it('reveals texture when user hovers on desktop')
-it('preloads images when constellation enters viewport')
-it('persists cart ID to localStorage on cart creation')
-it('falls back to static image when animation fails')
+it('reveals texture when user hovers on desktop');
+it('preloads images when constellation enters viewport');
+it('persists cart ID to localStorage on cart creation');
+it('falls back to static image when animation fails');
 
 // ❌ Vague or implementation-focused
-it('should work correctly')
-it('test hover')
-it('calls useState')
+it('should work correctly');
+it('test hover');
+it('calls useState');
 ```
 
 ### Design Token Naming
@@ -511,12 +535,12 @@ CSS custom properties follow this pattern:
 
 ```css
 /* Semantic color tokens */
---canvas-base: #FAF7F2;      /* Primary background */
---canvas-elevated: #F5F0E8;  /* Cards, modals */
---text-primary: #2C2416;     /* Body text */
---text-muted: #8C8578;       /* Secondary text */
---accent-primary: #3A8A8C;   /* CTAs, links */
---accent-hover: #2D6E70;     /* Interactive states */
+--canvas-base: #faf7f2; /* Primary background */
+--canvas-elevated: #f5f0e8; /* Cards, modals */
+--text-primary: #2c2416; /* Body text */
+--text-muted: #8c8578; /* Secondary text */
+--accent-primary: #3a8a8c; /* CTAs, links */
+--accent-hover: #2d6e70; /* Interactive states */
 
 /* Spacing scale */
 --space-xs: 0.25rem;
@@ -534,28 +558,28 @@ CSS custom properties follow this pattern:
 
 ### Content Location Rules
 
-| Content Type | Location | Rationale |
-|--------------|----------|-----------|
-| **Error messages** | `app/content/errors.ts` | Warm tone, centralized |
-| **B2B copy** | `app/content/wholesale.ts` | Partner-specific templates |
-| **Product copy** | Shopify metafields | CMS-managed |
-| **Story fragments** | `app/content/story.ts` | Brand narrative |
-| **Accessibility labels** | Co-located with component | Context-dependent |
+| Content Type             | Location                   | Rationale                  |
+| ------------------------ | -------------------------- | -------------------------- |
+| **Error messages**       | `app/content/errors.ts`    | Warm tone, centralized     |
+| **B2B copy**             | `app/content/wholesale.ts` | Partner-specific templates |
+| **Product copy**         | Shopify metafields         | CMS-managed                |
+| **Story fragments**      | `app/content/story.ts`     | Brand narrative            |
+| **Accessibility labels** | Co-located with component  | Context-dependent          |
 
 ## Project Structure & Boundaries
 
 ### Requirements to Structure Mapping
 
-| FR Category | Lives In |
-|-------------|----------|
-| Product Discovery & Exploration (9 FRs) | `app/components/product/`, `app/routes/_index.tsx` |
-| Product Information (3 FRs) | `app/routes/products.$handle.tsx`, `app/components/product/` |
-| Cart & Checkout B2C (10 FRs) | `app/components/cart/`, `app/routes/cart.tsx` |
-| Wholesale Portal B2B (7 FRs) | `app/routes/wholesale/`, `app/components/wholesale/` |
-| Attribution & Analytics (7 FRs) | `app/lib/analytics.ts`, `app/stores/exploration.ts` |
-| Post-Purchase (4 FRs) | `app/routes/orders/`, `app/content/` |
-| Content & Navigation (8 FRs) | `app/components/layout/`, `app/routes/` |
-| Accessibility (3 FRs) | Cross-cutting, all components |
+| FR Category                             | Lives In                                                     |
+| --------------------------------------- | ------------------------------------------------------------ |
+| Product Discovery & Exploration (9 FRs) | `app/components/product/`, `app/routes/_index.tsx`           |
+| Product Information (3 FRs)             | `app/routes/products.$handle.tsx`, `app/components/product/` |
+| Cart & Checkout B2C (10 FRs)            | `app/components/cart/`, `app/routes/cart.tsx`                |
+| Wholesale Portal B2B (7 FRs)            | `app/routes/wholesale/`, `app/components/wholesale/`         |
+| Attribution & Analytics (7 FRs)         | `app/lib/analytics.ts`, `app/stores/exploration.ts`          |
+| Post-Purchase (4 FRs)                   | `app/routes/orders/`, `app/content/`                         |
+| Content & Navigation (8 FRs)            | `app/components/layout/`, `app/routes/`                      |
+| Accessibility (3 FRs)                   | Cross-cutting, all components                                |
 
 ### Complete Project Directory Structure
 
@@ -752,20 +776,20 @@ isla-suds/
 
 **API Boundaries:**
 
-| Boundary | Responsibility | Location |
-|----------|----------------|----------|
-| Storefront API | Product, cart, checkout | `app/graphql/`, Hydrogen utilities |
-| Customer Account API | B2B authentication | `app/routes/wholesale/login.tsx` |
-| Analytics Endpoint | Custom UX events | `app/lib/analytics.ts` → external |
+| Boundary             | Responsibility          | Location                           |
+| -------------------- | ----------------------- | ---------------------------------- |
+| Storefront API       | Product, cart, checkout | `app/graphql/`, Hydrogen utilities |
+| Customer Account API | B2B authentication      | `app/routes/wholesale/login.tsx`   |
+| Analytics Endpoint   | Custom UX events        | `app/lib/analytics.ts` → external  |
 
 **Component Boundaries:**
 
-| Boundary | Communication Pattern |
-|----------|----------------------|
-| Zustand ↔ Components | Selector hooks (`use-exploration-state.ts`) |
-| Cart Context ↔ Components | Hydrogen `useCart()` hook |
-| Route ↔ Components | Props via loader data |
-| Error Boundary ↔ Children | React error boundary pattern |
+| Boundary                  | Communication Pattern                       |
+| ------------------------- | ------------------------------------------- |
+| Zustand ↔ Components      | Selector hooks (`use-exploration-state.ts`) |
+| Cart Context ↔ Components | Hydrogen `useCart()` hook                   |
+| Route ↔ Components        | Props via loader data                       |
+| Error Boundary ↔ Children | React error boundary pattern                |
 
 **Data Flow:**
 
@@ -783,31 +807,35 @@ Shopify Storefront API
 
 ### Cross-Cutting Concerns Locations
 
-| Concern | Files |
-|---------|-------|
-| **Performance** | `app/lib/performance.ts`, `app/lib/shopify/preload.ts`, `tests/performance/` |
-| **Accessibility** | All components (semantic HTML), `tests/e2e/accessibility.spec.ts` |
-| **Analytics** | `app/lib/analytics.ts`, `app/stores/exploration.ts` |
-| **Error Handling** | `app/components/errors/`, `app/content/errors.ts` |
-| **Brand Consistency** | `app/styles/tokens.css`, `app/content/` |
+| Concern               | Files                                                                        |
+| --------------------- | ---------------------------------------------------------------------------- |
+| **Performance**       | `app/lib/performance.ts`, `app/lib/shopify/preload.ts`, `tests/performance/` |
+| **Accessibility**     | All components (semantic HTML), `tests/e2e/accessibility.spec.ts`            |
+| **Analytics**         | `app/lib/analytics.ts`, `app/stores/exploration.ts`                          |
+| **Error Handling**    | `app/components/errors/`, `app/content/errors.ts`                            |
+| **Brand Consistency** | `app/styles/tokens.css`, `app/content/`                                      |
 
 ### Development Workflow Integration
 
 **Development Server:**
+
 - `npm run dev` — Mock shop mode for UI development
 - `npm run dev -- --env production` — Connected mode with real Shopify store
 
 **Build Process:**
+
 - Vite builds to Oxygen-compatible output
 - GraphQL codegen runs pre-build for type safety
 - Tailwind processes `tokens.css` → utility classes
 
 **CI Pipeline:**
+
 - Lint + type-check → Unit tests → Integration tests → E2E tests
 - Lighthouse CI gates on Core Web Vitals
 - Performance tests verify <100ms texture reveal
 
 **Deployment:**
+
 - Push to `main` triggers Oxygen deployment
 - Preview deployments on PRs for visual review
 
@@ -817,6 +845,7 @@ Shopify Storefront API
 
 **Decision Compatibility:**
 All technology choices work together without conflicts:
+
 - Shopify Hydrogen (React Router 7.x) + Zustand: Both React-based, no conflicts
 - Tailwind CSS + CSS Custom Properties: Tailwind `extend` integrates tokens seamlessly
 - Framer Motion + <200KB bundle: Dynamic import protects budget
@@ -825,6 +854,7 @@ All technology choices work together without conflicts:
 
 **Pattern Consistency:**
 All implementation patterns align with technology conventions:
+
 - PascalCase components match React/Hydrogen conventions
 - kebab-case utilities match Node.js conventions
 - snake_case analytics events match industry standards
@@ -832,6 +862,7 @@ All implementation patterns align with technology conventions:
 
 **Structure Alignment:**
 Project structure fully supports all architectural decisions:
+
 - Layer-based components in `app/components/{domain}/`
 - Centralized content in `app/content/`
 - Shopify-specific utilities isolated in `app/lib/shopify/`
@@ -841,43 +872,46 @@ Project structure fully supports all architectural decisions:
 
 **Functional Requirements Coverage (51/51):**
 
-| FR Category | Count | Architectural Support |
-|-------------|-------|----------------------|
-| Product Discovery & Exploration | 9 | `ConstellationGrid`, `TextureReveal`, `StoryMoment` |
-| Product Information | 3 | `ProductGallery`, `products.$handle.tsx` |
-| Cart & Checkout B2C | 10 | `CartDrawer`, `CartLine`, Hydrogen Cart Context |
-| Wholesale Portal B2B | 7 | `wholesale/*` routes, `PartnerDashboard`, `QuickReorder` |
-| Attribution & Analytics | 7 | `app/lib/analytics.ts`, `exploration.ts` store |
-| Post-Purchase | 4 | `orders/$id.tsx`, `app/content/` |
-| Content & Navigation | 8 | `Header`, `Footer`, `StickyNav`, route structure |
-| Accessibility | 3 | Radix primitives, semantic HTML, `accessibility.spec.ts` |
+| FR Category                     | Count | Architectural Support                                    |
+| ------------------------------- | ----- | -------------------------------------------------------- |
+| Product Discovery & Exploration | 9     | `ConstellationGrid`, `TextureReveal`, `StoryMoment`      |
+| Product Information             | 3     | `ProductGallery`, `products.$handle.tsx`                 |
+| Cart & Checkout B2C             | 10    | `CartDrawer`, `CartLine`, Hydrogen Cart Context          |
+| Wholesale Portal B2B            | 7     | `wholesale/*` routes, `PartnerDashboard`, `QuickReorder` |
+| Attribution & Analytics         | 7     | `app/lib/analytics.ts`, `exploration.ts` store           |
+| Post-Purchase                   | 4     | `orders/$id.tsx`, `app/content/`                         |
+| Content & Navigation            | 8     | `Header`, `Footer`, `StickyNav`, route structure         |
+| Accessibility                   | 3     | Radix primitives, semantic HTML, `accessibility.spec.ts` |
 
 **Non-Functional Requirements Coverage (27/27):**
 
-| NFR Category | Count | Architectural Support |
-|--------------|-------|----------------------|
-| Performance | 7 | IO preloading, dynamic imports, Lighthouse CI, performance tests |
-| Accessibility | 7 | Radix primitives, semantic HTML, E2E accessibility tests |
-| Integration | 4 | Shopify Storefront/Customer APIs, analytics sendBeacon |
-| Reliability | 3 | Error boundaries, cart persistence, graceful degradation |
-| UX Tone | 5 | Centralized error copy, warm messaging |
-| Compliance | 1 | GDPR basics via Shopify |
+| NFR Category  | Count | Architectural Support                                            |
+| ------------- | ----- | ---------------------------------------------------------------- |
+| Performance   | 7     | IO preloading, dynamic imports, Lighthouse CI, performance tests |
+| Accessibility | 7     | Radix primitives, semantic HTML, E2E accessibility tests         |
+| Integration   | 4     | Shopify Storefront/Customer APIs, analytics sendBeacon           |
+| Reliability   | 3     | Error boundaries, cart persistence, graceful degradation         |
+| UX Tone       | 5     | Centralized error copy, warm messaging                           |
+| Compliance    | 1     | GDPR basics via Shopify                                          |
 
 ### Implementation Readiness Validation ✅
 
 **Decision Completeness:**
+
 - All technology versions specified (TypeScript, Vite 6, React Router 7.x)
 - Library sizes documented with budget impact
 - 11 implementation patterns with code examples
 - ESLint config provided for automated enforcement
 
 **Structure Completeness:**
+
 - 70+ files and directories explicitly defined
 - Test organization covers all testing levels
 - CI/CD pipeline structure in `.github/workflows/`
 - Asset verification script for implementation gate
 
 **Pattern Completeness:**
+
 - All naming conventions documented with examples
 - Co-location rules with threshold triggers
 - Import organization with ESLint enforcement
@@ -890,6 +924,7 @@ Project structure fully supports all architectural decisions:
 **Important Gaps:** None identified
 
 **Future Enhancements (Post-MVP):**
+
 - Subscription billing architecture
 - Dynamic B2B partner data from CMS
 - Advanced caching strategies at scale
@@ -898,24 +933,28 @@ Project structure fully supports all architectural decisions:
 ### Architecture Completeness Checklist
 
 **✅ Requirements Analysis**
+
 - [x] Project context thoroughly analyzed
 - [x] Scale and complexity assessed
 - [x] Technical constraints identified
 - [x] Cross-cutting concerns mapped
 
 **✅ Architectural Decisions**
+
 - [x] Critical decisions documented with versions
 - [x] Technology stack fully specified
 - [x] Integration patterns defined
 - [x] Performance considerations addressed
 
 **✅ Implementation Patterns**
+
 - [x] Naming conventions established
 - [x] Structure patterns defined
 - [x] Communication patterns specified
 - [x] Process patterns documented
 
 **✅ Project Structure**
+
 - [x] Complete directory structure defined
 - [x] Component boundaries established
 - [x] Integration points mapped
@@ -928,6 +967,7 @@ Project structure fully supports all architectural decisions:
 **Confidence Level:** HIGH
 
 **Key Strengths:**
+
 - Texture reveal performance contract protects core conversion mechanism
 - Bundle budget is explicit and enforced via CI
 - Dual-audience routing cleanly separated with dedicated layouts
@@ -935,6 +975,7 @@ Project structure fully supports all architectural decisions:
 - Performance verification integrated into CI pipeline
 
 **Areas for Future Enhancement:**
+
 - Subscription billing when ready for V2
 - Dynamic B2B partner data from CMS
 - Advanced caching strategies at scale
@@ -942,6 +983,7 @@ Project structure fully supports all architectural decisions:
 ### Implementation Handoff
 
 **AI Agent Guidelines:**
+
 - Follow all architectural decisions exactly as documented
 - Use implementation patterns consistently across all components
 - Respect project structure and boundaries
@@ -949,6 +991,7 @@ Project structure fully supports all architectural decisions:
 - Protect the <100ms texture reveal performance contract
 
 **First Implementation Priority:**
+
 ```bash
 npm create @shopify/hydrogen@latest -- \
   --language ts \
@@ -972,6 +1015,7 @@ Then follow the Post-Init Setup sequence documented in Starter Template Evaluati
 ### Final Architecture Deliverables
 
 **📋 Complete Architecture Document**
+
 - All architectural decisions documented with specific versions
 - Implementation patterns ensuring AI agent consistency
 - Complete project structure with 70+ files and directories
@@ -979,12 +1023,14 @@ Then follow the Post-Init Setup sequence documented in Starter Template Evaluati
 - Validation confirming coherence and completeness
 
 **🏗️ Implementation Ready Foundation**
+
 - 7 core architectural decisions made
 - 11 implementation patterns defined
 - 5 component domains specified
 - 78 requirements fully supported
 
 **📚 AI Agent Implementation Guide**
+
 - Technology stack with verified versions
 - Consistency rules that prevent implementation conflicts
 - Project structure with clear boundaries
@@ -993,18 +1039,21 @@ Then follow the Post-Init Setup sequence documented in Starter Template Evaluati
 ### Quality Assurance Checklist
 
 **✅ Architecture Coherence**
+
 - [x] All decisions work together without conflicts
 - [x] Technology choices are compatible
 - [x] Patterns support the architectural decisions
 - [x] Structure aligns with all choices
 
 **✅ Requirements Coverage**
+
 - [x] All functional requirements are supported
 - [x] All non-functional requirements are addressed
 - [x] Cross-cutting concerns are handled
 - [x] Integration points are defined
 
 **✅ Implementation Readiness**
+
 - [x] Decisions are specific and actionable
 - [x] Patterns prevent agent conflicts
 - [x] Structure is complete and unambiguous
@@ -1031,4 +1080,3 @@ The Hydrogen skeleton template and architectural patterns provide a production-r
 **Next Phase:** Begin implementation using the architectural decisions and patterns documented herein.
 
 **Document Maintenance:** Update this architecture when major technical decisions are made during implementation.
-

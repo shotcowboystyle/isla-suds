@@ -16,18 +16,18 @@
 #   - {file-path}: File created/found (e.g., "docs/product-brief.md")
 #   - skipped: Optional/conditional workflow that was skipped
 
-generated: "2026-01-23"
-project: "Isla Suds"
-project_type: "software"
-selected_track: "method"
-field_type: "greenfield"
-workflow_path: "method-greenfield.yaml"
+generated: '2026-01-23'
+project: 'Isla Suds'
+project_type: 'software'
+selected_track: 'method'
+field_type: 'greenfield'
+workflow_path: 'method-greenfield.yaml'
 
 workflow_status:
   # Phase 1: Analysis (Optional)
   brainstorm-project: skipped
   research: skipped
-  product-brief: "_bmad-output/planning-artifacts/product-brief-isla-suds-2026-01-23.md"
+  product-brief: '_bmad-output/planning-artifacts/product-brief-isla-suds-2026-01-23.md'
 
   # Phase 2: Planning
   prd: required

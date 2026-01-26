@@ -165,7 +165,7 @@ Result: Run 14 targeted tests instead of 147 with --only-changed!
 **Implementation**:
 
 ```typescript
-import type { BurnInConfig } from '@seontechnologies/playwright-utils/burn-in';
+import type {BurnInConfig} from '@seontechnologies/playwright-utils/burn-in';
 
 const config: BurnInConfig = {
   skipBurnInPatterns: ['**/config/**', '**/*types*', '**/*.md'],
@@ -197,7 +197,7 @@ export default config;
 
 ```typescript
 // burn-in-changed.ts with sharding
-import { runBurnIn } from '@seontechnologies/playwright-utils/burn-in';
+import {runBurnIn} from '@seontechnologies/playwright-utils/burn-in';
 
 async function main() {
   const shardArg = process.argv.find((arg) => arg.startsWith('--shard='));

@@ -18,10 +18,10 @@ Traditional integration testing requires running both consumer and provider simu
 
 ```typescript
 // tests/contract/user-api.pact.spec.ts
-import { PactV3, MatchersV3 } from '@pact-foundation/pact';
-import { getUserById, createUser, User } from '@/api/user-service';
+import {PactV3, MatchersV3} from '@pact-foundation/pact';
+import {getUserById, createUser, User} from '@/api/user-service';
 
-const { like, eachLike, string, integer } = MatchersV3;
+const {like, eachLike, string, integer} = MatchersV3;
 
 /**
  * Consumer-Driven Contract Test
@@ -69,7 +69,7 @@ describe('User API Contract', () => {
           // Act: Call consumer code against mock server
           const user = await getUserById(1, {
             baseURL: mockServer.url,
-            headers: { Authorization: 'Bearer token123' },
+            headers: {Authorization: 'Bearer token123'},
           });
 
           // Assert: Validate consumer behavior
@@ -91,11 +91,11 @@ describe('User API Contract', () => {
         .withRequest({
           method: 'GET',
           path: '/users/999',
-          headers: { Accept: 'application/json' },
+          headers: {Accept: 'application/json'},
         })
         .willRespondWith({
           status: 404,
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type': 'application/json'},
           body: {
             error: 'User not found',
             code: 'USER_NOT_FOUND',
@@ -103,7 +103,9 @@ describe('User API Contract', () => {
         })
         .executeTest(async (mockServer) => {
           // Act & Assert: Consumer handles 404 gracefully
-          await expect(getUserById(999, { baseURL: mockServer.url })).rejects.toThrow('User not found');
+          await expect(
+            getUserById(999, {baseURL: mockServer.url}),
+          ).rejects.toThrow('User not found');
         });
     });
   });
@@ -130,7 +132,7 @@ describe('User API Contract', () => {
         })
         .willRespondWith({
           status: 201,
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type': 'application/json'},
           body: like({
             id: integer(2),
             name: string('Jane Smith'),
@@ -187,9 +189,9 @@ describe('User API Contract', () => {
 
 ```typescript
 // tests/contract/user-api.provider.spec.ts
-import { Verifier, VerifierOptions } from '@pact-foundation/pact';
-import { server } from '../../src/server'; // Your Express/Fastify app
-import { seedDatabase, resetDatabase } from '../support/db-helpers';
+import {Verifier, VerifierOptions} from '@pact-foundation/pact';
+import {server} from '../../src/server'; // Your Express/Fastify app
+import {seedDatabase, resetDatabase} from '../support/db-helpers';
 
 /**
  * Provider Verification Test
@@ -491,10 +493,10 @@ jobs:
 
 ```typescript
 // tests/contract/user-api-resilience.pact.spec.ts
-import { PactV3, MatchersV3 } from '@pact-foundation/pact';
-import { getUserById, ApiError } from '@/api/user-service';
+import {PactV3, MatchersV3} from '@pact-foundation/pact';
+import {getUserById, ApiError} from '@/api/user-service';
 
-const { like, string } = MatchersV3;
+const {like, string} = MatchersV3;
 
 const provider = new PactV3({
   consumer: 'user-management-web',
@@ -514,11 +516,11 @@ describe('User API Resilience Contract', () => {
       .withRequest({
         method: 'GET',
         path: '/users/1',
-        headers: { Accept: 'application/json' },
+        headers: {Accept: 'application/json'},
       })
       .willRespondWith({
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: {
           error: 'Internal server error',
           code: 'INTERNAL_ERROR',
@@ -594,8 +596,8 @@ describe('User API Resilience Contract', () => {
       })
       .willRespondWith({
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: like({ id: 1, name: 'John' }),
+        headers: {'Content-Type': 'application/json'},
+        body: like({id: 1, name: 'John'}),
       })
       .withDelay(15000) // Simulate 15 second delay
       .executeTest(async (mockServer) => {
@@ -626,7 +628,7 @@ describe('User API Resilience Contract', () => {
       })
       .willRespondWith({
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: {
           id: integer(1),
           name: string('John Doe'),
@@ -635,7 +637,7 @@ describe('User API Resilience Contract', () => {
         },
       })
       .executeTest(async (mockServer) => {
-        const user = await getUserById(1, { baseURL: mockServer.url });
+        const user = await getUserById(1, {baseURL: mockServer.url});
 
         // Consumer handles missing optional fields gracefully
         expect(user.id).toBe(1);
@@ -651,7 +653,7 @@ describe('User API Resilience Contract', () => {
 
 ```typescript
 // src/api/user-service.ts
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 
 export class ApiError extends Error {
   constructor(
@@ -669,9 +671,18 @@ export class ApiError extends Error {
  */
 export async function getUserById(
   id: number,
-  config?: AxiosRequestConfig & { retries?: number; retryDelay?: number; respectRateLimit?: boolean },
+  config?: AxiosRequestConfig & {
+    retries?: number;
+    retryDelay?: number;
+    respectRateLimit?: boolean;
+  },
 ): Promise<User> {
-  const { retries = 3, retryDelay = 1000, respectRateLimit = true, ...axiosConfig } = config || {};
+  const {
+    retries = 3,
+    retryDelay = 1000,
+    respectRateLimit = true,
+    ...axiosConfig
+  } = config || {};
 
   let lastError: Error;
 
@@ -684,13 +695,22 @@ export async function getUserById(
 
       // Handle rate limiting
       if (error.response?.status === 429) {
-        const retryAfter = parseInt(error.response.headers['retry-after'] || '60');
-        throw new ApiError('Too many requests', 'RATE_LIMIT_EXCEEDED', false, retryAfter);
+        const retryAfter = parseInt(
+          error.response.headers['retry-after'] || '60',
+        );
+        throw new ApiError(
+          'Too many requests',
+          'RATE_LIMIT_EXCEEDED',
+          false,
+          retryAfter,
+        );
       }
 
       // Retry on 500 errors
       if (error.response?.status === 500 && attempt < retries) {
-        await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * attempt),
+        );
         continue;
       }
 
@@ -737,7 +757,7 @@ export async function getUserById(
  * - Tag releases for environment tracking
  */
 
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 
 const PACT_BROKER_URL = process.env.PACT_BROKER_URL!;
 const PACT_BROKER_TOKEN = process.env.PACT_BROKER_TOKEN!;
@@ -756,15 +776,20 @@ function tagRelease(version: string, environment: 'staging' | 'production') {
       --tag ${environment} \
       --broker-base-url ${PACT_BROKER_URL} \
       --broker-token ${PACT_BROKER_TOKEN}`,
-    { stdio: 'inherit' },
+    {stdio: 'inherit'},
   );
 }
 
 /**
  * Record deployment to environment
  */
-function recordDeployment(version: string, environment: 'staging' | 'production') {
-  console.log(`📝 Recording deployment of ${PACTICIPANT} v${version} to ${environment}`);
+function recordDeployment(
+  version: string,
+  environment: 'staging' | 'production',
+) {
+  console.log(
+    `📝 Recording deployment of ${PACTICIPANT} v${version} to ${environment}`,
+  );
 
   execSync(
     `npx pact-broker record-deployment \
@@ -773,7 +798,7 @@ function recordDeployment(version: string, environment: 'staging' | 'production'
       --environment ${environment} \
       --broker-base-url ${PACT_BROKER_URL} \
       --broker-token ${PACT_BROKER_TOKEN}`,
-    { stdio: 'inherit' },
+    {stdio: 'inherit'},
   );
 }
 
@@ -791,7 +816,7 @@ function cleanupOldPacts() {
       --broker-token ${PACT_BROKER_TOKEN} \
       --keep-latest-for-branch 1 \
       --keep-min-age 30`,
-    { stdio: 'inherit' },
+    {stdio: 'inherit'},
   );
 }
 
@@ -799,7 +824,9 @@ function cleanupOldPacts() {
  * Check deployment compatibility
  */
 function canIDeploy(version: string, toEnvironment: string): boolean {
-  console.log(`🔍 Checking if ${PACTICIPANT} v${version} can deploy to ${toEnvironment}`);
+  console.log(
+    `🔍 Checking if ${PACTICIPANT} v${version} can deploy to ${toEnvironment}`,
+  );
 
   try {
     execSync(
@@ -811,7 +838,7 @@ function canIDeploy(version: string, toEnvironment: string): boolean {
         --broker-token ${PACT_BROKER_TOKEN} \
         --retry-while-unknown 6 \
         --retry-interval 10`,
-      { stdio: 'inherit' },
+      {stdio: 'inherit'},
     );
     return true;
   } catch (error) {
@@ -846,7 +873,9 @@ async function main() {
       break;
 
     default:
-      console.error('Unknown command. Use: tag-release | record-deployment | can-i-deploy | cleanup');
+      console.error(
+        'Unknown command. Use: tag-release | record-deployment | can-i-deploy | cleanup',
+      );
       process.exit(1);
   }
 }

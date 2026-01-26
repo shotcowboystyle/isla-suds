@@ -29,7 +29,7 @@ Dynamic factories with overrides provide:
 
 ```typescript
 // test-utils/factories/user-factory.ts
-import { faker } from '@faker-js/faker';
+import {faker} from '@faker-js/faker';
 
 type User = {
   id: string;
@@ -63,22 +63,22 @@ export const createProduct = (overrides: Partial<Product> = {}): Product => ({
   id: faker.string.uuid(),
   name: faker.commerce.productName(),
   price: parseFloat(faker.commerce.price()),
-  stock: faker.number.int({ min: 0, max: 100 }),
+  stock: faker.number.int({min: 0, max: 100}),
   category: faker.commerce.department(),
   ...overrides,
 });
 
 // Usage in tests:
-test('admin can delete users', async ({ page, apiRequest }) => {
+test('admin can delete users', async ({page, apiRequest}) => {
   // Default user
   const user = createUser();
 
   // Admin user (explicit override shows intent)
-  const admin = createUser({ role: 'admin' });
+  const admin = createUser({role: 'admin'});
 
   // Seed via API (fast!)
-  await apiRequest({ method: 'POST', url: '/api/users', data: user });
-  await apiRequest({ method: 'POST', url: '/api/users', data: admin });
+  await apiRequest({method: 'POST', url: '/api/users', data: user});
+  await apiRequest({method: 'POST', url: '/api/users', data: admin});
 
   // Now test UI behavior
   await page.goto('/admin/users');
@@ -102,8 +102,8 @@ test('admin can delete users', async ({ page, apiRequest }) => {
 
 ```typescript
 // test-utils/factories/order-factory.ts
-import { createUser } from './user-factory';
-import { createProduct } from './product-factory';
+import {createUser} from './user-factory';
+import {createProduct} from './product-factory';
 
 type OrderItem = {
   product: Product;
@@ -120,9 +120,11 @@ type Order = {
   createdAt: Date;
 };
 
-export const createOrderItem = (overrides: Partial<OrderItem> = {}): OrderItem => {
+export const createOrderItem = (
+  overrides: Partial<OrderItem> = {},
+): OrderItem => {
   const product = overrides.product || createProduct();
-  const quantity = overrides.quantity || faker.number.int({ min: 1, max: 5 });
+  const quantity = overrides.quantity || faker.number.int({min: 1, max: 5});
 
   return {
     product,
@@ -148,25 +150,25 @@ export const createOrder = (overrides: Partial<Order> = {}): Order => {
 };
 
 // Usage in tests:
-test('user can view order details', async ({ page, apiRequest }) => {
-  const user = createUser({ email: 'test@example.com' });
-  const product1 = createProduct({ name: 'Widget A', price: 10.0 });
-  const product2 = createProduct({ name: 'Widget B', price: 15.0 });
+test('user can view order details', async ({page, apiRequest}) => {
+  const user = createUser({email: 'test@example.com'});
+  const product1 = createProduct({name: 'Widget A', price: 10.0});
+  const product2 = createProduct({name: 'Widget B', price: 15.0});
 
   // Explicit relationships
   const order = createOrder({
     user,
     items: [
-      createOrderItem({ product: product1, quantity: 2 }), // $20
-      createOrderItem({ product: product2, quantity: 1 }), // $15
+      createOrderItem({product: product1, quantity: 2}), // $20
+      createOrderItem({product: product2, quantity: 1}), // $15
     ],
   });
 
   // Seed via API
-  await apiRequest({ method: 'POST', url: '/api/users', data: user });
-  await apiRequest({ method: 'POST', url: '/api/products', data: product1 });
-  await apiRequest({ method: 'POST', url: '/api/products', data: product2 });
-  await apiRequest({ method: 'POST', url: '/api/orders', data: order });
+  await apiRequest({method: 'POST', url: '/api/users', data: user});
+  await apiRequest({method: 'POST', url: '/api/products', data: product1});
+  await apiRequest({method: 'POST', url: '/api/products', data: product2});
+  await apiRequest({method: 'POST', url: '/api/orders', data: order});
 
   // Test UI
   await page.goto(`/orders/${order.id}`);
@@ -191,11 +193,17 @@ test('user can view order details', async ({ page, apiRequest }) => {
 
 ```typescript
 // playwright/support/helpers/seed-helpers.ts
-import { APIRequestContext } from '@playwright/test';
-import { User, createUser } from '../../test-utils/factories/user-factory';
-import { Product, createProduct } from '../../test-utils/factories/product-factory';
+import {APIRequestContext} from '@playwright/test';
+import {User, createUser} from '../../test-utils/factories/user-factory';
+import {
+  Product,
+  createProduct,
+} from '../../test-utils/factories/product-factory';
 
-export async function seedUser(request: APIRequestContext, overrides: Partial<User> = {}): Promise<User> {
+export async function seedUser(
+  request: APIRequestContext,
+  overrides: Partial<User> = {},
+): Promise<User> {
   const user = createUser(overrides);
 
   const response = await request.post('/api/users', {
@@ -209,7 +217,10 @@ export async function seedUser(request: APIRequestContext, overrides: Partial<Us
   return user;
 }
 
-export async function seedProduct(request: APIRequestContext, overrides: Partial<Product> = {}): Promise<Product> {
+export async function seedProduct(
+  request: APIRequestContext,
+  overrides: Partial<Product> = {},
+): Promise<Product> {
   const product = createProduct(overrides);
 
   const response = await request.post('/api/products', {
@@ -225,8 +236,8 @@ export async function seedProduct(request: APIRequestContext, overrides: Partial
 
 // Playwright globalSetup for shared data
 // playwright/support/global-setup.ts
-import { chromium, FullConfig } from '@playwright/test';
-import { seedUser } from './helpers/seed-helpers';
+import {chromium, FullConfig} from '@playwright/test';
+import {seedUser} from './helpers/seed-helpers';
 
 async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
@@ -240,7 +251,7 @@ async function globalSetup(config: FullConfig) {
   });
 
   // Save auth state for reuse
-  await context.storageState({ path: 'playwright/.auth/admin.json' });
+  await context.storageState({path: 'playwright/.auth/admin.json'});
 
   await browser.close();
 }
@@ -259,8 +270,8 @@ export const seedDatabase = async (entity: string, data: unknown) => {
 
 // Usage in Cypress tests:
 beforeEach(() => {
-  const user = createUser({ email: 'test@example.com' });
-  cy.task('db:seed', { entity: 'users', data: user });
+  const user = createUser({email: 'test@example.com'});
+  cy.task('db:seed', {entity: 'users', data: user});
 });
 ```
 
@@ -313,11 +324,11 @@ test('admin can delete user', async ({ page }) => {
 
 ```typescript
 // ✅ GOOD: Factory-based data
-test('user can login', async ({ page, apiRequest }) => {
-  const user = createUser({ email: 'unique@example.com', password: 'secure123' });
+test('user can login', async ({page, apiRequest}) => {
+  const user = createUser({email: 'unique@example.com', password: 'secure123'});
 
   // Seed via API (fast, parallel-safe)
-  await apiRequest({ method: 'POST', url: '/api/users', data: user });
+  await apiRequest({method: 'POST', url: '/api/users', data: user});
 
   // Test UI
   await page.goto('/login');
@@ -366,11 +377,14 @@ export const createUser = (overrides: Partial<User> = {}): User => ({
 });
 
 // Compose specialized factories
-export const createAdminUser = (overrides: Partial<User> = {}): User => createUser({ role: 'admin', ...overrides });
+export const createAdminUser = (overrides: Partial<User> = {}): User =>
+  createUser({role: 'admin', ...overrides});
 
-export const createModeratorUser = (overrides: Partial<User> = {}): User => createUser({ role: 'moderator', ...overrides });
+export const createModeratorUser = (overrides: Partial<User> = {}): User =>
+  createUser({role: 'moderator', ...overrides});
 
-export const createInactiveUser = (overrides: Partial<User> = {}): User => createUser({ isActive: false, ...overrides });
+export const createInactiveUser = (overrides: Partial<User> = {}): User =>
+  createUser({isActive: false, ...overrides});
 
 // Account-level factories with feature flags
 type Account = {
@@ -398,7 +412,9 @@ export const createProAccount = (overrides: Partial<Account> = {}): Account =>
     ...overrides,
   });
 
-export const createEnterpriseAccount = (overrides: Partial<Account> = {}): Account =>
+export const createEnterpriseAccount = (
+  overrides: Partial<Account> = {},
+): Account =>
   createAccount({
     plan: 'enterprise',
     features: ['advanced-analytics', 'priority-support', 'sso', 'audit-logs'],
@@ -407,23 +423,23 @@ export const createEnterpriseAccount = (overrides: Partial<Account> = {}): Accou
   });
 
 // Usage in tests:
-test('pro accounts can access analytics', async ({ page, apiRequest }) => {
-  const admin = createAdminUser({ email: 'admin@company.com' });
-  const account = createProAccount({ owner: admin });
+test('pro accounts can access analytics', async ({page, apiRequest}) => {
+  const admin = createAdminUser({email: 'admin@company.com'});
+  const account = createProAccount({owner: admin});
 
-  await apiRequest({ method: 'POST', url: '/api/users', data: admin });
-  await apiRequest({ method: 'POST', url: '/api/accounts', data: account });
+  await apiRequest({method: 'POST', url: '/api/users', data: admin});
+  await apiRequest({method: 'POST', url: '/api/accounts', data: account});
 
   await page.goto('/analytics');
   await expect(page.getByText('Advanced Analytics')).toBeVisible();
 });
 
-test('free accounts cannot access analytics', async ({ page, apiRequest }) => {
-  const user = createUser({ email: 'user@company.com' });
-  const account = createAccount({ owner: user }); // Defaults to free plan
+test('free accounts cannot access analytics', async ({page, apiRequest}) => {
+  const user = createUser({email: 'user@company.com'});
+  const account = createAccount({owner: user}); // Defaults to free plan
 
-  await apiRequest({ method: 'POST', url: '/api/users', data: user });
-  await apiRequest({ method: 'POST', url: '/api/accounts', data: account });
+  await apiRequest({method: 'POST', url: '/api/users', data: user});
+  await apiRequest({method: 'POST', url: '/api/accounts', data: account});
 
   await page.goto('/analytics');
   await expect(page.getByText('Upgrade to Pro')).toBeVisible();
@@ -453,19 +469,19 @@ Ensure factories work with cleanup patterns:
 // Track created IDs for cleanup
 const createdUsers: string[] = [];
 
-afterEach(async ({ apiRequest }) => {
+afterEach(async ({apiRequest}) => {
   // Clean up all users created during test
   for (const userId of createdUsers) {
-    await apiRequest({ method: 'DELETE', url: `/api/users/${userId}` });
+    await apiRequest({method: 'DELETE', url: `/api/users/${userId}`});
   }
   createdUsers.length = 0;
 });
 
-test('user registration flow', async ({ page, apiRequest }) => {
+test('user registration flow', async ({page, apiRequest}) => {
   const user = createUser();
   createdUsers.push(user.id);
 
-  await apiRequest({ method: 'POST', url: '/api/users', data: user });
+  await apiRequest({method: 'POST', url: '/api/users', data: user});
   // ... test logic
 });
 ```
@@ -478,7 +494,7 @@ When working with feature flags, layer them into factories:
 export const createUserWithFlags = (
   overrides: Partial<User> = {},
   flags: Record<string, boolean> = {},
-): User & { flags: Record<string, boolean> } => ({
+): User & {flags: Record<string, boolean>} => ({
   ...createUser(overrides),
   flags: {
     'new-dashboard': false,
@@ -489,7 +505,7 @@ export const createUserWithFlags = (
 
 // Usage:
 const user = createUserWithFlags(
-  { email: 'test@example.com' },
+  {email: 'test@example.com'},
   {
     'new-dashboard': true,
     'beta-features': true,

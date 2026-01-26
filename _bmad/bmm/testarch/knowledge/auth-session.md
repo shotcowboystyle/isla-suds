@@ -34,7 +34,12 @@ The `auth-session` utility provides:
 
 ```typescript
 // Step 1: Configure in global-setup.ts
-import { authStorageInit, setAuthProvider, configureAuthSession, authGlobalInit } from '@seontechnologies/playwright-utils/auth-session';
+import {
+  authStorageInit,
+  setAuthProvider,
+  configureAuthSession,
+  authGlobalInit,
+} from '@seontechnologies/playwright-utils/auth-session';
 import myCustomProvider from './auth/custom-auth-provider';
 
 async function globalSetup() {
@@ -57,8 +62,11 @@ async function globalSetup() {
 export default globalSetup;
 
 // Step 2: Create auth fixture
-import { test as base } from '@playwright/test';
-import { createAuthFixtures, setAuthProvider } from '@seontechnologies/playwright-utils/auth-session';
+import {test as base} from '@playwright/test';
+import {
+  createAuthFixtures,
+  setAuthProvider,
+} from '@seontechnologies/playwright-utils/auth-session';
 import myCustomProvider from './custom-auth-provider';
 
 // Register provider early
@@ -67,9 +75,9 @@ setAuthProvider(myCustomProvider);
 export const test = base.extend(createAuthFixtures());
 
 // Step 3: Use in tests
-test('authenticated request', async ({ authToken, request }) => {
+test('authenticated request', async ({authToken, request}) => {
   const response = await request.get('/api/protected', {
-    headers: { Authorization: `Bearer ${authToken}` },
+    headers: {Authorization: `Bearer ${authToken}`},
   });
 
   expect(response.ok()).toBeTruthy();
@@ -90,30 +98,31 @@ test('authenticated request', async ({ authToken, request }) => {
 **Implementation**:
 
 ```typescript
-import { test } from '../support/auth/auth-fixture';
+import {test} from '../support/auth/auth-fixture';
 
 // Option 1: Per-test user override
-test('admin actions', async ({ authToken, authOptions }) => {
+test('admin actions', async ({authToken, authOptions}) => {
   // Override default user
   authOptions.userIdentifier = 'admin';
 
-  const { authToken: adminToken } = await test.step('Get admin token', async () => {
-    return { authToken }; // Re-fetches with new identifier
-  });
+  const {authToken: adminToken} =
+    await test.step('Get admin token', async () => {
+      return {authToken}; // Re-fetches with new identifier
+    });
 
   // Use admin token
   const response = await request.get('/api/admin/users', {
-    headers: { Authorization: `Bearer ${adminToken}` },
+    headers: {Authorization: `Bearer ${adminToken}`},
   });
 });
 
 // Option 2: Parallel execution with different users
 test.describe.parallel('multi-user tests', () => {
-  test('user 1 actions', async ({ authToken }) => {
+  test('user 1 actions', async ({authToken}) => {
     // Uses default user (e.g., 'user1')
   });
 
-  test('user 2 actions', async ({ authToken, authOptions }) => {
+  test('user 2 actions', async ({authToken, authOptions}) => {
     authOptions.userIdentifier = 'user2';
     // Uses different token for user2
   });
@@ -134,10 +143,10 @@ test.describe.parallel('multi-user tests', () => {
 **Implementation**:
 
 ```typescript
-import { applyUserCookiesToBrowserContext } from '@seontechnologies/playwright-utils/auth-session';
-import { createTestUser } from '../utils/user-factory';
+import {applyUserCookiesToBrowserContext} from '@seontechnologies/playwright-utils/auth-session';
+import {createTestUser} from '../utils/user-factory';
 
-test('ephemeral user test', async ({ context, page }) => {
+test('ephemeral user test', async ({context, page}) => {
   // Create temporary user (not persisted)
   const ephemeralUser = await createTestUser({
     role: 'admin',
@@ -170,7 +179,7 @@ test('ephemeral user test', async ({ context, page }) => {
 **Implementation**:
 
 ```typescript
-test('user interaction', async ({ browser }) => {
+test('user interaction', async ({browser}) => {
   // User 1 context
   const user1Context = await browser.newContext({
     storageState: './auth-sessions/local/user1/storage-state.json',
@@ -227,12 +236,12 @@ export default defineConfig({
 });
 
 // Tests run in parallel, each worker with its own user
-test('parallel test 1', async ({ page }) => {
+test('parallel test 1', async ({page}) => {
   // Worker 0 uses worker-0 account
   await page.goto('/dashboard');
 });
 
-test('parallel test 2', async ({ page }) => {
+test('parallel test 2', async ({page}) => {
   // Worker 1 uses worker-1 account
   await page.goto('/dashboard');
 });
@@ -254,7 +263,7 @@ test('parallel test 2', async ({ page }) => {
 ```typescript
 // Step 1: Create API-only auth provider (no browser needed)
 // playwright/support/api-auth-provider.ts
-import { type AuthProvider } from '@seontechnologies/playwright-utils/auth-session';
+import {type AuthProvider} from '@seontechnologies/playwright-utils/auth-session';
 
 const apiAuthProvider: AuthProvider = {
   getEnvironment: (options) => options.environment || 'local',
@@ -263,14 +272,14 @@ const apiAuthProvider: AuthProvider = {
   extractToken: (storageState) => {
     // Token stored in localStorage format for disk persistence
     const tokenEntry = storageState.origins?.[0]?.localStorage?.find(
-      (item) => item.name === 'auth_token'
+      (item) => item.name === 'auth_token',
     );
     return tokenEntry?.value;
   },
 
   isTokenExpired: (storageState) => {
     const expiryEntry = storageState.origins?.[0]?.localStorage?.find(
-      (item) => item.name === 'token_expiry'
+      (item) => item.name === 'token_expiry',
     );
     if (!expiryEntry) return true;
     return Date.now() > parseInt(expiryEntry.value, 10);
@@ -286,14 +295,14 @@ const apiAuthProvider: AuthProvider = {
 
     // Pure API login - no browser!
     const response = await request.post('/api/auth/login', {
-      data: { email, password },
+      data: {email, password},
     });
 
     if (!response.ok()) {
       throw new Error(`Auth failed: ${response.status()}`);
     }
 
-    const { token, expiresIn } = await response.json();
+    const {token, expiresIn} = await response.json();
     const expiryTime = Date.now() + expiresIn * 1000;
 
     // Return storage state format for disk persistence
@@ -303,8 +312,8 @@ const apiAuthProvider: AuthProvider = {
         {
           origin: process.env.API_BASE_URL || 'http://localhost:3000',
           localStorage: [
-            { name: 'auth_token', value: token },
-            { name: 'token_expiry', value: String(expiryTime) },
+            {name: 'auth_token', value: token},
+            {name: 'token_expiry', value: String(expiryTime)},
           ],
         },
       ],
@@ -316,8 +325,11 @@ export default apiAuthProvider;
 
 // Step 2: Create auth fixture
 // playwright/support/fixtures.ts
-import { test as base } from '@playwright/test';
-import { createAuthFixtures, setAuthProvider } from '@seontechnologies/playwright-utils/auth-session';
+import {test as base} from '@playwright/test';
+import {
+  createAuthFixtures,
+  setAuthProvider,
+} from '@seontechnologies/playwright-utils/auth-session';
 import apiAuthProvider from './api-auth-provider';
 
 setAuthProvider(apiAuthProvider);
@@ -326,26 +338,26 @@ export const test = base.extend(createAuthFixtures());
 
 // Step 3: Use in tests - token persisted to disk!
 // tests/api/authenticated-api.spec.ts
-import { test } from '../support/fixtures';
-import { expect } from '@playwright/test';
+import {test} from '../support/fixtures';
+import {expect} from '@playwright/test';
 
-test('should access protected endpoint', async ({ authToken, apiRequest }) => {
+test('should access protected endpoint', async ({authToken, apiRequest}) => {
   // authToken is automatically loaded from disk or fetched if expired
-  const { status, body } = await apiRequest({
+  const {status, body} = await apiRequest({
     method: 'GET',
     path: '/api/me',
-    headers: { Authorization: `Bearer ${authToken}` },
+    headers: {Authorization: `Bearer ${authToken}`},
   });
 
   expect(status).toBe(200);
 });
 
-test('should create resource with auth', async ({ authToken, apiRequest }) => {
-  const { status, body } = await apiRequest({
+test('should create resource with auth', async ({authToken, apiRequest}) => {
+  const {status, body} = await apiRequest({
     method: 'POST',
     path: '/api/orders',
-    headers: { Authorization: `Bearer ${authToken}` },
-    body: { items: [{ productId: 'prod-1', quantity: 2 }] },
+    headers: {Authorization: `Bearer ${authToken}`},
+    body: {items: [{productId: 'prod-1', quantity: 2}]},
   });
 
   expect(status).toBe(201);
@@ -369,9 +381,9 @@ test('should create resource with auth', async ({ authToken, apiRequest }) => {
 
 ```typescript
 // tests/api/service-auth.spec.ts
-import { test as base, expect } from '@playwright/test';
-import { test as apiFixture } from '@seontechnologies/playwright-utils/api-request/fixtures';
-import { mergeTests } from '@playwright/test';
+import {test as base, expect} from '@playwright/test';
+import {test as apiFixture} from '@seontechnologies/playwright-utils/api-request/fixtures';
+import {mergeTests} from '@playwright/test';
 
 // Validate environment variables at module load
 const SERVICE_API_KEY = process.env.SERVICE_API_KEY;
@@ -387,32 +399,34 @@ if (!INTERNAL_SERVICE_URL) {
 const test = mergeTests(base, apiFixture);
 
 test.describe('Service-to-Service Auth', () => {
-  test('should authenticate with API key', async ({ apiRequest }) => {
-    const { status, body } = await apiRequest({
+  test('should authenticate with API key', async ({apiRequest}) => {
+    const {status, body} = await apiRequest({
       method: 'GET',
       path: '/internal/health',
       baseUrl: INTERNAL_SERVICE_URL,
-      headers: { 'X-API-Key': SERVICE_API_KEY },
+      headers: {'X-API-Key': SERVICE_API_KEY},
     });
 
     expect(status).toBe(200);
     expect(body.status).toBe('healthy');
   });
 
-  test('should reject invalid API key', async ({ apiRequest }) => {
-    const { status, body } = await apiRequest({
+  test('should reject invalid API key', async ({apiRequest}) => {
+    const {status, body} = await apiRequest({
       method: 'GET',
       path: '/internal/health',
       baseUrl: INTERNAL_SERVICE_URL,
-      headers: { 'X-API-Key': 'invalid-key' },
+      headers: {'X-API-Key': 'invalid-key'},
     });
 
     expect(status).toBe(401);
     expect(body.code).toBe('INVALID_API_KEY');
   });
 
-  test('should call downstream service with propagated auth', async ({ apiRequest }) => {
-    const { status, body } = await apiRequest({
+  test('should call downstream service with propagated auth', async ({
+    apiRequest,
+  }) => {
+    const {status, body} = await apiRequest({
       method: 'POST',
       path: '/internal/aggregate-data',
       baseUrl: INTERNAL_SERVICE_URL,
@@ -420,7 +434,7 @@ test.describe('Service-to-Service Auth', () => {
         'X-API-Key': SERVICE_API_KEY,
         'X-Request-ID': `test-${Date.now()}`,
       },
-      body: { sources: ['users', 'orders', 'inventory'] },
+      body: {sources: ['users', 'orders', 'inventory']},
     });
 
     expect(status).toBe(200);
@@ -446,7 +460,7 @@ test.describe('Service-to-Service Auth', () => {
 **Minimal provider structure**:
 
 ```typescript
-import { type AuthProvider } from '@seontechnologies/playwright-utils/auth-session';
+import {type AuthProvider} from '@seontechnologies/playwright-utils/auth-session';
 
 const myCustomProvider: AuthProvider = {
   getEnvironment: (options) => options.environment || 'local',
@@ -490,13 +504,13 @@ export default myCustomProvider;
 ## Integration with API Request
 
 ```typescript
-import { test } from '@seontechnologies/playwright-utils/fixtures';
+import {test} from '@seontechnologies/playwright-utils/fixtures';
 
-test('authenticated API call', async ({ apiRequest, authToken }) => {
-  const { status, body } = await apiRequest({
+test('authenticated API call', async ({apiRequest, authToken}) => {
+  const {status, body} = await apiRequest({
     method: 'GET',
     path: '/api/protected',
-    headers: { Authorization: `Bearer ${authToken}` },
+    headers: {Authorization: `Bearer ${authToken}`},
   });
 
   expect(status).toBe(200);
@@ -542,7 +556,7 @@ const storageState = './auth-sessions/local/user1/storage-state.json'; // Brittl
 **✅ Use helper functions:**
 
 ```typescript
-import { getTokenFilePath } from '@seontechnologies/playwright-utils/auth-session';
+import {getTokenFilePath} from '@seontechnologies/playwright-utils/auth-session';
 
 const tokenPath = getTokenFilePath({
   environment: 'local',

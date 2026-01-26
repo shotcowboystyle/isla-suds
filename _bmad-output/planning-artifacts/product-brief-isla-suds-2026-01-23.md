@@ -46,14 +46,14 @@ A custom Shopify Hydrogen storefront featuring:
 
 ### Key Differentiators
 
-| Isla Suds | Competitors |
-|-----------|-------------|
-| 4 focused products | Hundreds of SKUs |
-| Family recipe, named after founder's daughter | Generic brand story |
-| Handmade locally, organic ingredients | Mass-produced or unclear sourcing |
-| Immersive, sensory-rich experience | Standard product grid layouts |
-| First-class customer experience | Pushy sales tactics and pop-ups |
-| Minimal packaging, low environmental footprint | Standard e-commerce packaging |
+| Isla Suds                                      | Competitors                       |
+| ---------------------------------------------- | --------------------------------- |
+| 4 focused products                             | Hundreds of SKUs                  |
+| Family recipe, named after founder's daughter  | Generic brand story               |
+| Handmade locally, organic ingredients          | Mass-produced or unclear sourcing |
+| Immersive, sensory-rich experience             | Standard product grid layouts     |
+| First-class customer experience                | Pushy sales tactics and pop-ups   |
+| Minimal packaging, low environmental footprint | Standard e-commerce packaging     |
 
 ---
 
@@ -70,6 +70,7 @@ Sarah is a 34-year-old mother of two (ages 2 and 6) who has consciously opted ou
 Sarah spots the vibrant, uncut soap bricks from across the farmers market. The rich purple of the lavender mint and bright yellow of the lemongrass catch her eye. She approaches, curious about the visible texture—the lavender buds, mint leaves, and sea salt crystals embedded in the bars. The visual stops her; the story keeps her.
 
 **What She Values:**
+
 - Organic, locally-made products that align with her anti-corporate stance
 - Supporting small businesses and local artisans
 - Variety and sensory experience—each scent is a different mood
@@ -77,6 +78,7 @@ Sarah spots the vibrant, uncut soap bricks from across the farmers market. The r
 - Quality that she can see and feel
 
 **Buying Behavior:**
+
 - Purchases 2-3 bars every other week
 - Rotates through all four scents—variety seeker, not a single-scent loyalist
 - Buys for herself and for bathing her children
@@ -100,17 +102,20 @@ Jim owns a 50-year-old general store serving a rural community. His store's iden
 Maria manages purchasing for a local convenience store franchise with four neighborhood locations. She differentiates her shops from big-box competitors by stocking local, quality products. She's proud to tell customers where the soap comes from.
 
 **What They Value:**
+
 - Supporting local businesses and artisans
 - Products that sell themselves through quality
 - Simple, no-friction reorder process
 - Being the exclusive local source for a unique product
 
 **Current Workflow:**
+
 - Track inventory visually (small-scale operations)
 - Contact founder when supply runs low
 - Reorder on a regular cadence
 
 **Portal Needs (Keep It Simple):**
+
 - Login and see order history
 - "Reorder Last Order" button—2 clicks maximum
 - View pricing and past invoices
@@ -125,26 +130,26 @@ A customer asks "do you have more of that goat milk soap?" and they can say yes�
 
 #### Individual Consumer Journey (The Intentional Buyer)
 
-| Stage | Experience |
-| ----- | ---------- |
-| **Discovery** | Spots colorful soap bricks at farmers market; visual appeal draws her in |
-| **Connection** | Hears the story—family recipe, daughter's namesake, local and organic; feels aligned |
-| **First Purchase** | Buys 2 bars of different scents to try the variety |
-| **First Use** | Creamy lather, natural scent, noticeably soft skin; confirms she made the right choice |
-| **Variety Exploration** | Returns to try other scents; each bar is a new experience |
-| **Retention** | Every other week, 2-3 bars; rotates through the collection |
-| **Advocacy** | Shares the story with friends; "you have to try this soap from this local mom" |
+| Stage                   | Experience                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| **Discovery**           | Spots colorful soap bricks at farmers market; visual appeal draws her in               |
+| **Connection**          | Hears the story—family recipe, daughter's namesake, local and organic; feels aligned   |
+| **First Purchase**      | Buys 2 bars of different scents to try the variety                                     |
+| **First Use**           | Creamy lather, natural scent, noticeably soft skin; confirms she made the right choice |
+| **Variety Exploration** | Returns to try other scents; each bar is a new experience                              |
+| **Retention**           | Every other week, 2-3 bars; rotates through the collection                             |
+| **Advocacy**            | Shares the story with friends; "you have to try this soap from this local mom"         |
 
 #### Wholesale Partner Journey (The Local Curator)
 
-| Stage | Experience |
-| ----- | ---------- |
-| **Discovery** | Learns about Isla Suds through local business networks or direct outreach |
-| **Alignment** | Sees fit with store identity—local, organic, handmade |
-| **First Order** | Places initial inventory order |
-| **Sell-Through** | Customers respond well; product moves consistently |
-| **Reorder** | Logs into portal, clicks "reorder last order," done in 30 seconds |
-| **Long-Term** | Reliable partnership; proud to carry and recommend the product |
+| Stage            | Experience                                                                |
+| ---------------- | ------------------------------------------------------------------------- |
+| **Discovery**    | Learns about Isla Suds through local business networks or direct outreach |
+| **Alignment**    | Sees fit with store identity—local, organic, handmade                     |
+| **First Order**  | Places initial inventory order                                            |
+| **Sell-Through** | Customers respond well; product moves consistently                        |
+| **Reorder**      | Logs into portal, clicks "reorder last order," done in 30 seconds         |
+| **Long-Term**    | Reliable partnership; proud to carry and recommend the product            |
 
 ---
 
@@ -154,32 +159,32 @@ A customer asks "do you have more of that goat milk soap?" and they can say yes�
 
 **For Individual Consumers (The Intentional Buyer):**
 
-| Metric | What Success Looks Like |
-| ------ | ----------------------- |
-| **Emotional Connection** | Visitors feel the same "bubbly and excited" energy from the website as they do at the booth |
-| **Visual Impact** | The vibrant, textured soap bricks stop visitors and draw them in—just like at the farmers market |
-| **Purchase Confidence** | Customers feel confident buying online without having held the product first |
-| **Repeat Engagement** | Farmers market customers find the site and use it to reorder between markets |
+| Metric                   | What Success Looks Like                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Emotional Connection** | Visitors feel the same "bubbly and excited" energy from the website as they do at the booth      |
+| **Visual Impact**        | The vibrant, textured soap bricks stop visitors and draw them in—just like at the farmers market |
+| **Purchase Confidence**  | Customers feel confident buying online without having held the product first                     |
+| **Repeat Engagement**    | Farmers market customers find the site and use it to reorder between markets                     |
 
 **For Wholesale Partners (The Local Curator):**
 
-| Metric | What Success Looks Like |
-| ------ | ----------------------- |
-| **Reorder Ease** | Partners complete a reorder in under 60 seconds without needing to call or text |
-| **Self-Service Adoption** | All 3 wholesale partners transition to using the portal for reorders |
-| **Order Accuracy** | No errors or confusion in wholesale orders placed through the portal |
+| Metric                    | What Success Looks Like                                                         |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| **Reorder Ease**          | Partners complete a reorder in under 60 seconds without needing to call or text |
+| **Self-Service Adoption** | All 3 wholesale partners transition to using the portal for reorders            |
+| **Order Accuracy**        | No errors or confusion in wholesale orders placed through the portal            |
 
 ---
 
 ### Business Objectives
 
-| Objective | Description | Priority |
-| --------- | ----------- | -------- |
-| **Time Savings** | Reduce manual order-taking and inventory tracking overhead | Primary |
-| **Professional Presence** | Establish a polished online presence that reflects the quality of the product | Primary |
-| **Process Automation** | Automate wholesale reorders and basic inventory visibility via Shopify | Primary |
-| **Local Foundation** | Serve existing local customer base reliably before expanding | Secondary |
-| **National Capability** | Build infrastructure that can support nationwide shipping when ready | Future |
+| Objective                 | Description                                                                   | Priority  |
+| ------------------------- | ----------------------------------------------------------------------------- | --------- |
+| **Time Savings**          | Reduce manual order-taking and inventory tracking overhead                    | Primary   |
+| **Professional Presence** | Establish a polished online presence that reflects the quality of the product | Primary   |
+| **Process Automation**    | Automate wholesale reorders and basic inventory visibility via Shopify        | Primary   |
+| **Local Foundation**      | Serve existing local customer base reliably before expanding                  | Secondary |
+| **National Capability**   | Build infrastructure that can support nationwide shipping when ready          | Future    |
 
 ---
 
@@ -187,14 +192,15 @@ A customer asks "do you have more of that goat milk soap?" and they can say yes�
 
 **Note:** For MVP, success metrics are kept intentionally simple. Advanced tracking (email signups, repeat customer analytics, etc.) deferred to post-launch.
 
-| KPI | Current Baseline | MVP Target | Measurement |
-| --- | ---------------- | ---------- | ----------- |
-| **Weekly Online Orders** | 0 (no site yet) | Any orders from non-market customers | Shopify orders dashboard |
-| **Wholesale Portal Adoption** | 0% (all manual) | 100% of reorders via portal | Track reorder source |
-| **Manual Order Handling** | 100% (calls/texts) | Significantly reduced | Founder time tracking |
-| **Time to Reorder (Wholesale)** | 5-10 min (call/text coordination) | Under 60 seconds | Portal usage observation |
+| KPI                             | Current Baseline                  | MVP Target                           | Measurement              |
+| ------------------------------- | --------------------------------- | ------------------------------------ | ------------------------ |
+| **Weekly Online Orders**        | 0 (no site yet)                   | Any orders from non-market customers | Shopify orders dashboard |
+| **Wholesale Portal Adoption**   | 0% (all manual)                   | 100% of reorders via portal          | Track reorder source     |
+| **Manual Order Handling**       | 100% (calls/texts)                | Significantly reduced                | Founder time tracking    |
+| **Time to Reorder (Wholesale)** | 5-10 min (call/text coordination) | Under 60 seconds                     | Portal usage observation |
 
 **Qualitative Success Indicators:**
+
 - Customers mention they "found you online" at the farmers market
 - Wholesale partners comment on how easy reordering has become
 - Founder feels less overwhelmed by order management
@@ -218,16 +224,17 @@ A customer asks "do you have more of that goat milk soap?" and they can say yes�
 ### Core Features
 
 #### 1. Immersive Landing Page Experience
+
 The homepage is the digital equivalent of walking up to the booth and seeing those vibrant soap bricks.
 
-| Feature | Description |
-| ------- | ----------- |
-| **Parallax Scrolling** | Layered scroll effects that create depth and draw visitors in |
+| Feature                         | Description                                                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Parallax Scrolling**          | Layered scroll effects that create depth and draw visitors in                                      |
 | **Story-Driven Scroll Journey** | The Isla Suds story unfolds as visitors scroll—family recipe, Isla's namesake, local craftsmanship |
-| **Animated Bubbles** | Subtle, playful bubble animations that reinforce the "bubbly" brand feeling |
-| **Texture Zoom-Ins** | Close-up reveals of lavender buds, mint leaves, sea salt crystals embedded in the bars |
-| **Animated Transitions** | Smooth transitions between product showcases and story sections |
-| **Product Showcase** | All 4 soaps presented with visual impact—vibrant purple lavender mint, bright yellow lemongrass |
+| **Animated Bubbles**            | Subtle, playful bubble animations that reinforce the "bubbly" brand feeling                        |
+| **Texture Zoom-Ins**            | Close-up reveals of lavender buds, mint leaves, sea salt crystals embedded in the bars             |
+| **Animated Transitions**        | Smooth transitions between product showcases and story sections                                    |
+| **Product Showcase**            | All 4 soaps presented with visual impact—vibrant purple lavender mint, bright yellow lemongrass    |
 
 #### 2. Product Pages (4 Soaps)
 
@@ -239,6 +246,7 @@ Each soap gets a dedicated page with sensory-rich presentation:
 - **Rosemary Sea Salt** - "Inspired by the wild coast"
 
 **Each page includes:**
+
 - Hero imagery showcasing texture and color
 - Sensory-rich descriptions (already written)
 - Ingredient highlights (organic goat's milk, essential oils, visible botanicals)
@@ -246,12 +254,15 @@ Each soap gets a dedicated page with sensory-rich presentation:
 - Smooth animated transitions
 
 #### 3. Variety Pack Bundle
+
 - Pre-configured bundle of all 4 scents
 - Single-click purchase option for variety seekers
 - Positioned as "Try the Collection" or "The Full Experience"
 
 #### 4. Brand Story Integration
+
 The founder story woven throughout—not just an "About" page:
+
 - Family recipe passed down from mother
 - Named after daughter Isla who loves bubbles
 - Handmade locally with organic ingredients
@@ -259,6 +270,7 @@ The founder story woven throughout—not just an "About" page:
 - Supporting local community
 
 #### 5. B2C E-Commerce (Shopify-Powered)
+
 - Shopping cart with multi-product support
 - Secure checkout via Shopify
 - Nationwide shipping enabled (Shopify handles rates and logistics)
@@ -266,14 +278,15 @@ The founder story woven throughout—not just an "About" page:
 - Order confirmation and tracking
 
 #### 6. B2B Wholesale Portal
+
 Simple, functional portal for existing wholesale partners:
 
-| Feature | Description |
-| ------- | ----------- |
-| **Partner Login** | Secure login for Jim, Maria, and other wholesale accounts |
-| **Order History** | View past orders and invoices |
-| **Quick Reorder** | "Reorder Last Order" button—2 clicks maximum |
-| **Wholesale Pricing** | Partner-specific pricing visible after login |
+| Feature               | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| **Partner Login**     | Secure login for Jim, Maria, and other wholesale accounts |
+| **Order History**     | View past orders and invoices                             |
+| **Quick Reorder**     | "Reorder Last Order" button—2 clicks maximum              |
+| **Wholesale Pricing** | Partner-specific pricing visible after login              |
 
 **Powered by Shopify B2B features—no custom development required.**
 
@@ -281,17 +294,17 @@ Simple, functional portal for existing wholesale partners:
 
 ### Out of Scope for MVP
 
-| Feature | Rationale | Future Phase |
-| ------- | --------- | ------------ |
-| **Professional Photography** | iPhone photos sufficient for launch; upgrade later | Post-MVP |
-| **Email Marketing/Signups** | Focus on core experience first | V2 |
-| **Advanced Analytics** | Simple Shopify dashboard sufficient | V2 |
-| **Social Media Integration** | Not essential for core value delivery | V2 |
-| **Subscription/Recurring Orders** | Nice-to-have, not MVP | V2 |
-| **Custom Bundle Builder** | Pre-configured variety pack is enough | V2 |
-| **Blog/Content Marketing** | Story is in the site; blog can come later | V2 |
-| **Customer Reviews/Ratings** | Build organically after launch | V2 |
-| **Loyalty Program** | Retention is already high; optimize later | Future |
+| Feature                           | Rationale                                          | Future Phase |
+| --------------------------------- | -------------------------------------------------- | ------------ |
+| **Professional Photography**      | iPhone photos sufficient for launch; upgrade later | Post-MVP     |
+| **Email Marketing/Signups**       | Focus on core experience first                     | V2           |
+| **Advanced Analytics**            | Simple Shopify dashboard sufficient                | V2           |
+| **Social Media Integration**      | Not essential for core value delivery              | V2           |
+| **Subscription/Recurring Orders** | Nice-to-have, not MVP                              | V2           |
+| **Custom Bundle Builder**         | Pre-configured variety pack is enough              | V2           |
+| **Blog/Content Marketing**        | Story is in the site; blog can come later          | V2           |
+| **Customer Reviews/Ratings**      | Build organically after launch                     | V2           |
+| **Loyalty Program**               | Retention is already high; optimize later          | Future       |
 
 ---
 
@@ -299,15 +312,16 @@ Simple, functional portal for existing wholesale partners:
 
 **The MVP is successful when:**
 
-| Criteria | Validation |
-| -------- | ---------- |
-| **Site Captures the Booth Experience** | Visitors comment on the visual impact; "wow" factor achieved |
-| **B2C Orders Flow** | Customers can discover, browse, and purchase without friction |
-| **B2B Portal Adopted** | All 3 wholesale partners use the portal instead of calling/texting |
-| **Time Savings Realized** | Founder spends less time on manual order management |
-| **Professional Presence** | Site looks polished and reflects product quality |
+| Criteria                               | Validation                                                         |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| **Site Captures the Booth Experience** | Visitors comment on the visual impact; "wow" factor achieved       |
+| **B2C Orders Flow**                    | Customers can discover, browse, and purchase without friction      |
+| **B2B Portal Adopted**                 | All 3 wholesale partners use the portal instead of calling/texting |
+| **Time Savings Realized**              | Founder spends less time on manual order management                |
+| **Professional Presence**              | Site looks polished and reflects product quality                   |
 
 **Go/No-Go for V2:**
+
 - If wholesale partners adopt the portal → proceed with enhancements
 - If B2C orders start coming in → validate demand, consider marketing
 - If founder feels time relief → success, iterate on experience
@@ -319,6 +333,7 @@ Simple, functional portal for existing wholesale partners:
 **If Isla Suds is wildly successful, here's where it could go:**
 
 **Near-Term (V2 - 6-12 months):**
+
 - Professional product photography
 - Email capture and basic marketing automation
 - Customer reviews and testimonials
@@ -326,16 +341,17 @@ Simple, functional portal for existing wholesale partners:
 - Seasonal or limited-edition scents
 
 **Medium-Term (Year 2):**
+
 - Subscription model for regular customers
 - Expanded wholesale network beyond local
 - Gift cards and gifting features
 - Blog with soap-making stories, ingredient spotlights
 
 **Long-Term Vision:**
+
 - National brand recognition in artisanal soap space
 - Potential retail partnerships beyond local stores
 - Product line expansion (lotions, bath bombs, etc.)
 - The "booth experience" becomes the benchmark for artisanal e-commerce
 
 **The North Star:** Isla Suds becomes the example of how a local, handmade brand can create a digital experience that rivals—and exceeds—the in-person connection.
-

@@ -1,0 +1,161 @@
+# generated: 2026-01-26
+# project: isla-suds
+# project_key: isla-suds
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-01-26
+project: isla-suds
+project_key: isla-suds
+tracking_system: file-system
+story_location: '{project-root}/_bmad-output/implementation-artifacts'
+
+development_status:
+  # ============================================================================
+  # Epic 1: Project Foundation & Design System (10 stories)
+  # ============================================================================
+  epic-1: in-progress
+  1-1-initialize-hydrogen-project-with-skeleton-template: ready-for-dev
+  1-2-implement-design-token-system: backlog
+  1-3-configure-fluid-typography-scale: backlog
+  1-4-add-cva-for-component-variants: backlog
+  1-5-add-radix-ui-primitives-with-accessibility-verification: backlog
+  1-6-add-lenis-smooth-scroll-desktop-only: backlog
+  1-7-add-framer-motion-with-dynamic-import: backlog
+  1-8-configure-zustand-store-structure: backlog
+  1-9-implement-error-boundary-architecture: backlog
+  1-10-configure-ci-cd-pipeline-with-quality-gates: backlog
+  epic-1-retrospective: optional
+
+  # ============================================================================
+  # Epic 2: Landing & Constellation Layout (5 stories)
+  # ============================================================================
+  epic-2: backlog
+  2-1-create-hero-section-with-brand-identity: backlog
+  2-2-implement-scroll-experience-with-lenis-native-hybrid: backlog
+  2-3-build-constellation-grid-layout: backlog
+  2-4-enable-non-linear-product-exploration: backlog
+  2-5-implement-sticky-header-with-scroll-trigger: backlog
+  epic-2-retrospective: optional
+
+  # ============================================================================
+  # Epic 3: Texture Reveals & Product Discovery (6 stories)
+  # ============================================================================
+  epic-3: backlog
+  3-1-implement-image-preloading-with-intersection-observer: backlog
+  3-2-build-texture-reveal-interaction: backlog
+  3-3-display-scent-narrative-copy-in-reveal: backlog
+  3-4-display-product-information-in-reveal: backlog
+  3-5-implement-close-dismiss-reveal-behavior: backlog
+  3-6-create-variety-pack-bundle-display: backlog
+  epic-3-retrospective: optional
+
+  # ============================================================================
+  # Epic 4: Story Moments & Site Navigation (7 stories)
+  # ============================================================================
+  epic-4: backlog
+  4-1-implement-story-fragments-during-scroll: backlog
+  4-2-display-collection-prompt-after-2-products-explored: backlog
+  4-3-add-variety-pack-from-collection-prompt: backlog
+  4-4-create-about-page-fallback-for-direct-traffic: backlog
+  4-5-implement-footer-with-navigation-links: backlog
+  4-6-add-wholesale-portal-link-in-header-footer: backlog
+  4-7-smoke-test-full-journey-verification: backlog
+  epic-4-retrospective: optional
+
+  # ============================================================================
+  # Epic 5: Cart Experience (10 stories)
+  # ============================================================================
+  epic-5: backlog
+  5-1-implement-cart-creation-and-persistence: backlog
+  5-2-add-individual-product-to-cart: backlog
+  5-3-add-variety-pack-bundle-to-cart: backlog
+  5-4-build-cart-drawer-component: backlog
+  5-5-display-cart-line-items: backlog
+  5-6-modify-cart-quantities: backlog
+  5-7-remove-items-from-cart: backlog
+  5-8-display-empty-cart-state: backlog
+  5-9-implement-proceed-to-checkout: backlog
+  5-10-add-cart-icon-to-sticky-header: backlog
+  epic-5-retrospective: optional
+
+  # ============================================================================
+  # Epic 6: Checkout & Communication (7 stories)
+  # ============================================================================
+  epic-6: backlog
+  6-1-integrate-shopify-managed-checkout: backlog
+  6-2-configure-order-confirmation-email: backlog
+  6-3-implement-payment-retry-flow: backlog
+  6-4-add-booth-attribution-code-field: backlog
+  6-5-add-how-did-you-find-us-survey: backlog
+  6-6-include-day-3-survey-link-in-confirmation-email: backlog
+  6-7-create-contact-page: backlog
+  epic-6-retrospective: optional
+
+  # ============================================================================
+  # Epic 7: Wholesale Partner Portal (9 stories)
+  # ============================================================================
+  epic-7: backlog
+  7-1-validate-shopify-b2b-authentication: backlog
+  7-2-create-wholesale-portal-layout: backlog
+  7-3-implement-wholesale-login-page: backlog
+  7-4-display-partner-acknowledgment-message: backlog
+  7-5-display-last-order-on-dashboard: backlog
+  7-6-implement-one-click-reorder: backlog
+  7-7-display-order-history: backlog
+  7-8-implement-invoice-request: backlog
+  7-9-apply-wholesale-pricing: backlog
+  epic-7-retrospective: optional
+
+  # ============================================================================
+  # Epic 8: Analytics & Attribution (6 stories) - CAN BE DEPRIORITIZED
+  # ============================================================================
+  epic-8: backlog
+  8-1-implement-analytics-event-infrastructure: backlog
+  8-2-track-texture-reveal-events: backlog
+  8-3-track-products-explored: backlog
+  8-4-track-session-duration: backlog
+  8-5-generate-shareable-links: backlog
+  8-6-track-share-link-clicks-and-conversions: backlog
+  epic-8-retrospective: optional
+
+  # ============================================================================
+  # Epic 9: Accessibility Validation (6 stories)
+  # ============================================================================
+  epic-9: backlog
+  9-1-keyboard-navigation-audit: backlog
+  9-2-screen-reader-compatibility-audit: backlog
+  9-3-reduced-motion-verification: backlog
+  9-4-color-contrast-and-visual-accessibility-audit: backlog
+  9-5-touch-target-size-verification: backlog
+  9-6-automated-accessibility-ci-validation: backlog
+  epic-9-retrospective: optional

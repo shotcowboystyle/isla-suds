@@ -18,7 +18,7 @@ Environment-specific configuration prevents hardcoded URLs, timeouts, and creden
 
 ```typescript
 // playwright.config.ts - Central config loader
-import { config as dotenvConfig } from 'dotenv';
+import {config as dotenvConfig} from 'dotenv';
 import path from 'path';
 
 // Load .env from project root
@@ -38,7 +38,9 @@ const environment = process.env.TEST_ENV || 'local';
 // Fail fast if environment not supported
 if (!Object.keys(envConfigMap).includes(environment)) {
   console.error(`❌ No configuration found for environment: ${environment}`);
-  console.error(`   Available environments: ${Object.keys(envConfigMap).join(', ')}`);
+  console.error(
+    `   Available environments: ${Object.keys(envConfigMap).join(', ')}`,
+  );
   process.exit(1);
 }
 
@@ -49,7 +51,7 @@ export default envConfigMap[environment as keyof typeof envConfigMap];
 
 ```typescript
 // playwright/config/base.config.ts - Shared base configuration
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 import path from 'path';
 
 export const baseConfig = defineConfig({
@@ -60,8 +62,8 @@ export const baseConfig = defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['junit', { outputFile: 'test-results/results.xml' }],
+    ['html', {outputFolder: 'playwright-report', open: 'never'}],
+    ['junit', {outputFile: 'test-results/results.xml'}],
     ['list'],
   ],
   use: {
@@ -73,14 +75,14 @@ export const baseConfig = defineConfig({
   },
   globalSetup: path.resolve(__dirname, '../support/global-setup.ts'),
   timeout: 60000,
-  expect: { timeout: 10000 },
+  expect: {timeout: 10000},
 });
 ```
 
 ```typescript
 // playwright/config/local.config.ts - Local environment
-import { defineConfig } from '@playwright/test';
-import { baseConfig } from './base.config';
+import {defineConfig} from '@playwright/test';
+import {baseConfig} from './base.config';
 
 export default defineConfig({
   ...baseConfig,
@@ -100,8 +102,8 @@ export default defineConfig({
 
 ```typescript
 // playwright/config/staging.config.ts - Staging environment
-import { defineConfig } from '@playwright/test';
-import { baseConfig } from './base.config';
+import {defineConfig} from '@playwright/test';
+import {baseConfig} from './base.config';
 
 export default defineConfig({
   ...baseConfig,
@@ -115,8 +117,8 @@ export default defineConfig({
 
 ```typescript
 // playwright/config/production.config.ts - Production environment
-import { defineConfig } from '@playwright/test';
-import { baseConfig } from './base.config';
+import {defineConfig} from '@playwright/test';
+import {baseConfig} from './base.config';
 
 export default defineConfig({
   ...baseConfig,
@@ -153,7 +155,7 @@ DATABASE_URL=postgresql://localhost:5432/test_db
 
 ```typescript
 // playwright/config/base.config.ts - Standardized timeouts
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 
 export default defineConfig({
   // Global test timeout: 60 seconds
@@ -176,7 +178,7 @@ export default defineConfig({
 
 ```typescript
 // playwright/support/fixtures/timeout-fixture.ts - Timeout override fixture
-import { test as base } from '@playwright/test';
+import {test as base} from '@playwright/test';
 
 type TimeoutOptions = {
   extendedTimeout: (timeoutMs: number) => Promise<void>;
@@ -195,14 +197,14 @@ export const test = base.extend<TimeoutOptions>({
   },
 });
 
-export { expect } from '@playwright/test';
+export {expect} from '@playwright/test';
 ```
 
 ```typescript
 // Usage in tests - Standard timeouts (implicit)
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('user can log in', async ({ page }) => {
+test('user can log in', async ({page}) => {
   await page.goto('/login'); // Uses 30s navigation timeout
   await page.fill('[data-testid="email"]', 'test@example.com'); // Uses 15s action timeout
   await page.click('[data-testid="login-button"]'); // Uses 15s action timeout
@@ -213,9 +215,9 @@ test('user can log in', async ({ page }) => {
 
 ```typescript
 // Usage in tests - Per-test timeout override
-import { test, expect } from '../support/fixtures/timeout-fixture';
+import {test, expect} from '../support/fixtures/timeout-fixture';
 
-test('slow data processing operation', async ({ page, extendedTimeout }) => {
+test('slow data processing operation', async ({page, extendedTimeout}) => {
   // Override default 60s timeout for this slow test
   await extendedTimeout(180000); // 3 minutes
 
@@ -231,14 +233,16 @@ test('slow data processing operation', async ({ page, extendedTimeout }) => {
 
 ```typescript
 // Per-assertion timeout override (inline)
-test('API returns quickly', async ({ page }) => {
+test('API returns quickly', async ({page}) => {
   await page.goto('/dashboard');
 
   // Override expect timeout for fast API (reduce flakiness detection)
-  await expect(page.getByTestId('user-name')).toBeVisible({ timeout: 5000 }); // 5s instead of 10s
+  await expect(page.getByTestId('user-name')).toBeVisible({timeout: 5000}); // 5s instead of 10s
 
   // Override expect timeout for slow external API
-  await expect(page.getByTestId('weather-widget')).toBeVisible({ timeout: 20000 }); // 20s instead of 10s
+  await expect(page.getByTestId('weather-widget')).toBeVisible({
+    timeout: 20000,
+  }); // 20s instead of 10s
 });
 ```
 
@@ -258,7 +262,7 @@ test('API returns quickly', async ({ page }) => {
 
 ```typescript
 // playwright.config.ts - Artifact configuration
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 import path from 'path';
 
 export default defineConfig({
@@ -302,13 +306,13 @@ export default defineConfig({
 
 ```typescript
 // playwright/support/fixtures/artifact-fixture.ts - Custom artifact capture
-import { test as base } from '@playwright/test';
+import {test as base} from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
 export const test = base.extend({
   // Auto-capture console logs on failure
-  page: async ({ page }, use, testInfo) => {
+  page: async ({page}, use, testInfo) => {
     const logs: string[] = [];
 
     page.on('console', (msg) => {
@@ -376,7 +380,7 @@ jobs:
 
 ```typescript
 // Example: Custom screenshot on specific condition
-test('capture screenshot on specific error', async ({ page }) => {
+test('capture screenshot on specific error', async ({page}) => {
   await page.goto('/checkout');
 
   try {
@@ -411,7 +415,7 @@ test('capture screenshot on specific error', async ({ page }) => {
 
 ```typescript
 // playwright.config.ts - Parallelization settings
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 import os from 'os';
 
 export default defineConfig({
@@ -481,8 +485,8 @@ jobs:
 
 ```typescript
 // playwright/config/serial.config.ts - Serial execution for flaky tests
-import { defineConfig } from '@playwright/test';
-import { baseConfig } from './base.config';
+import {defineConfig} from '@playwright/test';
+import {baseConfig} from './base.config';
 
 export default defineConfig({
   ...baseConfig,
@@ -497,17 +501,17 @@ export default defineConfig({
 
 ```typescript
 // Usage: Force serial execution for specific tests
-import { test } from '@playwright/test';
+import {test} from '@playwright/test';
 
 // Serial execution for auth tests (shared session state)
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({mode: 'serial'});
 
 test.describe('Authentication Flow', () => {
-  test('user can log in', async ({ page }) => {
+  test('user can log in', async ({page}) => {
     // First test in serial block
   });
 
-  test('user can access dashboard', async ({ page }) => {
+  test('user can access dashboard', async ({page}) => {
     // Depends on previous test (serial)
   });
 });
@@ -515,14 +519,14 @@ test.describe('Authentication Flow', () => {
 
 ```typescript
 // Usage: Parallel execution for independent tests (default)
-import { test } from '@playwright/test';
+import {test} from '@playwright/test';
 
 test.describe('Product Catalog', () => {
-  test('can view product 1', async ({ page }) => {
+  test('can view product 1', async ({page}) => {
     // Runs in parallel with other tests
   });
 
-  test('can view product 2', async ({ page }) => {
+  test('can view product 2', async ({page}) => {
     // Runs in parallel with other tests
   });
 });
@@ -545,38 +549,38 @@ test.describe('Product Catalog', () => {
 
 ```typescript
 // playwright.config.ts - Multiple browser projects
-import { defineConfig, devices } from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 export default defineConfig({
   projects: [
     // Desktop browsers
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {...devices['Desktop Chrome']},
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {...devices['Desktop Firefox']},
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {...devices['Desktop Safari']},
     },
 
     // Mobile browsers
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
+      use: {...devices['Pixel 5']},
     },
     {
       name: 'mobile-safari',
-      use: { ...devices['iPhone 13'] },
+      use: {...devices['iPhone 13']},
     },
 
     // Tablet
     {
       name: 'tablet',
-      use: { ...devices['iPad Pro'] },
+      use: {...devices['iPad Pro']},
     },
   ],
 });
@@ -584,7 +588,7 @@ export default defineConfig({
 
 ```typescript
 // playwright.config.ts - Authenticated vs. unauthenticated projects
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 import path from 'path';
 
 export default defineConfig({
@@ -616,7 +620,7 @@ export default defineConfig({
 
 ```typescript
 // playwright/support/global-setup.ts - Setup project for auth
-import { chromium, FullConfig } from '@playwright/test';
+import {chromium, FullConfig} from '@playwright/test';
 import path from 'path';
 
 async function globalSetup(config: FullConfig) {
@@ -658,9 +662,9 @@ npx playwright test
 
 ```typescript
 // Usage: Project-specific test
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('mobile navigation works', async ({ page, isMobile }) => {
+test('mobile navigation works', async ({page, isMobile}) => {
   await page.goto('/');
 
   if (isMobile) {

@@ -2,10 +2,7 @@
   "mcpServers": {
     "memory": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     },
     "serena": {
       "command": "/abs/path/to/uv",
@@ -19,10 +16,7 @@
     },
     "ios-simulator": {
       "command": "npx",
-      "args": [
-        "-y",
-        "ios-simulator-mcp"
-      ]
+      "args": ["-y", "ios-simulator-mcp"]
     }
   }
 }

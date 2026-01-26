@@ -30,9 +30,9 @@ The `interceptNetworkCall` utility provides:
 **Implementation**:
 
 ```typescript
-import { test } from '@seontechnologies/playwright-utils/intercept-network-call/fixtures';
+import {test} from '@seontechnologies/playwright-utils/intercept-network-call/fixtures';
 
-test('should spy on users API', async ({ page, interceptNetworkCall }) => {
+test('should spy on users API', async ({page, interceptNetworkCall}) => {
   // Setup interception BEFORE navigation
   const usersCall = interceptNetworkCall({
     url: '**/api/users', // Glob pattern
@@ -41,7 +41,7 @@ test('should spy on users API', async ({ page, interceptNetworkCall }) => {
   await page.goto('/dashboard');
 
   // Wait for response and access parsed data
-  const { responseJson, status } = await usersCall;
+  const {responseJson, status} = await usersCall;
 
   expect(status).toBe(200);
   expect(responseJson).toHaveLength(10);
@@ -63,10 +63,10 @@ test('should spy on users API', async ({ page, interceptNetworkCall }) => {
 **Implementation**:
 
 ```typescript
-test('should stub users API', async ({ page, interceptNetworkCall }) => {
+test('should stub users API', async ({page, interceptNetworkCall}) => {
   const mockUsers = [
-    { id: 1, name: 'Test User 1' },
-    { id: 2, name: 'Test User 2' },
+    {id: 1, name: 'Test User 1'},
+    {id: 2, name: 'Test User 2'},
   ];
 
   const usersCall = interceptNetworkCall({
@@ -100,7 +100,7 @@ test('should stub users API', async ({ page, interceptNetworkCall }) => {
 **Implementation**:
 
 ```typescript
-test('conditional mocking', async ({ page, interceptNetworkCall }) => {
+test('conditional mocking', async ({page, interceptNetworkCall}) => {
   await interceptNetworkCall({
     url: '**/api/data',
     handler: async (route, request) => {
@@ -108,13 +108,13 @@ test('conditional mocking', async ({ page, interceptNetworkCall }) => {
         // Mock POST success
         await route.fulfill({
           status: 201,
-          body: JSON.stringify({ id: 'new-id', success: true }),
+          body: JSON.stringify({id: 'new-id', success: true}),
         });
       } else if (request.method() === 'GET') {
         // Mock GET with data
         await route.fulfill({
           status: 200,
-          body: JSON.stringify([{ id: 1, name: 'Item' }]),
+          body: JSON.stringify([{id: 1, name: 'Item'}]),
         });
       } else {
         // Let other methods through
@@ -141,13 +141,16 @@ test('conditional mocking', async ({ page, interceptNetworkCall }) => {
 **Implementation**:
 
 ```typescript
-test('should handle API errors gracefully', async ({ page, interceptNetworkCall }) => {
+test('should handle API errors gracefully', async ({
+  page,
+  interceptNetworkCall,
+}) => {
   // Simulate 500 error
   const errorCall = interceptNetworkCall({
     url: '**/api/users',
     fulfillResponse: {
       status: 500,
-      body: { error: 'Internal Server Error' },
+      body: {error: 'Internal Server Error'},
     },
   });
 
@@ -160,7 +163,7 @@ test('should handle API errors gracefully', async ({ page, interceptNetworkCall 
 });
 
 // Simulate network timeout
-test('should handle timeout', async ({ page, interceptNetworkCall }) => {
+test('should handle timeout', async ({page, interceptNetworkCall}) => {
   await interceptNetworkCall({
     url: '**/api/slow',
     handler: async (route) => {
@@ -172,7 +175,9 @@ test('should handle timeout', async ({ page, interceptNetworkCall }) => {
   await page.goto('/slow-page');
 
   // UI should show timeout error
-  await expect(page.getByText('Request timed out')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('Request timed out')).toBeVisible({
+    timeout: 10000,
+  });
 });
 ```
 
@@ -192,11 +197,11 @@ test('should handle timeout', async ({ page, interceptNetworkCall }) => {
 ```typescript
 // INCORRECT - interceptor set up too late
 await page.goto('https://example.com'); // Request already happened
-const networkCall = interceptNetworkCall({ url: '**/api/data' });
+const networkCall = interceptNetworkCall({url: '**/api/data'});
 await networkCall; // Will hang indefinitely!
 
 // CORRECT - Set up interception first
-const networkCall = interceptNetworkCall({ url: '**/api/data' });
+const networkCall = interceptNetworkCall({url: '**/api/data'});
 await page.goto('https://example.com');
 const result = await networkCall;
 ```
@@ -214,11 +219,11 @@ This pattern follows the classic test spy/stub pattern:
 **Implementation**:
 
 ```typescript
-test('multiple intercepts', async ({ page, interceptNetworkCall }) => {
+test('multiple intercepts', async ({page, interceptNetworkCall}) => {
   // Setup all intercepts BEFORE navigation
-  const usersCall = interceptNetworkCall({ url: '**/api/users' });
-  const productsCall = interceptNetworkCall({ url: '**/api/products' });
-  const ordersCall = interceptNetworkCall({ url: '**/api/orders' });
+  const usersCall = interceptNetworkCall({url: '**/api/users'});
+  const productsCall = interceptNetworkCall({url: '**/api/products'});
+  const ordersCall = interceptNetworkCall({url: '**/api/orders'});
 
   // THEN navigate
   await page.goto('/dashboard');
@@ -246,8 +251,8 @@ test('multiple intercepts', async ({ page, interceptNetworkCall }) => {
 
 ```typescript
 // Capturing a known number of requests
-const firstRequest = interceptNetworkCall({ url: '/api/data' });
-const secondRequest = interceptNetworkCall({ url: '/api/data' });
+const firstRequest = interceptNetworkCall({url: '/api/data'});
+const secondRequest = interceptNetworkCall({url: '/api/data'});
 
 await page.click('#load-data-button');
 
@@ -299,7 +304,7 @@ const dataCall = interceptNetworkCall({
 await page.goto('/data-page');
 
 try {
-  const { responseJson } = await dataCall;
+  const {responseJson} = await dataCall;
   console.log('Data loaded successfully:', responseJson);
 } catch (error) {
   if (error.message.includes('timeout')) {
@@ -339,10 +344,10 @@ const predicate = (response) => {
 page.waitForResponse(predicate);
 
 // With interceptNetworkCall - simple glob patterns
-interceptNetworkCall({ url: '/api/users' }); // Exact endpoint
-interceptNetworkCall({ url: '/api/users/*' }); // User by ID pattern
-interceptNetworkCall({ url: '/api/users/*/profile' }); // Specific sub-paths
-interceptNetworkCall({ url: '/api/users/**' }); // Match all
+interceptNetworkCall({url: '/api/users'}); // Exact endpoint
+interceptNetworkCall({url: '/api/users/*'}); // User by ID pattern
+interceptNetworkCall({url: '/api/users/*/profile'}); // Specific sub-paths
+interceptNetworkCall({url: '/api/users/**'}); // Match all
 ```
 
 ## API Reference
@@ -402,21 +407,21 @@ Returns a `Promise<NetworkCallResult>` with:
 
 ```typescript
 await page.goto('/dashboard'); // Navigation starts
-const usersCall = interceptNetworkCall({ url: '**/api/users' }); // Too late!
+const usersCall = interceptNetworkCall({url: '**/api/users'}); // Too late!
 ```
 
 **DO intercept before navigate:**
 
 ```typescript
-const usersCall = interceptNetworkCall({ url: '**/api/users' }); // First
+const usersCall = interceptNetworkCall({url: '**/api/users'}); // First
 await page.goto('/dashboard'); // Then navigate
-const { responseJson } = await usersCall; // Then await
+const {responseJson} = await usersCall; // Then await
 ```
 
 **DON'T ignore the returned Promise:**
 
 ```typescript
-interceptNetworkCall({ url: '**/api/users' }); // Not awaited!
+interceptNetworkCall({url: '**/api/users'}); // Not awaited!
 await page.goto('/dashboard');
 // No deterministic wait - race condition
 ```
@@ -424,7 +429,7 @@ await page.goto('/dashboard');
 **DO always await the intercept:**
 
 ```typescript
-const usersCall = interceptNetworkCall({ url: '**/api/users' });
+const usersCall = interceptNetworkCall({url: '**/api/users'});
 await page.goto('/dashboard');
 await usersCall; // Deterministic wait
 ```

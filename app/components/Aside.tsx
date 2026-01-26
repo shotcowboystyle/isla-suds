@@ -70,21 +70,21 @@ export function Aside({
           <div className="w-full h-24 p-5 flex items-center justify-between relative">
             <ThemeSwitcher theme="light" setTheme={() => {}} />
 
-              {/* <h3>{heading}</h3> */}
-              <button
-                onClick={close}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              >
-                <img
-                  src={GoatLogo}
-                  alt="Isla Suds Logo"
-                  className="w-[16.06rem] h-[3.44rem]"
-                />
-              </button>
+            {/* <h3>{heading}</h3> */}
+            <button
+              onClick={close}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+            >
+              <img
+                src={GoatLogo}
+                alt="Isla Suds Logo"
+                className="w-[16.06rem] h-[3.44rem]"
+              />
+            </button>
 
-              <button className="close reset" onClick={close} aria-label="Close">
-                &times;
-              </button>
+            <button className="close reset" onClick={close} aria-label="Close">
+              &times;
+            </button>
           </div>
         </header>
 

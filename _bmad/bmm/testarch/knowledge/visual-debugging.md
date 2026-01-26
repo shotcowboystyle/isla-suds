@@ -27,7 +27,7 @@ Fast feedback loops and transparent debugging artifacts are critical for maintai
 
 ```typescript
 // playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 
 export default defineConfig({
   use: {
@@ -46,8 +46,8 @@ export default defineConfig({
 
   // CI-specific artifact retention
   reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['junit', { outputFile: 'results.xml' }],
+    ['html', {outputFolder: 'playwright-report', open: 'never'}],
+    ['junit', {outputFile: 'results.xml'}],
     ['list'], // Console output
   ],
 
@@ -93,16 +93,22 @@ npx playwright show-report
 
 ```typescript
 // tests/e2e/checkout-with-har.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import path from 'path';
 
 test.describe('Checkout Flow with HAR Recording', () => {
-  test('should complete payment with full network capture', async ({ page, context }) => {
+  test('should complete payment with full network capture', async ({
+    page,
+    context,
+  }) => {
     // Start HAR recording BEFORE navigation
-    await context.routeFromHAR(path.join(__dirname, '../fixtures/checkout.har'), {
-      url: '**/api/**', // Only capture API calls
-      update: true, // Update HAR if file exists
-    });
+    await context.routeFromHAR(
+      path.join(__dirname, '../fixtures/checkout.har'),
+      {
+        url: '**/api/**', // Only capture API calls
+        update: true, // Update HAR if file exists
+      },
+    );
 
     await page.goto('/checkout');
 
@@ -124,10 +130,10 @@ test.describe('Checkout Flow with HAR Recording', () => {
 
 ```typescript
 // tests/e2e/checkout-replay-har.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import path from 'path';
 
-test('should replay checkout flow from HAR', async ({ page, context }) => {
+test('should replay checkout flow from HAR', async ({page, context}) => {
   // Replay network from HAR (no real API calls)
   await context.routeFromHAR(path.join(__dirname, '../fixtures/checkout.har'), {
     url: '**/api/**',
@@ -169,7 +175,7 @@ test('should replay checkout flow from HAR', async ({ page, context }) => {
 
 ```typescript
 // playwright/support/fixtures/debug-fixture.ts
-import { test as base } from '@playwright/test';
+import {test as base} from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
@@ -178,9 +184,13 @@ type DebugFixture = {
 };
 
 export const test = base.extend<DebugFixture>({
-  captureDebugArtifacts: async ({ page }, use, testInfo) => {
+  captureDebugArtifacts: async ({page}, use, testInfo) => {
     const consoleLogs: string[] = [];
-    const networkRequests: Array<{ url: string; status: number; method: string }> = [];
+    const networkRequests: Array<{
+      url: string;
+      status: number;
+      method: string;
+    }> = [];
 
     // Capture console messages
     page.on('console', (msg) => {
@@ -209,13 +219,21 @@ export const test = base.extend<DebugFixture>({
     // After test completes, save artifacts if failed
     if (testInfo.status !== testInfo.expectedStatus) {
       const artifactDir = path.join(testInfo.outputDir, 'debug-artifacts');
-      fs.mkdirSync(artifactDir, { recursive: true });
+      fs.mkdirSync(artifactDir, {recursive: true});
 
       // Save console logs
-      fs.writeFileSync(path.join(artifactDir, 'console.log'), consoleLogs.join('\n'), 'utf-8');
+      fs.writeFileSync(
+        path.join(artifactDir, 'console.log'),
+        consoleLogs.join('\n'),
+        'utf-8',
+      );
 
       // Save network summary
-      fs.writeFileSync(path.join(artifactDir, 'network.json'), JSON.stringify(networkRequests, null, 2), 'utf-8');
+      fs.writeFileSync(
+        path.join(artifactDir, 'network.json'),
+        JSON.stringify(networkRequests, null, 2),
+        'utf-8',
+      );
 
       console.log(`Debug artifacts saved to: ${artifactDir}`);
     }
@@ -227,14 +245,19 @@ export const test = base.extend<DebugFixture>({
 
 ```typescript
 // tests/e2e/payment-with-debug.spec.ts
-import { test, expect } from '../support/fixtures/debug-fixture';
+import {test, expect} from '../support/fixtures/debug-fixture';
 
-test('payment flow captures debug artifacts on failure', async ({ page, captureDebugArtifacts }) => {
+test('payment flow captures debug artifacts on failure', async ({
+  page,
+  captureDebugArtifacts,
+}) => {
   await page.goto('/checkout');
 
   // Test will automatically capture console + network on failure
   await page.getByTestId('submit-payment').click();
-  await expect(page.getByTestId('success-message')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('success-message')).toBeVisible({
+    timeout: 5000,
+  });
 
   // If this fails, console.log and network.json saved automatically
 });
@@ -291,7 +314,7 @@ jobs:
 
 ```typescript
 // playwright/support/fixtures/a11y-fixture.ts
-import { test as base } from '@playwright/test';
+import {test as base} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 type A11yFixture = {
@@ -299,20 +322,26 @@ type A11yFixture = {
 };
 
 export const test = base.extend<A11yFixture>({
-  checkA11y: async ({ page }, use) => {
+  checkA11y: async ({page}, use) => {
     await use(async () => {
       // Run axe accessibility scan
-      const results = await new AxeBuilder({ page }).analyze();
+      const results = await new AxeBuilder({page}).analyze();
 
       // Attach results to test report (visible in trace viewer)
       if (results.violations.length > 0) {
-        console.log(`Found ${results.violations.length} accessibility violations:`);
+        console.log(
+          `Found ${results.violations.length} accessibility violations:`,
+        );
         results.violations.forEach((violation) => {
-          console.log(`- [${violation.impact}] ${violation.id}: ${violation.description}`);
+          console.log(
+            `- [${violation.impact}] ${violation.id}: ${violation.description}`,
+          );
           console.log(`  Help: ${violation.helpUrl}`);
         });
 
-        throw new Error(`Accessibility violations found: ${results.violations.length}`);
+        throw new Error(
+          `Accessibility violations found: ${results.violations.length}`,
+        );
       }
     });
   },
@@ -323,13 +352,13 @@ export const test = base.extend<A11yFixture>({
 
 ```typescript
 // tests/e2e/checkout-a11y.spec.ts
-import { test, expect } from '../support/fixtures/a11y-fixture';
+import {test, expect} from '../support/fixtures/a11y-fixture';
 
-test('checkout page is accessible', async ({ page, checkA11y }) => {
+test('checkout page is accessible', async ({page, checkA11y}) => {
   await page.goto('/checkout');
 
   // Verify page loaded
-  await expect(page.getByRole('heading', { name: 'Checkout' })).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Checkout'})).toBeVisible();
 
   // Run accessibility check
   await checkA11y();
@@ -360,7 +389,10 @@ Cypress.Commands.add('checkA11y', (context = null, options = {}) => {
     if (violations.length) {
       cy.task('log', `Found ${violations.length} accessibility violations`);
       violations.forEach((violation) => {
-        cy.task('log', `- [${violation.impact}] ${violation.id}: ${violation.description}`);
+        cy.task(
+          'log',
+          `- [${violation.impact}] ${violation.id}: ${violation.description}`,
+        );
       });
     }
   });
@@ -397,9 +429,9 @@ describe('Checkout Accessibility', () => {
 
 ```typescript
 // tests/e2e/checkout-debug.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('debug checkout flow step-by-step', async ({ page }) => {
+test('debug checkout flow step-by-step', async ({page}) => {
   // Set breakpoint by uncommenting this:
   // await page.pause()
 
@@ -452,7 +484,7 @@ PWDEBUG=1 npx playwright test
 
 ```typescript
 // Pattern 1: Debug selector issues
-test('debug selector', async ({ page }) => {
+test('debug selector', async ({page}) => {
   await page.goto('/dashboard');
   await page.pause(); // Inspector opens
 
@@ -463,7 +495,7 @@ test('debug selector', async ({ page }) => {
 });
 
 // Pattern 2: Debug timing issues
-test('debug network timing', async ({ page }) => {
+test('debug network timing', async ({page}) => {
   await page.goto('/dashboard');
 
   // Set up network listener BEFORE interaction
@@ -477,7 +509,7 @@ test('debug network timing', async ({ page }) => {
 });
 
 // Pattern 3: Debug state changes
-test('debug state mutation', async ({ page }) => {
+test('debug state mutation', async ({page}) => {
   await page.goto('/cart');
 
   // Check initial state

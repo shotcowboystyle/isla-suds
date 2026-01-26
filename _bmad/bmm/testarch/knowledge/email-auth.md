@@ -18,7 +18,7 @@ Email authentication introduces unique challenges: asynchronous email delivery, 
 
 ```typescript
 // tests/e2e/magic-link-auth.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Magic Link Authentication Flow
@@ -38,7 +38,7 @@ const MAILOSAUR_SERVER_ID = process.env.MAILOSAUR_SERVER_ID!;
  * DOMParser provides XML/HTML parsing in Node.js
  */
 function extractMagicLink(htmlString: string): string | null {
-  const { JSDOM } = require('jsdom');
+  const {JSDOM} = require('jsdom');
   const dom = new JSDOM(htmlString);
   const link = dom.window.document.querySelector('#magic-link-button');
   return link ? (link as HTMLAnchorElement).href : null;
@@ -75,7 +75,7 @@ async function getMagicLinkFromEmail(email: string): Promise<string> {
 }
 
 test.describe('Magic Link Authentication', () => {
-  test('should authenticate user via magic link', async ({ page, context }) => {
+  test('should authenticate user via magic link', async ({page, context}) => {
     // Arrange: Generate unique test email
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
@@ -87,7 +87,9 @@ test.describe('Magic Link Authentication', () => {
 
     // Assert: Success message
     await expect(page.getByTestId('check-email-message')).toBeVisible();
-    await expect(page.getByTestId('check-email-message')).toContainText('Check your email');
+    await expect(page.getByTestId('check-email-message')).toContainText(
+      'Check your email',
+    );
 
     // Retrieve magic link from email
     const magicLink = await getMagicLinkFromEmail(testEmail);
@@ -100,25 +102,30 @@ test.describe('Magic Link Authentication', () => {
     await expect(page.getByTestId('user-email')).toContainText(testEmail);
 
     // Verify session storage preserved
-    const localStorage = await page.evaluate(() => JSON.stringify(window.localStorage));
+    const localStorage = await page.evaluate(() =>
+      JSON.stringify(window.localStorage),
+    );
     expect(localStorage).toContain('authToken');
   });
 
-  test('should handle expired magic link', async ({ page }) => {
+  test('should handle expired magic link', async ({page}) => {
     // Use pre-expired link (older than 15 minutes)
-    const expiredLink = 'http://localhost:3000/auth/verify?token=expired-token-123';
+    const expiredLink =
+      'http://localhost:3000/auth/verify?token=expired-token-123';
 
     await page.goto(expiredLink);
 
     // Assert: Error message displayed
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText('link has expired');
+    await expect(page.getByTestId('error-message')).toContainText(
+      'link has expired',
+    );
 
     // Assert: User NOT authenticated
     await expect(page.getByTestId('user-menu')).not.toBeVisible();
   });
 
-  test('should prevent reusing magic link', async ({ page }) => {
+  test('should prevent reusing magic link', async ({page}) => {
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
 
@@ -139,7 +146,9 @@ test.describe('Magic Link Authentication', () => {
     // Try to reuse same link (should fail)
     await page.goto(magicLink);
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText('link has already been used');
+    await expect(page.getByTestId('error-message')).toContainText(
+      'link has already been used',
+    );
   });
 });
 ```
@@ -161,7 +170,7 @@ describe('Magic Link Authentication', () => {
     cy.get('[data-cy="check-email-message"]').should('be.visible');
 
     // Retrieve and visit magic link
-    cy.mailosaurGetMessage(serverId, { sentTo: testEmail })
+    cy.mailosaurGetMessage(serverId, {sentTo: testEmail})
       .its('html.links.0.href') // Mailosaur extracts links automatically!
       .should('exist')
       .then((magicLink) => {
@@ -194,15 +203,15 @@ describe('Magic Link Authentication', () => {
 
 ```typescript
 // playwright/fixtures/email-auth-fixture.ts
-import { test as base } from '@playwright/test';
-import { getMagicLinkFromEmail } from '../support/mailosaur-helpers';
+import {test as base} from '@playwright/test';
+import {getMagicLinkFromEmail} from '../support/mailosaur-helpers';
 
 type EmailAuthFixture = {
-  authenticatedUser: { email: string; token: string };
+  authenticatedUser: {email: string; token: string};
 };
 
 export const test = base.extend<EmailAuthFixture>({
-  authenticatedUser: async ({ page, context }, use) => {
+  authenticatedUser: async ({page, context}, use) => {
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${process.env.MAILOSAUR_SERVER_ID}.mailosaur.net`;
 
@@ -211,19 +220,23 @@ export const test = base.extend<EmailAuthFixture>({
 
     try {
       // Try to reuse existing session
-      await context.storageState({ path: storageStatePath });
+      await context.storageState({path: storageStatePath});
       await page.goto('/dashboard');
 
       // Validate session is still valid
-      const isAuthenticated = await page.getByTestId('user-menu').isVisible({ timeout: 2000 });
+      const isAuthenticated = await page
+        .getByTestId('user-menu')
+        .isVisible({timeout: 2000});
 
       if (isAuthenticated) {
         console.log(`✅ Reusing cached session for ${testEmail}`);
-        await use({ email: testEmail, token: 'cached' });
+        await use({email: testEmail, token: 'cached'});
         return;
       }
     } catch (error) {
-      console.log(`📧 No cached session, requesting magic link for ${testEmail}`);
+      console.log(
+        `📧 No cached session, requesting magic link for ${testEmail}`,
+      );
     }
 
     // Request new magic link
@@ -239,14 +252,16 @@ export const test = base.extend<EmailAuthFixture>({
     await expect(page.getByTestId('user-menu')).toBeVisible();
 
     // Extract auth token from localStorage
-    const authToken = await page.evaluate(() => localStorage.getItem('authToken'));
+    const authToken = await page.evaluate(() =>
+      localStorage.getItem('authToken'),
+    );
 
     // Save session state for reuse
-    await context.storageState({ path: storageStatePath });
+    await context.storageState({path: storageStatePath});
 
     console.log(`💾 Cached session for ${testEmail}`);
 
-    await use({ email: testEmail, token: authToken || '' });
+    await use({email: testEmail, token: authToken || ''});
   },
 });
 ```
@@ -255,7 +270,7 @@ export const test = base.extend<EmailAuthFixture>({
 
 ```javascript
 // cypress/support/commands/email-auth.js
-import { dataSession } from 'cypress-data-session';
+import {dataSession} from 'cypress-data-session';
 
 /**
  * Authenticate via magic link with session caching
@@ -283,11 +298,11 @@ Cypress.Commands.add('authViaMagicLink', (email) => {
         });
 
       // Wait for authentication
-      cy.get('[data-cy="user-menu"]', { timeout: 10000 }).should('be.visible');
+      cy.get('[data-cy="user-menu"]', {timeout: 10000}).should('be.visible');
 
       // Preserve authentication state
       return cy.getAllLocalStorage().then((storage) => {
-        return { storage, email };
+        return {storage, email};
       });
     },
 
@@ -301,7 +316,7 @@ Cypress.Commands.add('authViaMagicLink', (email) => {
       // Restore localStorage
       cy.setLocalStorage(cached.storage);
       cy.visit('/dashboard');
-      cy.get('[data-cy="user-menu"]', { timeout: 5000 }).should('be.visible');
+      cy.get('[data-cy="user-menu"]', {timeout: 5000}).should('be.visible');
     },
 
     shareAcrossSpecs: true, // Share session across all tests
@@ -353,13 +368,13 @@ describe('Dashboard', () => {
 
 ```typescript
 // tests/e2e/email-auth-negative.spec.ts
-import { test, expect } from '@playwright/test';
-import { getMagicLinkFromEmail } from '../support/mailosaur-helpers';
+import {test, expect} from '@playwright/test';
+import {getMagicLinkFromEmail} from '../support/mailosaur-helpers';
 
 const MAILOSAUR_SERVER_ID = process.env.MAILOSAUR_SERVER_ID!;
 
 test.describe('Email Auth Negative Flows', () => {
-  test('should reject expired magic link', async ({ page }) => {
+  test('should reject expired magic link', async ({page}) => {
     // Generate expired link (simulate 24 hours ago)
     const expiredToken = Buffer.from(
       JSON.stringify({
@@ -375,7 +390,9 @@ test.describe('Email Auth Negative Flows', () => {
 
     // Assert: Error displayed
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText(/link.*expired|expired.*link/i);
+    await expect(page.getByTestId('error-message')).toContainText(
+      /link.*expired|expired.*link/i,
+    );
 
     // Assert: Link to request new one
     await expect(page.getByTestId('request-new-link')).toBeVisible();
@@ -384,20 +401,23 @@ test.describe('Email Auth Negative Flows', () => {
     await expect(page.getByTestId('user-menu')).not.toBeVisible();
   });
 
-  test('should reject invalid magic link token', async ({ page }) => {
-    const invalidLink = 'http://localhost:3000/auth/verify?token=invalid-garbage';
+  test('should reject invalid magic link token', async ({page}) => {
+    const invalidLink =
+      'http://localhost:3000/auth/verify?token=invalid-garbage';
 
     await page.goto(invalidLink);
 
     // Assert: Error displayed
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText(/invalid.*link|link.*invalid/i);
+    await expect(page.getByTestId('error-message')).toContainText(
+      /invalid.*link|link.*invalid/i,
+    );
 
     // Assert: User not authenticated
     await expect(page.getByTestId('user-menu')).not.toBeVisible();
   });
 
-  test('should reject already-used magic link', async ({ page, context }) => {
+  test('should reject already-used magic link', async ({page, context}) => {
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
 
@@ -422,13 +442,15 @@ test.describe('Email Auth Negative Flows', () => {
 
     // Assert: Link already used error
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText(/already.*used|link.*used/i);
+    await expect(page.getByTestId('error-message')).toContainText(
+      /already.*used|link.*used/i,
+    );
 
     // Assert: User not authenticated
     await expect(page.getByTestId('user-menu')).not.toBeVisible();
   });
 
-  test('should handle rapid successive link requests', async ({ page }) => {
+  test('should handle rapid successive link requests', async ({page}) => {
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
 
@@ -467,7 +489,7 @@ test.describe('Email Auth Negative Flows', () => {
     await expect(page.getByTestId('error-message')).toBeVisible();
   });
 
-  test('should rate-limit excessive magic link requests', async ({ page }) => {
+  test('should rate-limit excessive magic link requests', async ({page}) => {
     const randomId = Math.floor(Math.random() * 1000000);
     const testEmail = `user-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
 
@@ -480,12 +502,14 @@ test.describe('Email Auth Negative Flows', () => {
       // After N requests, should show rate limit error
       const errorVisible = await page
         .getByTestId('rate-limit-error')
-        .isVisible({ timeout: 1000 })
+        .isVisible({timeout: 1000})
         .catch(() => false);
 
       if (errorVisible) {
         console.log(`Rate limit hit after ${i + 1} requests`);
-        await expect(page.getByTestId('rate-limit-error')).toContainText(/too many.*requests|rate.*limit/i);
+        await expect(page.getByTestId('rate-limit-error')).toContainText(
+          /too many.*requests|rate.*limit/i,
+        );
         return;
       }
     }
@@ -514,7 +538,7 @@ test.describe('Email Auth Negative Flows', () => {
 
 ```javascript
 // cypress/support/commands/register-and-sign-in.js
-import { dataSession } from 'cypress-data-session';
+import {dataSession} from 'cypress-data-session';
 
 /**
  * Email Authentication Caching Strategy
@@ -525,15 +549,15 @@ import { dataSession } from 'cypress-data-session';
  */
 
 // Helper: Fill registration form
-function fillRegistrationForm({ fullName, userName, email, password }) {
+function fillRegistrationForm({fullName, userName, email, password}) {
   cy.intercept('POST', 'https://cognito-idp*').as('cognito');
   cy.contains('Register').click();
   cy.get('#reg-dialog-form').should('be.visible');
-  cy.get('#first-name').type(fullName, { delay: 0 });
-  cy.get('#last-name').type(lastName, { delay: 0 });
-  cy.get('#email').type(email, { delay: 0 });
-  cy.get('#username').type(userName, { delay: 0 });
-  cy.get('#password').type(password, { delay: 0 });
+  cy.get('#first-name').type(fullName, {delay: 0});
+  cy.get('#last-name').type(lastName, {delay: 0});
+  cy.get('#email').type(email, {delay: 0});
+  cy.get('#username').type(userName, {delay: 0});
+  cy.get('#password').type(password, {delay: 0});
   cy.contains('button', 'Create an account').click();
   cy.wait('@cognito').its('response.statusCode').should('equal', 200);
 }
@@ -541,11 +565,11 @@ function fillRegistrationForm({ fullName, userName, email, password }) {
 // Helper: Confirm registration with email code
 function confirmRegistration(email) {
   return cy
-    .mailosaurGetMessage(Cypress.env('MAILOSAUR_SERVERID'), { sentTo: email })
+    .mailosaurGetMessage(Cypress.env('MAILOSAUR_SERVERID'), {sentTo: email})
     .its('html.codes.0.value') // Mailosaur auto-extracts codes!
     .then((code) => {
       cy.intercept('POST', 'https://cognito-idp*').as('cognito');
-      cy.get('#verification-code').type(code, { delay: 0 });
+      cy.get('#verification-code').type(code, {delay: 0});
       cy.contains('button', 'Confirm registration').click();
       cy.wait('@cognito');
       cy.contains('You are now registered!').should('be.visible');
@@ -555,17 +579,17 @@ function confirmRegistration(email) {
 }
 
 // Helper: Full registration (form + email)
-function register({ fullName, userName, email, password }) {
-  fillRegistrationForm({ fullName, userName, email, password });
+function register({fullName, userName, email, password}) {
+  fillRegistrationForm({fullName, userName, email, password});
   return confirmRegistration(email);
 }
 
 // Helper: Sign in
-function signIn({ userName, password }) {
+function signIn({userName, password}) {
   cy.intercept('POST', 'https://cognito-idp*').as('cognito');
   cy.contains('Sign in').click();
-  cy.get('#sign-in-username').type(userName, { delay: 0 });
-  cy.get('#sign-in-password').type(password, { delay: 0 });
+  cy.get('#sign-in-username').type(userName, {delay: 0});
+  cy.get('#sign-in-password').type(password, {delay: 0});
   cy.contains('button', 'Sign in').click();
   cy.wait('@cognito');
   cy.contains('Sign out').should('be.visible');
@@ -575,23 +599,26 @@ function signIn({ userName, password }) {
  * Register and sign in with email caching
  * ONE EMAIL PER MACHINE (cypress run or cypress open)
  */
-Cypress.Commands.add('registerAndSignIn', ({ fullName, userName, email, password }) => {
-  return dataSession({
-    name: email, // Unique session per email
+Cypress.Commands.add(
+  'registerAndSignIn',
+  ({fullName, userName, email, password}) => {
+    return dataSession({
+      name: email, // Unique session per email
 
-    // First time: Full registration (form → email → code)
-    init: () => register({ fullName, userName, email, password }),
+      // First time: Full registration (form → email → code)
+      init: () => register({fullName, userName, email, password}),
 
-    // Subsequent specs: Just check email exists (code already used)
-    setup: () => confirmRegistration(email),
+      // Subsequent specs: Just check email exists (code already used)
+      setup: () => confirmRegistration(email),
 
-    // Always runs after init/setup: Sign in
-    recreate: () => signIn({ userName, password }),
+      // Always runs after init/setup: Sign in
+      recreate: () => signIn({userName, password}),
 
-    // Share across ALL specs (one email for entire test run)
-    shareAcrossSpecs: true,
-  });
-});
+      // Share across ALL specs (one email for entire test run)
+      shareAcrossSpecs: true,
+    });
+  },
+);
 ```
 
 **Usage across multiple specs**:
@@ -639,7 +666,7 @@ describe('User Profile', () => {
 
 ```typescript
 // playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 
 export default defineConfig({
   projects: [
@@ -661,12 +688,12 @@ export default defineConfig({
 
 ```typescript
 // tests/global-setup.ts (runs once)
-import { test as setup } from '@playwright/test';
-import { getMagicLinkFromEmail } from './support/mailosaur-helpers';
+import {test as setup} from '@playwright/test';
+import {getMagicLinkFromEmail} from './support/mailosaur-helpers';
 
 const authFile = '.auth/user-session.json';
 
-setup('authenticate via magic link', async ({ page }) => {
+setup('authenticate via magic link', async ({page}) => {
   const testEmail = process.env.TEST_USER_EMAIL!;
 
   // Request magic link
@@ -682,7 +709,7 @@ setup('authenticate via magic link', async ({ page }) => {
   await expect(page.getByTestId('user-menu')).toBeVisible();
 
   // Save authenticated state (ONE TIME for all tests)
-  await page.context().storageState({ path: authFile });
+  await page.context().storageState({path: authFile});
 
   console.log('✅ Authentication state saved to', authFile);
 });

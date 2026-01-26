@@ -337,7 +337,7 @@ exit 0
 
 ```javascript
 // scripts/run-sharded-tests.js
-const { spawn } = require('child_process');
+const {spawn} = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -356,7 +356,7 @@ console.log('━'.repeat(50));
 
 // Ensure results directory exists
 if (!fs.existsSync(RESULTS_DIR)) {
-  fs.mkdirSync(RESULTS_DIR, { recursive: true });
+  fs.mkdirSync(RESULTS_DIR, {recursive: true});
 }
 
 /**
@@ -367,10 +367,14 @@ function runShard(shardIndex) {
     const shardId = `${shardIndex}/${SHARD_COUNT}`;
     console.log(`\n📦 Starting shard ${shardId}...`);
 
-    const child = spawn('npx', ['playwright', 'test', `--shard=${shardId}`, '--reporter=json'], {
-      env: { ...process.env, TEST_ENV, SHARD_INDEX: shardIndex },
-      stdio: 'pipe',
-    });
+    const child = spawn(
+      'npx',
+      ['playwright', 'test', `--shard=${shardId}`, '--reporter=json'],
+      {
+        env: {...process.env, TEST_ENV, SHARD_INDEX: shardIndex},
+        stdio: 'pipe',
+      },
+    );
 
     let stdout = '';
     let stderr = '';
@@ -392,16 +396,19 @@ function runShard(shardIndex) {
         const result = JSON.parse(stdout);
         fs.writeFileSync(resultFile, JSON.stringify(result, null, 2));
         console.log(`✅ Shard ${shardId} completed (exit code: ${code})`);
-        resolve({ shardIndex, code, result });
+        resolve({shardIndex, code, result});
       } catch (error) {
-        console.error(`❌ Shard ${shardId} failed to parse results:`, error.message);
-        reject({ shardIndex, code, error });
+        console.error(
+          `❌ Shard ${shardId} failed to parse results:`,
+          error.message,
+        );
+        reject({shardIndex, code, error});
       }
     });
 
     child.on('error', (error) => {
       console.error(`❌ Shard ${shardId} process error:`, error.message);
-      reject({ shardIndex, error });
+      reject({shardIndex, error});
     });
   });
 }
@@ -447,7 +454,10 @@ function aggregateResults() {
   };
 
   // Save aggregated summary
-  fs.writeFileSync(path.join(RESULTS_DIR, 'summary.json'), JSON.stringify(summary, null, 2));
+  fs.writeFileSync(
+    path.join(RESULTS_DIR, 'summary.json'),
+    JSON.stringify(summary, null, 2),
+  );
 
   console.log('\n━'.repeat(50));
   console.log('📈 Test Results Summary');

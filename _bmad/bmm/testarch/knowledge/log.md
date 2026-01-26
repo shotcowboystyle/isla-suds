@@ -24,7 +24,7 @@ The `log` utility provides:
 ## Quick Start
 
 ```typescript
-import { log } from '@seontechnologies/playwright-utils';
+import {log} from '@seontechnologies/playwright-utils';
 
 // Basic logging
 await log.info('Starting test');
@@ -44,9 +44,9 @@ await log.debug('Debug information');
 **Implementation**:
 
 ```typescript
-import { log } from '@seontechnologies/playwright-utils';
+import {log} from '@seontechnologies/playwright-utils';
 
-test('logging demo', async ({ page }) => {
+test('logging demo', async ({page}) => {
   await log.step('Navigate to login page');
   await page.goto('/login');
 
@@ -57,7 +57,7 @@ test('logging demo', async ({ page }) => {
 
   await log.warning('Rate limit approaching');
 
-  await log.debug({ userId: '123', sessionId: 'abc' });
+  await log.debug({userId: '123', sessionId: 'abc'});
 
   // Errors still throw but get logged first
   try {
@@ -84,8 +84,8 @@ test('logging demo', async ({ page }) => {
 **Implementation**:
 
 ```typescript
-test('object logging', async ({ apiRequest }) => {
-  const { body } = await apiRequest({
+test('object logging', async ({apiRequest}) => {
+  const {body} = await apiRequest({
     method: 'GET',
     path: '/api/users',
   });
@@ -129,12 +129,12 @@ test('object logging', async ({ apiRequest }) => {
 **Implementation**:
 
 ```typescript
-test('organized with steps', async ({ page, apiRequest }) => {
+test('organized with steps', async ({page, apiRequest}) => {
   await log.step('ARRANGE: Setup test data');
-  const { body: user } = await apiRequest({
+  const {body: user} = await apiRequest({
     method: 'POST',
     path: '/api/users',
-    body: { name: 'Test User' },
+    body: {name: 'Test User'},
   });
 
   await log.step('ACT: Perform user action');
@@ -164,7 +164,7 @@ test('organized with steps', async ({ page, apiRequest }) => {
 **Page Object Methods with @methodTestStep:**
 
 ```typescript
-import { methodTestStep } from '@seontechnologies/playwright-utils';
+import {methodTestStep} from '@seontechnologies/playwright-utils';
 
 class TodoPage {
   constructor(private page: Page) {
@@ -194,22 +194,25 @@ class TodoPage {
 **Function Helpers with functionTestStep:**
 
 ```typescript
-import { functionTestStep } from '@seontechnologies/playwright-utils';
+import {functionTestStep} from '@seontechnologies/playwright-utils';
 
 // Define todo items for the test
 const TODO_ITEMS = ['buy groceries', 'pay bills', 'schedule meeting'];
 
-const createDefaultTodos = functionTestStep('Create default todos', async (page: Page) => {
-  await log.info('Creating default todos');
-  await log.step('step within a functionWrapper');
-  const todoPage = new TodoPage(page);
+const createDefaultTodos = functionTestStep(
+  'Create default todos',
+  async (page: Page) => {
+    await log.info('Creating default todos');
+    await log.step('step within a functionWrapper');
+    const todoPage = new TodoPage(page);
 
-  for (const item of TODO_ITEMS) {
-    await todoPage.addTodo(item);
-  }
+    for (const item of TODO_ITEMS) {
+      await todoPage.addTodo(item);
+    }
 
-  await log.success('Created all default todos');
-});
+    await log.success('Created all default todos');
+  },
+);
 
 const checkNumberOfTodosInLocalStorage = functionTestStep(
   'Check total todos count fn-step',
@@ -217,11 +220,11 @@ const checkNumberOfTodosInLocalStorage = functionTestStep(
     await log.info(`Verifying todo count: ${expected}`);
     const result = await page.waitForFunction(
       (e) => JSON.parse(localStorage['react-todos']).length === e,
-      expected
+      expected,
     );
     await log.success(`Verified todo count: ${expected}`);
     return result;
-  }
+  },
 );
 ```
 
@@ -233,8 +236,8 @@ const checkNumberOfTodosInLocalStorage = functionTestStep(
 
 ```typescript
 // playwright/support/fixtures.ts
-import { test as base } from '@playwright/test';
-import { log, captureTestContext } from '@seontechnologies/playwright-utils';
+import {test as base} from '@playwright/test';
+import {log, captureTestContext} from '@seontechnologies/playwright-utils';
 
 // Configure file logging globally
 log.configure({
@@ -248,10 +251,13 @@ log.configure({
 // Extend base test with file logging context capture
 export const test = base.extend({
   // Auto-capture test context for file logging
-  autoTestContext: [async ({}, use, testInfo) => {
-    captureTestContext(testInfo);
-    await use(undefined);
-  }, { auto: true }],
+  autoTestContext: [
+    async ({}, use, testInfo) => {
+      captureTestContext(testInfo);
+      await use(undefined);
+    },
+    {auto: true},
+  ],
 });
 ```
 
@@ -262,7 +268,7 @@ export const test = base.extend({
 **Implementation**:
 
 ```typescript
-import { test } from '@seontechnologies/playwright-utils/fixtures';
+import {test} from '@seontechnologies/playwright-utils/fixtures';
 
 // Helper to create safe token preview
 function createTokenPreview(token: string): string {
@@ -270,14 +276,14 @@ function createTokenPreview(token: string): string {
   return `${token.slice(0, 6)}...${token.slice(-4)}`;
 }
 
-test('should log auth flow', async ({ authToken, apiRequest }) => {
+test('should log auth flow', async ({authToken, apiRequest}) => {
   await log.info(`Using token: ${createTokenPreview(authToken)}`);
 
   await log.step('Fetch protected resource');
-  const { status, body } = await apiRequest({
+  const {status, body} = await apiRequest({
     method: 'GET',
     path: '/api/protected',
-    headers: { Authorization: `Bearer ${authToken}` },
+    headers: {Authorization: `Bearer ${authToken}`},
   });
 
   await log.debug({
@@ -316,8 +322,8 @@ log.configure({
 
 // Per-test override
 await log.info('Message', {
-  console: { enabled: false },
-  fileLogging: { enabled: true },
+  console: {enabled: false},
+  fileLogging: {enabled: true},
 });
 ```
 
@@ -389,14 +395,14 @@ log.errorSync('Setup failed');
 **DON'T log objects in steps:**
 
 ```typescript
-await log.step({ user: 'test', action: 'create' }); // Shows empty in UI
+await log.step({user: 'test', action: 'create'}); // Shows empty in UI
 ```
 
 **DO use strings for steps, objects for debug:**
 
 ```typescript
 await log.step('Creating user: test'); // Readable in UI
-await log.debug({ user: 'test', action: 'create' }); // Detailed data
+await log.debug({user: 'test', action: 'create'}); // Detailed data
 ```
 
 **DON'T log sensitive data:**
@@ -410,7 +416,7 @@ await log.info(`Token: ${authToken}`); // Full token exposed!
 
 ```typescript
 await log.info('User authenticated successfully'); // No sensitive data
-await log.debug({ tokenPreview: token.slice(0, 6) + '...' });
+await log.debug({tokenPreview: token.slice(0, 6) + '...'});
 ```
 
 **DON'T log excessively in loops:**
@@ -425,5 +431,5 @@ for (const item of items) {
 
 ```typescript
 await log.step(`Processing ${items.length} items`);
-await log.debug({ itemIds: items.map((i) => i.id) }); // One log entry
+await log.debug({itemIds: items.map((i) => i.id)}); // One log entry
 ```

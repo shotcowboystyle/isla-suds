@@ -4,7 +4,7 @@ import {
   NavLink,
   useAsyncValue,
   useLocation,
-  useNavigate
+  useNavigate,
 } from 'react-router';
 import {
   type CartViewPayload,
@@ -40,7 +40,13 @@ export function Header({
   return (
     <header className="sticky top-0 w-full z-20 bg-white dark:bg-black transition duration-300 border-b sm:border-b-2 border-neutral-300 dark:border-[#2D2D2D] -mb-[2px]">
       <div className="h-[4.5rem] sm:h-24 px-[1.05rem] sm:px-6 flex items-center justify-end sm:justify-between relative gap-3">
-        <NavLink prefetch="intent" to="/" style={activeLinkStyle} end className="absolute top-1/2 left-5 sm:left-1/2 transform sm:-translate-x-1/2 -translate-y-1/2">
+        <NavLink
+          prefetch="intent"
+          to="/"
+          style={activeLinkStyle}
+          end
+          className="absolute top-1/2 left-5 sm:left-1/2 transform sm:-translate-x-1/2 -translate-y-1/2"
+        >
           <div className="w-[8.13rem] sm:w-[16.06rem] aspect-[1/0.21] h-[2.19rem] sm:h-[3.44rem] dark:invert transition duration-300">
             <Logo />
           </div>

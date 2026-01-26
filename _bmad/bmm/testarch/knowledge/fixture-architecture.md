@@ -92,16 +92,22 @@ export const test = base.extend<{ apiRequest: typeof apiRequest }>({
 
 ```typescript
 // playwright/support/fixtures/merged-fixtures.ts
-import { test as base, mergeTests } from '@playwright/test';
-import { test as apiRequestFixture } from './api-request-fixture';
-import { test as networkFixture } from './network-fixture';
-import { test as authFixture } from './auth-fixture';
-import { test as logFixture } from './log-fixture';
+import {test as base, mergeTests} from '@playwright/test';
+import {test as apiRequestFixture} from './api-request-fixture';
+import {test as networkFixture} from './network-fixture';
+import {test as authFixture} from './auth-fixture';
+import {test as logFixture} from './log-fixture';
 
 // Compose all fixtures for comprehensive capabilities
-export const test = mergeTests(base, apiRequestFixture, networkFixture, authFixture, logFixture);
+export const test = mergeTests(
+  base,
+  apiRequestFixture,
+  networkFixture,
+  authFixture,
+  logFixture,
+);
 
-export { expect } from '@playwright/test';
+export {expect} from '@playwright/test';
 
 // Example usage in tests:
 // import { test, expect } from './support/fixtures/merged-fixtures';
@@ -120,19 +126,23 @@ export { expect } from '@playwright/test';
 ```typescript
 // network-fixture.ts
 export const test = base.extend({
-  network: async ({ page }, use) => {
+  network: async ({page}, use) => {
     const interceptedRoutes = new Map();
 
-    const interceptRoute = async (method: string, url: string, response: unknown) => {
+    const interceptRoute = async (
+      method: string,
+      url: string,
+      response: unknown,
+    ) => {
       await page.route(url, (route) => {
         if (route.request().method() === method) {
-          route.fulfill({ body: JSON.stringify(response) });
+          route.fulfill({body: JSON.stringify(response)});
         }
       });
       interceptedRoutes.set(`${method}:${url}`, response);
     };
 
-    await use({ interceptRoute });
+    await use({interceptRoute});
 
     // Cleanup
     interceptedRoutes.clear();
@@ -141,7 +151,7 @@ export const test = base.extend({
 
 // auth-fixture.ts
 export const test = base.extend({
-  auth: async ({ page, context }, use) => {
+  auth: async ({page, context}, use) => {
     const loginAs = async (email: string) => {
       // Use API to setup auth (fast!)
       const token = await getAuthToken(email);
@@ -155,7 +165,7 @@ export const test = base.extend({
       ]);
     };
 
-    await use({ loginAs });
+    await use({loginAs});
   },
 });
 ```
@@ -185,11 +195,18 @@ type HttpHelperParams = {
   token?: string;
 };
 
-export async function makeHttpRequest({ baseUrl, endpoint, method, body, headers = {}, token }: HttpHelperParams): Promise<unknown> {
+export async function makeHttpRequest({
+  baseUrl,
+  endpoint,
+  method,
+  body,
+  headers = {},
+  token,
+}: HttpHelperParams): Promise<unknown> {
   const url = `${baseUrl}${endpoint}`;
   const requestHeaders = {
     'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(token && {Authorization: `Bearer ${token}`}),
     ...headers,
   };
 
@@ -201,7 +218,9 @@ export async function makeHttpRequest({ baseUrl, endpoint, method, body, headers
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`HTTP ${method} ${url} failed: ${response.status} ${errorText}`);
+    throw new Error(
+      `HTTP ${method} ${url} failed: ${response.status} ${errorText}`,
+    );
   }
 
   return response.json();
@@ -209,24 +228,24 @@ export async function makeHttpRequest({ baseUrl, endpoint, method, body, headers
 
 // Playwright fixture wrapper
 // playwright/support/fixtures/http-fixture.ts
-import { test as base } from '@playwright/test';
-import { makeHttpRequest } from '../../shared/helpers/http-helper';
+import {test as base} from '@playwright/test';
+import {makeHttpRequest} from '../../shared/helpers/http-helper';
 
 export const test = base.extend({
   httpHelper: async ({}, use) => {
     const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
 
-    await use((params) => makeHttpRequest({ baseUrl, ...params }));
+    await use((params) => makeHttpRequest({baseUrl, ...params}));
   },
 });
 
 // Cypress command wrapper
 // cypress/support/commands.ts
-import { makeHttpRequest } from '../../shared/helpers/http-helper';
+import {makeHttpRequest} from '../../shared/helpers/http-helper';
 
 Cypress.Commands.add('apiRequest', (params) => {
   const baseUrl = Cypress.env('API_BASE_URL') || 'http://localhost:3000';
-  return cy.wrap(makeHttpRequest({ baseUrl, ...params }));
+  return cy.wrap(makeHttpRequest({baseUrl, ...params}));
 });
 ```
 
@@ -245,8 +264,8 @@ Cypress.Commands.add('apiRequest', (params) => {
 
 ```typescript
 // playwright/support/fixtures/database-fixture.ts
-import { test as base } from '@playwright/test';
-import { seedDatabase, deleteRecord } from '../helpers/db-helpers';
+import {test as base} from '@playwright/test';
+import {seedDatabase, deleteRecord} from '../helpers/db-helpers';
 
 type DatabaseFixture = {
   seedUser: (userData: Partial<User>) => Promise<User>;
@@ -371,7 +390,7 @@ export async function login(page: Page, email: string, password: string) {
 
 // fixtures/admin-fixture.ts
 export const test = base.extend({
-  adminPage: async ({ page }, use) => {
+  adminPage: async ({page}, use) => {
     await login(page, 'admin@example.com', 'admin123');
     await navigate(page, '/admin');
     await use(page);

@@ -18,7 +18,7 @@ Tests fail for two reasons: genuine bugs or poor error handling in the test itse
 
 ```typescript
 // tests/e2e/error-handling.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Scoped Error Handling Pattern
@@ -28,7 +28,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('API Error Handling', () => {
-  test('should display error message when API returns 500', async ({ page }) => {
+  test('should display error message when API returns 500', async ({page}) => {
     // Scope error handling to THIS test only
     const consoleErrors: string[] = [];
     page.on('pageerror', (error) => {
@@ -58,16 +58,20 @@ test.describe('API Error Handling', () => {
 
     // Assert: Error UI displayed
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText(/error.*loading|failed.*load/i);
+    await expect(page.getByTestId('error-message')).toContainText(
+      /error.*loading|failed.*load/i,
+    );
 
     // Assert: Retry button visible
     await expect(page.getByTestId('retry-button')).toBeVisible();
 
     // Assert: NetworkError was thrown and caught
-    expect(consoleErrors).toContainEqual(expect.stringContaining('NetworkError'));
+    expect(consoleErrors).toContainEqual(
+      expect.stringContaining('NetworkError'),
+    );
   });
 
-  test('should NOT swallow unexpected errors', async ({ page }) => {
+  test('should NOT swallow unexpected errors', async ({page}) => {
     let unexpectedError: Error | null = null;
 
     page.on('pageerror', (error) => {
@@ -165,7 +169,7 @@ describe('API Error Handling', () => {
 
 ```typescript
 // tests/e2e/retry-resilience.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Retry Validation Pattern
@@ -175,7 +179,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Network Retry Logic', () => {
-  test('should retry on 500 error and succeed', async ({ page }) => {
+  test('should retry on 500 error and succeed', async ({page}) => {
     let attemptCount = 0;
     const attemptTimestamps: number[] = [];
 
@@ -188,14 +192,14 @@ test.describe('Network Retry Logic', () => {
         // First 2 attempts: 500 error
         route.fulfill({
           status: 500,
-          body: JSON.stringify({ error: 'Server error' }),
+          body: JSON.stringify({error: 'Server error'}),
         });
       } else {
         // 3rd attempt: Success
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ products: [{ id: 1, name: 'Product 1' }] }),
+          body: JSON.stringify({products: [{id: 1, name: 'Product 1'}]}),
         });
       }
     });
@@ -222,7 +226,9 @@ test.describe('Network Retry Logic', () => {
     }
 
     // Assert: Telemetry logged retry events
-    const telemetryEvents = await page.evaluate(() => (window as any).__TELEMETRY_EVENTS__ || []);
+    const telemetryEvents = await page.evaluate(
+      () => (window as any).__TELEMETRY_EVENTS__ || [],
+    );
     expect(telemetryEvents).toContainEqual(
       expect.objectContaining({
         event: 'api_retry',
@@ -238,7 +244,7 @@ test.describe('Network Retry Logic', () => {
     );
   });
 
-  test('should give up after max retries and show error', async ({ page }) => {
+  test('should give up after max retries and show error', async ({page}) => {
     let attemptCount = 0;
 
     // Mock API: Always fail (test retry limit)
@@ -246,7 +252,7 @@ test.describe('Network Retry Logic', () => {
       attemptCount++;
       route.fulfill({
         status: 500,
-        body: JSON.stringify({ error: 'Persistent server error' }),
+        body: JSON.stringify({error: 'Persistent server error'}),
       });
     });
 
@@ -258,13 +264,15 @@ test.describe('Network Retry Logic', () => {
 
     // Assert: Error UI displayed after exhausting retries
     await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText(/unable.*load|failed.*after.*retries/i);
+    await expect(page.getByTestId('error-message')).toContainText(
+      /unable.*load|failed.*after.*retries/i,
+    );
 
     // Assert: Data not displayed
     await expect(page.getByTestId('product-list')).not.toBeVisible();
   });
 
-  test('should NOT retry on 404 (non-retryable error)', async ({ page }) => {
+  test('should NOT retry on 404 (non-retryable error)', async ({page}) => {
     let attemptCount = 0;
 
     // Mock API: 404 error (should NOT retry)
@@ -272,7 +280,7 @@ test.describe('Network Retry Logic', () => {
       attemptCount++;
       route.fulfill({
         status: 404,
-        body: JSON.stringify({ error: 'Product not found' }),
+        body: JSON.stringify({error: 'Product not found'}),
       });
     });
 
@@ -299,9 +307,12 @@ describe('Network Retry Logic', () => {
       attemptCount++;
 
       if (attemptCount <= 2) {
-        req.reply({ statusCode: 500, body: { error: 'Server error' } });
+        req.reply({statusCode: 500, body: {error: 'Server error'}});
       } else {
-        req.reply({ statusCode: 200, body: { products: [{ id: 1, name: 'Product 1' }] } });
+        req.reply({
+          statusCode: 200,
+          body: {products: [{id: 1, name: 'Product 1'}]},
+        });
       }
     }).as('getProducts');
 
@@ -338,7 +349,7 @@ describe('Network Retry Logic', () => {
 
 ```typescript
 // tests/e2e/telemetry-logging.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Telemetry Logging Pattern
@@ -362,7 +373,7 @@ type ErrorLog = {
 };
 
 test.describe('Error Telemetry', () => {
-  test('should log API errors with context', async ({ page }) => {
+  test('should log API errors with context', async ({page}) => {
     const errorLogs: ErrorLog[] = [];
 
     // Capture console errors
@@ -381,7 +392,7 @@ test.describe('Error Telemetry', () => {
     await page.route('**/api/orders', (route) =>
       route.fulfill({
         status: 500,
-        body: JSON.stringify({ error: 'Payment processor unavailable' }),
+        body: JSON.stringify({error: 'Payment processor unavailable'}),
       }),
     );
 
@@ -413,14 +424,15 @@ test.describe('Error Telemetry', () => {
     expect(logString).not.toContain('creditCard');
   });
 
-  test('should send errors to Sentry with breadcrumbs', async ({ page }) => {
+  test('should send errors to Sentry with breadcrumbs', async ({page}) => {
     const sentryEvents: any[] = [];
 
     // Mock Sentry SDK
     await page.addInitScript(() => {
       (window as any).Sentry = {
         captureException: (error: Error, context?: any) => {
-          (window as any).__SENTRY_EVENTS__ = (window as any).__SENTRY_EVENTS__ || [];
+          (window as any).__SENTRY_EVENTS__ =
+            (window as any).__SENTRY_EVENTS__ || [];
           (window as any).__SENTRY_EVENTS__.push({
             error: error.message,
             context,
@@ -428,14 +440,17 @@ test.describe('Error Telemetry', () => {
           });
         },
         addBreadcrumb: (breadcrumb: any) => {
-          (window as any).__SENTRY_BREADCRUMBS__ = (window as any).__SENTRY_BREADCRUMBS__ || [];
+          (window as any).__SENTRY_BREADCRUMBS__ =
+            (window as any).__SENTRY_BREADCRUMBS__ || [];
           (window as any).__SENTRY_BREADCRUMBS__.push(breadcrumb);
         },
       };
     });
 
     // Mock failing API
-    await page.route('**/api/users', (route) => route.fulfill({ status: 403, body: { error: 'Forbidden' } }));
+    await page.route('**/api/users', (route) =>
+      route.fulfill({status: 403, body: {error: 'Forbidden'}}),
+    );
 
     // Act
     await page.goto('/users');
@@ -452,7 +467,9 @@ test.describe('Error Telemetry', () => {
     });
 
     // Assert: Breadcrumbs include user actions
-    const breadcrumbs = await page.evaluate(() => (window as any).__SENTRY_BREADCRUMBS__);
+    const breadcrumbs = await page.evaluate(
+      () => (window as any).__SENTRY_BREADCRUMBS__,
+    );
     expect(breadcrumbs).toContainEqual(
       expect.objectContaining({
         category: 'navigation',
@@ -481,7 +498,7 @@ describe('Error Telemetry', () => {
     // Mock failing API
     cy.intercept('POST', '**/api/orders', {
       statusCode: 500,
-      body: { error: 'Payment failed' },
+      body: {error: 'Payment failed'},
     });
 
     // Act
@@ -522,10 +539,12 @@ const SENSITIVE_KEYS = ['password', 'token', 'creditCard', 'ssn', 'apiKey'];
 function redactSensitiveData(obj: any): any {
   if (typeof obj !== 'object' || obj === null) return obj;
 
-  const redacted = { ...obj };
+  const redacted = {...obj};
 
   for (const key of Object.keys(redacted)) {
-    if (SENSITIVE_KEYS.some((sensitive) => key.toLowerCase().includes(sensitive))) {
+    if (
+      SENSITIVE_KEYS.some((sensitive) => key.toLowerCase().includes(sensitive))
+    ) {
       redacted[key] = '[REDACTED]';
     } else if (typeof redacted[key] === 'object') {
       redacted[key] = redactSensitiveData(redacted[key]);
@@ -555,7 +574,7 @@ export function logError(error: Error, context?: ErrorContext) {
   // Sentry (production)
   if (typeof window !== 'undefined' && (window as any).Sentry) {
     (window as any).Sentry.captureException(error, {
-      contexts: { custom: safeContext },
+      contexts: {custom: safeContext},
     });
   }
 }
@@ -579,7 +598,7 @@ export function logError(error: Error, context?: ErrorContext) {
 
 ```typescript
 // tests/e2e/graceful-degradation.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Graceful Degradation Pattern
@@ -590,15 +609,15 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Service Unavailability', () => {
-  test('should display cached data when API is down', async ({ page }) => {
+  test('should display cached data when API is down', async ({page}) => {
     // Arrange: Seed localStorage with cached data
     await page.addInitScript(() => {
       localStorage.setItem(
         'products_cache',
         JSON.stringify({
           data: [
-            { id: 1, name: 'Cached Product 1' },
-            { id: 2, name: 'Cached Product 2' },
+            {id: 1, name: 'Cached Product 1'},
+            {id: 2, name: 'Cached Product 2'},
           ],
           timestamp: Date.now(),
         }),
@@ -620,15 +639,21 @@ test.describe('Service Unavailability', () => {
 
     // Assert: Stale data warning shown
     await expect(page.getByTestId('cache-warning')).toBeVisible();
-    await expect(page.getByTestId('cache-warning')).toContainText(/showing.*cached|offline.*mode/i);
+    await expect(page.getByTestId('cache-warning')).toContainText(
+      /showing.*cached|offline.*mode/i,
+    );
 
     // Assert: Retry button available
     await expect(page.getByTestId('refresh-button')).toBeVisible();
   });
 
-  test('should show fallback UI when analytics service fails', async ({ page }) => {
+  test('should show fallback UI when analytics service fails', async ({
+    page,
+  }) => {
     // Mock analytics service down (non-critical)
-    await page.route('**/analytics/track', (route) => route.fulfill({ status: 503, body: 'Service unavailable' }));
+    await page.route('**/analytics/track', (route) =>
+      route.fulfill({status: 503, body: 'Service unavailable'}),
+    );
 
     // Act: Navigate normally
     await page.goto('/dashboard');
@@ -646,19 +671,23 @@ test.describe('Service Unavailability', () => {
     await page.getByTestId('track-action-button').click();
 
     // Analytics error logged
-    expect(consoleErrors).toContainEqual(expect.stringContaining('Analytics service unavailable'));
+    expect(consoleErrors).toContainEqual(
+      expect.stringContaining('Analytics service unavailable'),
+    );
 
     // But user doesn't see error
     await expect(page.getByTestId('error-message')).not.toBeVisible();
   });
 
-  test('should fallback to local validation when API is slow', async ({ page }) => {
+  test('should fallback to local validation when API is slow', async ({
+    page,
+  }) => {
     // Mock slow API (> 5 seconds)
     await page.route('**/api/validate-email', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 6000)); // 6 second delay
       route.fulfill({
         status: 200,
-        body: JSON.stringify({ valid: true }),
+        body: JSON.stringify({valid: true}),
       });
     });
 
@@ -668,13 +697,19 @@ test.describe('Service Unavailability', () => {
     await page.getByTestId('email-input').blur();
 
     // Assert: Client-side validation triggers immediately (doesn't wait for API)
-    await expect(page.getByTestId('email-valid-icon')).toBeVisible({ timeout: 1000 });
+    await expect(page.getByTestId('email-valid-icon')).toBeVisible({
+      timeout: 1000,
+    });
 
     // Assert: Eventually API validates too (but doesn't block UX)
-    await expect(page.getByTestId('email-validated-badge')).toBeVisible({ timeout: 7000 });
+    await expect(page.getByTestId('email-validated-badge')).toBeVisible({
+      timeout: 7000,
+    });
   });
 
-  test('should maintain functionality with third-party script failure', async ({ page }) => {
+  test('should maintain functionality with third-party script failure', async ({
+    page,
+  }) => {
     // Block third-party scripts (Google Analytics, Intercom, etc.)
     await page.route('**/*.google-analytics.com/**', (route) => route.abort());
     await page.route('**/*.intercom.io/**', (route) => route.abort());

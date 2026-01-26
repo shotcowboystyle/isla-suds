@@ -27,10 +27,10 @@ Robust selectors follow a strict hierarchy: **data-testid > ARIA roles > text co
 
 ```typescript
 // tests/selectors/hierarchy-examples.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 test.describe('Selector Hierarchy Best Practices', () => {
-  test('Level 1: data-testid (BEST - most resilient)', async ({ page }) => {
+  test('Level 1: data-testid (BEST - most resilient)', async ({page}) => {
     await page.goto('/login');
 
     // ✅ Best: Dedicated test attribute (survives all UI changes)
@@ -47,15 +47,17 @@ test.describe('Selector Hierarchy Best Practices', () => {
     // - Explicit test contract (developer knows it's for testing)
   });
 
-  test('Level 2: ARIA roles and accessible names (GOOD - future-proof)', async ({ page }) => {
+  test('Level 2: ARIA roles and accessible names (GOOD - future-proof)', async ({
+    page,
+  }) => {
     await page.goto('/login');
 
     // ✅ Good: Semantic HTML roles (benefits accessibility + tests)
-    await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('password123');
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('textbox', {name: 'Email'}).fill('user@example.com');
+    await page.getByRole('textbox', {name: 'Password'}).fill('password123');
+    await page.getByRole('button', {name: 'Sign In'}).click();
 
-    await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Welcome'})).toBeVisible();
 
     // Why it's good:
     // - Survives CSS refactoring
@@ -64,7 +66,7 @@ test.describe('Selector Hierarchy Best Practices', () => {
     // - Self-documenting (role + name = clear intent)
   });
 
-  test('Level 3: Text content (ACCEPTABLE - user-centric)', async ({ page }) => {
+  test('Level 3: Text content (ACCEPTABLE - user-centric)', async ({page}) => {
     await page.goto('/dashboard');
 
     // ✅ Acceptable: Text content (matches user perception)
@@ -81,7 +83,7 @@ test.describe('Selector Hierarchy Best Practices', () => {
     // - Avoid for i18n content (use data-testid or ARIA)
   });
 
-  test('Level 4: CSS classes/IDs (LAST RESORT - brittle)', async ({ page }) => {
+  test('Level 4: CSS classes/IDs (LAST RESORT - brittle)', async ({page}) => {
     await page.goto('/login');
 
     // ❌ Last resort: CSS class (breaks with styling updates)
@@ -120,10 +122,10 @@ test.describe('Selector Hierarchy Best Practices', () => {
 
 ```typescript
 // tests/selectors/dynamic-selectors.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 test.describe('Dynamic Selector Patterns', () => {
-  test('regex for variable content (user IDs, timestamps)', async ({ page }) => {
+  test('regex for variable content (user IDs, timestamps)', async ({page}) => {
     await page.goto('/users');
 
     // ✅ Good: Regex pattern for dynamic user IDs
@@ -136,34 +138,39 @@ test.describe('Dynamic Selector Patterns', () => {
     await expect(page.getByText(/\d+ items in cart/)).toBeVisible();
   });
 
-  test('partial text matching (case-insensitive, substring)', async ({ page }) => {
+  test('partial text matching (case-insensitive, substring)', async ({
+    page,
+  }) => {
     await page.goto('/products');
 
     // ✅ Good: Partial match (survives minor text changes)
-    await page.getByText('Product', { exact: false }).first().click();
+    await page.getByText('Product', {exact: false}).first().click();
 
     // ✅ Good: Case-insensitive (survives capitalization changes)
     await expect(page.getByText(/sign in/i)).toBeVisible();
   });
 
-  test('filter locators for lists (avoid brittle nth)', async ({ page }) => {
+  test('filter locators for lists (avoid brittle nth)', async ({page}) => {
     await page.goto('/products');
 
     // ❌ Bad: Index-based (breaks when order changes)
     // await page.locator('.product-card').nth(2).click()
 
     // ✅ Good: Filter by content (resilient to reordering)
-    await page.locator('[data-testid="product-card"]').filter({ hasText: 'Premium Plan' }).click();
+    await page
+      .locator('[data-testid="product-card"]')
+      .filter({hasText: 'Premium Plan'})
+      .click();
 
     // ✅ Good: Filter by attribute
     await page
       .locator('[data-testid="product-card"]')
-      .filter({ has: page.locator('[data-status="active"]') })
+      .filter({has: page.locator('[data-status="active"]')})
       .first()
       .click();
   });
 
-  test('nth() only when absolutely necessary', async ({ page }) => {
+  test('nth() only when absolutely necessary', async ({page}) => {
     await page.goto('/dashboard');
 
     // ⚠️ Acceptable: nth(0) for first item (common pattern)
@@ -174,10 +181,13 @@ test.describe('Dynamic Selector Patterns', () => {
     // await page.getByTestId('notification').nth(5).click()
 
     // ✅ Better: Use filter() with specific criteria
-    await page.getByTestId('notification').filter({ hasText: 'Critical Alert' }).click();
+    await page
+      .getByTestId('notification')
+      .filter({hasText: 'Critical Alert'})
+      .click();
   });
 
-  test('combine multiple locators for specificity', async ({ page }) => {
+  test('combine multiple locators for specificity', async ({page}) => {
     await page.goto('/checkout');
 
     // ✅ Good: Narrow scope with combined locators
@@ -208,10 +218,10 @@ test.describe('Dynamic Selector Patterns', () => {
 
 ```typescript
 // tests/selectors/anti-patterns.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 test.describe('Selector Anti-Patterns to Avoid', () => {
-  test('❌ Anti-Pattern 1: CSS classes (brittle)', async ({ page }) => {
+  test('❌ Anti-Pattern 1: CSS classes (brittle)', async ({page}) => {
     await page.goto('/login');
 
     // ❌ Bad: CSS class (breaks with design system updates)
@@ -220,47 +230,60 @@ test.describe('Selector Anti-Patterns to Avoid', () => {
 
     // ✅ Good: Use data-testid or ARIA role
     await page.getByTestId('login-button').click();
-    await page.getByRole('textbox', { name: 'Email' }).fill('test@example.com');
+    await page.getByRole('textbox', {name: 'Email'}).fill('test@example.com');
   });
 
-  test('❌ Anti-Pattern 2: Index-based nth() (fragile)', async ({ page }) => {
+  test('❌ Anti-Pattern 2: Index-based nth() (fragile)', async ({page}) => {
     await page.goto('/products');
 
     // ❌ Bad: Index-based (breaks when product order changes)
     // await page.locator('.product-card').nth(3).click()
 
     // ✅ Good: Content-based filter
-    await page.locator('[data-testid="product-card"]').filter({ hasText: 'Laptop' }).click();
+    await page
+      .locator('[data-testid="product-card"]')
+      .filter({hasText: 'Laptop'})
+      .click();
   });
 
-  test('❌ Anti-Pattern 3: Complex XPath (hard to maintain)', async ({ page }) => {
+  test('❌ Anti-Pattern 3: Complex XPath (hard to maintain)', async ({
+    page,
+  }) => {
     await page.goto('/dashboard');
 
     // ❌ Bad: Complex XPath (unreadable, breaks with structure changes)
     // await page.locator('xpath=//div[@class="container"]//section[2]//button[contains(@class, "primary")]').click()
 
     // ✅ Good: Semantic selector
-    await page.getByRole('button', { name: 'Create Order' }).click();
+    await page.getByRole('button', {name: 'Create Order'}).click();
   });
 
-  test('❌ Anti-Pattern 4: ID selectors (coupled to implementation)', async ({ page }) => {
+  test('❌ Anti-Pattern 4: ID selectors (coupled to implementation)', async ({
+    page,
+  }) => {
     await page.goto('/settings');
 
     // ❌ Bad: HTML ID (breaks if ID changes for accessibility/SEO)
     // await page.locator('#user-settings-form').fill(...)
 
     // ✅ Good: data-testid or ARIA landmark
-    await page.getByTestId('user-settings-form').getByLabel('Display Name').fill('John Doe');
+    await page
+      .getByTestId('user-settings-form')
+      .getByLabel('Display Name')
+      .fill('John Doe');
   });
 
-  test('✅ Refactoring: Bad → Good Selector', async ({ page }) => {
+  test('✅ Refactoring: Bad → Good Selector', async ({page}) => {
     await page.goto('/checkout');
 
     // Before (brittle):
     // await page.locator('.checkout-form > .payment-section > .btn-submit').click()
 
     // After (resilient):
-    await page.getByTestId('checkout-form').getByRole('button', { name: 'Complete Payment' }).click();
+    await page
+      .getByTestId('checkout-form')
+      .getByRole('button', {name: 'Complete Payment'})
+      .click();
 
     await expect(page.getByText('Payment successful')).toBeVisible();
   });
@@ -286,10 +309,10 @@ test.describe('Selector Anti-Patterns to Avoid', () => {
 
 ```typescript
 // tests/selectors/debugging-techniques.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 test.describe('Selector Debugging Techniques', () => {
-  test('use Playwright Inspector to test selectors', async ({ page }) => {
+  test('use Playwright Inspector to test selectors', async ({page}) => {
     await page.goto('/dashboard');
 
     // Pause test to open Inspector
@@ -307,7 +330,7 @@ test.describe('Selector Debugging Techniques', () => {
     await expect(page.getByRole('menu')).toBeVisible();
   });
 
-  test('use locator.all() to debug lists', async ({ page }) => {
+  test('use locator.all() to debug lists', async ({page}) => {
     await page.goto('/products');
 
     // Debug: How many products are visible?
@@ -321,10 +344,10 @@ test.describe('Selector Debugging Techniques', () => {
     }
 
     // Use findings to build better selector
-    await page.getByTestId('product-card').filter({ hasText: 'Laptop' }).click();
+    await page.getByTestId('product-card').filter({hasText: 'Laptop'}).click();
   });
 
-  test('use DevTools console to test selectors', async ({ page }) => {
+  test('use DevTools console to test selectors', async ({page}) => {
     await page.goto('/checkout');
 
     // Open DevTools (manually or via page.pause())
@@ -336,7 +359,7 @@ test.describe('Selector Debugging Techniques', () => {
     await page.getByTestId('payment-method').selectOption('credit-card');
   });
 
-  test('MCP browser_generate_locator (if available)', async ({ page }) => {
+  test('MCP browser_generate_locator (if available)', async ({page}) => {
     await page.goto('/products');
 
     // If Playwright MCP available, use browser_generate_locator:
@@ -348,7 +371,7 @@ test.describe('Selector Debugging Techniques', () => {
     // page.getByRole('link', { name: 'Product A' })
 
     // Use generated selector
-    await page.getByRole('link', { name: 'Product A' }).click();
+    await page.getByRole('link', {name: 'Product A'}).click();
     await expect(page).toHaveURL(/\/products\/\d+/);
   });
 });
@@ -372,10 +395,10 @@ test.describe('Selector Debugging Techniques', () => {
 
 ```typescript
 // tests/selectors/refactoring-guide.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 test.describe('Selector Refactoring Patterns', () => {
-  test('refactor: CSS class → data-testid', async ({ page }) => {
+  test('refactor: CSS class → data-testid', async ({page}) => {
     await page.goto('/products');
 
     // ❌ Before: CSS class (breaks with Tailwind updates)
@@ -388,37 +411,43 @@ test.describe('Selector Refactoring Patterns', () => {
     // <button className="bg-blue-500 px-4 py-2 rounded" data-testid="add-to-cart-button">
   });
 
-  test('refactor: nth() index → filter()', async ({ page }) => {
+  test('refactor: nth() index → filter()', async ({page}) => {
     await page.goto('/users');
 
     // ❌ Before: Index-based (breaks when users reorder)
     // await page.locator('.user-row').nth(2).click()
 
     // ✅ After: Content-based filter
-    await page.locator('[data-testid="user-row"]').filter({ hasText: 'john@example.com' }).click();
+    await page
+      .locator('[data-testid="user-row"]')
+      .filter({hasText: 'john@example.com'})
+      .click();
   });
 
-  test('refactor: Complex XPath → ARIA role', async ({ page }) => {
+  test('refactor: Complex XPath → ARIA role', async ({page}) => {
     await page.goto('/checkout');
 
     // ❌ Before: Complex XPath (unreadable, brittle)
     // await page.locator('xpath=//div[@id="payment"]//form//button[contains(@class, "submit")]').click()
 
     // ✅ After: ARIA role
-    await page.getByRole('button', { name: 'Complete Payment' }).click();
+    await page.getByRole('button', {name: 'Complete Payment'}).click();
   });
 
-  test('refactor: ID selector → data-testid', async ({ page }) => {
+  test('refactor: ID selector → data-testid', async ({page}) => {
     await page.goto('/settings');
 
     // ❌ Before: HTML ID (changes with accessibility improvements)
     // await page.locator('#user-profile-section').getByLabel('Name').fill('John')
 
     // ✅ After: data-testid + semantic label
-    await page.getByTestId('user-profile-section').getByLabel('Display Name').fill('John Doe');
+    await page
+      .getByTestId('user-profile-section')
+      .getByLabel('Display Name')
+      .fill('John Doe');
   });
 
-  test('refactor: Deeply nested CSS → scoped data-testid', async ({ page }) => {
+  test('refactor: Deeply nested CSS → scoped data-testid', async ({page}) => {
     await page.goto('/dashboard');
 
     // ❌ Before: Deep nesting (breaks with structure changes)
@@ -426,7 +455,7 @@ test.describe('Selector Refactoring Patterns', () => {
 
     // ✅ After: Scoped data-testid
     const sidebar = page.getByTestId('sidebar');
-    await sidebar.getByRole('link', { name: 'Settings' }).click();
+    await sidebar.getByRole('link', {name: 'Settings'}).click();
   });
 });
 ```
@@ -445,7 +474,7 @@ test.describe('Selector Refactoring Patterns', () => {
 
 ```typescript
 // tests/selectors/validation-checklist.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 /**
  * Selector Validation Checklist
@@ -453,7 +482,7 @@ import { test, expect } from '@playwright/test';
  * Before committing test, verify selectors meet these criteria:
  */
 test.describe('Selector Best Practices Validation', () => {
-  test('✅ 1. Prefer data-testid for interactive elements', async ({ page }) => {
+  test('✅ 1. Prefer data-testid for interactive elements', async ({page}) => {
     await page.goto('/login');
 
     // Interactive elements (buttons, inputs, links) should use data-testid
@@ -461,33 +490,44 @@ test.describe('Selector Best Practices Validation', () => {
     await page.getByTestId('login-button').click();
   });
 
-  test('✅ 2. Use ARIA roles for semantic elements', async ({ page }) => {
+  test('✅ 2. Use ARIA roles for semantic elements', async ({page}) => {
     await page.goto('/dashboard');
 
     // Semantic elements (headings, navigation, forms) use ARIA
-    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
-    await page.getByRole('navigation').getByRole('link', { name: 'Settings' }).click();
+    await expect(page.getByRole('heading', {name: 'Dashboard'})).toBeVisible();
+    await page
+      .getByRole('navigation')
+      .getByRole('link', {name: 'Settings'})
+      .click();
   });
 
-  test('✅ 3. Avoid CSS classes (except when testing styles)', async ({ page }) => {
+  test('✅ 3. Avoid CSS classes (except when testing styles)', async ({
+    page,
+  }) => {
     await page.goto('/products');
 
     // ❌ Never for interaction: page.locator('.btn-primary')
     // ✅ Only for visual regression: await expect(page.locator('.error-banner')).toHaveCSS('color', 'rgb(255, 0, 0)')
   });
 
-  test('✅ 4. Use filter() instead of nth() for lists', async ({ page }) => {
+  test('✅ 4. Use filter() instead of nth() for lists', async ({page}) => {
     await page.goto('/orders');
 
     // List selection should be content-based
-    await page.getByTestId('order-row').filter({ hasText: 'Order #12345' }).click();
+    await page
+      .getByTestId('order-row')
+      .filter({hasText: 'Order #12345'})
+      .click();
   });
 
-  test('✅ 5. Selectors are human-readable', async ({ page }) => {
+  test('✅ 5. Selectors are human-readable', async ({page}) => {
     await page.goto('/checkout');
 
     // ✅ Good: Clear intent
-    await page.getByTestId('shipping-address-form').getByLabel('Street Address').fill('123 Main St');
+    await page
+      .getByTestId('shipping-address-form')
+      .getByLabel('Street Address')
+      .fill('123 Main St');
 
     // ❌ Bad: Cryptic
     // await page.locator('div > div:nth-child(2) > input[type="text"]').fill('123 Main St')

@@ -54,7 +54,7 @@ status: complete
 
 ---
 
-*This PRD defines the complete capability contract for Isla Suds. UX designers, architects, and developers should treat this as the authoritative source for what to build.*
+_This PRD defines the complete capability contract for Isla Suds. UX designers, architects, and developers should treat this as the authoritative source for what to build._
 
 ---
 
@@ -62,44 +62,44 @@ status: complete
 
 ### User Success
 
-| Metric | Target | How We'll Know |
-|--------|--------|----------------|
-| **Emotional resonance** | Time on site > 3 min + Products explored ≥ 2 | Analytics |
-| **"Wow" moment achieved** | Texture reveal triggered on 60%+ of sessions | Event tracking |
-| **Customer delight confirmed** | Positive feedback mentions texture/story | Post-purchase survey (3 days) |
-| **Emotional success ratio** | 70%+ choose emotional response over "just satisfied" | Post-purchase survey |
-| **Story recall rate** | 50%+ mention specific story details (Isla, family recipe, local) | Post-purchase survey |
-| **Purchase confidence** | <5% cart abandonment citing "want to see in person" | Exit surveys |
-| **Wholesale efficiency** | Reorder in <60 seconds | Portal usage timing |
-| **Wholesale adoption** | 100% of 3 partners on portal | Track reorder source |
+| Metric                         | Target                                                           | How We'll Know                |
+| ------------------------------ | ---------------------------------------------------------------- | ----------------------------- |
+| **Emotional resonance**        | Time on site > 3 min + Products explored ≥ 2                     | Analytics                     |
+| **"Wow" moment achieved**      | Texture reveal triggered on 60%+ of sessions                     | Event tracking                |
+| **Customer delight confirmed** | Positive feedback mentions texture/story                         | Post-purchase survey (3 days) |
+| **Emotional success ratio**    | 70%+ choose emotional response over "just satisfied"             | Post-purchase survey          |
+| **Story recall rate**          | 50%+ mention specific story details (Isla, family recipe, local) | Post-purchase survey          |
+| **Purchase confidence**        | <5% cart abandonment citing "want to see in person"              | Exit surveys                  |
+| **Wholesale efficiency**       | Reorder in <60 seconds                                           | Portal usage timing           |
+| **Wholesale adoption**         | 100% of 3 partners on portal                                     | Track reorder source          |
 
 ### Business Success
 
-| Metric | Current | Target | How We'll Track |
-|--------|---------|--------|-----------------|
-| **Manual order handling** | 2 hrs/week | 0 phone/text wholesale orders + 0 manual inventory | Founder time log |
-| **Market customer online adoption** | 0% | 80% | Booth code + checkout survey |
-| **Weekly online orders** | 0 | Baseline established | Shopify dashboard |
-| **Wholesale portal errors** | N/A | 0 | Portal error logs |
-| **Referral tracking** | N/A | Baseline MVP → 20% post-MVP | Share link clicks + conversions |
+| Metric                              | Current    | Target                                             | How We'll Track                 |
+| ----------------------------------- | ---------- | -------------------------------------------------- | ------------------------------- |
+| **Manual order handling**           | 2 hrs/week | 0 phone/text wholesale orders + 0 manual inventory | Founder time log                |
+| **Market customer online adoption** | 0%         | 80%                                                | Booth code + checkout survey    |
+| **Weekly online orders**            | 0          | Baseline established                               | Shopify dashboard               |
+| **Wholesale portal errors**         | N/A        | 0                                                  | Portal error logs               |
+| **Referral tracking**               | N/A        | Baseline MVP → 20% post-MVP                        | Share link clicks + conversions |
 
 ### Technical Success
 
-| Metric | Target |
-|--------|--------|
-| **Core Web Vitals** | All pass (LCP <2.5s, FID <100ms, CLS <0.1) |
-| **Texture reveal latency** | <100ms on mobile |
-| **Mobile responsiveness** | 100% fluid 320px–2560px |
-| **Accessibility** | WCAG 2.1 AA |
-| **Uptime (Hydrogen frontend)** | 99.5% |
+| Metric                         | Target                                     |
+| ------------------------------ | ------------------------------------------ |
+| **Core Web Vitals**            | All pass (LCP <2.5s, FID <100ms, CLS <0.1) |
+| **Texture reveal latency**     | <100ms on mobile                           |
+| **Mobile responsiveness**      | 100% fluid 320px–2560px                    |
+| **Accessibility**              | WCAG 2.1 AA                                |
+| **Uptime (Hydrogen frontend)** | 99.5%                                      |
 
 ### Measurable Outcomes
 
-| Timeframe | What Success Looks Like |
-|-----------|------------------------|
-| **Launch** | Site live, wholesale partners onboarded, first non-market order |
-| **30 days** | 100% wholesale portal adoption, baseline metrics established |
-| **90 days** | 50%+ market customers using site, manual handling near-zero |
+| Timeframe    | What Success Looks Like                                               |
+| ------------ | --------------------------------------------------------------------- |
+| **Launch**   | Site live, wholesale partners onboarded, first non-market order       |
+| **30 days**  | 100% wholesale portal adoption, baseline metrics established          |
+| **90 days**  | 50%+ market customers using site, manual handling near-zero           |
 | **6 months** | 80% market-to-online, 70%+ emotional success ratio, 50%+ story recall |
 
 ## Product Scope
@@ -141,11 +141,11 @@ Sarah is scrolling her phone at 9:47 PM. Kids are finally asleep. She has 20 min
 The page loads. Full-bleed warmth. Four colorful soap bricks floating against cream. No pop-up. No "SIGN UP FOR 10% OFF" assault. Just... space. She exhales slightly without realizing it.
 
 **Rising Action:**
-She hovers on the purple one. It lifts. The texture fills her screen - she can see the actual lavender buds pressed into the bar. Copy fades in: *"Close your eyes. A field at dusk. Your shoulders drop."*
+She hovers on the purple one. It lifts. The texture fills her screen - she can see the actual lavender buds pressed into the bar. Copy fades in: _"Close your eyes. A field at dusk. Your shoulders drop."_
 
-She lingers. Taps the yellow one next. Lemongrass. *"Morning sun. The first deep breath of a clear day."* She's not shopping anymore. She's... somewhere else. A tiny vacation.
+She lingers. Taps the yellow one next. Lemongrass. _"Morning sun. The first deep breath of a clear day."_ She's not shopping anymore. She's... somewhere else. A tiny vacation.
 
-A subtle element appears: *"Named for our daughter. Made in our kitchen."*
+A subtle element appears: _"Named for our daughter. Made in our kitchen."_
 
 These are her people.
 
@@ -156,14 +156,14 @@ She taps "Get the Collection." All four. She doesn't need to decide. The cart dr
 Checkout takes 90 seconds. Confirmation email arrives with warmth, not marketing.
 
 **The First Use (Day 3):**
-The soap arrived yesterday. Tonight, after the kids are in bed, she unwraps the lavender mint. The bathroom fills with scent before she even turns on the water. The lather is creamy - richer than anything from a bottle. Her skin feels *different* after.
+The soap arrived yesterday. Tonight, after the kids are in bed, she unwraps the lavender mint. The bathroom fills with scent before she even turns on the water. The lather is creamy - richer than anything from a bottle. Her skin feels _different_ after.
 
 She stands there an extra 30 seconds. This is hers.
 
 **The Story Invitation (Day 4):**
 Email arrives: "How was your first shower with Isla Suds?" Not a survey blast - a genuine question. Options that feel human: "I slept better" / "I felt like myself again" / "I'm already running low."
 
-She taps "I slept better." And then texts her friend: *"okay you were right about that soap."*
+She taps "I slept better." And then texts her friend: _"okay you were right about that soap."_
 
 ### Journey 2: Sarah Hits a Snag (B2C Error Recovery)
 
@@ -174,7 +174,7 @@ Sarah's ready to check out. She's in the zone. Collection in cart.
 She taps "Complete Order." Spinner. Then... card declined.
 
 **The Isla Suds Way:**
-A gentle message appears: *"Something didn't go through. Your cart is safe - let's try again."*
+A gentle message appears: _"Something didn't go through. Your cart is safe - let's try again."_
 
 No red. No alarm. Just a warm nudge.
 
@@ -182,15 +182,15 @@ No red. No alarm. Just a warm nudge.
 She double-checks the card number. Typo in the expiration. Fixes it. Taps again.
 
 **Resolution:**
-Order confirmed. She never felt like she was *in trouble*. The site handled it like a friend would.
+Order confirmed. She never felt like she was _in trouble_. The site handled it like a friend would.
 
 ### Journey 3: Sarah Buys a Gift (B2C Edge Case)
 
 **The Setup:**
-Sarah's mother-in-law has a birthday. She's impossible to shop for. But she *does* appreciate "the finer things."
+Sarah's mother-in-law has a birthday. She's impossible to shop for. But she _does_ appreciate "the finer things."
 
 **Opening Scene:**
-Sarah returns to the site. She knows what she wants - but which scent for someone else? She hovers on Rosemary Sea Salt. *"Salt air. Herbs in the window. Home."* That's her mother-in-law's aesthetic exactly.
+Sarah returns to the site. She knows what she wants - but which scent for someone else? She hovers on Rosemary Sea Salt. _"Salt air. Herbs in the window. Home."_ That's her mother-in-law's aesthetic exactly.
 
 **Rising Action:**
 She adds two bars. At checkout, she pauses. Shipping address is different from billing. She needs to make sure there's no price on the packing slip.
@@ -210,7 +210,7 @@ Jim's general store. Tuesday morning. He's stocking shelves and notices the Isla
 He pulls out his phone. Types the URL from memory. Login page loads. Email, password, done.
 
 **Partner Acknowledgment:**
-Dashboard appears. A simple line at the top: *"Isla Suds is in 3 local stores. Thanks for being one of them, Jim."*
+Dashboard appears. A simple line at the top: _"Isla Suds is in 3 local stores. Thanks for being one of them, Jim."_
 
 He doesn't dwell on it. But it lands.
 
@@ -220,7 +220,7 @@ Front and center: "YOUR LAST ORDER" - 12x Lavender, 12x Lemongrass, 6x Lavender 
 One button: **Reorder**.
 
 **Climax:**
-He taps it. Confirmation: *"Another batch heading to [Jim's General Store]. Your customers are lucky."*
+He taps it. Confirmation: _"Another batch heading to [Jim's General Store]. Your customers are lucky."_
 
 47 seconds.
 
@@ -265,20 +265,20 @@ She closes the laptop. The site is working. She didn't touch a single manual ord
 
 ### Journey Requirements Summary
 
-| Journey | Key Capabilities Needed |
-|---------|------------------------|
-| **Sarah - Primary** | Constellation layout, texture reveals, story fragments, collection bundle, cart drawer, clean checkout, warm confirmation, Day 3 story invitation email |
-| **Sarah - Error** | Warm error messaging, cart persistence, easy retry, tone consistency |
-| **Sarah - Gift** | Gift checkout option, separate addresses, price-hidden packing, gift message, easy sharing |
-| **Jim - Reorder** | B2B login, partner acknowledgment, last-order dashboard, one-click reorder, personalized confirmation |
-| **Maria - Invoices** | Order history, downloadable PDF invoices, professional formatting |
-| **Founder - Admin** | Shopify analytics, inventory view, survey response tracking |
+| Journey              | Key Capabilities Needed                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sarah - Primary**  | Constellation layout, texture reveals, story fragments, collection bundle, cart drawer, clean checkout, warm confirmation, Day 3 story invitation email |
+| **Sarah - Error**    | Warm error messaging, cart persistence, easy retry, tone consistency                                                                                    |
+| **Sarah - Gift**     | Gift checkout option, separate addresses, price-hidden packing, gift message, easy sharing                                                              |
+| **Jim - Reorder**    | B2B login, partner acknowledgment, last-order dashboard, one-click reorder, personalized confirmation                                                   |
+| **Maria - Invoices** | Order history, downloadable PDF invoices, professional formatting                                                                                       |
+| **Founder - Admin**  | Shopify analytics, inventory view, survey response tracking                                                                                             |
 
 ## Innovation & Strategic Differentiation
 
 ### The Core Bet: Anti-Aggressive Commerce
 
-Isla Suds bets against the e-commerce optimization playbook. No pop-ups, no exit-intent modals, no fake urgency, no scarcity messaging. The hypothesis: for intentional buyers who've opted out of corporate, the *absence* of manipulation is a differentiator that builds trust and compounds through word-of-mouth.
+Isla Suds bets against the e-commerce optimization playbook. No pop-ups, no exit-intent modals, no fake urgency, no scarcity messaging. The hypothesis: for intentional buyers who've opted out of corporate, the _absence_ of manipulation is a differentiator that builds trust and compounds through word-of-mouth.
 
 **This is a strategic choice, not a UX preference.**
 
@@ -286,8 +286,8 @@ Isla Suds bets against the e-commerce optimization playbook. No pop-ups, no exit
 
 Artisanal e-commerce struggles with a fundamental problem: products that must be touched and smelled to be appreciated. Isla Suds solves this through:
 
-1. **Texture reveals** - Macro photography showing visible botanicals (the *source* of the scent)
-2. **Scent narratives** - Copy that describes *where the scent takes you*, not ingredient lists ("A field at dusk" not "lavender essential oil")
+1. **Texture reveals** - Macro photography showing visible botanicals (the _source_ of the scent)
+2. **Scent narratives** - Copy that describes _where the scent takes you_, not ingredient lists ("A field at dusk" not "lavender essential oil")
 3. **Atmosphere shifts** - Subtle background changes that reinforce the sensory territory
 
 **This pattern is the core conversion mechanism. Protect it.**
@@ -295,6 +295,7 @@ Artisanal e-commerce struggles with a fundamental problem: products that must be
 ### The Moat: Radical Specificity
 
 Competitors can copy the code. They cannot copy:
+
 - A product named after a real daughter
 - A real family recipe passed down
 - Wholesale partners named Jim and Maria
@@ -314,88 +315,88 @@ Shopify Hydrogen storefront (React + Remix SPA) with custom immersive frontend a
 
 ### Browser & Device Support
 
-| Requirement | Specification |
-|-------------|---------------|
-| **Target browsers** | Modern evergreen (Chrome, Safari, Firefox, Edge - latest 2 versions) |
-| **IE11** | Not supported |
-| **Mobile browsers** | Safari iOS, Chrome Android |
-| **Minimum viewport** | 320px (iPhone SE) |
-| **Maximum viewport** | 2560px+ (ultrawide) |
+| Requirement          | Specification                                                        |
+| -------------------- | -------------------------------------------------------------------- |
+| **Target browsers**  | Modern evergreen (Chrome, Safari, Firefox, Edge - latest 2 versions) |
+| **IE11**             | Not supported                                                        |
+| **Mobile browsers**  | Safari iOS, Chrome Android                                           |
+| **Minimum viewport** | 320px (iPhone SE)                                                    |
+| **Maximum viewport** | 2560px+ (ultrawide)                                                  |
 
 ### Responsive Design
 
-| Breakpoint | Behavior |
-|------------|----------|
-| **<640px (Mobile)** | 2-column grid, no rotations, touch-optimized, native scroll |
-| **640–1024px (Tablet)** | 2-column grid, subtle rotations, touch + hover |
-| **1024–1440px (Desktop)** | Organic constellation, full rotations, Lenis scroll |
-| **1440–2560px (Large)** | Expanded spacing, fluid gaps |
-| **>2560px (Ultrawide)** | Constellation spreads, gallery-like spacing, text max-width capped |
+| Breakpoint                | Behavior                                                           |
+| ------------------------- | ------------------------------------------------------------------ |
+| **<640px (Mobile)**       | 2-column grid, no rotations, touch-optimized, native scroll        |
+| **640–1024px (Tablet)**   | 2-column grid, subtle rotations, touch + hover                     |
+| **1024–1440px (Desktop)** | Organic constellation, full rotations, Lenis scroll                |
+| **1440–2560px (Large)**   | Expanded spacing, fluid gaps                                       |
+| **>2560px (Ultrawide)**   | Constellation spreads, gallery-like spacing, text max-width capped |
 
 ### Performance Targets
 
-| Metric | Target | Verification |
-|--------|--------|--------------|
-| **LCP** | <2.5s | Lighthouse CI in pipeline |
-| **FID** | <100ms | Lighthouse CI in pipeline |
-| **CLS** | <0.1 | Lighthouse CI in pipeline |
-| **Texture reveal** | <100ms | Custom Performance API timing |
-| **Total bundle** | <200KB gzipped | size-limit in CI |
+| Metric             | Target         | Verification                  |
+| ------------------ | -------------- | ----------------------------- |
+| **LCP**            | <2.5s          | Lighthouse CI in pipeline     |
+| **FID**            | <100ms         | Lighthouse CI in pipeline     |
+| **CLS**            | <0.1           | Lighthouse CI in pipeline     |
+| **Texture reveal** | <100ms         | Custom Performance API timing |
+| **Total bundle**   | <200KB gzipped | size-limit in CI              |
 
 ### SEO Strategy
 
-| Aspect | Approach |
-|--------|----------|
-| **Priority** | Secondary to experience |
-| **Meta** | Product pages with proper titles, descriptions |
-| **Schema** | Product schema for rich results |
-| **Crawlability** | Hydrogen SSR ensures content is indexable |
-| **Sitemap** | Auto-generated via Shopify |
+| Aspect           | Approach                                       |
+| ---------------- | ---------------------------------------------- |
+| **Priority**     | Secondary to experience                        |
+| **Meta**         | Product pages with proper titles, descriptions |
+| **Schema**       | Product schema for rich results                |
+| **Crawlability** | Hydrogen SSR ensures content is indexable      |
+| **Sitemap**      | Auto-generated via Shopify                     |
 
 ### Accessibility Level
 
-| Requirement | Specification |
-|-------------|---------------|
-| **Target** | WCAG 2.1 AA |
-| **Keyboard navigation** | Full support |
-| **Screen readers** | Semantic HTML, ARIA where needed |
-| **Focus indicators** | Visible, styled to match brand |
-| **Animations** | Respect prefers-reduced-motion |
-| **Color contrast** | 4.5:1 minimum for text |
-| **Verification** | axe-core in CI + manual screen reader testing |
-| **Implementation** | Radix UI primitives for complex components |
+| Requirement             | Specification                                 |
+| ----------------------- | --------------------------------------------- |
+| **Target**              | WCAG 2.1 AA                                   |
+| **Keyboard navigation** | Full support                                  |
+| **Screen readers**      | Semantic HTML, ARIA where needed              |
+| **Focus indicators**    | Visible, styled to match brand                |
+| **Animations**          | Respect prefers-reduced-motion                |
+| **Color contrast**      | 4.5:1 minimum for text                        |
+| **Verification**        | axe-core in CI + manual screen reader testing |
+| **Implementation**      | Radix UI primitives for complex components    |
 
 ### Implementation Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Platform** | Shopify Hydrogen (React + Remix) |
-| **Hosting** | Shopify Oxygen (primary) - Vercel as fallback |
-| **Styling** | Tailwind CSS + CVA |
-| **Component styling** | Radix primitives styled via CVA + Tailwind using data-state selectors |
-| **Typography** | Fraunces (Variable) + CSS clamp() |
-| **Scroll** | Lenis (desktop), native (mobile) |
-| **Animation** | Framer Motion + Intersection Observer (scroll-linked via IO for Lenis compatibility) |
-| **Accessibility** | Radix UI primitives |
+| Layer                 | Technology                                                                           |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| **Platform**          | Shopify Hydrogen (React + Remix)                                                     |
+| **Hosting**           | Shopify Oxygen (primary) - Vercel as fallback                                        |
+| **Styling**           | Tailwind CSS + CVA                                                                   |
+| **Component styling** | Radix primitives styled via CVA + Tailwind using data-state selectors                |
+| **Typography**        | Fraunces (Variable) + CSS clamp()                                                    |
+| **Scroll**            | Lenis (desktop), native (mobile)                                                     |
+| **Animation**         | Framer Motion + Intersection Observer (scroll-linked via IO for Lenis compatibility) |
+| **Accessibility**     | Radix UI primitives                                                                  |
 
 ### Image Delivery Strategy
 
-| Asset Type | Delivery |
-|------------|----------|
-| **Product images** | Shopify CDN (automatic) |
-| **Custom assets** | Cloudinary or equivalent for hero/atmospheric images |
-| **Format** | WebP/AVIF with fallbacks |
-| **Loading** | Lazy loading for below-fold content |
-| **Texture macros** | Optimized but high-quality - critical for UX |
+| Asset Type         | Delivery                                             |
+| ------------------ | ---------------------------------------------------- |
+| **Product images** | Shopify CDN (automatic)                              |
+| **Custom assets**  | Cloudinary or equivalent for hero/atmospheric images |
+| **Format**         | WebP/AVIF with fallbacks                             |
+| **Loading**        | Lazy loading for below-fold content                  |
+| **Texture macros** | Optimized but high-quality - critical for UX         |
 
 ### Performance Verification Pipeline
 
-| Check | Tool | When |
-|-------|------|------|
-| **Core Web Vitals** | Lighthouse CI | Every deploy |
-| **Bundle size** | size-limit / bundlewatch | Every PR |
-| **Accessibility** | axe-core | Every deploy |
-| **Texture reveal timing** | Custom Performance API | Dev + staging |
+| Check                     | Tool                     | When          |
+| ------------------------- | ------------------------ | ------------- |
+| **Core Web Vitals**       | Lighthouse CI            | Every deploy  |
+| **Bundle size**           | size-limit / bundlewatch | Every PR      |
+| **Accessibility**         | axe-core                 | Every deploy  |
+| **Texture reveal timing** | Custom Performance API   | Dev + staging |
 
 ## Project Scoping & Phased Development
 
@@ -410,79 +411,80 @@ Shopify Hydrogen storefront (React + Remix SPA) with custom immersive frontend a
 ### MVP Feature Set (Phase 1)
 
 **Core User Journeys Supported:**
+
 - Sarah - Primary (discover → explore → buy)
 - Jim - Reorder (login → one-click → done)
 - Founder - Admin (Shopify native)
 
 **Must-Have Capabilities:**
 
-| Category | Features |
-|----------|----------|
-| **Core Experience** | Immersive landing, parallax, story fragments, constellation layout |
-| **Products** | 4 product pages with texture reveals (<100ms), scent narratives |
-| **Bundle** | Variety pack (all 4) with one-click add |
-| **B2C Checkout** | Shopify-managed (default error handling) |
-| **B2B Portal** | Wholesale login, last-order dashboard, one-click reorder, partner acknowledgment |
-| **Tracking** | Booth code attribution, checkout survey, share link baseline |
-| **Post-Purchase** | Manual founder email at Day 3 (personal touch, on-brand) |
-| **B2B Invoices** | Manual (founder sends on request) |
+| Category            | Features                                                                         |
+| ------------------- | -------------------------------------------------------------------------------- |
+| **Core Experience** | Immersive landing, parallax, story fragments, constellation layout               |
+| **Products**        | 4 product pages with texture reveals (<100ms), scent narratives                  |
+| **Bundle**          | Variety pack (all 4) with one-click add                                          |
+| **B2C Checkout**    | Shopify-managed (default error handling)                                         |
+| **B2B Portal**      | Wholesale login, last-order dashboard, one-click reorder, partner acknowledgment |
+| **Tracking**        | Booth code attribution, checkout survey, share link baseline                     |
+| **Post-Purchase**   | Manual founder email at Day 3 (personal touch, on-brand)                         |
+| **B2B Invoices**    | Manual (founder sends on request)                                                |
 
 ### Post-MVP Features
 
 **Phase 2 (Growth):**
 
-| Category | Features |
-|----------|----------|
-| **Gift Experience** | Price-hidden packing slip, gift message |
-| **Error Polish** | Custom warm error messaging |
-| **B2B Automation** | Auto-generated downloadable invoices |
+| Category             | Features                                           |
+| -------------------- | -------------------------------------------------- |
+| **Gift Experience**  | Price-hidden packing slip, gift message            |
+| **Error Polish**     | Custom warm error messaging                        |
+| **B2B Automation**   | Auto-generated downloadable invoices               |
 | **Email Automation** | Klaviyo/Mailchimp integration, automated sequences |
-| **Social Proof** | Customer reviews |
-| **Referral** | Formal program (20% target) |
-| **Photography** | Professional upgrade |
+| **Social Proof**     | Customer reviews                                   |
+| **Referral**         | Formal program (20% target)                        |
+| **Photography**      | Professional upgrade                               |
 
 **Phase 3 (Vision):**
 
-| Category | Features |
-|----------|----------|
-| **Subscription** | Recurring delivery |
-| **Expansion** | New products, seasonal scents |
+| Category             | Features                      |
+| -------------------- | ----------------------------- |
+| **Subscription**     | Recurring delivery            |
+| **Expansion**        | New products, seasonal scents |
 | **Wholesale Growth** | More partners, tiered pricing |
-| **National Reach** | Shipping optimization |
+| **National Reach**   | Shipping optimization         |
 
 ### Decision Triggers
 
-| Metric | Threshold | Action |
-|--------|-----------|--------|
-| **Add-to-cart rate** | <5% after 30 days | Review texture reveal engagement |
-| **Checkout completion** | <50% of carts | Check Shopify analytics for dropoff points |
-| **Return visit rate** | <10% | Story isn't landing - review scent narratives |
-| **Texture reveal rate** | <60% of sessions | Core UX failing - investigate mobile performance |
-| **Wholesale reorder** | Partner not reordering in 60 days | Personal outreach |
-| **Story recall** | <30% in surveys | Strengthen narrative fragments |
+| Metric                  | Threshold                         | Action                                           |
+| ----------------------- | --------------------------------- | ------------------------------------------------ |
+| **Add-to-cart rate**    | <5% after 30 days                 | Review texture reveal engagement                 |
+| **Checkout completion** | <50% of carts                     | Check Shopify analytics for dropoff points       |
+| **Return visit rate**   | <10%                              | Story isn't landing - review scent narratives    |
+| **Texture reveal rate** | <60% of sessions                  | Core UX failing - investigate mobile performance |
+| **Wholesale reorder**   | Partner not reordering in 60 days | Personal outreach                                |
+| **Story recall**        | <30% in surveys                   | Strengthen narrative fragments                   |
 
 ### Pre-Development Dependencies
 
-| Asset | Owner | Must Exist Before Sprint 1 |
-|-------|-------|---------------------------|
-| **Scent narratives (4)** | Founder | Written, reviewed, final |
-| **Texture macro photos (4)** | Founder | Shot or sourced, optimized |
-| **Story fragments (3-4)** | Founder | Copy for scattered elements |
-| **Hero imagery** | Founder | Landing page visuals |
-| **Wholesale partner info** | Founder | Jim/Maria details, typical orders |
-| **Shopify store setup** | Founder | Products, pricing, collections |
-| **Booth attribution code** | Founder | Decided (e.g., "FARMSTAND") |
+| Asset                        | Owner   | Must Exist Before Sprint 1        |
+| ---------------------------- | ------- | --------------------------------- |
+| **Scent narratives (4)**     | Founder | Written, reviewed, final          |
+| **Texture macro photos (4)** | Founder | Shot or sourced, optimized        |
+| **Story fragments (3-4)**    | Founder | Copy for scattered elements       |
+| **Hero imagery**             | Founder | Landing page visuals              |
+| **Wholesale partner info**   | Founder | Jim/Maria details, typical orders |
+| **Shopify store setup**      | Founder | Products, pricing, collections    |
+| **Booth attribution code**   | Founder | Decided (e.g., "FARMSTAND")       |
 
 ### Risk Mitigation Strategy
 
-| Risk Type | Risk | Mitigation |
-|-----------|------|------------|
-| **Technical** | Texture reveal performance on mobile | Test on low-end devices early. Fallback: simpler animation. |
-| **Technical** | Lenis + Framer Motion integration | Prototype scroll first. Fallback: native scroll + IO only. |
-| **Market** | Anti-aggressive approach doesn't convert | Decision triggers above. Test subtle additions if needed. |
-| **Resource** | Solo founder stretched thin | MVP is lean. Manual emails sustainable for early volume. |
-| **Content** | Copy/photos not ready | Pre-dev dependencies checklist. No dev start without assets. |
-| **B2B** | Wholesale portal friction | 3 partners = direct feedback loop. Iterate based on input. |
+| Risk Type     | Risk                                     | Mitigation                                                   |
+| ------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| **Technical** | Texture reveal performance on mobile     | Test on low-end devices early. Fallback: simpler animation.  |
+| **Technical** | Lenis + Framer Motion integration        | Prototype scroll first. Fallback: native scroll + IO only.   |
+| **Market**    | Anti-aggressive approach doesn't convert | Decision triggers above. Test subtle additions if needed.    |
+| **Resource**  | Solo founder stretched thin              | MVP is lean. Manual emails sustainable for early volume.     |
+| **Content**   | Copy/photos not ready                    | Pre-dev dependencies checklist. No dev start without assets. |
+| **B2B**       | Wholesale portal friction                | 3 partners = direct feedback loop. Iterate based on input.   |
 
 ## Functional Requirements
 
@@ -565,59 +567,59 @@ Shopify Hydrogen storefront (React + Remix SPA) with custom immersive frontend a
 
 ### Performance
 
-| Requirement | Target | Rationale |
-|-------------|--------|-----------|
-| **NFR1:** Largest Contentful Paint | <2.5s | Core Web Vital - perceived load speed |
-| **NFR2:** First Input Delay | <100ms | Core Web Vital - interactivity |
-| **NFR3:** Cumulative Layout Shift | <0.1 | Core Web Vital - visual stability |
-| **NFR4:** Texture reveal response | <100ms after interaction | Core UX moment must feel instant |
-| **NFR5:** Cart drawer open | <200ms | Responsive feedback for add-to-cart |
-| **NFR6:** Total JS bundle | <200KB gzipped | Mobile data budget |
-| **NFR7:** Time to Interactive | <3.5s on 4G | Mobile users on slower connections |
+| Requirement                        | Target                   | Rationale                             |
+| ---------------------------------- | ------------------------ | ------------------------------------- |
+| **NFR1:** Largest Contentful Paint | <2.5s                    | Core Web Vital - perceived load speed |
+| **NFR2:** First Input Delay        | <100ms                   | Core Web Vital - interactivity        |
+| **NFR3:** Cumulative Layout Shift  | <0.1                     | Core Web Vital - visual stability     |
+| **NFR4:** Texture reveal response  | <100ms after interaction | Core UX moment must feel instant      |
+| **NFR5:** Cart drawer open         | <200ms                   | Responsive feedback for add-to-cart   |
+| **NFR6:** Total JS bundle          | <200KB gzipped           | Mobile data budget                    |
+| **NFR7:** Time to Interactive      | <3.5s on 4G              | Mobile users on slower connections    |
 
 ### Accessibility
 
-| Requirement | Target | Rationale |
-|-------------|--------|-----------|
-| **NFR8:** WCAG compliance | 2.1 AA | Stated commitment + legal baseline |
-| **NFR9:** Keyboard navigation | 100% of interactive elements | Users who can't use mouse |
-| **NFR10:** Screen reader compatibility | All content accessible | Blind/low-vision users |
-| **NFR11:** Focus indicators | Visible on all focusable elements | Keyboard navigation clarity |
-| **NFR12:** Color contrast | 4.5:1 minimum for text | Low-vision readability |
-| **NFR13:** Reduced motion | Animations simplified when prefers-reduced-motion | Motion-sensitive users |
-| **NFR14:** Touch targets | Minimum 44x44px on mobile | Motor impairment + fat fingers |
+| Requirement                            | Target                                            | Rationale                          |
+| -------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| **NFR8:** WCAG compliance              | 2.1 AA                                            | Stated commitment + legal baseline |
+| **NFR9:** Keyboard navigation          | 100% of interactive elements                      | Users who can't use mouse          |
+| **NFR10:** Screen reader compatibility | All content accessible                            | Blind/low-vision users             |
+| **NFR11:** Focus indicators            | Visible on all focusable elements                 | Keyboard navigation clarity        |
+| **NFR12:** Color contrast              | 4.5:1 minimum for text                            | Low-vision readability             |
+| **NFR13:** Reduced motion              | Animations simplified when prefers-reduced-motion | Motion-sensitive users             |
+| **NFR14:** Touch targets               | Minimum 44x44px on mobile                         | Motor impairment + fat fingers     |
 
 ### Integration
 
-| Requirement | Specification | Rationale |
-|-------------|--------------|-----------|
-| **NFR15:** Shopify Storefront API | Must support all cart/checkout operations | Core commerce functionality |
-| **NFR16:** Shopify B2B app | Must integrate for wholesale pricing/portal | B2B journey depends on it |
-| **NFR17:** Analytics events | Must fire reliably for all tracked interactions | Success metrics depend on data |
-| **NFR18:** Image CDN | Must serve optimized images (WebP/AVIF with fallbacks) | Performance depends on it |
+| Requirement                       | Specification                                          | Rationale                      |
+| --------------------------------- | ------------------------------------------------------ | ------------------------------ |
+| **NFR15:** Shopify Storefront API | Must support all cart/checkout operations              | Core commerce functionality    |
+| **NFR16:** Shopify B2B app        | Must integrate for wholesale pricing/portal            | B2B journey depends on it      |
+| **NFR17:** Analytics events       | Must fire reliably for all tracked interactions        | Success metrics depend on data |
+| **NFR18:** Image CDN              | Must serve optimized images (WebP/AVIF with fallbacks) | Performance depends on it      |
 
 ### Reliability
 
-| Requirement | Target | Rationale |
-|-------------|--------|-----------|
-| **NFR19:** Frontend uptime | 99.5% (Shopify Oxygen SLA) | Customers expect site to work |
-| **NFR20:** Cart persistence | Survive browser close/reopen | Don't lose customer's work |
-| **NFR21:** Graceful degradation | If Lenis or Framer Motion fails, users can browse, add to cart, and checkout without animations | Core commerce must work |
+| Requirement                     | Target                                                                                          | Rationale                     |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------- |
+| **NFR19:** Frontend uptime      | 99.5% (Shopify Oxygen SLA)                                                                      | Customers expect site to work |
+| **NFR20:** Cart persistence     | Survive browser close/reopen                                                                    | Don't lose customer's work    |
+| **NFR21:** Graceful degradation | If Lenis or Framer Motion fails, users can browse, add to cart, and checkout without animations | Core commerce must work       |
 
 ### UX Tone & Brand Consistency
 
-| Requirement | Specification | Rationale |
-|-------------|--------------|-----------|
-| **NFR22:** Error messaging tone | Warm, non-accusatory ("Your cart is safe - let's try again") | Farmers market energy |
-| **NFR23:** Loading states | Subtle, brand-aligned (no harsh spinners) | Maintain calm atmosphere |
-| **NFR24:** Empty cart state | Friendly message guiding user back to products | No dead ends |
-| **NFR25:** System feedback | Confirmation feels personal, not transactional | Reinforce brand relationship |
-| **NFR27:** Order confirmation | Brand-warm messaging ("Your soap is on its way") | Checkout is a moment |
+| Requirement                     | Specification                                                | Rationale                    |
+| ------------------------------- | ------------------------------------------------------------ | ---------------------------- |
+| **NFR22:** Error messaging tone | Warm, non-accusatory ("Your cart is safe - let's try again") | Farmers market energy        |
+| **NFR23:** Loading states       | Subtle, brand-aligned (no harsh spinners)                    | Maintain calm atmosphere     |
+| **NFR24:** Empty cart state     | Friendly message guiding user back to products               | No dead ends                 |
+| **NFR25:** System feedback      | Confirmation feels personal, not transactional               | Reinforce brand relationship |
+| **NFR27:** Order confirmation   | Brand-warm messaging ("Your soap is on its way")             | Checkout is a moment         |
 
 ### Privacy & Compliance
 
-| Requirement | Specification | Rationale |
-|-------------|--------------|-----------|
+| Requirement                | Specification                                          | Rationale                              |
+| -------------------------- | ------------------------------------------------------ | -------------------------------------- |
 | **NFR26:** GDPR compliance | Privacy policy, explicit email opt-in, right to delete | Personal data requires lawful handling |
 
 ---
@@ -647,5 +649,4 @@ Shopify Hydrogen storefront (React + Remix SPA) with custom immersive frontend a
 
 ---
 
-*Document Complete. Ready for Architecture phase.*
-
+_Document Complete. Ready for Architecture phase._

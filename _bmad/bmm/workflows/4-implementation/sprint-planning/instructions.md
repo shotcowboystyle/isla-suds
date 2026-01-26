@@ -1,7 +1,7 @@
 # Sprint Planning - Sprint Status Generator
 
-<critical>The workflow execution engine is governed by: {project-root}/_bmad/core/tasks/workflow.xml</critical>
-<critical>You MUST have already loaded and processed: {project-root}/_bmad/bmm/workflows/4-implementation/sprint-planning/workflow.yaml</critical>
+<critical>The workflow execution engine is governed by: {project-root}/\_bmad/core/tasks/workflow.xml</critical>
+<critical>You MUST have already loaded and processed: {project-root}/\_bmad/bmm/workflows/4-implementation/sprint-planning/workflow.yaml</critical>
 
 ## 📚 Document Discovery - Full Epic Loading
 
@@ -128,11 +128,11 @@ development_status:
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
-generated: { date }
-project: { project_name }
-project_key: { project_key }
-tracking_system: { tracking_system }
-story_location: { story_location }
+generated: {date}
+project: {project_name}
+project_key: {project_key}
+tracking_system: {tracking_system}
+story_location: {story_location}
 
 development_status:
   # All epics, stories, and retrospectives in order

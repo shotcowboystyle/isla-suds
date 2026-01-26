@@ -41,22 +41,25 @@ The `file-utils` module provides:
 **Implementation**:
 
 ```typescript
-import { handleDownload, readCSV } from '@seontechnologies/playwright-utils/file-utils';
+import {
+  handleDownload,
+  readCSV,
+} from '@seontechnologies/playwright-utils/file-utils';
 import path from 'node:path';
 
 const DOWNLOAD_DIR = path.join(__dirname, '../downloads');
 
-test('should download and validate CSV', async ({ page }) => {
+test('should download and validate CSV', async ({page}) => {
   const downloadPath = await handleDownload({
     page,
     downloadDir: DOWNLOAD_DIR,
     trigger: () => page.getByTestId('download-button-text/csv').click(),
   });
 
-  const csvResult = await readCSV({ filePath: downloadPath });
+  const csvResult = await readCSV({filePath: downloadPath});
 
   // Access parsed data and headers
-  const { data, headers } = csvResult.content;
+  const {data, headers} = csvResult.content;
   expect(headers).toEqual(['ID', 'Name', 'Email']);
   expect(data[0]).toMatchObject({
     ID: expect.any(String),
@@ -80,7 +83,7 @@ test('should download and validate CSV', async ({ page }) => {
 **Implementation**:
 
 ```typescript
-import { readXLSX } from '@seontechnologies/playwright-utils/file-utils';
+import {readXLSX} from '@seontechnologies/playwright-utils/file-utils';
 
 test('should read multi-sheet XLSX', async () => {
   const downloadPath = await handleDownload({
@@ -89,7 +92,7 @@ test('should read multi-sheet XLSX', async () => {
     trigger: () => page.click('[data-testid="export-xlsx"]'),
   });
 
-  const xlsxResult = await readXLSX({ filePath: downloadPath });
+  const xlsxResult = await readXLSX({filePath: downloadPath});
 
   // Verify worksheet structure
   expect(xlsxResult.content.worksheets.length).toBeGreaterThan(0);
@@ -121,21 +124,24 @@ test('should read multi-sheet XLSX', async () => {
 **Implementation**:
 
 ```typescript
-import { readPDF } from '@seontechnologies/playwright-utils/file-utils';
+import {readPDF} from '@seontechnologies/playwright-utils/file-utils';
 
 test('should validate PDF report', async () => {
   const downloadPath = await handleDownload({
     page,
     downloadDir: DOWNLOAD_DIR,
-    trigger: () => page.getByTestId('download-button-Text-based PDF Document').click(),
+    trigger: () =>
+      page.getByTestId('download-button-Text-based PDF Document').click(),
   });
 
-  const pdfResult = await readPDF({ filePath: downloadPath });
+  const pdfResult = await readPDF({filePath: downloadPath});
 
   // content is extracted text from all pages
   expect(pdfResult.pagesCount).toBe(1);
   expect(pdfResult.fileName).toContain('.pdf');
-  expect(pdfResult.content).toContain('All you need is the free Adobe Acrobat Reader');
+  expect(pdfResult.content).toContain(
+    'All you need is the free Adobe Acrobat Reader',
+  );
 });
 ```
 
@@ -156,11 +162,11 @@ Text extraction may fail for PDFs that store text as vector graphics (e.g., thos
 
 ```typescript
 // Vector-based PDF example (extraction fails gracefully)
-const pdfResult = await readPDF({ filePath: downloadPath });
+const pdfResult = await readPDF({filePath: downloadPath});
 
 expect(pdfResult.pagesCount).toBe(1);
 expect(pdfResult.info.extractionNotes).toContain(
-  'Text extraction from vector-based PDFs is not supported.'
+  'Text extraction from vector-based PDFs is not supported.',
 );
 ```
 
@@ -177,7 +183,7 @@ Such PDFs will have:
 **Implementation**:
 
 ```typescript
-import { readZIP } from '@seontechnologies/playwright-utils/file-utils';
+import {readZIP} from '@seontechnologies/playwright-utils/file-utils';
 
 test('should validate ZIP archive', async () => {
   const downloadPath = await handleDownload({
@@ -186,16 +192,17 @@ test('should validate ZIP archive', async () => {
     trigger: () => page.click('[data-testid="download-backup"]'),
   });
 
-  const zipResult = await readZIP({ filePath: downloadPath });
+  const zipResult = await readZIP({filePath: downloadPath});
 
   // Check file list
   expect(Array.isArray(zipResult.content.entries)).toBe(true);
   expect(zipResult.content.entries).toContain(
-    'Case_53125_10-19-22_AM/Case_53125_10-19-22_AM_case_data.csv'
+    'Case_53125_10-19-22_AM/Case_53125_10-19-22_AM_case_data.csv',
   );
 
   // Extract specific file
-  const targetFile = 'Case_53125_10-19-22_AM/Case_53125_10-19-22_AM_case_data.csv';
+  const targetFile =
+    'Case_53125_10-19-22_AM/Case_53125_10-19-22_AM_case_data.csv';
   const zipWithExtraction = await readZIP({
     filePath: downloadPath,
     fileToExtract: targetFile,
@@ -223,13 +230,13 @@ test('should validate ZIP archive', async () => {
 **Implementation**:
 
 ```typescript
-test('should download via API', async ({ page, request }) => {
+test('should download via API', async ({page, request}) => {
   const downloadPath = await handleDownload({
     page, // Still need page for download events
     downloadDir: DOWNLOAD_DIR,
     trigger: async () => {
       const response = await request.get('/api/export/csv', {
-        headers: { Authorization: 'Bearer token' },
+        headers: {Authorization: 'Bearer token'},
       });
 
       if (!response.ok()) {
@@ -238,7 +245,7 @@ test('should download via API', async ({ page, request }) => {
     },
   });
 
-  const { content } = await readCSV({ filePath: downloadPath });
+  const {content} = await readCSV({filePath: downloadPath});
 
   expect(content.data).toHaveLength(100);
 });
@@ -264,13 +271,13 @@ const zipResult = await readZIP({
   fileToExtract: 'data.csv',
 });
 const fileBuffer = zipResult.content.extractedFiles?.['data.csv'];
-const csvFromBuffer = await readCSV({ content: fileBuffer });
+const csvFromBuffer = await readCSV({content: fileBuffer});
 
 // Read from a string
 const csvString = 'name,age\nJohn,30\nJane,25';
-const csvFromString = await readCSV({ content: csvString });
+const csvFromString = await readCSV({content: csvString});
 
-const { data, headers } = csvFromString.content;
+const {data, headers} = csvFromString.content;
 expect(headers).toContain('name');
 expect(headers).toContain('age');
 ```
@@ -330,10 +337,10 @@ expect(headers).toContain('age');
 {
   content: {
     worksheets: Array<{
-      name: string,                       // Sheet name
-      rows: Array<Array<any>>,            // All rows including headers
-      headers?: string[]                  // First row as headers (if present)
-    }>
+      name: string; // Sheet name
+      rows: Array<Array<any>>; // All rows including headers
+      headers?: string[]; // First row as headers (if present)
+    }>;
   }
 }
 ```
@@ -404,7 +411,7 @@ await expect
         return false;
       }
     },
-    { timeout: 5000, intervals: [100, 200, 500] }
+    {timeout: 5000, intervals: [100, 200, 500]},
   )
   .toBe(true);
 
@@ -434,7 +441,7 @@ const downloadPath = await handleDownload({
   trigger: () => page.getByTestId('download-button-text/csv').click(),
 });
 
-const { data, headers } = (await readCSV({ filePath: downloadPath })).content;
+const {data, headers} = (await readCSV({filePath: downloadPath})).content;
 ```
 
 ## Related Fragments

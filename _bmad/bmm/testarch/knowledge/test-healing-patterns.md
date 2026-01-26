@@ -60,7 +60,9 @@ export function extractSelector(errorMessage: string): string | null {
   if (playwrightMatch) return playwrightMatch[1];
 
   // Cypress: "Timed out retrying: Expected to find element: '.submit-button'"
-  const cypressMatch = errorMessage.match(/Expected to find element: ['"]([^'"]+)['"]/i);
+  const cypressMatch = errorMessage.match(
+    /Expected to find element: ['"]([^'"]+)['"]/i,
+  );
   if (cypressMatch) return cypressMatch[1];
 
   return null;
@@ -72,7 +74,8 @@ export function extractSelector(errorMessage: string): string | null {
 export function suggestBetterSelector(badSelector: string): string {
   // If using CSS class → suggest data-testid
   if (badSelector.startsWith('.') || badSelector.includes('class=')) {
-    const elementName = badSelector.match(/class=["']([^"']+)["']/)?.[1] || badSelector.slice(1);
+    const elementName =
+      badSelector.match(/class=["']([^"']+)["']/)?.[1] || badSelector.slice(1);
     return `page.getByTestId('${elementName}') // Prefer data-testid over CSS class`;
   }
 
@@ -99,10 +102,14 @@ export function suggestBetterSelector(badSelector: string): string {
 
 ```typescript
 // tests/healing/selector-healing.spec.ts
-import { test, expect } from '@playwright/test';
-import { isSelectorFailure, extractSelector, suggestBetterSelector } from '../../src/testing/healing/selector-healing';
+import {test, expect} from '@playwright/test';
+import {
+  isSelectorFailure,
+  extractSelector,
+  suggestBetterSelector,
+} from '../../src/testing/healing/selector-healing';
 
-test('heal stale selector failures automatically', async ({ page }) => {
+test('heal stale selector failures automatically', async ({page}) => {
   await page.goto('/dashboard');
 
   try {
@@ -111,7 +118,9 @@ test('heal stale selector failures automatically', async ({ page }) => {
   } catch (error: any) {
     if (isSelectorFailure(error)) {
       const badSelector = extractSelector(error.message);
-      const suggestion = badSelector ? suggestBetterSelector(badSelector) : null;
+      const suggestion = badSelector
+        ? suggestBetterSelector(badSelector)
+        : null;
 
       console.log('HEALING SUGGESTION:', suggestion);
 
@@ -171,7 +180,12 @@ export function isTimingFailure(error: Error): boolean {
  * Detect hard wait anti-pattern
  */
 export function hasHardWait(testCode: string): boolean {
-  const hardWaitPatterns = [/page\.waitForTimeout\(/, /cy\.wait\(\d+\)/, /await.*sleep\(/, /setTimeout\(/];
+  const hardWaitPatterns = [
+    /page\.waitForTimeout\(/,
+    /cy\.wait\(\d+\)/,
+    /await.*sleep\(/,
+    /setTimeout\(/,
+  ];
 
   return hardWaitPatterns.some((pattern) => pattern.test(testCode));
 }
@@ -219,15 +233,22 @@ await responsePromise
 
 ```typescript
 // tests/healing/timing-healing.spec.ts
-import { test, expect } from '@playwright/test';
-import { isTimingFailure, hasHardWait, suggestDeterministicWait } from '../../src/testing/healing/timing-healing';
+import {test, expect} from '@playwright/test';
+import {
+  isTimingFailure,
+  hasHardWait,
+  suggestDeterministicWait,
+} from '../../src/testing/healing/timing-healing';
 
-test('heal race condition with network-first pattern', async ({ page, context }) => {
+test('heal race condition with network-first pattern', async ({
+  page,
+  context,
+}) => {
   // Setup interception BEFORE navigation (prevent race)
   await context.route('**/api/products', (route) => {
     route.fulfill({
       status: 200,
-      body: JSON.stringify({ products: [{ id: 1, name: 'Product A' }] }),
+      body: JSON.stringify({products: [{id: 1, name: 'Product A'}]}),
     });
   });
 
@@ -240,13 +261,13 @@ test('heal race condition with network-first pattern', async ({ page, context })
   await expect(page.getByText('Product A')).toBeVisible();
 });
 
-test('heal hard wait with event-based wait', async ({ page }) => {
+test('heal hard wait with event-based wait', async ({page}) => {
   await page.goto('/dashboard');
 
   // ❌ Original (flaky): await page.waitForTimeout(3000)
 
   // ✅ Healed: Wait for spinner to disappear
-  await page.getByTestId('loading-spinner').waitFor({ state: 'detached' });
+  await page.getByTestId('loading-spinner').waitFor({state: 'detached'});
 
   // Element now reliably visible
   await expect(page.getByText('Dashboard loaded')).toBeVisible();
@@ -348,9 +369,9 @@ await expect(page.getByText(\`Order #\${orderId} confirmed\`)).toBeVisible()
 
 ```typescript
 // tests/healing/data-healing.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('heal dynamic ID assertion with regex', async ({ page }) => {
+test('heal dynamic ID assertion with regex', async ({page}) => {
   await page.goto('/users');
 
   // ❌ Original (fails with random IDs): await expect(page.getByText('User 123')).toBeVisible()
@@ -359,7 +380,7 @@ test('heal dynamic ID assertion with regex', async ({ page }) => {
   await expect(page.getByText(/User \d+/)).toBeVisible();
 });
 
-test('heal timestamp assertion with dynamic generation', async ({ page }) => {
+test('heal timestamp assertion with dynamic generation', async ({page}) => {
   await page.goto('/dashboard');
 
   // ❌ Original (fails daily): await expect(page.getByText('2024-01-15')).toBeVisible()
@@ -369,12 +390,12 @@ test('heal timestamp assertion with dynamic generation', async ({ page }) => {
   await expect(page.getByTestId('last-updated')).toContainText(today);
 });
 
-test('heal order ID assertion with capture', async ({ page, request }) => {
+test('heal order ID assertion with capture', async ({page, request}) => {
   // Create order via API (dynamic ID)
   const response = await request.post('/api/orders', {
-    data: { productId: '123', quantity: 1 },
+    data: {productId: '123', quantity: 1},
   });
-  const { orderId } = await response.json();
+  const {orderId} = await response.json();
 
   // ✅ Healed: Use captured dynamic ID
   await page.goto(`/orders/${orderId}`);
@@ -454,9 +475,9 @@ await page.goto('/page')
 
 ```typescript
 // tests/healing/network-healing.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('heal network failure with route mocking', async ({ page, context }) => {
+test('heal network failure with route mocking', async ({page, context}) => {
   // ✅ Healed: Mock API to prevent real network calls
   await context.route('**/api/products', (route) => {
     route.fulfill({
@@ -464,8 +485,8 @@ test('heal network failure with route mocking', async ({ page, context }) => {
       contentType: 'application/json',
       body: JSON.stringify({
         products: [
-          { id: 1, name: 'Product A', price: 29.99 },
-          { id: 2, name: 'Product B', price: 49.99 },
+          {id: 1, name: 'Product A', price: 29.99},
+          {id: 2, name: 'Product B', price: 49.99},
         ],
       }),
     });
@@ -478,17 +499,20 @@ test('heal network failure with route mocking', async ({ page, context }) => {
   await expect(page.getByText('$29.99')).toBeVisible();
 });
 
-test('heal 500 error with error state mocking', async ({ page, context }) => {
+test('heal 500 error with error state mocking', async ({page, context}) => {
   // Mock API failure scenario
   await context.route('**/api/products', (route) => {
-    route.fulfill({ status: 500, body: JSON.stringify({ error: 'Internal Server Error' }) });
+    route.fulfill({
+      status: 500,
+      body: JSON.stringify({error: 'Internal Server Error'}),
+    });
   });
 
   await page.goto('/products');
 
   // Verify error handling (not crash)
   await expect(page.getByText('Unable to load products')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Retry'})).toBeVisible();
 });
 ```
 
@@ -513,13 +537,20 @@ test('heal 500 error with error state mocking', async ({ page, context }) => {
 /**
  * Detect hard wait anti-pattern in test code
  */
-export function detectHardWaits(testCode: string): Array<{ line: number; code: string }> {
+export function detectHardWaits(
+  testCode: string,
+): Array<{line: number; code: string}> {
   const lines = testCode.split('\n');
-  const violations: Array<{ line: number; code: string }> = [];
+  const violations: Array<{line: number; code: string}> = [];
 
   lines.forEach((line, index) => {
-    if (line.includes('page.waitForTimeout(') || /cy\.wait\(\d+\)/.test(line) || line.includes('sleep(') || line.includes('setTimeout(')) {
-      violations.push({ line: index + 1, code: line.trim() });
+    if (
+      line.includes('page.waitForTimeout(') ||
+      /cy\.wait\(\d+\)/.test(line) ||
+      line.includes('sleep(') ||
+      line.includes('setTimeout(')
+    ) {
+      violations.push({line: index + 1, code: line.trim()});
     }
   });
 
@@ -564,23 +595,25 @@ cy.wait('@getData') // Deterministic
 
 ```typescript
 // tests/healing/hard-wait-healing.spec.ts
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('heal hard wait with deterministic wait', async ({ page }) => {
+test('heal hard wait with deterministic wait', async ({page}) => {
   await page.goto('/dashboard');
 
   // ❌ Original (flaky): await page.waitForTimeout(3000)
 
   // ✅ Healed: Wait for loading spinner to disappear
-  await page.getByTestId('loading-spinner').waitFor({ state: 'detached' });
+  await page.getByTestId('loading-spinner').waitFor({state: 'detached'});
 
   // OR wait for specific network response
-  await page.waitForResponse((resp) => resp.url().includes('/api/dashboard') && resp.ok());
+  await page.waitForResponse(
+    (resp) => resp.url().includes('/api/dashboard') && resp.ok(),
+  );
 
   await expect(page.getByText('Dashboard ready')).toBeVisible();
 });
 
-test('heal implicit wait with explicit network wait', async ({ page }) => {
+test('heal implicit wait with explicit network wait', async ({page}) => {
   const responsePromise = page.waitForResponse('**/api/products');
 
   await page.goto('/products');

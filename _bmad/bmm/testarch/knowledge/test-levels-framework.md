@@ -155,17 +155,20 @@ Examples:
 
 ```typescript
 // tests/e2e/checkout-flow.spec.ts
-import { test, expect } from '@playwright/test';
-import { createUser, createProduct } from '../test-utils/factories';
+import {test, expect} from '@playwright/test';
+import {createUser, createProduct} from '../test-utils/factories';
 
 test.describe('Checkout Flow', () => {
-  test('user can complete purchase with saved payment method', async ({ page, apiRequest }) => {
+  test('user can complete purchase with saved payment method', async ({
+    page,
+    apiRequest,
+  }) => {
     // Setup: Seed data via API (fast!)
-    const user = createUser({ email: 'buyer@example.com', hasSavedCard: true });
-    const product = createProduct({ name: 'Widget', price: 29.99, stock: 10 });
+    const user = createUser({email: 'buyer@example.com', hasSavedCard: true});
+    const product = createProduct({name: 'Widget', price: 29.99, stock: 10});
 
-    await apiRequest.post('/api/users', { data: user });
-    await apiRequest.post('/api/products', { data: product });
+    await apiRequest.post('/api/users', {data: user});
+    await apiRequest.post('/api/products', {data: product});
 
     // Network-first: Intercept BEFORE action
     const loginPromise = page.waitForResponse('**/api/auth/login');
@@ -217,12 +220,12 @@ test.describe('Checkout Flow', () => {
 
 ```typescript
 // tests/integration/user-service.spec.ts
-import { test, expect } from '@playwright/test';
-import { createUser } from '../test-utils/factories';
+import {test, expect} from '@playwright/test';
+import {createUser} from '../test-utils/factories';
 
 test.describe('UserService Integration', () => {
-  test('should create user with admin role via API', async ({ request }) => {
-    const userData = createUser({ role: 'admin' });
+  test('should create user with admin role via API', async ({request}) => {
+    const userData = createUser({role: 'admin'});
 
     // Direct API call (no UI)
     const response = await request.post('/api/users', {
@@ -249,17 +252,17 @@ test.describe('UserService Integration', () => {
     await request.delete(`/api/users/${createdUser.id}`);
   });
 
-  test('should validate email uniqueness constraint', async ({ request }) => {
-    const userData = createUser({ email: 'duplicate@example.com' });
+  test('should validate email uniqueness constraint', async ({request}) => {
+    const userData = createUser({email: 'duplicate@example.com'});
 
     // Create first user
-    const response1 = await request.post('/api/users', { data: userData });
+    const response1 = await request.post('/api/users', {data: userData});
     expect(response1.status()).toBe(201);
 
     const user1 = await response1.json();
 
     // Attempt duplicate email
-    const response2 = await request.post('/api/users', { data: userData });
+    const response2 = await request.post('/api/users', {data: userData});
     expect(response2.status()).toBe(409); // Conflict
     const error = await response2.json();
     expect(error.message).toContain('Email already exists');
@@ -356,44 +359,48 @@ test.describe('Button Component', () => {
 
 ```typescript
 // src/utils/price-calculator.test.ts (Jest/Vitest)
-import { calculateDiscount, applyTaxes, calculateTotal } from './price-calculator';
+import {
+  calculateDiscount,
+  applyTaxes,
+  calculateTotal,
+} from './price-calculator';
 
 describe('PriceCalculator', () => {
   describe('calculateDiscount', () => {
     it('should apply percentage discount correctly', () => {
-      const result = calculateDiscount(100, { type: 'percentage', value: 20 });
+      const result = calculateDiscount(100, {type: 'percentage', value: 20});
       expect(result).toBe(80);
     });
 
     it('should apply fixed amount discount correctly', () => {
-      const result = calculateDiscount(100, { type: 'fixed', value: 15 });
+      const result = calculateDiscount(100, {type: 'fixed', value: 15});
       expect(result).toBe(85);
     });
 
     it('should not apply discount below zero', () => {
-      const result = calculateDiscount(10, { type: 'fixed', value: 20 });
+      const result = calculateDiscount(10, {type: 'fixed', value: 20});
       expect(result).toBe(0);
     });
 
     it('should handle no discount', () => {
-      const result = calculateDiscount(100, { type: 'none', value: 0 });
+      const result = calculateDiscount(100, {type: 'none', value: 0});
       expect(result).toBe(100);
     });
   });
 
   describe('applyTaxes', () => {
     it('should calculate tax correctly for US', () => {
-      const result = applyTaxes(100, { country: 'US', rate: 0.08 });
+      const result = applyTaxes(100, {country: 'US', rate: 0.08});
       expect(result).toBe(108);
     });
 
     it('should calculate tax correctly for EU (VAT)', () => {
-      const result = applyTaxes(100, { country: 'DE', rate: 0.19 });
+      const result = applyTaxes(100, {country: 'DE', rate: 0.19});
       expect(result).toBe(119);
     });
 
     it('should handle zero tax rate', () => {
-      const result = applyTaxes(100, { country: 'US', rate: 0 });
+      const result = applyTaxes(100, {country: 'US', rate: 0});
       expect(result).toBe(100);
     });
   });
@@ -401,24 +408,32 @@ describe('PriceCalculator', () => {
   describe('calculateTotal', () => {
     it('should calculate total with discount and taxes', () => {
       const items = [
-        { price: 50, quantity: 2 }, // 100
-        { price: 30, quantity: 1 }, // 30
+        {price: 50, quantity: 2}, // 100
+        {price: 30, quantity: 1}, // 30
       ];
-      const discount = { type: 'percentage', value: 10 }; // -13
-      const tax = { country: 'US', rate: 0.08 }; // +9.36
+      const discount = {type: 'percentage', value: 10}; // -13
+      const tax = {country: 'US', rate: 0.08}; // +9.36
 
       const result = calculateTotal(items, discount, tax);
       expect(result).toBeCloseTo(126.36, 2);
     });
 
     it('should handle empty items array', () => {
-      const result = calculateTotal([], { type: 'none', value: 0 }, { country: 'US', rate: 0 });
+      const result = calculateTotal(
+        [],
+        {type: 'none', value: 0},
+        {country: 'US', rate: 0},
+      );
       expect(result).toBe(0);
     });
 
     it('should calculate correctly without discount or tax', () => {
-      const items = [{ price: 25, quantity: 4 }];
-      const result = calculateTotal(items, { type: 'none', value: 0 }, { country: 'US', rate: 0 });
+      const items = [{price: 25, quantity: 4}];
+      const result = calculateTotal(
+        items,
+        {type: 'none', value: 0},
+        {country: 'US', rate: 0},
+      );
       expect(result).toBe(100);
     });
   });
@@ -451,7 +466,7 @@ describe('PriceCalculator', () => {
 
 ```typescript
 // DON'T DO THIS
-test('calculate discount via UI', async ({ page }) => {
+test('calculate discount via UI', async ({page}) => {
   await page.goto('/calculator');
   await page.fill('[data-testid="price"]', '100');
   await page.fill('[data-testid="discount"]', '20');

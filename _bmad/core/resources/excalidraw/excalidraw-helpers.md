@@ -86,8 +86,8 @@ After creating arrow, update `boundElements` on both connected shapes:
 {
   "id": "shape-id",
   "boundElements": [
-    { "type": "text", "id": "text-id" },
-    { "type": "arrow", "id": "arrow-id" }
+    {"type": "text", "id": "text-id"},
+    {"type": "arrow", "id": "arrow-id"}
   ]
 }
 ```

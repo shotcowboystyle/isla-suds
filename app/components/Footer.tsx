@@ -61,7 +61,8 @@ function FooterMenu({
   primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
   publicStoreDomain: string;
 }) {
-  const classes = 'inline-block uppercase text-xs text-black dark:text-white opacity-50 hover:opacity-100 duration-300 transition pointer-events-none line-through';
+  const classes =
+    'inline-block uppercase text-xs text-black dark:text-white opacity-50 hover:opacity-100 duration-300 transition pointer-events-none line-through';
   return (
     <nav className="footer-menu grid gap-2 sm:gap-2" role="navigation">
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
@@ -75,7 +76,13 @@ function FooterMenu({
             : item.url;
         const isExternal = !url.startsWith('/');
         return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank" className={classes}>
+          <a
+            href={url}
+            key={item.id}
+            rel="noopener noreferrer"
+            target="_blank"
+            className={classes}
+          >
             {item.title}
           </a>
         ) : (

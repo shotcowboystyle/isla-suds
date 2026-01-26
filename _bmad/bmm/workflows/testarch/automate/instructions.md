@@ -276,11 +276,11 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```typescript
    // tests/support/fixtures/auth.fixture.ts
-   import { test as base } from '@playwright/test';
-   import { createUser, deleteUser } from '../factories/user.factory';
+   import {test as base} from '@playwright/test';
+   import {createUser, deleteUser} from '../factories/user.factory';
 
    export const test = base.extend({
-     authenticatedUser: async ({ page }, use) => {
+     authenticatedUser: async ({page}, use) => {
        // Setup: Create and authenticate user
        const user = await createUser();
        await page.goto('/login');
@@ -316,7 +316,7 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```typescript
    // tests/support/factories/user.factory.ts
-   import { faker } from '@faker-js/faker';
+   import {faker} from '@faker-js/faker';
 
    export const createUser = (overrides = {}) => ({
      id: faker.number.int(),
@@ -328,11 +328,12 @@ Expands test automation coverage by generating comprehensive test suites at appr
      ...overrides,
    });
 
-   export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());
+   export const createUsers = (count: number) =>
+     Array.from({length: count}, () => createUser());
 
    // API helper for cleanup
    export const deleteUser = async (userId: number) => {
-     await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+     await fetch(`/api/users/${userId}`, {method: 'DELETE'});
    };
    ```
 
@@ -350,7 +351,11 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```typescript
    // tests/support/helpers/wait-for.ts
-   export const waitFor = async (condition: () => Promise<boolean>, timeout = 5000, interval = 100): Promise<void> => {
+   export const waitFor = async (
+     condition: () => Promise<boolean>,
+     timeout = 5000,
+     interval = 100,
+   ): Promise<void> => {
      const startTime = Date.now();
      while (Date.now() - startTime < timeout) {
        if (await condition()) return;
@@ -389,10 +394,12 @@ Expands test automation coverage by generating comprehensive test suites at appr
    **Follow Given-When-Then format:**
 
    ```typescript
-   import { test, expect } from '@playwright/test';
+   import {test, expect} from '@playwright/test';
 
    test.describe('User Authentication', () => {
-     test('[P0] should login with valid credentials and load dashboard', async ({ page }) => {
+     test('[P0] should login with valid credentials and load dashboard', async ({
+       page,
+     }) => {
        // GIVEN: User is on login page
        await page.goto('/login');
 
@@ -406,7 +413,9 @@ Expands test automation coverage by generating comprehensive test suites at appr
        await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
      });
 
-     test('[P1] should display error for invalid credentials', async ({ page }) => {
+     test('[P1] should display error for invalid credentials', async ({
+       page,
+     }) => {
        // GIVEN: User is on login page
        await page.goto('/login');
 
@@ -416,7 +425,9 @@ Expands test automation coverage by generating comprehensive test suites at appr
        await page.click('[data-testid="login-button"]');
 
        // THEN: Error message is displayed
-       await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
+       await expect(page.locator('[data-testid="error-message"]')).toHaveText(
+         'Invalid email or password',
+       );
      });
    });
    ```
@@ -432,10 +443,12 @@ Expands test automation coverage by generating comprehensive test suites at appr
 3. **Write API Tests (If Applicable)**
 
    ```typescript
-   import { test, expect } from '@playwright/test';
+   import {test, expect} from '@playwright/test';
 
    test.describe('User Authentication API', () => {
-     test('[P1] POST /api/auth/login - should return token for valid credentials', async ({ request }) => {
+     test('[P1] POST /api/auth/login - should return token for valid credentials', async ({
+       request,
+     }) => {
        // GIVEN: Valid user credentials
        const credentials = {
          email: 'user@example.com',
@@ -451,10 +464,14 @@ Expands test automation coverage by generating comprehensive test suites at appr
        expect(response.status()).toBe(200);
        const body = await response.json();
        expect(body).toHaveProperty('token');
-       expect(body.token).toMatch(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/); // JWT format
+       expect(body.token).toMatch(
+         /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/,
+       ); // JWT format
      });
 
-     test('[P1] POST /api/auth/login - should return 401 for invalid credentials', async ({ request }) => {
+     test('[P1] POST /api/auth/login - should return 401 for invalid credentials', async ({
+       request,
+     }) => {
        // GIVEN: Invalid credentials
        const credentials = {
          email: 'invalid@example.com',
@@ -514,7 +531,7 @@ Expands test automation coverage by generating comprehensive test suites at appr
 5. **Write Unit Tests (If Applicable)**
 
    ```typescript
-   import { validateEmail } from './validation';
+   import {validateEmail} from './validation';
 
    describe('Email Validation', () => {
      test('[P2] should return true for valid email', () => {
@@ -530,7 +547,12 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
      test('[P2] should return false for malformed email', () => {
        // GIVEN: Malformed email addresses
-       const invalidEmails = ['notanemail', '@example.com', 'user@', 'user @example.com'];
+       const invalidEmails = [
+         'notanemail',
+         '@example.com',
+         'user@',
+         'user @example.com',
+       ];
 
        // WHEN/THEN: Each should fail validation
        invalidEmails.forEach((email) => {
@@ -547,19 +569,21 @@ Expands test automation coverage by generating comprehensive test suites at appr
    **Critical pattern to prevent race conditions:**
 
    ```typescript
-   test('should load user dashboard after login', async ({ page }) => {
+   test('should load user dashboard after login', async ({page}) => {
      // CRITICAL: Intercept routes BEFORE navigation
      await page.route('**/api/user', (route) =>
        route.fulfill({
          status: 200,
-         body: JSON.stringify({ id: 1, name: 'Test User' }),
+         body: JSON.stringify({id: 1, name: 'Test User'}),
        }),
      );
 
      // NOW navigate
      await page.goto('/dashboard');
 
-     await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
+     await expect(page.locator('[data-testid="user-name"]')).toHaveText(
+       'Test User',
+     );
    });
    ```
 
@@ -720,7 +744,7 @@ Expands test automation coverage by generating comprehensive test suites at appr
      - Manual investigation needed
 
    ```typescript
-   test.fixme('[P1] should handle complex interaction', async ({ page }) => {
+   test.fixme('[P1] should handle complex interaction', async ({page}) => {
      // FIXME: Test healing failed after 3 attempts
      // Failure: "Locator 'button[data-action="submit"]' resolved to 0 elements"
      // Attempted fixes:
@@ -1159,7 +1183,7 @@ await element.click();
 ```typescript
 // ✅ CORRECT: Fixture with auto-cleanup
 export const test = base.extend({
-  testUser: async ({ page }, use) => {
+  testUser: async ({page}, use) => {
     const user = await createUser();
     await use(user);
     await deleteUser(user.id); // Auto-cleanup
@@ -1167,7 +1191,7 @@ export const test = base.extend({
 });
 
 // ❌ WRONG: Manual cleanup (can be forgotten)
-test('should login', async ({ page }) => {
+test('should login', async ({page}) => {
   const user = await createUser();
   // ... test logic ...
   // Forgot to delete user!
