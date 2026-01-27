@@ -6,9 +6,9 @@ import {
   useState,
 } from 'react';
 import {NavLink} from 'react-router';
-import {ResponsiveImage} from '@responsive-image/react';
-import {ThemeSwitcher} from '~/components/ThemeSwitcher';
 import GoatLogo from '~/assets/images/goat-logo.png?responsive';
+import {Picture} from '~/components/Picture';
+import {ThemeSwitcher} from '~/components/ThemeSwitcher';
 
 type AsideType = 'search' | 'cart' | 'mobile' | 'closed';
 type AsideContextValue = {
@@ -76,7 +76,7 @@ export function Aside({
               onClick={close}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
             >
-              <ResponsiveImage
+              <Picture
                 src={GoatLogo}
                 alt="Isla Suds Logo"
                 className="w-[16.06rem] h-[3.44rem]"
