@@ -3,6 +3,7 @@ import {Await, useLoaderData, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {HeroSection} from '~/components/story';
+import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {
   FeaturedCollectionFragment,
@@ -62,22 +63,31 @@ export default function Homepage() {
   return (
     <div className="home">
       <HeroSection />
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
+      {/* Story 2.2: Snap sections for mobile scroll-snap */}
+      <FeaturedCollection
+        collection={data.featuredCollection}
+        className="snap-start"
+      />
+      <RecommendedProducts
+        products={data.recommendedProducts}
+        className="snap-start"
+      />
     </div>
   );
 }
 
 function FeaturedCollection({
   collection,
+  className,
 }: {
   collection: FeaturedCollectionFragment;
+  className?: string;
 }) {
   if (!collection) return null;
   const image = collection?.image;
   return (
     <Link
-      className="featured-collection"
+      className={cn('featured-collection', className)}
       to={`/collections/${collection.handle}`}
     >
       {image && (
@@ -93,13 +103,29 @@ function FeaturedCollection({
 
 function RecommendedProducts({
   products,
+  className,
 }: {
   products: Promise<RecommendedProductsQuery | null>;
+  className?: string;
 }) {
   return (
-    <div className="recommended-products">
+    <div className={cn('recommended-products', className)}>
       <h2>Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div
+            className="min-h-[280px] grid grid-cols-2 sm:grid-cols-4 gap-4"
+            aria-hidden
+          >
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="aspect-square bg-[var(--canvas-elevated)] rounded animate-pulse"
+              />
+            ))}
+          </div>
+        }
+      >
         <Await resolve={products}>
           {(response) => (
             <div className="recommended-products-grid">
