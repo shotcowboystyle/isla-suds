@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # React Router generated files
 .react-router/
+
+.DS_Store
+**/.DS_Store
