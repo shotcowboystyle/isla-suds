@@ -1,7 +1,7 @@
 import {Suspense} from 'react';
 import {Await, useLoaderData, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
-import {ProductItem} from '~/components/ProductItem';
+import {ConstellationGrid} from '~/components/product';
 import {HeroSection} from '~/components/story';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
@@ -68,7 +68,8 @@ export default function Homepage() {
         collection={data.featuredCollection}
         className="snap-start"
       />
-      <RecommendedProducts
+      {/* Story 2.3: Constellation grid layout */}
+      <ConstellationProducts
         products={data.recommendedProducts}
         className="snap-start"
       />
@@ -101,7 +102,7 @@ function FeaturedCollection({
   );
 }
 
-function RecommendedProducts({
+function ConstellationProducts({
   products,
   className,
 }: {
@@ -109,37 +110,33 @@ function RecommendedProducts({
   className?: string;
 }) {
   return (
-    <div className={cn('recommended-products', className)}>
-      <h2>Recommended Products</h2>
-      <Suspense
-        fallback={
-          <div
-            className="min-h-[280px] grid grid-cols-2 sm:grid-cols-4 gap-4"
-            aria-hidden
-          >
+    <Suspense
+      fallback={
+        <div
+          className={cn('min-h-[400px] px-4 py-12', className)}
+          aria-hidden
+          aria-label="Loading products"
+        >
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 lg:max-w-6xl lg:mx-auto">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="aspect-square bg-[var(--canvas-elevated)] rounded animate-pulse"
+                className="aspect-square bg-[var(--canvas-elevated)] rounded-lg animate-pulse"
               />
             ))}
           </div>
-        }
-      >
-        <Await resolve={products}>
-          {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <ProductItem key={product.id} product={product} />
-                  ))
-                : null}
-            </div>
-          )}
-        </Await>
-      </Suspense>
-      <br />
-    </div>
+        </div>
+      }
+    >
+      <Await resolve={products}>
+        {(response) => (
+          <ConstellationGrid
+            products={response?.products.nodes || null}
+            className={className}
+          />
+        )}
+      </Await>
+    </Suspense>
   );
 }
 
