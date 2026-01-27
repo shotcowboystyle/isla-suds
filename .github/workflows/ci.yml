@@ -249,17 +249,17 @@ jobs:
       - name: Build production bundle
         run: pnpm build
 
-      # - name: Run Lighthouse CI
-      #   run: pnpm run lighthouse:ci
-      #   env:
-      #     LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - name: Run Lighthouse CI
+        run: pnpm run lighthouse:ci
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      - name: Lighthouse
-        uses: shopify/lighthouse-ci-action@v1
-        with:
-          access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
-          store: ${{ secrets.SHOP_STORE }}
-          # password: ${{ secrets.SHOP_PASSWORD }}
+      # - name: Lighthouse
+      #   uses: shopify/lighthouse-ci-action@v1
+      #   with:
+      #     access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
+      #     store: ${{ secrets.SHOP_STORE }}
+      #     # password: ${{ secrets.SHOP_PASSWORD }}
 
       - name: Upload Lighthouse results
         if: failure()
@@ -276,6 +276,9 @@ jobs:
     needs: bundle-size
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
+      PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}
+      PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
     steps:
       - uses: actions/checkout@v4
 
