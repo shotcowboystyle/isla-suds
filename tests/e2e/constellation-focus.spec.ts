@@ -8,6 +8,7 @@
  */
 
 import {test, expect} from '@playwright/test';
+import type {ExplorationState} from 'app/stores/exploration';
 
 test.describe('Constellation Product Focus - Desktop (Story 2.4)', () => {
   test.beforeEach(async ({page}) => {
@@ -37,9 +38,7 @@ test.describe('Constellation Product Focus - Desktop (Story 2.4)', () => {
     // GIVEN: User is on homepage
     await page.waitForSelector('[aria-label="Product constellation grid"]');
 
-    const cards = page.locator(
-      '[aria-label="Product constellation grid"] a',
-    );
+    const cards = page.locator('[aria-label="Product constellation grid"] a');
     const firstCard = cards.nth(0);
     const secondCard = cards.nth(1);
 
@@ -57,9 +56,7 @@ test.describe('Constellation Product Focus - Desktop (Story 2.4)', () => {
     // GIVEN: User has one product focused
     await page.waitForSelector('[aria-label="Product constellation grid"]');
 
-    const cards = page.locator(
-      '[aria-label="Product constellation grid"] a',
-    );
+    const cards = page.locator('[aria-label="Product constellation grid"] a');
     const firstCard = cards.nth(0);
     const secondCard = cards.nth(1);
 
@@ -166,19 +163,23 @@ test.describe('Constellation Product Focus - Keyboard (Story 2.4)', () => {
     // GIVEN: User is on homepage
     await page.waitForSelector('[aria-label="Product constellation grid"]');
 
-    const cards = page.locator(
-      '[aria-label="Product constellation grid"] a',
-    );
+    const cards = page.locator('[aria-label="Product constellation grid"] a');
 
     // WHEN: User tabs through product cards
     await page.keyboard.press('Tab'); // Focus first card
-    const firstFocused = await page.evaluate(() => document.activeElement?.textContent);
+    const firstFocused = await page.evaluate(
+      () => document.activeElement?.textContent,
+    );
 
     await page.keyboard.press('Tab'); // Focus second card
-    const secondFocused = await page.evaluate(() => document.activeElement?.textContent);
+    const secondFocused = await page.evaluate(
+      () => document.activeElement?.textContent,
+    );
 
     await page.keyboard.press('Tab'); // Focus third card
-    const thirdFocused = await page.evaluate(() => document.activeElement?.textContent);
+    const thirdFocused = await page.evaluate(
+      () => document.activeElement?.textContent,
+    );
 
     // THEN: Focus order matches DOM order (not visual placement)
     expect(firstFocused).toBeTruthy();
@@ -261,20 +262,18 @@ test.describe('Constellation Exploration Tracking (Story 2.4 AC5)', () => {
     // Verify via localStorage or devtools protocol (exploration store uses localStorage)
     const explorationState = await page.evaluate(() => {
       const stored = localStorage.getItem('exploration-store');
-      return stored ? JSON.parse(stored) : null;
+      return stored ? (JSON.parse(stored) as ExplorationState) : null;
     });
 
     expect(explorationState).toBeTruthy();
-    expect(explorationState?.state?.productsExplored).toBeDefined();
+    expect(explorationState?.productsExplored).toBeDefined();
   });
 
   test('[P1] should track multiple products cumulatively', async ({page}) => {
     // GIVEN: User is exploring constellation
     await page.waitForSelector('[aria-label="Product constellation grid"]');
 
-    const cards = page.locator(
-      '[aria-label="Product constellation grid"] a',
-    );
+    const cards = page.locator('[aria-label="Product constellation grid"] a');
 
     // WHEN: User focuses multiple products in sequence
     await cards.nth(0).hover();
@@ -289,10 +288,10 @@ test.describe('Constellation Exploration Tracking (Story 2.4 AC5)', () => {
     // THEN: All products are tracked cumulatively
     const explorationState = await page.evaluate(() => {
       const stored = localStorage.getItem('exploration-store');
-      return stored ? JSON.parse(stored) : null;
+      return stored ? (JSON.parse(stored) as ExplorationState) : null;
     });
 
-    const exploredCount = explorationState?.state?.productsExplored?.length || 0;
+    const exploredCount = explorationState?.productsExplored?.size || 0;
     expect(exploredCount).toBeGreaterThanOrEqual(3);
   });
 
@@ -312,9 +311,9 @@ test.describe('Constellation Exploration Tracking (Story 2.4 AC5)', () => {
     // Verify product was added
     let explorationState = await page.evaluate(() => {
       const stored = localStorage.getItem('exploration-store');
-      return stored ? JSON.parse(stored) : null;
+      return stored ? (JSON.parse(stored) as ExplorationState) : null;
     });
-    const initialCount = explorationState?.state?.productsExplored?.length || 0;
+    const initialCount = explorationState?.productsExplored?.size || 0;
     expect(initialCount).toBeGreaterThan(0);
 
     // WHEN: User clears focus by clicking outside
@@ -324,9 +323,9 @@ test.describe('Constellation Exploration Tracking (Story 2.4 AC5)', () => {
     // THEN: Explored products remain in store (cumulative tracking)
     explorationState = await page.evaluate(() => {
       const stored = localStorage.getItem('exploration-store');
-      return stored ? JSON.parse(stored) : null;
+      return stored ? (JSON.parse(stored) as ExplorationState) : null;
     });
-    const finalCount = explorationState?.state?.productsExplored?.length || 0;
+    const finalCount = explorationState?.productsExplored?.size || 0;
     expect(finalCount).toBe(initialCount); // Count unchanged
   });
 });
