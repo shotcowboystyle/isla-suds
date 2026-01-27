@@ -12,6 +12,18 @@ html {
   font-size: 20px !important;
 }
 
+/* Story 2.2: scroll-snap on viewport for mobile (<1024px); viewport is the scroll container */
+@media (max-width: 1023px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+@media (min-width: 1024px) {
+  html {
+    scroll-snap-type: none;
+  }
+}
+
 img {
   border-radius: 4px;
 }

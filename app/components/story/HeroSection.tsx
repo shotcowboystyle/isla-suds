@@ -11,6 +11,8 @@ export function HeroSection({className}: HeroSectionProps) {
       className={cn(
         'relative min-h-[100dvh] flex items-center justify-center',
         'bg-[var(--canvas-base)]',
+        // Story 2.2: CSS scroll-snap for mobile - snap to top of hero
+        'snap-start',
         className,
       )}
       aria-label="Hero section"

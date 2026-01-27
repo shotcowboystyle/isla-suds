@@ -5,6 +5,31 @@ let lenisInstance: Lenis | null = null;
 let rafId: number | null = null;
 
 /**
+ * SCROLL-LINKED ANIMATIONS POLICY (Story 2.2)
+ *
+ * ⚠️ IMPORTANT: All scroll-linked animations MUST use Intersection Observer, NOT scroll event listeners.
+ *
+ * WHY:
+ * - Scroll listeners run on the main thread and cause jank during scroll
+ * - Intersection Observer runs off-main-thread and is more efficient
+ * - Better performance for animations, visibility detection, and scroll-triggered behavior
+ *
+ * IMPLEMENTATION:
+ * - Use IntersectionObserver for "in view" detection
+ * - Use IntersectionObserver for triggering animations when elements enter/exit viewport
+ * - Story 2.5 (Sticky Header) will use IO for "past hero" detection
+ * - Story 4.1 (Story Fragments) will use IO for scroll-triggered content
+ *
+ * DO NOT:
+ * - window.addEventListener('scroll', ...) for animation/visibility logic
+ * - Check scroll position in RAF loops for triggering UI changes
+ *
+ * EXCEPTIONS:
+ * - Scroll position for Lenis itself (handled by Lenis library internally)
+ * - Resize events (for responsive behavior, not animation)
+ */
+
+/**
  * Initializes Lenis smooth scroll for desktop devices (≥1024px)
  * SSR-safe, respects prefers-reduced-motion, graceful fallback to native scroll
  *
@@ -50,7 +75,7 @@ export function initLenis(): Lenis | null {
     return lenisInstance;
   } catch (error) {
     // Graceful fallback - log warning but don't break user experience
-    // Using console.warn per AC4: "no console errors are thrown"
+    // Using console.warn per AC5: "no console.error that breaks flow"
     console.warn('Failed to initialize Lenis smooth scroll:', error);
     return null;
   }
@@ -74,7 +99,7 @@ export function destroyLenis(): void {
       lenisInstance = null;
     } catch (error) {
       // Graceful error handling - ensure cleanup happens
-      // Using console.warn per AC4: "no console errors are thrown"
+      // Using console.warn per AC5: "no console.error that breaks flow"
       console.warn('Failed to destroy Lenis instance:', error);
       lenisInstance = null;
     }
