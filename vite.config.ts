@@ -1,3 +1,4 @@
+import path from 'path';
 import {reactRouter} from '@react-router/dev/vite';
 import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
@@ -5,14 +6,20 @@ import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
+export default defineConfig(({mode}) => ({
   plugins: [
     tailwindcss(),
     hydrogen(),
     oxygen(),
-    reactRouter(),
     tsconfigPaths(),
+    // Skip React Router plugin in test mode to avoid processing test files
+    ...(mode !== 'test' ? [reactRouter()] : []),
   ],
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, './app'),
+    },
+  },
   build: {
     // Allow a strict Content-Security-Policy
     // withtout inlining assets as base64:
@@ -22,6 +29,17 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
+      '**/tests/**', // Exclude Playwright e2e tests
+    ],
+    typecheck: {
+      tsconfig: path.resolve(__dirname, './tsconfig.spec.json'),
+    },
   },
   define: {
     global: {},
@@ -45,4 +63,4 @@ export default defineConfig({
   server: {
     allowedHosts: ['.tryhydrogen.dev'],
   },
-});
+}));

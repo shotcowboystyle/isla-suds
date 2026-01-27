@@ -1,4 +1,5 @@
 import {useEffect} from 'react';
+import {useShallow} from 'zustand/react/shallow';
 import {useExplorationStore} from '~/stores/exploration';
 
 /**
@@ -70,10 +71,9 @@ export function useSessionStartTime(): number {
  */
 export function useCartDrawerOpen(): [boolean, (open: boolean) => void] {
   // Optimized: Single selector to avoid multiple subscriptions
-  return useExplorationStore((state) => [
-    state.cartDrawerOpen,
-    state.setCartDrawerOpen,
-  ]);
+  return useExplorationStore(
+    useShallow((state) => [state.cartDrawerOpen, state.setCartDrawerOpen]),
+  );
 }
 
 /**
