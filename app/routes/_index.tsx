@@ -2,6 +2,7 @@ import {Suspense} from 'react';
 import {Await, useLoaderData, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
+import {HeroSection} from '~/components/story';
 import type {Route} from './+types/_index';
 import type {
   FeaturedCollectionFragment,
@@ -60,6 +61,7 @@ export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="home">
+      <HeroSection />
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
@@ -84,7 +86,7 @@ function FeaturedCollection({
         </div>
       )}
 
-      <h1>{collection.title}</h1>
+      <h2>{collection.title}</h2>
     </Link>
   );
 }

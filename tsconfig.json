@@ -4,6 +4,8 @@
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.d.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
     "*.ts",
     "*.tsx",
     "*.d.ts",
@@ -14,11 +16,7 @@
     "node_modules",
     "dist",
     "build",
-    "packages/**/dist/**/*",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "packages/**/dist/**/*"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],

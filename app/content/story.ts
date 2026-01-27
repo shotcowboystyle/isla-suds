@@ -1,3 +1,6 @@
+/** Hero section tagline (AC3 – brand essence message) */
+export const HERO_TAGLINE = 'Handcrafted soap, made with love';
+
 const STORY_FRAGMENTS = [
   {
     title: 'Suds People',
