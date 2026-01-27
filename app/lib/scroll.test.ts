@@ -2,7 +2,7 @@ import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import {initLenis, destroyLenis} from './scroll';
 
 // Mock Lenis with proper constructor
-vi.mock('@studio-freight/lenis', () => {
+vi.mock('lenis', () => {
   const MockLenis = vi.fn(function (this: any) {
     this.raf = vi.fn();
     this.destroy = vi.fn();
@@ -131,7 +131,7 @@ describe('initLenis', () => {
     });
 
     // Mock Lenis to throw an error
-    const Lenis = await import('@studio-freight/lenis');
+    const Lenis = await import('lenis');
     vi.mocked(Lenis.default).mockImplementationOnce(() => {
       throw new Error('Lenis initialization failed');
     });

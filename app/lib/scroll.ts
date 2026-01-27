@@ -1,4 +1,4 @@
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 
 // Keep track of the Lenis instance and RAF ID globally
 let lenisInstance: Lenis | null = null;

@@ -82,7 +82,7 @@ describe('RouteErrorBoundary', () => {
     const originalLocation = window.location;
     // @ts-expect-error - Mocking window.location for test
     delete window.location;
-    window.location = {...originalLocation, reload: vi.fn()};
+    (window.location as any) = {...originalLocation, reload: vi.fn()};
 
     render(
       <RouteErrorBoundary>
@@ -98,7 +98,7 @@ describe('RouteErrorBoundary', () => {
     fireEvent.click(retryButton);
     expect(window.location.reload).toHaveBeenCalled();
 
-    window.location = originalLocation;
+    (window.location as any) = originalLocation;
   });
 
   it('displays go back button that navigates back', () => {
