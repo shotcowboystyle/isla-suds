@@ -1,6 +1,7 @@
-import {describe, it, expect, vi} from 'vitest';
-import {render, screen} from '@testing-library/react';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
+import {render, screen, fireEvent} from '@testing-library/react';
 import {ConstellationGrid} from './ConstellationGrid';
+import {useExplorationStore} from '~/stores/exploration';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 // Mock Hydrogen Image component
@@ -176,5 +177,218 @@ describe('ConstellationGrid', () => {
   it('renders null when empty products array provided', () => {
     const {container} = render(<ConstellationGrid products={[]} />);
     expect(container.firstChild).toBeNull();
+  });
+});
+
+describe('ConstellationGrid - Focus State (Story 2.4)', () => {
+  beforeEach(() => {
+    // Reset exploration store before each test
+    useExplorationStore.setState({
+      productsExplored: new Set(),
+      textureRevealsTriggered: 0,
+      storyMomentShown: false,
+      sessionStartTime: 0,
+      cartDrawerOpen: false,
+    });
+  });
+
+  it('applies focused state when hovering on desktop', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    // Simulate hover (mouseenter)
+    fireEvent.mouseEnter(firstCard);
+
+    // Card should have focused state (scale, shadow)
+    expect(firstCard).toHaveClass('scale-[1.02]');
+    expect(firstCard).toHaveClass('shadow-lg');
+  });
+
+  it('applies dimmed state to other products when one is focused', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+    const secondCard = screen.getByRole('link', {name: /citrus sunrise/i});
+
+    fireEvent.mouseEnter(firstCard);
+
+    // First card should be focused (no opacity change)
+    expect(firstCard).not.toHaveClass('opacity-60');
+
+    // Other cards should be dimmed
+    expect(secondCard).toHaveClass('opacity-60');
+  });
+
+  it('moves focus to new product when hovering another', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+    const secondCard = screen.getByRole('link', {name: /citrus sunrise/i});
+
+    // Hover first card
+    fireEvent.mouseEnter(firstCard);
+    expect(firstCard).toHaveClass('scale-[1.02]');
+    expect(secondCard).toHaveClass('opacity-60');
+
+    // Hover second card
+    fireEvent.mouseEnter(secondCard);
+    expect(secondCard).toHaveClass('scale-[1.02]');
+    expect(firstCard).toHaveClass('opacity-60');
+  });
+
+  it('clears focus when clicking on section background (not on a card)', () => {
+    const {container} = render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+    const section = container.querySelector('section');
+
+    // Focus first card
+    fireEvent.mouseEnter(firstCard);
+    expect(firstCard).toHaveClass('scale-[1.02]');
+
+    // Click on section background (inside section, not on a card)
+    fireEvent.click(section!);
+
+    // Focus should be cleared
+    expect(firstCard).not.toHaveClass('scale-[1.02]');
+    expect(firstCard).not.toHaveClass('opacity-60');
+  });
+
+  it('clears focus when clicking outside section (e.g. elsewhere on page)', () => {
+    render(
+      <div>
+        <div data-testid="page-elsewhere">Other content</div>
+        <ConstellationGrid products={mockProducts} />
+      </div>,
+    );
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+    const elsewhere = screen.getByTestId('page-elsewhere');
+
+    // Focus first card
+    fireEvent.mouseEnter(firstCard);
+    expect(firstCard).toHaveClass('scale-[1.02]');
+
+    // Click outside the constellation section (AC3)
+    fireEvent.click(elsewhere);
+
+    // Focus should be cleared
+    expect(firstCard).not.toHaveClass('scale-[1.02]');
+    expect(firstCard).not.toHaveClass('opacity-60');
+  });
+
+  it('activates focus state with keyboard Enter key', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    // Focus with Tab (simulated by focus event)
+    fireEvent.focus(firstCard);
+
+    // Activate with Enter
+    fireEvent.keyDown(firstCard, {key: 'Enter', code: 'Enter'});
+
+    expect(firstCard).toHaveClass('scale-[1.02]');
+  });
+
+  it('activates focus state with keyboard Space key', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    fireEvent.focus(firstCard);
+    fireEvent.keyDown(firstCard, {key: ' ', code: 'Space'});
+
+    expect(firstCard).toHaveClass('scale-[1.02]');
+  });
+
+  it('clears focus when Escape key is pressed', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    // Focus card
+    fireEvent.mouseEnter(firstCard);
+    expect(firstCard).toHaveClass('scale-[1.02]');
+
+    // Press Escape
+    fireEvent.keyDown(firstCard, {key: 'Escape', code: 'Escape'});
+
+    // Focus should be cleared
+    expect(firstCard).not.toHaveClass('scale-[1.02]');
+  });
+
+  it('calls addProductExplored when product enters focused state', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    // Focus card via hover
+    fireEvent.mouseEnter(firstCard);
+
+    // Check store was updated
+    const {productsExplored} = useExplorationStore.getState();
+    expect(productsExplored.has('gid://shopify/Product/1')).toBe(true);
+  });
+
+  it('does not remove from productsExplored when focus is cleared', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+
+    // Focus card
+    fireEvent.mouseEnter(firstCard);
+
+    // Verify it was added
+    let {productsExplored} = useExplorationStore.getState();
+    expect(productsExplored.has('gid://shopify/Product/1')).toBe(true);
+
+    // Clear focus
+    fireEvent.mouseLeave(firstCard);
+
+    // Verify it's still in the explored set
+    productsExplored = useExplorationStore.getState().productsExplored;
+    expect(productsExplored.has('gid://shopify/Product/1')).toBe(true);
+  });
+
+  it('tracks multiple explored products cumulatively', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const firstCard = screen.getByRole('link', {name: /lavender bliss/i});
+    const secondCard = screen.getByRole('link', {name: /citrus sunrise/i});
+
+    // Focus first card
+    fireEvent.mouseEnter(firstCard);
+
+    // Focus second card
+    fireEvent.mouseEnter(secondCard);
+
+    // Both should be in explored set
+    const {productsExplored} = useExplorationStore.getState();
+    expect(productsExplored.has('gid://shopify/Product/1')).toBe(true);
+    expect(productsExplored.has('gid://shopify/Product/2')).toBe(true);
+  });
+
+  it('ensures only one product is focused at a time', () => {
+    render(<ConstellationGrid products={mockProducts} />);
+
+    const cards = [
+      screen.getByRole('link', {name: /lavender bliss/i}),
+      screen.getByRole('link', {name: /citrus sunrise/i}),
+      screen.getByRole('link', {name: /mint meadow/i}),
+    ];
+
+    // Focus first card
+    fireEvent.mouseEnter(cards[0]);
+    expect(cards[0]).toHaveClass('scale-[1.02]');
+    expect(cards[1]).not.toHaveClass('scale-[1.02]');
+    expect(cards[2]).not.toHaveClass('scale-[1.02]');
+
+    // Focus second card
+    fireEvent.mouseEnter(cards[1]);
+    expect(cards[0]).not.toHaveClass('scale-[1.02]');
+    expect(cards[1]).toHaveClass('scale-[1.02]');
+    expect(cards[2]).not.toHaveClass('scale-[1.02]');
   });
 });
