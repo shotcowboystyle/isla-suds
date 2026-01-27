@@ -1,3 +1,5 @@
+import {useState, useEffect, useCallback} from 'react';
+import {useExplorationActions} from '~/hooks/use-exploration-state';
 import {cn} from '~/utils/cn';
 import {ProductCard} from './ProductCard';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
@@ -29,6 +31,52 @@ export function ConstellationGrid({
   products,
   className,
 }: ConstellationGridProps) {
+  // Hooks must be called unconditionally before any early returns
+  const [focusedProductId, setFocusedProductId] = useState<string | null>(null);
+  const {addProductExplored} = useExplorationActions();
+
+  // Handle focus state and track exploration
+  const handleProductFocus = useCallback(
+    (productId: string) => {
+      setFocusedProductId(productId);
+      addProductExplored(productId);
+    },
+    [addProductExplored],
+  );
+
+  // Clear focus state
+  const handleClearFocus = useCallback(() => {
+    setFocusedProductId(null);
+  }, []);
+
+  // Handle click outside to clear focus (AC3: any click not on a product card clears)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!focusedProductId) return;
+      const target = event.target as HTMLElement;
+      // Clear when click is not on any product card (inside or outside section)
+      if (!target.closest?.('.product-card')) {
+        handleClearFocus();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [focusedProductId, handleClearFocus]);
+
+  // Handle Escape key to clear focus
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && focusedProductId) {
+        handleClearFocus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [focusedProductId, handleClearFocus]);
+
+  // Early return after all hooks
   if (!products || products.length === 0) {
     return null;
   }
@@ -66,6 +114,9 @@ export function ConstellationGrid({
       >
         {products.map((product, index) => {
           const i = index % 4;
+          const isFocused = focusedProductId === product.id;
+          const isDimmed = focusedProductId !== null && !isFocused;
+
           return (
             <div
               key={product.id}
@@ -75,6 +126,10 @@ export function ConstellationGrid({
                 product={product}
                 rotationClass={rotationClasses[i]}
                 loading={index < 2 ? 'eager' : 'lazy'}
+                isFocused={isFocused}
+                isDimmed={isDimmed}
+                onFocus={handleProductFocus}
+                onClearFocus={handleClearFocus}
               />
             </div>
           );
