@@ -1,5 +1,4 @@
 import {Suspense, useEffect, useState} from 'react';
-
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {MotionErrorBoundary} from './MotionErrorBoundary';
 

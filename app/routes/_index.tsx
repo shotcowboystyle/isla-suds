@@ -1,12 +1,12 @@
-import {Await, useLoaderData, Link} from 'react-router';
-import type {Route} from './+types/_index';
 import {Suspense} from 'react';
+import {Await, useLoaderData, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
+import {ProductItem} from '~/components/ProductItem';
+import type {Route} from './+types/_index';
 import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
-import {ProductItem} from '~/components/ProductItem';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];

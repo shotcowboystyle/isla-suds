@@ -1,4 +1,4 @@
-import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
+import {useEffect} from 'react';
 import {
   Outlet,
   useRouteError,
@@ -11,19 +11,18 @@ import {
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
-import {useEffect} from 'react';
-
-import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
-import {initLenis, destroyLenis} from '~/lib/scroll';
-import {useInitializeSession} from '~/hooks/use-exploration-state';
-import type {Route} from './+types/root';
+import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
+import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
+import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
-import resetStyles from '~/styles/reset.css?url';
+import {initLenis, destroyLenis} from '~/lib/scroll';
 import appStyles from '~/styles/app.css?url';
-import tailwindCss from './styles/tailwind.css?url';
+import resetStyles from '~/styles/reset.css?url';
 import {PageLayout} from './components/PageLayout';
+import tailwindCss from './styles/tailwind.css?url';
 import {cn} from './utils/cn';
+import type {Route} from './+types/root';
 // import {localizationCookie, themeCookie} from './cookie.server';
 
 export type RootLoader = typeof loader;

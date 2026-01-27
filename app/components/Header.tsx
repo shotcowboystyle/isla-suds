@@ -11,9 +11,9 @@ import {
   useAnalytics,
   useOptimisticCart,
 } from '@shopify/hydrogen';
-import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
+import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 interface HeaderProps {
   header: HeaderQuery;

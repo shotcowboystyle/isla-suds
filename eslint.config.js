@@ -227,6 +227,43 @@ export default [
       '@typescript-eslint/no-misused-promises': 'error',
       'react/prop-types': 'off',
       'import/no-unresolved': ['error', {ignore: ['^virtual:']}],
+      // Import order rules (AC2)
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin', // Node.js built-in modules
+            'external', // External libraries (react, react-router, framer-motion, etc.)
+            'internal', // Internal absolute imports (~/components/...)
+            ['parent', 'sibling'], // Relative imports (./, ../)
+            'type', // Type imports (import type)
+          ],
+          pathGroups: [
+            {
+              pattern: 'react',
+              group: 'builtin',
+              position: 'before',
+            },
+            {
+              pattern: 'react-router',
+              group: 'builtin',
+              position: 'before',
+            },
+            {
+              pattern: '~/**',
+              group: 'internal',
+              position: 'after',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin', 'type'],
+          'newlines-between': 'never',
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+          warnOnUnassignedImports: false,
+        },
+      ],
     },
   },
   {

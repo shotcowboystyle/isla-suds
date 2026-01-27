@@ -1,4 +1,3 @@
-import {NavLink} from 'react-router';
 import {
   createContext,
   type ReactNode,
@@ -6,6 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import {NavLink} from 'react-router';
 import GoatLogo from '~/assets/goat-logo.png';
 import {ThemeSwitcher} from '~/components/ThemeSwitcher';
 
