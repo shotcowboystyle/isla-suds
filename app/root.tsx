@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {
   Outlet,
   useRouteError,
@@ -20,7 +20,9 @@ import {
 } from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
+import {HomeScrollProvider} from '~/contexts/home-scroll-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
+import {usePastHero} from '~/hooks/use-past-hero';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import {initLenis, destroyLenis} from '~/lib/scroll';
 import appStyles from '~/styles/app.css?url';
@@ -210,6 +212,9 @@ export function Layout({children}: {children?: React.ReactNode}) {
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
   const location = useLocation();
+  const isHome = location.pathname === '/';
+  const heroRef = useRef<HTMLElement>(null);
+  const isPastHero = usePastHero(heroRef);
 
   // Initialize exploration session timestamp (SSR-safe)
   useInitializeSession();
@@ -264,7 +269,16 @@ export default function App() {
     return <Outlet />;
   }
 
-  // const [theme, setTheme] = useState(data?.theme);
+  const layoutContent = (
+    <PageLayout
+      {...data}
+      theme="light"
+      setTheme={() => {}}
+      header={data.header}
+    >
+      <Outlet context={isHome ? {heroRef} : undefined} />
+    </PageLayout>
+  );
 
   return (
     <Analytics.Provider
@@ -272,14 +286,13 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <PageLayout
-        {...data}
-        theme="light"
-        setTheme={() => {}}
-        header={data.header}
-      >
-        <Outlet />
-      </PageLayout>
+      {isHome ? (
+        <HomeScrollProvider isPastHero={isPastHero}>
+          {layoutContent}
+        </HomeScrollProvider>
+      ) : (
+        layoutContent
+      )}
     </Analytics.Provider>
   );
 }

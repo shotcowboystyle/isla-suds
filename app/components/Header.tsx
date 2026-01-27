@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import {
   Await,
   NavLink,
@@ -13,6 +13,8 @@ import {
 } from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
+import {useHomeScroll} from '~/contexts/home-scroll-context';
+import {cn} from '~/utils/cn';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 interface HeaderProps {
@@ -37,15 +39,56 @@ export function Header({
     location.pathname.startsWith('/products');
   const navigate = useNavigate();
 
+  // Story 2.5: Scroll-aware header on home page only
+  const isHomePage = location.pathname === '/';
+  const homeScroll = useHomeScroll();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    // Check for prefers-reduced-motion preference
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      setPrefersReducedMotion(mediaQuery.matches);
+
+      const handleChange = (e: MediaQueryListEvent) => {
+        setPrefersReducedMotion(e.matches);
+      };
+
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, []);
+
+  // On home page: hide header when at hero (isPastHero = false)
+  // On other pages: always show header
+  const shouldShowHeader = !isHomePage || homeScroll?.isPastHero;
+
   return (
-    <header className="sticky top-0 w-full z-20 bg-white dark:bg-black transition duration-300 border-b sm:border-b-2 border-neutral-300 dark:border-[#2D2D2D] -mb-[2px]">
+    <header
+      className={cn(
+        'sticky top-0 w-full z-20 bg-[var(--canvas-base)]/95 dark:bg-[var(--canvas-elevated)]/95 border-b sm:border-b-2 border-neutral-300 dark:border-[#2D2D2D] -mb-[2px]',
+        // Story 2.5: GPU-composited fade for scroll-triggered visibility
+        // Only apply transitions if NOT prefers-reduced-motion
+        !prefersReducedMotion && 'transition-all duration-300',
+        // When on home and not past hero, use GPU-composited properties to hide
+        isHomePage && !shouldShowHeader && 'opacity-0 pointer-events-none',
+      )}
+      style={
+        isHomePage && !shouldShowHeader && !prefersReducedMotion
+          ? {
+              // GPU-composited transform for smooth fade
+              transform: 'translateY(-100%)',
+            }
+          : undefined
+      }
+    >
       <div className="h-[4.5rem] sm:h-24 px-[1.05rem] sm:px-6 flex items-center justify-end sm:justify-between relative gap-3">
         <NavLink
           prefetch="intent"
           to="/"
           style={activeLinkStyle}
           end
-          className="absolute top-1/2 left-5 sm:left-1/2 transform sm:-translate-x-1/2 -translate-y-1/2"
+          className="absolute top-1/2 left-5 sm:left-1/2 transform sm:-translate-x-1/2 -translate-y-1/2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2"
         >
           <div className="w-[8.13rem] sm:w-[16.06rem] aspect-[1/0.21] h-[2.19rem] sm:h-[3.44rem] dark:invert transition duration-300">
             <Logo />
@@ -83,7 +126,7 @@ export function Header({
           >
             <div className="absolute z-10 size-2 top-1/2 left-0 transform -translate-x-[35%] -translate-y-1/2 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full"></div>
             <div className="size-8 sm:size-9 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full relative">
-              <div className="size-3 scale-110 leading-none absolute top-1/2 left-1/2 -translate-x-[30%] -translate-y-[55%] rotate-45 text-black dark:text-white group-hover:text-white dark:group-hover:text-black trnsition duration-300 flex">
+              <div className="size-3 scale-110 leading-none absolute top-1/2 left-1/2 -translate-x-[30%] -translate-y-[55%] rotate-45 text-black dark:text-white group-hover:text-white dark:group-hover:text-black transition duration-300 flex">
                 +
                 {/* <svg
                   width="100%"
@@ -200,8 +243,10 @@ function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
     <button
-      className="header-menu-mobile-toggle reset"
+      type="button"
+      className="header-menu-mobile-toggle reset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2"
       onClick={() => open('mobile')}
+      aria-label="Open menu"
     >
       <h3>☰</h3>
     </button>
@@ -224,7 +269,8 @@ function CartBadge({count}: {count: number | null}) {
   return (
     <a
       href="/cart"
-      className="group flex items-center gap-3"
+      className="group flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2"
+      aria-label="Shopping cart"
       onClick={(e) => {
         e.preventDefault();
         open('cart');
