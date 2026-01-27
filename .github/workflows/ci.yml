@@ -318,6 +318,8 @@ jobs:
 
       - name: Build production bundle
         run: pnpm build
+        env:
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Run accessibility checks
         run: pnpm run test:a11y
