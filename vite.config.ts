@@ -1,8 +1,11 @@
 import path from 'path';
 import {reactRouter} from '@react-router/dev/vite';
+import { setupPlugins } from "@responsive-image/vite-plugin";
 import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
 import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react'
+import { analyzer } from 'vite-bundle-analyzer'
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
@@ -12,8 +15,14 @@ export default defineConfig(({mode}) => ({
     hydrogen(),
     oxygen(),
     tsconfigPaths(),
+    setupPlugins({
+      format: ["original", "webp"],
+      include: /^[^?]+\.(jpe?g|png|webp)\?.*responsive.*$/,
+      lqip: { type: "color" },
+    }),
+    ...(process.env.ANALYZE ? [analyzer({ openAnalyzer: true, analyzerMode: 'static' })] : []),
     // Skip React Router plugin in test mode to avoid processing test files
-    ...(mode !== 'test' ? [reactRouter()] : []),
+    ...(mode !== 'test' ? [reactRouter()] : react()),
   ],
   resolve: {
     alias: {
@@ -24,6 +33,9 @@ export default defineConfig(({mode}) => ({
     // Allow a strict Content-Security-Policy
     // withtout inlining assets as base64:
     assetsInlineLimit: 0,
+    rollupOptions: {
+      treeshake: true,
+    },
   },
   test: {
     globals: true,
