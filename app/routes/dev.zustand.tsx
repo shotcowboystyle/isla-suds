@@ -1,5 +1,4 @@
 import {useState} from 'react';
-
 import {
   useCartDrawerOpen,
   useExplorationActions,
@@ -8,7 +7,6 @@ import {
   useStoryMomentShown,
   useTextureRevealsCount,
 } from '~/hooks/use-exploration-state';
-
 import type {Route} from './+types/dev.zustand';
 
 /**

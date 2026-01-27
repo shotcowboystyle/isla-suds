@@ -1,5 +1,4 @@
 import {redirect, useLoaderData} from 'react-router';
-import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
   Analytics,
@@ -8,10 +7,11 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
-import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {ProductImage} from '~/components/ProductImage';
+import {ProductPrice} from '~/components/ProductPrice';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import type {Route} from './+types/products.$handle';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [

@@ -1,5 +1,4 @@
 import {useLoaderData} from 'react-router';
-import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
 import {SearchResults} from '~/components/SearchResults';
@@ -8,6 +7,7 @@ import {
   type PredictiveSearchReturn,
   getEmptyPredictiveSearchResult,
 } from '~/lib/search';
+import type {Route} from './+types/search';
 import type {
   RegularSearchQuery,
   PredictiveSearchQuery,

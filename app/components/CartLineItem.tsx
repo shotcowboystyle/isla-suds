@@ -1,11 +1,11 @@
-import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
-import type {CartLayout} from '~/components/CartMain';
+import {Link} from 'react-router';
 import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variant-url';
-import {Link} from 'react-router';
-import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {ProductPrice} from './ProductPrice';
+import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
+import type {CartLayout} from '~/components/CartMain';
 
 type CartLine = OptimisticCartLine<CartApiQueryFragment>;
 

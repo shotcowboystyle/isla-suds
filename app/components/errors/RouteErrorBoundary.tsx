@@ -1,7 +1,7 @@
 import {Component} from 'react';
+import {RouteErrorFallback} from './RouteErrorFallback';
 import type {ErrorInfo, ReactNode} from 'react';
 
-import {RouteErrorFallback} from './RouteErrorFallback';
 
 interface RouteErrorBoundaryProps {
   children: ReactNode;

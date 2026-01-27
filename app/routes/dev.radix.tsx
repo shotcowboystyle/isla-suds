@@ -18,7 +18,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from '~/components/ui/NavigationMenu';
-
 import type {Route} from './+types/dev.radix';
 
 export const meta: Route.MetaFunction = () => {

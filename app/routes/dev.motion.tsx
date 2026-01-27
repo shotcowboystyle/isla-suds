@@ -1,5 +1,4 @@
 import {DevMotion} from '~/components/dev/DevMotion';
-
 import type {Route} from './+types/dev.motion';
 
 export const meta: Route.MetaFunction = () => {

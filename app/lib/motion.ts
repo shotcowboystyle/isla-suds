@@ -1,5 +1,4 @@
 import {lazy} from 'react';
-
 import type {HTMLMotionProps} from 'framer-motion';
 
 /**

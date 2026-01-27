@@ -1,5 +1,4 @@
 import {useEffect, useRef, useState} from 'react';
-
 import {ROUTE_ERROR_MESSAGE} from '~/content/errors';
 import {cn} from '~/utils/cn';
 

@@ -1,11 +1,11 @@
 import {redirect, useLoaderData} from 'react-router';
-import type {Route} from './+types/account.orders.$id';
 import {Money, Image} from '@shopify/hydrogen';
+import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
+import type {Route} from './+types/account.orders.$id';
 import type {
   OrderLineItemFullFragment,
   OrderQuery,
 } from 'customer-accountapi.generated';
-import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Order ${data?.order?.name}`}];

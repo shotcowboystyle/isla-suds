@@ -1,8 +1,3 @@
-import type {CustomerAddressInput} from '@shopify/hydrogen/customer-account-api-types';
-import type {
-  AddressFragment,
-  CustomerFragment,
-} from 'customer-accountapi.generated';
 import {
   data,
   Form,
@@ -11,12 +6,17 @@ import {
   useOutletContext,
   type Fetcher,
 } from 'react-router';
-import type {Route} from './+types/account.addresses';
 import {
   UPDATE_ADDRESS_MUTATION,
   DELETE_ADDRESS_MUTATION,
   CREATE_ADDRESS_MUTATION,
 } from '~/graphql/customer-account/CustomerAddressMutations';
+import type {Route} from './+types/account.addresses';
+import type {CustomerAddressInput} from '@shopify/hydrogen/customer-account-api-types';
+import type {
+  AddressFragment,
+  CustomerFragment,
+} from 'customer-accountapi.generated';
 
 export type ActionResponse = {
   addressId?: string | null;
