@@ -300,6 +300,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        env:
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium

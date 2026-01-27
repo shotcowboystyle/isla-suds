@@ -17,7 +17,7 @@
     "test:smoke:build": "node scripts/smoke-test-build.mjs",
     "test:smoke:typecheck": "node scripts/smoke-test-typecheck.mjs",
     "test:smoke:dev": "node scripts/smoke-test-dev-server.mjs",
-    "lighthouse:ci": "lhci autorun --col",
+    "lighthouse:ci": "lhci autorun --collect.staticDistDir=\"dist/server\"",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "test:a11y": "playwright test --project=accessibility"
   },
