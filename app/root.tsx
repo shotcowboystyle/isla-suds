@@ -11,7 +11,13 @@ import {
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
-import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
+import {
+  Analytics,
+  getShopAnalytics,
+  useNonce,
+  type CartQueryDataReturn,
+  type ShopAnalytics,
+} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
@@ -23,6 +29,11 @@ import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
 import {cn} from './utils/cn';
 import type {Route} from './+types/root';
+import type {
+  CartApiQueryFragment,
+  FooterQuery,
+  HeaderQuery,
+} from 'storefrontapi.generated';
 // import {localizationCookie, themeCookie} from './cookie.server';
 
 export type RootLoader = typeof loader;
@@ -75,7 +86,21 @@ export function links() {
 
 // const theme = await themeCookie.parse(cookieHeader);
 
-export async function loader(args: Route.LoaderArgs) {
+export async function loader(args: Route.LoaderArgs): Promise<{
+  cart: any | null;
+  isLoggedIn: Promise<boolean>;
+  footer: any | null;
+  header: any | null;
+  publicStoreDomain: string;
+  shop: Promise<ShopAnalytics | null>;
+  consent: {
+    checkoutDomain: string;
+    storefrontAccessToken: string;
+    withPrivacyBanner: boolean;
+    country: any;
+    language: any;
+  };
+}> {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
 
@@ -247,7 +272,12 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <PageLayout {...data} theme="light" setTheme={() => {}}>
+      <PageLayout
+        {...data}
+        theme="light"
+        setTheme={() => {}}
+        header={data.header}
+      >
         <Outlet />
       </PageLayout>
     </Analytics.Provider>

@@ -1,4 +1,5 @@
 import {describe, expect, it, vi, beforeEach, afterEach} from 'vitest';
+import React from 'react';
 import {render, screen} from '@testing-library/react';
 
 import {ComponentErrorBoundary} from './ComponentErrorBoundary';
@@ -65,13 +66,27 @@ describe('ComponentErrorBoundary', () => {
     );
 
     expect(console.error).toHaveBeenCalled();
-    const errorCall = (console.error as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(errorCall[0]).toContain('ComponentErrorBoundary caught error');
-    expect(errorCall[0]).toHaveProperty('error');
-    expect(errorCall[0]).toHaveProperty('stack');
-    expect(errorCall[0]).toHaveProperty('componentStack');
-    expect(errorCall[0]).toHaveProperty('timestamp');
-    expect(errorCall[0]).toHaveProperty('boundaryType', 'component');
+    const calls = (console.error as ReturnType<typeof vi.fn>).mock.calls;
+    const errorCall = calls.find((args) => {
+      // First arg is message string, second arg is details object
+      const message = args[0];
+      const details = args[1];
+      return (
+        typeof message === 'string' &&
+        message.includes('ComponentErrorBoundary caught error') &&
+        typeof details === 'object' &&
+        details !== null &&
+        'boundaryType' in details &&
+        details.boundaryType === 'component'
+      );
+    });
+
+    expect(errorCall).toBeDefined();
+    const details = errorCall![1];
+    expect(details).toHaveProperty('error');
+    expect(details).toHaveProperty('stack');
+    expect(details).toHaveProperty('componentStack');
+    expect(details).toHaveProperty('timestamp');
   });
 
   it('calls onError callback when error occurs', () => {
@@ -117,7 +132,9 @@ describe('ComponentErrorBoundary', () => {
     );
 
     // Commerce content should still be visible
-    expect(screen.getByText('Commerce content that should still work')).toBeInTheDocument();
+    expect(
+      screen.getByText('Commerce content that should still work'),
+    ).toBeInTheDocument();
     expect(screen.getByText('More commerce content')).toBeInTheDocument();
     // Failed component should be gracefully handled (renders null)
     expect(screen.queryByText('No error')).not.toBeInTheDocument();

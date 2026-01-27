@@ -1,13 +1,14 @@
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import {initLenis, destroyLenis} from './scroll';
 
-// Mock Lenis
+// Mock Lenis with proper constructor
 vi.mock('@studio-freight/lenis', () => {
+  const MockLenis = vi.fn(function (this: any) {
+    this.raf = vi.fn();
+    this.destroy = vi.fn();
+  });
   return {
-    default: vi.fn().mockImplementation(() => ({
-      raf: vi.fn(),
-      destroy: vi.fn(),
-    })),
+    default: MockLenis,
   };
 });
 
@@ -79,11 +80,10 @@ describe('initLenis', () => {
       return {matches: false} as MediaQueryList;
     });
 
-    // Mock requestAnimationFrame
+    // Mock requestAnimationFrame - don't call callback to avoid infinite recursion
     const rafSpy = vi
       .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb: FrameRequestCallback) => {
-        cb(0);
+      .mockImplementation(() => {
         return 1;
       });
 
@@ -106,8 +106,7 @@ describe('initLenis', () => {
 
     const rafSpy = vi
       .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb: FrameRequestCallback) => {
-        cb(0);
+      .mockImplementation(() => {
         return 1;
       });
 
@@ -116,8 +115,8 @@ describe('initLenis', () => {
 
     // Should return same instance
     expect(firstCall).toBe(secondCall);
-    // RAF should only be set up once
-    expect(rafSpy).toHaveBeenCalledTimes(2); // Once per initLenis call, but instance reused
+    // RAF should only be set up once (first call only)
+    expect(rafSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should handle initialization errors gracefully', async () => {
@@ -181,8 +180,7 @@ describe('destroyLenis', () => {
 
     const rafSpy = vi
       .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb: FrameRequestCallback) => {
-        cb(0);
+      .mockImplementation(() => {
         return 123; // Mock RAF ID
       });
 
@@ -208,18 +206,15 @@ describe('destroyLenis', () => {
 
     const rafSpy = vi
       .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb: FrameRequestCallback) => {
-        cb(0);
+      .mockImplementation(() => {
         return 1;
       });
 
-    initLenis();
+    const instance = initLenis();
 
     // Mock destroy to throw an error
-    const Lenis = await import('@studio-freight/lenis');
-    const mockInstance = vi.mocked(Lenis.default).mock.results[0]?.value;
-    if (mockInstance) {
-      vi.mocked(mockInstance.destroy).mockImplementationOnce(() => {
+    if (instance) {
+      vi.spyOn(instance, 'destroy').mockImplementationOnce(() => {
         throw new Error('Destroy failed');
       });
     }

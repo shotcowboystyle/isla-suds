@@ -1,4 +1,5 @@
 import {describe, expect, it, vi, beforeEach, afterEach} from 'vitest';
+import React from 'react';
 import {render, screen, fireEvent} from '@testing-library/react';
 
 import {RouteErrorBoundary} from './RouteErrorBoundary';
@@ -54,17 +55,34 @@ describe('RouteErrorBoundary', () => {
     );
 
     expect(console.error).toHaveBeenCalled();
-    const errorCall = (console.error as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(errorCall[0]).toContain('RouteErrorBoundary caught error');
-    expect(errorCall[0]).toHaveProperty('error');
-    expect(errorCall[0]).toHaveProperty('stack');
-    expect(errorCall[0]).toHaveProperty('componentStack');
-    expect(errorCall[0]).toHaveProperty('timestamp');
-    expect(errorCall[0]).toHaveProperty('boundaryType', 'route');
+    const calls = (console.error as ReturnType<typeof vi.fn>).mock.calls;
+    const errorCall = calls.find((args) => {
+      // First arg is message string, second arg is details object
+      const message = args[0];
+      const details = args[1];
+      return (
+        typeof message === 'string' &&
+        message.includes('RouteErrorBoundary caught error') &&
+        typeof details === 'object' &&
+        details !== null &&
+        'boundaryType' in details &&
+        details.boundaryType === 'route'
+      );
+    });
+
+    expect(errorCall).toBeDefined();
+    const details = errorCall![1];
+    expect(details).toHaveProperty('error');
+    expect(details).toHaveProperty('stack');
+    expect(details).toHaveProperty('componentStack');
+    expect(details).toHaveProperty('timestamp');
   });
 
   it('displays retry button that reloads page', () => {
-    const reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(() => {});
+    const originalLocation = window.location;
+    // @ts-expect-error - Mocking window.location for test
+    delete window.location;
+    window.location = {...originalLocation, reload: vi.fn()};
 
     render(
       <RouteErrorBoundary>
@@ -78,13 +96,15 @@ describe('RouteErrorBoundary', () => {
     expect(retryButton).toBeInTheDocument();
 
     fireEvent.click(retryButton);
-    expect(reloadSpy).toHaveBeenCalled();
+    expect(window.location.reload).toHaveBeenCalled();
 
-    reloadSpy.mockRestore();
+    window.location = originalLocation;
   });
 
   it('displays go back button that navigates back', () => {
-    const backSpy = vi.spyOn(window.history, 'back').mockImplementation(() => {});
+    const backSpy = vi
+      .spyOn(window.history, 'back')
+      .mockImplementation(() => {});
 
     render(
       <RouteErrorBoundary>

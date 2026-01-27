@@ -10,7 +10,10 @@ export const meta: Route.MetaFunction = () => {
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
 
-export async function action({request, context}: Route.ActionArgs) {
+export async function action({
+  request,
+  context,
+}: Route.ActionArgs): Promise<Response> {
   const {cart} = context;
 
   const formData = await request.formData();
@@ -97,7 +100,7 @@ export async function action({request, context}: Route.ActionArgs) {
       },
     },
     {status, headers},
-  );
+  ) as unknown as Response;
 }
 
 export async function loader({context}: Route.LoaderArgs) {
