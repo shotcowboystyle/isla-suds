@@ -1,5 +1,5 @@
-import {Suspense} from 'react';
-import {Await, useLoaderData, Link} from 'react-router';
+import {Suspense, useRef, type RefObject} from 'react';
+import {Await, useLoaderData, Link, useOutletContext} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ConstellationGrid} from '~/components/product';
 import {HeroSection} from '~/components/story';
@@ -60,15 +60,21 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  const localHeroRef = useRef<HTMLElement>(null);
+  const outletContext = useOutletContext() as
+    | {heroRef?: RefObject<HTMLElement>}
+    | undefined;
+  const heroRef = outletContext?.heroRef ?? localHeroRef;
+
   return (
     <div className="home">
-      <HeroSection />
-      {/* Story 2.2: Snap sections for mobile scroll-snap */}
-      <FeaturedCollection
-        collection={data.featuredCollection}
-        className="snap-start"
-      />
-      {/* Story 2.3: Constellation grid layout */}
+      <HeroSection ref={heroRef} />
+        {/* Story 2.2: Snap sections for mobile scroll-snap */}
+        <FeaturedCollection
+          collection={data.featuredCollection}
+          className="snap-start"
+        />
+        {/* Story 2.3: Constellation grid layout */}
       <ConstellationProducts
         products={data.recommendedProducts}
         className="snap-start"
@@ -129,7 +135,7 @@ function ConstellationProducts({
       }
     >
       <Await resolve={products}>
-        {(response) => (
+        {(response: RecommendedProductsQuery | null) => (
           <ConstellationGrid
             products={response?.products.nodes || null}
             className={className}

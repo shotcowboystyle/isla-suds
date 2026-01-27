@@ -64,7 +64,7 @@ development_status:
   2-2-implement-scroll-experience-with-lenis-native-hybrid: done
   2-3-build-constellation-grid-layout: done
   2-4-enable-non-linear-product-exploration: done
-  2-5-implement-sticky-header-with-scroll-trigger: backlog
+  2-5-implement-sticky-header-with-scroll-trigger: done
   epic-2-retrospective: optional
 
   # ============================================================================
