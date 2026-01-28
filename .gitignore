@@ -143,3 +143,13 @@ vite.config.ts.timestamp-*
 
 .DS_Store
 **/.DS_Store
+
+.build/
+
+playwright-report/
+./playwright-report/index.html
+
+test-results/
+test-results/.last-run.json
+
+.pnpm-store/
