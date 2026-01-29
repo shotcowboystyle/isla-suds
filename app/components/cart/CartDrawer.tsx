@@ -5,6 +5,7 @@ import {useOptimisticCart} from '@shopify/hydrogen';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
+import {CHECKOUT_ERROR_MESSAGE} from '~/content/errors';
 import {CartLineItems} from './CartLineItems';
 import {EmptyCart} from './EmptyCart';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
@@ -20,6 +21,9 @@ export function CartDrawer() {
   const itemCount = cart?.lines?.nodes?.length ?? 0;
   const subtotal = cart?.cost?.subtotalAmount;
   const [liveMessage, setLiveMessage] = React.useState('');
+  const [isCheckingOut, setIsCheckingOut] = React.useState(false);
+  const [checkoutError, setCheckoutError] = React.useState<string | null>(null);
+  const errorTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Announce when cart becomes empty
   React.useEffect(() => {
@@ -33,8 +37,59 @@ export function CartDrawer() {
 
   // Format money - uses centralized utility
   const formatSubtotal = () => {
-    if (!subtotal?.amount || !subtotal?.currencyCode) return '—';
-    return formatMoney(subtotal.amount, subtotal.currencyCode);
+    if (!subtotal?.currencyCode) return '—';
+    // Handle zero/null amount cases
+    const amount = subtotal?.amount ?? '0';
+    return formatMoney(amount, subtotal.currencyCode);
+  };
+
+  // Cleanup error timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (errorTimerRef.current) {
+        clearTimeout(errorTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Handle checkout redirect (Story 5.9 - AC2, AC3, AC6, AC10)
+  const handleCheckout = () => {
+    // Clear any existing error timer to prevent multiple timers
+    if (errorTimerRef.current) {
+      clearTimeout(errorTimerRef.current);
+      errorTimerRef.current = null;
+    }
+
+    // AC6: Validate checkoutUrl exists
+    if (!cart?.checkoutUrl) {
+      setCheckoutError(CHECKOUT_ERROR_MESSAGE);
+      // Auto-dismiss error after 3 seconds (AC6)
+      errorTimerRef.current = setTimeout(() => {
+        setCheckoutError(null);
+        errorTimerRef.current = null;
+      }, 3000);
+      return;
+    }
+
+    try {
+      // AC3: Set loading state (prevents double-click - AC10)
+      setIsCheckingOut(true);
+      setCheckoutError(null);
+
+      // AC2: Redirect to Shopify checkout in same tab
+      window.location.href = cart.checkoutUrl;
+    } catch (error) {
+      // AC6: Handle redirect failure
+      console.error('Checkout redirect failed:', error);
+      setCheckoutError(CHECKOUT_ERROR_MESSAGE);
+      setIsCheckingOut(false);
+
+      // Auto-dismiss error after 3 seconds
+      errorTimerRef.current = setTimeout(() => {
+        setCheckoutError(null);
+        errorTimerRef.current = null;
+      }, 3000);
+    }
   };
 
   return (
@@ -122,10 +177,10 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer - Subtotal & Checkout - Only show when cart has items (AC7) */}
+          {/* Footer - Subtotal & Checkout - Only show when cart has items (AC4) */}
           {itemCount > 0 && (
             <div className="border-t border-neutral-200 p-4 space-y-4">
-              {/* Subtotal */}
+              {/* Subtotal (AC5) */}
               <div className="flex justify-between items-center">
                 <span className="text-[var(--text-muted)]">Subtotal</span>
                 <span className="font-medium text-[var(--text-primary)]">
@@ -133,19 +188,43 @@ export function CartDrawer() {
                 </span>
               </div>
 
-              {/* Checkout Button */}
+              {/* Error message (AC6) */}
+              {checkoutError && (
+                <div
+                  role="alert"
+                  aria-live="assertive"
+                  className="text-sm text-red-600"
+                >
+                  {checkoutError}
+                </div>
+              )}
+
+              {/* Checkout Button (AC1, AC2, AC3, AC7, AC8, AC9, AC10) */}
               <button
                 type="button"
+                onClick={handleCheckout}
+                disabled={isCheckingOut}
                 className={cn(
-                  'w-full py-3 rounded',
-                  'bg-[var(--accent-primary)] text-white',
-                  'font-medium',
-                  'hover:opacity-90 transition-opacity',
+                  'w-full h-14 rounded', // AC7: 56px height for touch targets
+                  'bg-[var(--accent-primary)] text-white', // AC9: Design tokens
+                  'font-medium text-base',
+                  'hover:opacity-90', // AC9: Hover state
+                  'active:scale-[0.98] active:opacity-80', // AC9: Active state with subtle press effect
+                  'disabled:opacity-50 disabled:cursor-not-allowed', // AC3, AC10: Disabled during loading
+                  'transition-all duration-150',
+                  'flex items-center justify-center gap-2',
                   'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
                 )}
-                aria-label={`Proceed to checkout with ${itemCount} items, total ${formatSubtotal()}`}
+                aria-label="Checkout button, proceed to payment" // AC8: Screen reader label with "button"
               >
-                Proceed to Checkout
+                {isCheckingOut ? (
+                  <>
+                    <Spinner />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  'Checkout'
+                )}
               </button>
 
               {/* Continue Shopping Link */}
@@ -178,5 +257,35 @@ export function CartDrawer() {
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
+  );
+}
+
+/**
+ * Spinner component for loading states (Story 5.9)
+ * Used in checkout button during redirect
+ */
+function Spinner() {
+  return (
+    <svg
+      className="animate-spin h-5 w-5"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
   );
 }

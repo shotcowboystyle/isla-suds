@@ -102,3 +102,11 @@ export const CART_REMOVE_ERROR_MESSAGE =
  */
 export const CART_REMOVE_GENERIC_ERROR_MESSAGE =
   "Something went wrong. Please try again.";
+
+/**
+ * Checkout redirect error message (Story 5.9)
+ * Displayed when: Checkout redirect fails or checkoutUrl is missing
+ * Recovery: User can retry by clicking checkout button again
+ */
+export const CHECKOUT_ERROR_MESSAGE =
+  "Couldn't start checkout. Let's try again.";

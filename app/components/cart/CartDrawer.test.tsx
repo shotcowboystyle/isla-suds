@@ -1,4 +1,4 @@
-import {render, screen, waitFor} from '@testing-library/react';
+import {render, screen, waitFor, act} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import {CartDrawer} from './CartDrawer';
@@ -430,6 +430,7 @@ describe('CartDrawer', () => {
 
     it('shows checkout button when cart has items', () => {
       mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
         lines: {
           nodes: [
             {
@@ -460,7 +461,7 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       expect(
-        screen.getByRole('button', {name: /proceed to checkout/i}),
+        screen.getByRole('button', {name: /checkout.*proceed to payment/i}),
       ).toBeInTheDocument();
     });
   });
@@ -478,6 +479,493 @@ describe('CartDrawer', () => {
 
       // Note: This is a basic check; real implementation should verify actual pixel dimensions
       expect(closeButton).toHaveClass('h-11', 'w-11'); // 44px = 11 * 4px (Tailwind)
+    });
+  });
+
+  describe('Checkout redirect functionality (Story 5.9)', () => {
+    beforeEach(() => {
+      mockCartDrawerOpen = true;
+      // Reset window.location.href before each test
+      delete (window as any).location;
+      (window as any).location = {href: ''};
+    });
+
+    it('redirects to cart.checkoutUrl when checkout button is clicked (AC2)', async () => {
+      const user = userEvent.setup();
+      const checkoutUrl = 'https://isla-suds.myshopify.com/checkout/123';
+      mockCartData = {
+        checkoutUrl,
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+      await user.click(checkoutButton);
+
+      // Verify redirect happens
+      expect(window.location.href).toBe(checkoutUrl);
+    });
+
+    it('shows loading state during checkout redirect (AC3)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      // Button should not be disabled before click
+      expect(checkoutButton).not.toBeDisabled();
+
+      await user.click(checkoutButton);
+
+      // Button should show loading state (text changes to "Processing..." or has loading indicator)
+      // This test will initially fail until we implement loading state
+      await waitFor(() => {
+        expect(checkoutButton).toHaveTextContent(/processing/i);
+      });
+    });
+
+    it('disables button during redirect to prevent double-click (AC10)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      await user.click(checkoutButton);
+
+      // Button should be disabled during redirect
+      await waitFor(() => {
+        expect(checkoutButton).toBeDisabled();
+      });
+    });
+
+    it('shows error message when checkout URL is missing (AC6)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: null, // Missing checkout URL
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+      await user.click(checkoutButton);
+
+      // Error message should appear
+      expect(
+        screen.getByText(/couldn't start checkout/i),
+      ).toBeInTheDocument();
+    });
+
+    it('auto-dismisses error message after 3 seconds (AC6)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: null,
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+      await user.click(checkoutButton);
+
+      // Error should be visible
+      expect(
+        screen.getByText(/couldn't start checkout/i),
+      ).toBeInTheDocument();
+
+      // Wait for error to auto-dismiss (using real timers with increased timeout)
+      await waitFor(
+        () => {
+          expect(
+            screen.queryByText(/couldn't start checkout/i),
+          ).not.toBeInTheDocument();
+        },
+        {timeout: 4000},
+      );
+    });
+
+    it('button returns to normal state after error (AC6)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: null,
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+      await user.click(checkoutButton);
+
+      // Wait for error state to settle
+      await waitFor(() => {
+        expect(screen.getByText(/couldn't start checkout/i)).toBeInTheDocument();
+      });
+
+      // After error, button should not be disabled (user can retry)
+      expect(checkoutButton).not.toBeDisabled();
+
+      // Button text should be back to "Checkout"
+      expect(checkoutButton).toHaveTextContent(/^Checkout$/i);
+    });
+
+    it('has correct ARIA label for screen readers (AC8)', () => {
+      mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      // AC8 requires: "Checkout button, proceed to payment"
+      const checkoutButton = screen.getByRole('button', {
+        name: 'Checkout button, proceed to payment',
+      });
+      expect(checkoutButton).toBeInTheDocument();
+      expect(checkoutButton).toHaveAccessibleName('Checkout button, proceed to payment');
+    });
+
+    it('checkout button has adequate height for touch targets (AC7)', () => {
+      mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      // Button should have h-12 (48px) or h-14 (56px) class
+      const hasAdequateHeight =
+        checkoutButton.classList.contains('h-12') ||
+        checkoutButton.classList.contains('h-14');
+      expect(hasAdequateHeight).toBe(true);
+    });
+
+    it('checkout button can be activated with Enter key (AC8)', async () => {
+      const user = userEvent.setup();
+      const checkoutUrl = 'https://isla-suds.myshopify.com/checkout/123';
+      mockCartData = {
+        checkoutUrl,
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      // Focus the button
+      checkoutButton.focus();
+      expect(checkoutButton).toHaveFocus();
+
+      // Press Enter
+      await user.keyboard('{Enter}');
+
+      // Verify redirect happens
+      expect(window.location.href).toBe(checkoutUrl);
+    });
+
+    it('checkout button can be activated with Space key (AC8)', async () => {
+      const user = userEvent.setup();
+      const checkoutUrl = 'https://isla-suds.myshopify.com/checkout/123';
+      mockCartData = {
+        checkoutUrl,
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      // Focus the button
+      checkoutButton.focus();
+      expect(checkoutButton).toHaveFocus();
+
+      // Press Space
+      await user.keyboard('{ }');
+
+      // Verify redirect happens
+      expect(window.location.href).toBe(checkoutUrl);
+    });
+
+    it('checkout button is focusable via Tab navigation (AC8)', async () => {
+      const user = userEvent.setup();
+      mockCartData = {
+        checkoutUrl: 'https://isla-suds.myshopify.com/checkout/123',
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {handle: 'test-soap'},
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+
+      render(<CartDrawer />);
+
+      const checkoutButton = screen.getByRole('button', {
+        name: /checkout/i,
+      });
+
+      // Tab to the button (simulate keyboard navigation)
+      await user.tab();
+
+      // Button should be focusable (will be in tab sequence)
+      expect(checkoutButton).toBeInTheDocument();
+      expect(checkoutButton).not.toHaveAttribute('tabindex', '-1');
     });
   });
 });
