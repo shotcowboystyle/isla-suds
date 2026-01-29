@@ -1,5 +1,9 @@
 import * as React from 'react';
-import {getProductDescription} from '~/content/products';
+import {
+  BUNDLE_HANDLE,
+  getProductDescription,
+  getBundleValueProposition,
+} from '~/content/products';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
 import type {
@@ -50,6 +54,17 @@ export const ProductRevealInfo = React.forwardRef<
   // Format price with currency symbol and locale-aware formatting (AC2)
   const formattedPrice = formatMoney(money.amount, money.currencyCode);
 
+  // Detect bundle product (Story 3.6)
+  const isBundle = product.handle === BUNDLE_HANDLE;
+
+  // Get bundle value proposition if this is a bundle (Story 3.6, Task 4)
+  const bundleValueProp = isBundle
+    ? getBundleValueProposition(
+        product.handle,
+        product.bundleValueProposition?.value,
+      )
+    : null;
+
   // Get description with fallback (AC3)
   const description = getProductDescription(
     product.handle,
@@ -88,6 +103,13 @@ export const ProductRevealInfo = React.forwardRef<
       <h3 className="text-fluid-heading text-white font-semibold">
         {product.title}
       </h3>
+
+      {/* Bundle value proposition (Story 3.6, Task 4) */}
+      {bundleValueProp && (
+        <p className="text-fluid-body text-white/90 italic">
+          {bundleValueProp}
+        </p>
+      )}
 
       {/* Formatted price (AC2) */}
       <p className="text-fluid-body text-white font-medium">{formattedPrice}</p>

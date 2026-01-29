@@ -1,5 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
+import {BUNDLE_HANDLE} from '~/content/products';
 import {ProductRevealInfo} from './ProductRevealInfo';
 import type {
   MoneyFragment,
@@ -178,5 +179,34 @@ describe('ProductRevealInfo', () => {
 
     // Should show variant price instead of product minVariantPrice
     expect(screen.getByText('$15.00')).toBeInTheDocument();
+  });
+
+  it('displays bundle value proposition for variety pack (Story 3.6)', () => {
+    const bundleProduct: RecommendedProductFragment = {
+      ...mockProduct,
+      id: 'gid://shopify/Product/5',
+      title: 'The Collection',
+      handle: BUNDLE_HANDLE,
+      description: 'All four handcrafted soaps together.',
+      priceRange: {
+        minVariantPrice: {
+          amount: '48.00',
+          currencyCode: 'USD',
+        },
+      },
+      bundleValueProposition: {
+        value: 'All four soaps, one price. Rotate scents with your mood.',
+      },
+    };
+
+    render(<ProductRevealInfo product={bundleProduct} />);
+
+    expect(screen.getByText('The Collection')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'All four soaps, one price. Rotate scents with your mood.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText('$48.00')).toBeInTheDocument();
   });
 });

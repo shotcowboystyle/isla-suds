@@ -114,6 +114,7 @@ export default defineConfig(({mode}) => ({
       '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
+      '**/.react-router/**', // Generated route types (e.g. +types/_index.test.ts)
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
       '**/tests/**', // Exclude Playwright e2e tests
@@ -138,7 +139,7 @@ export default defineConfig(({mode}) => ({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: ['set-cookie-parser', 'cookie', 'react-router'],
+      include: ['expect-type', 'set-cookie-parser', 'cookie', 'react-router'],
       noExternals: ['@responsive-image/react'],
     },
   },

@@ -191,10 +191,13 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     scentNarrative: metafield(namespace: "custom", key: "scent_narrative") {
       value
     }
+    bundleValueProposition: metafield(namespace: "custom", key: "bundle_value_proposition") {
+      value
+    }
   }
   query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 5, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
       }

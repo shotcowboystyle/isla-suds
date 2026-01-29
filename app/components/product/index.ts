@@ -1,8 +1,10 @@
+export {BundleCard} from './BundleCard';
 export {ConstellationGrid} from './ConstellationGrid';
 export {ProductCard} from './ProductCard';
 export {ProductRevealInfo} from './ProductRevealInfo';
 export {ScentNarrative} from './ScentNarrative';
 export {TextureReveal} from './TextureReveal';
+export type {BundleCardProps} from './BundleCard';
 export type {ConstellationGridProps} from './ConstellationGrid';
 export type {ProductCardProps} from './ProductCard';
 export type {ProductRevealInfoProps} from './ProductRevealInfo';
