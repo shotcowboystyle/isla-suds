@@ -19,6 +19,7 @@ import {
   type ShopAnalytics,
 } from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
+import {CartDrawer} from '~/components/cart/CartDrawer';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
 import {HomeScrollProvider} from '~/contexts/home-scroll-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
@@ -293,6 +294,7 @@ export default function App() {
       ) : (
         layoutContent
       )}
+      <CartDrawer />
     </Analytics.Provider>
   );
 }
