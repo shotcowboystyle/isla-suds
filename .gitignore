@@ -153,3 +153,4 @@ test-results/
 test-results/.last-run.json
 
 .pnpm-store/
+.shopify
