@@ -76,6 +76,7 @@ export function ProductCard({
 
   return (
     <Link
+      data-testid="product-card"
       className={cn(
         'product-card group block',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2',
@@ -116,9 +117,18 @@ export function ProductCard({
       </div>
 
       <div className="mt-[var(--space-sm)] px-[var(--space-sm)]">
-        <h3 className="text-fluid-small font-medium text-[var(--text-primary)]">
+        <h3
+          data-testid="product-name"
+          className="text-fluid-small font-medium text-[var(--text-primary)]"
+        >
           {product.title}
         </h3>
+        <p
+          data-testid="product-price"
+          className="text-fluid-small text-[var(--text-muted)] mt-[var(--space-xs)]"
+        >
+          ${product.priceRange.minVariantPrice.amount}
+        </p>
       </div>
     </Link>
   );

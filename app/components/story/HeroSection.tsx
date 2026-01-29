@@ -11,6 +11,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(
     return (
       <section
         ref={ref}
+        data-testid="hero-section"
         className={cn(
           'relative min-h-[100dvh] flex items-center justify-center',
           'bg-[var(--canvas-base)]',

@@ -82,15 +82,15 @@ development_status:
   # ============================================================================
   # Epic 4: Story Moments & Site Navigation (7 stories)
   # ============================================================================
-  epic-4: in-progress
+  epic-4: done
   4-1-implement-story-fragments-during-scroll: done
   4-2-display-collection-prompt-after-2-products-explored: done
   4-3-add-variety-pack-from-collection-prompt: done
   4-4-create-about-page-fallback-for-direct-traffic: done
   4-5-implement-footer-with-navigation-links: done
   4-6-add-wholesale-portal-link-in-header-footer: done
-  4-7-smoke-test-full-journey-verification: backlog
-  epic-4-retrospective: optional
+  4-7-smoke-test-full-journey-verification: done
+  epic-4-retrospective: skipped
 
   # ============================================================================
   # Epic 5: Cart Experience (10 stories)

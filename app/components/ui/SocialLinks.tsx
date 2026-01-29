@@ -89,7 +89,12 @@ const SOCIAL_LINKS: SocialLink[] = [
 
 export function SocialLinks() {
   return (
-    <div className="flex gap-4" role="list" aria-label="Social media links">
+    <div
+      data-testid="social-icons"
+      className="flex gap-4"
+      role="list"
+      aria-label="Social media links"
+    >
       {SOCIAL_LINKS.map((link) => (
         <div
           key={link.platform}
