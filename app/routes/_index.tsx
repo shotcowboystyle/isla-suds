@@ -2,7 +2,7 @@ import {Suspense, useRef, type RefObject} from 'react';
 import {Await, useLoaderData, Link, useOutletContext} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ConstellationGrid} from '~/components/product';
-import {HeroSection} from '~/components/story';
+import {HeroSection, StoryFragmentContainer} from '~/components/story';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {
@@ -69,16 +69,22 @@ export default function Homepage() {
   return (
     <div className="home">
       <HeroSection ref={heroRef} />
-        {/* Story 2.2: Snap sections for mobile scroll-snap */}
-        <FeaturedCollection
-          collection={data.featuredCollection}
-          className="snap-start"
-        />
-        {/* Story 2.3: Constellation grid layout */}
+      {/* Story 4.1: Story fragments interleaved organically (AC1) */}
+      <StoryFragmentContainer fragmentIndices={[0, 1]} />
+      {/* Story 2.2: Snap sections for mobile scroll-snap */}
+      <FeaturedCollection
+        collection={data.featuredCollection}
+        className="snap-start"
+      />
+      {/* Story 4.1: Story fragments between sections */}
+      <StoryFragmentContainer fragmentIndices={[2, 3]} />
+      {/* Story 2.3: Constellation grid layout */}
       <ConstellationProducts
         products={data.recommendedProducts}
         className="snap-start"
       />
+      {/* Story 4.1: Story fragments after product sections */}
+      <StoryFragmentContainer fragmentIndices={[4, 5, 6, 7]} />
     </div>
   );
 }

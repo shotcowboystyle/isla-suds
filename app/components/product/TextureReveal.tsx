@@ -174,7 +174,7 @@ export const TextureReveal = React.forwardRef<
             aria-label={`Texture view expanded for ${product.title}`}
             className={cn(
               'fixed left-[50%] top-[50%] z-[51]',
-              'w-[90vw] max-w-2xl',
+              'w-[90vw]',
               'translate-x-[-50%] translate-y-[-50%]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
             )}

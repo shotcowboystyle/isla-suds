@@ -23,7 +23,7 @@ export function DevMotion() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-canvas-base p-8">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto">
           <h1 className="mb-8 text-4xl font-bold text-text-primary">
             Framer Motion Test
           </h1>
@@ -37,7 +37,7 @@ export function DevMotion() {
 
   return (
     <div className="min-h-screen bg-canvas-base p-8">
-      <div className="mx-auto max-w-2xl space-y-8">
+      <div className="mx-auto space-y-8">
         <header className="mb-12">
           <h1 className="mb-2 text-4xl font-bold text-text-primary">
             Framer Motion Test
@@ -60,80 +60,80 @@ export function DevMotion() {
               </div>
             }
           >
-          {reducedMotion ? (
-            // Static fallback for reduced motion
-            <div className="space-y-6">
-              <div className="rounded-lg bg-canvas-elevated p-6">
-                <h2 className="mb-2 text-xl font-semibold text-text-primary">
-                  Static Content (No Animation)
-                </h2>
-                <p className="text-text-muted">
-                  Animations are disabled because you have reduced motion
-                  enabled.
-                </p>
+            {reducedMotion ? (
+              // Static fallback for reduced motion
+              <div className="space-y-6">
+                <div className="rounded-lg bg-canvas-elevated p-6">
+                  <h2 className="mb-2 text-xl font-semibold text-text-primary">
+                    Static Content (No Animation)
+                  </h2>
+                  <p className="text-text-muted">
+                    Animations are disabled because you have reduced motion
+                    enabled.
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-accent-primary p-6 text-white">
+                  <h2 className="mb-2 text-xl font-semibold">Test Box 1</h2>
+                  <p className="opacity-90">
+                    This box would normally fade in and scale up.
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-accent-primary p-6 text-white">
+                  <h2 className="mb-2 text-xl font-semibold">Test Box 2</h2>
+                  <p className="opacity-90">
+                    This box would normally fade in with a delay.
+                  </p>
+                </div>
               </div>
+            ) : (
+              // Animated content
+              <div className="space-y-6">
+                <MotionDiv
+                  initial={{opacity: 0}}
+                  animate={{opacity: 1}}
+                  transition={{duration: 0.6}}
+                  className="rounded-lg bg-canvas-elevated p-6"
+                >
+                  <h2 className="mb-2 text-xl font-semibold text-text-primary">
+                    Fade In Animation
+                  </h2>
+                  <p className="text-text-muted">
+                    This box fades in smoothly on page load.
+                  </p>
+                </MotionDiv>
 
-              <div className="rounded-lg bg-accent-primary p-6 text-white">
-                <h2 className="mb-2 text-xl font-semibold">Test Box 1</h2>
-                <p className="opacity-90">
-                  This box would normally fade in and scale up.
-                </p>
+                <MotionDiv
+                  initial={{opacity: 0, scale: 0.95}}
+                  animate={{opacity: 1, scale: 1}}
+                  transition={{duration: 0.6, delay: 0.2}}
+                  className="rounded-lg bg-accent-primary p-6 text-white"
+                >
+                  <h2 className="mb-2 text-xl font-semibold">
+                    Fade In + Scale Animation
+                  </h2>
+                  <p className="opacity-90">
+                    This box fades in and scales up with a slight delay.
+                  </p>
+                </MotionDiv>
+
+                <MotionDiv
+                  initial={{opacity: 0, y: 20}}
+                  animate={{opacity: 1, y: 0}}
+                  transition={{duration: 0.6, delay: 0.4}}
+                  className="rounded-lg bg-accent-primary p-6 text-white"
+                >
+                  <h2 className="mb-2 text-xl font-semibold">
+                    Fade In + Slide Up Animation
+                  </h2>
+                  <p className="opacity-90">
+                    This box slides up while fading in, demonstrating transform
+                    animations.
+                  </p>
+                </MotionDiv>
               </div>
-
-              <div className="rounded-lg bg-accent-primary p-6 text-white">
-                <h2 className="mb-2 text-xl font-semibold">Test Box 2</h2>
-                <p className="opacity-90">
-                  This box would normally fade in with a delay.
-                </p>
-              </div>
-            </div>
-          ) : (
-            // Animated content
-            <div className="space-y-6">
-              <MotionDiv
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                transition={{duration: 0.6}}
-                className="rounded-lg bg-canvas-elevated p-6"
-              >
-                <h2 className="mb-2 text-xl font-semibold text-text-primary">
-                  Fade In Animation
-                </h2>
-                <p className="text-text-muted">
-                  This box fades in smoothly on page load.
-                </p>
-              </MotionDiv>
-
-              <MotionDiv
-                initial={{opacity: 0, scale: 0.95}}
-                animate={{opacity: 1, scale: 1}}
-                transition={{duration: 0.6, delay: 0.2}}
-                className="rounded-lg bg-accent-primary p-6 text-white"
-              >
-                <h2 className="mb-2 text-xl font-semibold">
-                  Fade In + Scale Animation
-                </h2>
-                <p className="opacity-90">
-                  This box fades in and scales up with a slight delay.
-                </p>
-              </MotionDiv>
-
-              <MotionDiv
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.6, delay: 0.4}}
-                className="rounded-lg bg-accent-primary p-6 text-white"
-              >
-                <h2 className="mb-2 text-xl font-semibold">
-                  Fade In + Slide Up Animation
-                </h2>
-                <p className="opacity-90">
-                  This box slides up while fading in, demonstrating transform
-                  animations.
-                </p>
-              </MotionDiv>
-            </div>
-          )}
+            )}
           </Suspense>
         </MotionErrorBoundary>
 
