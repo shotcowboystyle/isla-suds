@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
+import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import {ProductRevealInfo} from './ProductRevealInfo';
 import {ScentNarrative} from './ScentNarrative';
@@ -96,6 +97,11 @@ export const TextureReveal = React.forwardRef<
     const [revealAnimationComplete, setRevealAnimationComplete] =
       React.useState(false);
 
+    // Get exploration state actions
+    const addProductExplored = useExplorationStore(
+      (state) => state.addProductExplored,
+    );
+
     // Reset animation completion state when dialog closes
     React.useEffect(() => {
       if (!isOpen) {
@@ -117,11 +123,43 @@ export const TextureReveal = React.forwardRef<
       }
     }, [isOpen, onAnimationComplete]);
 
+    /**
+     * Internal close handler - Story 3.5, Task 1
+     *
+     * Single source of truth for all close mechanisms:
+     * - Close button click (AC1)
+     * - Outside click/tap on overlay (AC2)
+     * - Escape key press (AC3)
+     *
+     * Responsibilities:
+     * - Mark product as explored in exploration store (AC5)
+     * - Trigger close animation (or instant close for reduced motion) (AC4)
+     * - Invoke external onClose callback
+     * - NO network requests (AC6)
+     *
+     * Focus management handled by Radix Dialog (AC7)
+     */
+    const handleCloseReveal = React.useCallback(() => {
+      // Update exploration state: mark this product as explored
+      // This runs on close so users who opened the reveal are tracked
+      addProductExplored(product.id);
+
+      // Trigger parent close handler
+      // This updates parent state and triggers close animation
+      onClose();
+    }, [addProductExplored, product.id, onClose]);
+
     return (
-      <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
+      <DialogPrimitive.Root
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseReveal();
+        }}
+      >
         <DialogPrimitive.Portal>
-          {/* Overlay */}
+          {/* Overlay (click/tap to close - AC2) */}
           <DialogPrimitive.Overlay
+            data-testid="texture-reveal-overlay"
             className={cn(
               'fixed inset-0 z-50 bg-black/80',
               'transition-opacity duration-300',
@@ -211,14 +249,14 @@ export const TextureReveal = React.forwardRef<
               </MotionDiv>
             </Suspense>
 
-            {/* Close button for explicit dismissal */}
+            {/* Close button for explicit dismissal (AC1: accessible label includes product name; 44px min touch target) */}
             <DialogPrimitive.Close
               className={cn(
-                'absolute right-4 top-4 rounded-full bg-white/90 p-2',
+                'absolute right-4 top-4 flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/90',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
                 'hover:bg-white transition-colors',
               )}
-              aria-label="Close texture view"
+              aria-label={`Close texture view for ${product.title}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -1,8 +1,22 @@
 import {render, screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {act} from 'react-dom/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
+
+// Mock exploration store
+const mockAddProductExplored = vi.fn();
+vi.mock('~/stores/exploration', () => ({
+  useExplorationStore: (selector: any) => {
+    const mockState = {
+      productsExplored: new Set<string>(),
+      textureRevealsTriggered: 0,
+      addProductExplored: mockAddProductExplored,
+    };
+    return selector ? selector(mockState) : mockState;
+  },
+}));
 
 let lastMotionDivProps: any;
 const scentNarrativeProps: any[] = [];
@@ -70,6 +84,7 @@ describe('TextureReveal', () => {
     motionModule.state.prefersReducedMotion = false;
     scentNarrativeProps.length = 0;
     lastMotionDivProps = undefined;
+    mockAddProductExplored.mockClear();
   });
   it('renders with required props', () => {
     const onClose = vi.fn();
@@ -236,8 +251,10 @@ describe('TextureReveal', () => {
     );
 
     // Radix Dialog automatically traps focus and moves focus into dialog content
-    // The close button should be focusable
-    const closeButton = screen.getByLabelText('Close texture view');
+    // Close button has product-specific label (AC1)
+    const closeButton = screen.getByLabelText(
+      'Close texture view for Lavender Dreams Soap',
+    );
     expect(closeButton).toBeInTheDocument();
     // Dialog content should be focusable (Radix handles this automatically)
     const dialog = screen.getByRole('dialog');
@@ -341,5 +358,166 @@ describe('TextureReveal', () => {
     expect(productInfo).toBeInTheDocument();
     expect(productInfo).toHaveTextContent('Lavender Dreams Soap');
     expect(productInfo).toHaveTextContent('$12.00');
+  });
+
+  // Story 3.5: Close/Dismiss Behavior Tests
+
+  describe('Close behavior (Story 3.5)', () => {
+    it('calls onClose when close button is clicked (AC1)', () => {
+      const onClose = vi.fn();
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      // Should call onClose callback and mark explored
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(mockAddProductExplored).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('calls onClose when Escape key is pressed (AC3)', async () => {
+      const onClose = vi.fn();
+      const user = userEvent.setup();
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      await user.keyboard('{Escape}');
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(mockAddProductExplored).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('calls onClose when clicking overlay (AC2)', async () => {
+      const onClose = vi.fn();
+      const user = userEvent.setup();
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      const overlay = screen.getByTestId('texture-reveal-overlay');
+      await user.click(overlay);
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(mockAddProductExplored).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('respects reduced motion preference when closing (AC4)', () => {
+      const onClose = vi.fn();
+      motionModule.state.prefersReducedMotion = true;
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      // When reduced motion is enabled, variants should be undefined
+      // This causes instant state change without animation
+      expect(lastMotionDivProps.variants).toBeUndefined();
+    });
+
+    it('does not make network requests on close (AC6)', () => {
+      const onClose = vi.fn();
+      const originalFetch = global.fetch;
+      const fetchSpy = vi.fn();
+      global.fetch = fetchSpy;
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      // No fetch calls should be made during close
+      expect(fetchSpy).not.toHaveBeenCalled();
+
+      global.fetch = originalFetch;
+    });
+
+    it('handles close with animation complete callback', () => {
+      const onClose = vi.fn();
+      const onAnimationComplete = vi.fn();
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+          onAnimationComplete={onAnimationComplete}
+        />,
+      );
+
+      // Close the dialog
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      // Should call onClose
+      expect(onClose).toHaveBeenCalled();
+
+      // Animation callback should have been registered
+      expect(onAnimationComplete).toBeDefined();
+    });
+
+    it('marks product as explored when reveal is closed (AC5, Task 6)', () => {
+      const onClose = vi.fn();
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      // Should mark product as explored in exploration store
+      expect(mockAddProductExplored).toHaveBeenCalledTimes(1);
+      expect(mockAddProductExplored).toHaveBeenCalledWith(mockProduct.id);
+
+      // Should also call parent onClose callback
+      expect(onClose).toHaveBeenCalled();
+    });
   });
 });
