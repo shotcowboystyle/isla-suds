@@ -1,16 +1,40 @@
 /**
- * Scent narrative copy for product reveals
+ * Product Content Layer - Centralized content management with Shopify metafield fallbacks
  *
- * This file provides fallback scent narratives for products when
- * Shopify metafields are not configured. Narratives should be evocative
- * and sensory to help visitors imagine the scent experience.
+ * This module provides all product-related copy (scent narratives, descriptions,
+ * bundle value propositions) with a consistent fallback strategy:
+ *
+ * **Priority Order (all content types):**
+ * 1. Shopify metafield value (CMS-managed, preferred)
+ * 2. Hardcoded fallback by product handle (development/staging safety net)
+ * 3. Generic default (last resort for unknown handles)
+ *
+ * **Usage:**
+ * - Scent narratives: `getScentNarrative(handle, metafieldValue)`
+ * - Product descriptions: `getProductDescription(handle, apiDescription)`
+ * - Bundle value props: `getBundleValueProposition(handle, metafieldValue)`
+ *
+ * **Adding new products:**
+ * 1. Add handle to appropriate fallback map (SCENT_NARRATIVES, PRODUCT_DESCRIPTIONS, etc.)
+ * 2. Configure metafields in Shopify Admin (preferred for production)
+ *
+ * @see Stories 3-3 (scent narratives), 3-4 (product descriptions), 3-6 (bundle content)
  */
+
+// =============================================================================
+// Bundle Configuration
+// =============================================================================
 
 /**
  * Product handle for the variety pack bundle (Story 3.6).
  * Single source of truth for bundle detection across constellation, reveal, and content.
  */
 export const BUNDLE_HANDLE = 'four-bar-variety-pack';
+
+// =============================================================================
+// Scent Narratives (Story 3-3)
+// Evocative sensory copy displayed in texture reveals
+// =============================================================================
 
 /**
  * Map of product handles to scent narrative copy
@@ -40,12 +64,7 @@ export const SCENT_NARRATIVES: Record<string, string> = {
 export const DEFAULT_NARRATIVE = 'Discover the essence of craftsmanship.';
 
 /**
- * Get scent narrative for a product
- *
- * Priority order:
- * 1. Shopify metafield value (if provided)
- * 2. Fallback from SCENT_NARRATIVES map (if handle matches)
- * 3. Default narrative (if handle unknown)
+ * Get scent narrative for a product (follows standard priority order)
  *
  * @param handle - Product handle (e.g., 'lavender-dreams')
  * @param metafieldValue - Optional scent narrative from Shopify metafield
@@ -63,6 +82,11 @@ export function getScentNarrative(
   // Fall back to hardcoded narratives
   return SCENT_NARRATIVES[handle] ?? DEFAULT_NARRATIVE;
 }
+
+// =============================================================================
+// Product Descriptions (Story 3-4)
+// Brief product info displayed in texture reveals (1-2 sentences)
+// =============================================================================
 
 /**
  * Product descriptions (1-2 sentences)
@@ -97,12 +121,7 @@ export const DEFAULT_DESCRIPTION =
   'Handcrafted soap made with premium natural ingredients.';
 
 /**
- * Get product description with fallback
- *
- * Priority order:
- * 1. Shopify product.description (if provided)
- * 2. Fallback from PRODUCT_DESCRIPTIONS map (if handle matches)
- * 3. Default description (if handle unknown)
+ * Get product description with fallback (follows standard priority order)
  *
  * @param handle - Product handle (e.g., 'lavender-dreams')
  * @param apiDescription - Optional description from Shopify API
@@ -121,6 +140,11 @@ export function getProductDescription(
   return PRODUCT_DESCRIPTIONS[handle] ?? DEFAULT_DESCRIPTION;
 }
 
+// =============================================================================
+// Bundle Value Propositions (Story 3-6)
+// Marketing copy for variety pack bundle (displayed in BundleCard)
+// =============================================================================
+
 /**
  * Bundle value proposition copy
  *
@@ -138,12 +162,7 @@ export const DEFAULT_BUNDLE_VALUE_PROPOSITION =
   'Get all four handcrafted soaps together.';
 
 /**
- * Get bundle value proposition for a product
- *
- * Priority order:
- * 1. Shopify bundleValueProposition metafield (if provided)
- * 2. Fallback from BUNDLE_VALUE_PROPOSITIONS map (if handle matches)
- * 3. Default value proposition (if handle unknown)
+ * Get bundle value proposition for a product (follows standard priority order)
  *
  * @param handle - Product handle (e.g., 'four-bar-variety-pack')
  * @param metafieldValue - Optional value proposition from Shopify metafield
@@ -161,3 +180,17 @@ export function getBundleValueProposition(
   // Fall back to hardcoded value propositions
   return BUNDLE_VALUE_PROPOSITIONS[handle] ?? DEFAULT_BUNDLE_VALUE_PROPOSITION;
 }
+
+// =============================================================================
+// Content Helper Types (for consumers)
+// =============================================================================
+
+/**
+ * Type for product content configuration
+ * Use this when passing content to components that need multiple content types
+ */
+export type ProductContent = {
+  scentNarrative: string;
+  description: string;
+  bundleValueProposition?: string;
+};
