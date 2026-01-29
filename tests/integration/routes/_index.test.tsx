@@ -48,7 +48,7 @@ describe('_index loader - bundle support', () => {
     };
 
     // Dynamic import to avoid module-level side effects
-    const {loader} = await import('./_index');
+    const {loader} = await import('~/routes/_index');
 
     // Call loader
     await loader({
@@ -104,7 +104,7 @@ describe('_index loader - bundle support', () => {
       storefront: mockStorefront,
     };
 
-    const {loader} = await import('./_index');
+    const {loader} = await import('~/routes/_index');
 
     await loader({
       context: mockContext,
@@ -175,7 +175,7 @@ describe('_index loader - bundle support', () => {
       storefront: mockStorefront,
     };
 
-    const {loader} = await import('./_index');
+    const {loader} = await import('~/routes/_index');
 
     const result = await loader({
       context: mockContext,

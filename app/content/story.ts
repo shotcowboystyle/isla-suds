@@ -1,7 +1,19 @@
 /** Hero section tagline (AC3 – brand essence message) */
 export const HERO_TAGLINE = 'Handcrafted soap, made with love';
 
-const STORY_FRAGMENTS = [
+/** Story fragment type definition (AC3) */
+export interface StoryFragment {
+  title: string;
+  subtitle: string;
+  content: string;
+  actions?: Array<{
+    label: string;
+    url: string;
+  }>;
+}
+
+/** Story fragments for organic scroll discovery (AC3) */
+export const STORY_FRAGMENTS: StoryFragment[] = [
   {
     title: 'Suds People',
     subtitle: 'Our Passion is People. Our Mission is Soap.',
@@ -20,7 +32,7 @@ const STORY_FRAGMENTS = [
   },
   {
     title: 'Our Soaps',
-    subtitle: 'Named for our daughter. Made in our kitchen.',
+    subtitle: 'Named for our daughter. Made in our kitchen. A family recipe passed down.',
     content:
       'Our soaps are made with love and care in our kitchen. We use the best ingredients and the most sustainable practices to create the best soaps possible.',
     actions: [

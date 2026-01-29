@@ -83,7 +83,7 @@ development_status:
   # Epic 4: Story Moments & Site Navigation (7 stories)
   # ============================================================================
   epic-4: in-progress
-  4-1-implement-story-fragments-during-scroll: ready-for-dev
+  4-1-implement-story-fragments-during-scroll: done
   4-2-display-collection-prompt-after-2-products-explored: backlog
   4-3-add-variety-pack-from-collection-prompt: backlog
   4-4-create-about-page-fallback-for-direct-traffic: backlog
