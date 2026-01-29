@@ -211,6 +211,7 @@ export function ConstellationGrid({
   return (
     <section
       ref={gridRef}
+      data-testid="constellation-grid"
       className={cn(
         'constellation-grid',
         'py-[var(--space-2xl)] px-[var(--space-md)]',

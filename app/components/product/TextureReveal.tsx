@@ -203,6 +203,7 @@ export const TextureReveal = React.forwardRef<
             {/* Content */}
             <DialogPrimitive.Content
               ref={ref}
+              data-testid="texture-reveal"
               aria-label={`Texture view expanded for ${product.title}`}
               className={cn(
                 'fixed left-[50%] top-[50%] z-[51]',

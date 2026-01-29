@@ -47,6 +47,31 @@ export default defineConfig({
 
   // Configure projects for major browsers
   projects: [
+    // Smoke tests - critical path verification across devices
+    {
+      name: 'smoke-iphone-se',
+      testDir: './tests/smoke',
+      use: {
+        ...devices['iPhone SE'], // 375px viewport
+      },
+    },
+    {
+      name: 'smoke-pixel-7',
+      testDir: './tests/smoke',
+      use: {
+        ...devices['Pixel 7'], // 412px viewport
+      },
+    },
+    {
+      name: 'smoke-desktop',
+      testDir: './tests/smoke',
+      use: {
+        viewport: {width: 1440, height: 900},
+        userAgent:
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      },
+    },
+
     // Accessibility tests - critical for WCAG 2.1 AA compliance (AC5)
     {
       name: 'accessibility',
