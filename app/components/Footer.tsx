@@ -1,7 +1,7 @@
 import {Suspense} from 'react';
 import {useNavigate, useLocation, Await, NavLink} from 'react-router';
-import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {SocialLinks} from './ui/SocialLinks';
+import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;

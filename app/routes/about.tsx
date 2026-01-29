@@ -1,6 +1,6 @@
-import type {Route} from './+types/about';
 import {ABOUT_PAGE} from '~/content/about';
 import {cn} from '~/utils/cn';
+import type {Route} from './+types/about';
 
 export const meta: Route.MetaFunction = () => {
   return [

@@ -1,8 +1,8 @@
 import {Link} from 'react-router';
 import {Image, type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variant-url';
-import {cn} from '~/utils/cn';
 import {AddToCartButton} from '~/components/AddToCartButton';
+import {cn} from '~/utils/cn';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 export interface BundleCardProps {
