@@ -164,13 +164,13 @@ describe('Footer', () => {
 
   describe('Layout when primaryDomain is missing (AC7)', () => {
     it('renders navigation and legal links when primaryDomain is null', async () => {
-      const headerWithoutDomain: HeaderQuery = {
+      const headerWithoutDomain = {
         ...mockHeader,
         shop: {
           ...mockHeader.shop,
           primaryDomain: null,
         },
-      };
+      } as unknown as HeaderQuery;
       render(
         <MemoryRouter>
           <Footer
