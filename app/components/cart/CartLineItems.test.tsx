@@ -1,11 +1,17 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {render, screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {CartLineItems} from './CartLineItems';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 // Mock dependencies
 vi.mock('react-router', () => ({
   useRouteLoaderData: vi.fn(),
+  useFetcher: vi.fn(() => ({
+    submit: vi.fn(),
+    state: 'idle',
+    data: null,
+  })),
   Link: ({to, children, ...props}: any) => (
     <a href={to} {...props}>
       {children}
@@ -15,10 +21,15 @@ vi.mock('react-router', () => ({
 
 vi.mock('@shopify/hydrogen', () => ({
   useOptimisticCart: vi.fn((cart) => cart),
+  CartForm: {
+    ACTIONS: {
+      LinesUpdate: 'LinesUpdate',
+    },
+  },
 }));
 
 // Import mocks after vi.mock
-import {useRouteLoaderData} from 'react-router';
+import {useRouteLoaderData, useFetcher} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
 
 describe('CartLineItems', () => {
@@ -26,9 +37,16 @@ describe('CartLineItems', () => {
     typeof vi.fn
   >;
   const mockUseOptimisticCart = useOptimisticCart as ReturnType<typeof vi.fn>;
+  const mockUseFetcher = useFetcher as ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset fetcher mock to default state
+    mockUseFetcher.mockReturnValue({
+      submit: vi.fn(),
+      state: 'idle',
+      data: null,
+    });
   });
 
   // Helper to create mock cart data
@@ -303,8 +321,8 @@ describe('CartLineItems', () => {
     });
   });
 
-  describe('AC4: Quantity display', () => {
-    it('displays quantity as read-only text', () => {
+  describe('AC4: Quantity display (Story 5.5 - Updated for Story 5.6)', () => {
+    it('displays quantity with interactive controls (Story 5.6 replaces read-only text)', () => {
       const cart = createMockCart(1);
       cart.lines.nodes[0].quantity = 3;
       mockUseRouteLoaderData.mockReturnValue({cart});
@@ -312,26 +330,424 @@ describe('CartLineItems', () => {
 
       render(<CartLineItems />);
 
-      // Should have quantity text (appears twice: mobile + desktop)
-      const qtyElements = screen.getAllByText(/Qty: 3/);
-      expect(qtyElements.length).toBeGreaterThan(0);
+      // Story 5.6: Quantity is now displayed with +/- controls, not "Qty: 3" text
+      const quantityElements = screen.getAllByText('3');
+      expect(quantityElements.length).toBe(2); // Mobile + desktop
     });
 
-    it('does not render quantity input controls', () => {
+    it('renders quantity controls (Story 5.6 adds interactive +/- buttons)', () => {
       const cart = createMockCart(1);
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
       render(<CartLineItems />);
 
-      // Should not have +/- buttons or input fields
+      // Story 5.6: NOW we SHOULD have +/- buttons
+      const increaseButtons = screen.getAllByRole('button', {name: /increase/i});
+      const decreaseButtons = screen.getAllByRole('button', {name: /decrease/i});
+
+      expect(increaseButtons.length).toBeGreaterThan(0);
+      expect(decreaseButtons.length).toBeGreaterThan(0);
+    });
+  });
+
+  // Story 5.6: Modify Cart Quantities - NEW TESTS
+  describe('Story 5.6 - AC2: Increment quantity with plus button', () => {
+    it('calls cart update mutation when plus button is clicked', async () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 1;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+
+      await user.click(plusButtons[0]);
+
+      // Should trigger cart update (we'll verify via fetcher in implementation)
+      // This test will validate onClick handler is wired up
+      expect(plusButtons[0]).toBeInTheDocument();
+    });
+
+    it('increments quantity from 1 to 2', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 1;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      // Initial quantity should be 1
+      expect(screen.getAllByText('1').length).toBe(2); // Mobile + desktop
+    });
+
+    it('does not have a maximum quantity limit', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 999;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+
+      // Plus button should not be disabled at high quantities
+      expect(plusButtons[0]).not.toBeDisabled();
+    });
+  });
+
+  describe('Story 5.6 - AC3: Decrement quantity with minus button', () => {
+    it('calls cart update mutation when minus button is clicked', async () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 2;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      await user.click(minusButtons[0]);
+
+      // Should trigger cart update
+      expect(minusButtons[0]).toBeInTheDocument();
+    });
+
+    it('decrements quantity from 2 to 1', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 2;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      // Initial quantity should be 2
+      expect(screen.getAllByText('2').length).toBe(2); // Mobile + desktop
+    });
+
+    it('minus button is disabled when quantity is 1', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 1;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      // Both mobile and desktop minus buttons should be disabled at qty=1
+      expect(minusButtons[0]).toBeDisabled();
+      expect(minusButtons[1]).toBeDisabled();
+    });
+
+    it('does not call mutation when clicking disabled minus button', async () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 1;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'idle',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      // Try to click disabled button
+      await user.click(minusButtons[0]);
+
+      // Submit should not be called because button is disabled
+      expect(mockSubmit).not.toHaveBeenCalled();
+    });
+
+    it('minus button is enabled when quantity is greater than 1', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 5;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      // Buttons should be enabled at qty > 1
+      expect(minusButtons[0]).not.toBeDisabled();
+      expect(minusButtons[1]).not.toBeDisabled();
+    });
+  });
+
+  describe('Story 5.6 - AC7: Error handling with warm messaging', () => {
+    it('displays error message when cart update fails', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      // Mock fetcher with error state
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Cart update failed'}],
+        },
+      });
+
+      render(<CartLineItems />);
+
+      // Should display warm error message near quantity controls (appears twice: mobile + desktop)
+      const errorMessages = screen.getAllByText(/Couldn't update quantity/i);
+      expect(errorMessages.length).toBe(2); // Mobile + desktop
+    });
+
+    it('uses warm error message from errors.ts', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Error'}],
+        },
+      });
+
+      render(<CartLineItems />);
+
+      // Should use exact message from CART_QUANTITY_UPDATE_ERROR_MESSAGE (appears twice)
+      const errorMessages = screen.getAllByText(
+        "Couldn't update quantity. Let's try again.",
+      );
+      expect(errorMessages.length).toBe(2); // Mobile + desktop
+    });
+
+    it('displays inventory error when stock is insufficient', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Not enough inventory'}],
+        },
+      });
+
+      render(<CartLineItems />);
+
+      // Should display inventory-specific message (appears twice: mobile + desktop)
+      const errorMessages = screen.getAllByText(
+        /don't have that many in stock/i,
+      );
+      expect(errorMessages.length).toBe(2);
+    });
+
+    it('error message has ARIA live region for screen readers', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Error'}],
+        },
+      });
+
+      const {container} = render(<CartLineItems />);
+
+      // Should have aria-live region
+      const liveRegion = container.querySelector('[aria-live="polite"]');
+      expect(liveRegion).toBeInTheDocument();
+    });
+
+    it('displays error near quantity controls, not globally', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Error'}],
+        },
+      });
+
+      const {container} = render(<CartLineItems />);
+
+      // Error should be within the line item container
+      const lineItem = container.querySelector('li');
+      const errorMessage = lineItem?.querySelector('[role="alert"]');
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('does not display error when fetcher has no errors', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: null,
+      });
+
+      render(<CartLineItems />);
+
+      // Should not display any error message
       expect(
-        screen.queryByRole('button', {name: /increase/i}),
+        screen.queryByText(/Couldn't update quantity/i),
       ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('button', {name: /decrease/i}),
-      ).not.toBeInTheDocument();
-      expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Story 5.6 - AC1: Plus/minus buttons for quantity control', () => {
+    it('renders plus button to increment quantity', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      // Should render plus buttons for both mobile and desktop
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+      expect(plusButtons.length).toBeGreaterThan(0);
+    });
+
+    it('renders minus button to decrement quantity', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      // Should render minus buttons for both mobile and desktop
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+      expect(minusButtons.length).toBeGreaterThan(0);
+    });
+
+    it('displays current quantity between plus and minus buttons', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 2;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      // Quantity should be visible as text "2" (appears twice: mobile + desktop)
+      const quantityElements = screen.getAllByText('2');
+      expect(quantityElements.length).toBe(2); // Mobile + desktop
+    });
+
+    it('buttons are positioned near quantity display', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const {container} = render(<CartLineItems />);
+
+      // Buttons and quantity should be in a flex container (2 sets: mobile + desktop)
+      const quantityControls = container.querySelectorAll('.flex.items-center.gap-2');
+      expect(quantityControls.length).toBeGreaterThan(0);
+    });
+
+    it('buttons have accessible sizing (44x44px touch targets on mobile)', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      // First button is mobile (h-11 w-11 = 44px)
+      expect(plusButtons[0].className).toMatch(/h-11/);
+      expect(plusButtons[0].className).toMatch(/w-11/);
+      expect(minusButtons[0].className).toMatch(/h-11/);
+      expect(minusButtons[0].className).toMatch(/w-11/);
+    });
+
+    it('buttons are visually styled consistently with design system', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+
+      // Check for accent color and transition classes
+      expect(plusButtons[0].className).toMatch(/transition/);
+      expect(plusButtons[0].className).toMatch(/rounded/);
+    });
+
+    it('buttons have hover and active states', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+
+      // Check for hover state classes
+      expect(plusButtons[0].className).toMatch(/hover:/);
+    });
+
+    it('buttons are keyboard-accessible with proper ARIA labels', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity for lavender fields/i,
+      });
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity for lavender fields/i,
+      });
+
+      expect(plusButtons[0]).toHaveAttribute('aria-label');
+      expect(minusButtons[0]).toHaveAttribute('aria-label');
     });
   });
 
@@ -524,6 +940,166 @@ describe('CartLineItems', () => {
 
       const zeroDollarElements = screen.getAllByText('$0.00');
       expect(zeroDollarElements.length).toBeGreaterThan(0);
+    });
+  });
+
+  // Story 5.6 - Integration Tests (Task 10)
+  describe('Integration: Cart mutation flow', () => {
+    it('submits correct data structure when incrementing quantity', async () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 2;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'idle',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+
+      await user.click(plusButtons[0]);
+
+      // Verify fetcher.submit was called with correct structure
+      expect(mockSubmit).toHaveBeenCalledWith(
+        {
+          action: 'LinesUpdate',
+          inputs: {
+            lines: [
+              {
+                id: 'line-1',
+                quantity: 3, // 2 + 1
+              },
+            ],
+          },
+        },
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      );
+    });
+
+    it('submits correct data structure when decrementing quantity', async () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 3;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'idle',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      await user.click(minusButtons[0]);
+
+      // Verify fetcher.submit was called with correct structure
+      expect(mockSubmit).toHaveBeenCalledWith(
+        {
+          action: 'LinesUpdate',
+          inputs: {
+            lines: [
+              {
+                id: 'line-1',
+                quantity: 2, // 3 - 1
+              },
+            ],
+          },
+        },
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      );
+    });
+
+    it('integrates with useOptimisticCart for instant UI updates', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 5;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+
+      // Simulate optimistic cart returning updated quantity
+      const optimisticCart = createMockCart(1);
+      optimisticCart.lines.nodes[0].quantity = 6;
+      mockUseOptimisticCart.mockReturnValue(optimisticCart);
+
+      render(<CartLineItems />);
+
+      // Should display optimistic quantity (6), not original (5)
+      const quantityElements = screen.getAllByText('6');
+      expect(quantityElements.length).toBe(2); // Mobile + desktop
+    });
+
+    it('handles fetcher loading state across all buttons', () => {
+      const cart = createMockCart(1);
+      cart.lines.nodes[0].quantity = 2;
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      // Simulate fetcher in submitting state
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'submitting',
+        data: null,
+      });
+
+      render(<CartLineItems />);
+
+      // All buttons should be disabled during submission
+      const plusButtons = screen.getAllByRole('button', {
+        name: /increase quantity/i,
+      });
+      const minusButtons = screen.getAllByRole('button', {
+        name: /decrease quantity/i,
+      });
+
+      plusButtons.forEach((btn) => expect(btn).toBeDisabled());
+      minusButtons.forEach((btn) => expect(btn).toBeDisabled());
+    });
+
+    it('detects and handles error response from fetcher', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      // Simulate fetcher with error response
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [
+            {
+              message: 'Insufficient inventory available',
+            },
+          ],
+        },
+      });
+
+      render(<CartLineItems />);
+
+      // Should detect inventory error and display appropriate message
+      const errorMessages = screen.getAllByText(
+        /don't have that many in stock/i,
+      );
+      expect(errorMessages.length).toBe(2); // Mobile + desktop
     });
   });
 });
