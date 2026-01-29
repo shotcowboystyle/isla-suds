@@ -3,6 +3,7 @@ import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {cn} from '~/utils/cn';
+import {ProductRevealInfo} from './ProductRevealInfo';
 import {ScentNarrative} from './ScentNarrative';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
@@ -41,6 +42,8 @@ export interface TextureRevealProps {
  * - Keyboard navigable (Enter/Space to open, Escape to close)
  * - Screen reader announces "Texture view expanded for [product name]"
  * - Focus trap when open, returns focus on close
+ * - DOM/read order for content matches AC6:
+ *   image → scent narrative → product name → price → description → Add to Cart
  */
 /**
  * Animation variants for texture reveal
@@ -161,14 +164,19 @@ export const TextureReveal = React.forwardRef<
                     loading="eager"
                     className="h-full w-full object-cover"
                   />
-                  {/* Include narrative in fallback too, without motion dependencies */}
-                  {scentNarrative && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                      <p className="text-fluid-body text-white italic">
-                        {scentNarrative}
-                      </p>
-                    </div>
-                  )}
+                  {/* Include content in fallback too, without motion dependencies */}
+                  <div className="absolute bottom-0 left-0 right-0">
+                    {/* Scent narrative */}
+                    {scentNarrative && (
+                      <div className="p-4 bg-gradient-to-t from-black/60 to-transparent">
+                        <p className="text-fluid-body text-white italic">
+                          {scentNarrative}
+                        </p>
+                      </div>
+                    )}
+                    {/* Product information - Story 3.4 */}
+                    <ProductRevealInfo product={product} />
+                  </div>
                 </div>
               }
             >
@@ -186,13 +194,20 @@ export const TextureReveal = React.forwardRef<
                   loading="eager"
                   className="h-full w-full object-cover"
                 />
-                {/* Scent narrative - fades in after reveal animation completes */}
-                {scentNarrative && (
-                  <ScentNarrative
-                    narrative={scentNarrative}
-                    isVisible={revealAnimationComplete}
-                  />
-                )}
+                {/* Content overlay at bottom */}
+                <div className="absolute bottom-0 left-0 right-0">
+                  {/* Scent narrative - fades in after reveal animation completes */}
+                  {scentNarrative && (
+                    <ScentNarrative
+                      narrative={scentNarrative}
+                      isVisible={revealAnimationComplete}
+                    />
+                  )}
+                  {/* Product information - Story 3.4 - shows after animation */}
+                  {revealAnimationComplete && (
+                    <ProductRevealInfo product={product} />
+                  )}
+                </div>
               </MotionDiv>
             </Suspense>
 

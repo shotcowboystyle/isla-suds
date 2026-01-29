@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {act} from 'react-dom/test-utils';
-import {describe, it, expect, vi} from 'vitest';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
@@ -35,11 +35,21 @@ vi.mock('./ScentNarrative', () => ({
   },
 }));
 
+vi.mock('./ProductRevealInfo', () => ({
+  ProductRevealInfo: (props: any) => (
+    <div data-testid="product-reveal-info">
+      <h3>{props.product.title}</h3>
+      <p>${props.product.priceRange.minVariantPrice.amount}</p>
+    </div>
+  ),
+}));
+
 // Mock product data matching RecommendedProductFragment structure
 const mockProduct: RecommendedProductFragment = {
   id: 'gid://shopify/Product/1',
   title: 'Lavender Dreams Soap',
   handle: 'lavender-dreams',
+  description: 'A soothing lavender soap with calming properties.',
   featuredImage: {
     id: 'gid://shopify/ProductImage/1',
     url: 'https://cdn.shopify.com/product.jpg',
@@ -306,5 +316,30 @@ describe('TextureReveal', () => {
 
     const afterAnimationProps = scentNarrativeProps.at(-1);
     expect(afterAnimationProps?.isVisible).toBe(true);
+  });
+
+  it('includes ProductRevealInfo with product data (Story 3.4)', () => {
+    const onClose = vi.fn();
+
+    render(
+      <TextureReveal
+        product={mockProduct}
+        isOpen={true}
+        onClose={onClose}
+        textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        scentNarrative="Lavender fields"
+      />,
+    );
+
+    // Trigger animation complete to show product info
+    act(() => {
+      lastMotionDivProps.onAnimationComplete?.();
+    });
+
+    // ProductRevealInfo should be rendered with product data
+    const productInfo = screen.getByTestId('product-reveal-info');
+    expect(productInfo).toBeInTheDocument();
+    expect(productInfo).toHaveTextContent('Lavender Dreams Soap');
+    expect(productInfo).toHaveTextContent('$12.00');
   });
 });

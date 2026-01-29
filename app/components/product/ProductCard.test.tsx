@@ -40,6 +40,7 @@ const mockProduct: RecommendedProductFragment = {
   id: 'gid://shopify/Product/1',
   title: 'Lavender Bliss',
   handle: 'lavender-bliss',
+  description: 'Soothing lavender soap',
   priceRange: {
     minVariantPrice: {
       amount: '12.00',

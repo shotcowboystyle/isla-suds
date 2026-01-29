@@ -1,6 +1,6 @@
 # Story 3.3: Display Scent Narrative Copy in Reveal
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

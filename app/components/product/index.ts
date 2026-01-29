@@ -1,8 +1,10 @@
 export {ConstellationGrid} from './ConstellationGrid';
 export {ProductCard} from './ProductCard';
+export {ProductRevealInfo} from './ProductRevealInfo';
 export {ScentNarrative} from './ScentNarrative';
 export {TextureReveal} from './TextureReveal';
 export type {ConstellationGridProps} from './ConstellationGrid';
 export type {ProductCardProps} from './ProductCard';
+export type {ProductRevealInfoProps} from './ProductRevealInfo';
 export type {ScentNarrativeProps} from './ScentNarrative';
 export type {TextureRevealProps} from './TextureReveal';

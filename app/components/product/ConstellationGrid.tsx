@@ -2,7 +2,6 @@ import {useMemo, useState, useEffect, useCallback, useRef} from 'react';
 import {getScentNarrative} from '~/content/products';
 import {useExplorationActions} from '~/hooks/use-exploration-state';
 import {usePreloadImages} from '~/hooks/use-preload-images';
-import {measureTextureReveal} from '~/lib/performance';
 import {getOptimizedImageUrl} from '~/lib/shopify/preload';
 import {cn} from '~/utils/cn';
 import {ProductCard} from './ProductCard';

@@ -1,5 +1,12 @@
 import {describe, expect, it} from 'vitest';
-import {getScentNarrative, SCENT_NARRATIVES, DEFAULT_NARRATIVE} from './products';
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_NARRATIVE,
+  PRODUCT_DESCRIPTIONS,
+  getProductDescription,
+  getScentNarrative,
+  SCENT_NARRATIVES,
+} from './products';
 
 describe('getScentNarrative', () => {
   it('returns metafield value when provided', () => {
@@ -77,5 +84,50 @@ describe('DEFAULT_NARRATIVE', () => {
 
   it('matches expected fallback text', () => {
     expect(DEFAULT_NARRATIVE).toBe('Discover the essence of craftsmanship.');
+  });
+});
+
+describe('getProductDescription', () => {
+  it('returns API description when provided and non-empty', () => {
+    const apiDescription = 'API-provided product description.';
+    const result = getProductDescription('any-handle', apiDescription);
+
+    expect(result).toBe(apiDescription);
+  });
+
+  it('trims API description and still prefers it when not empty after trim', () => {
+    const apiDescription = '  Trimmed API description.  ';
+    const result = getProductDescription('any-handle', apiDescription);
+
+    expect(result).toBe(apiDescription.trim());
+  });
+
+  it('falls back to PRODUCT_DESCRIPTIONS map when API description is empty', () => {
+    const handle = 'lavender-dreams';
+    const result = getProductDescription(handle, '');
+
+    expect(result).toBe(PRODUCT_DESCRIPTIONS[handle]);
+  });
+
+  it('falls back to PRODUCT_DESCRIPTIONS map when API description is undefined', () => {
+    const handle = 'citrus-sunrise';
+    const result = getProductDescription(handle);
+
+    expect(result).toBe(PRODUCT_DESCRIPTIONS[handle]);
+  });
+
+  it('returns DEFAULT_DESCRIPTION for unknown handle with no API description', () => {
+    const handle = 'unknown-product-handle';
+    const result = getProductDescription(handle);
+
+    expect(result).toBe(DEFAULT_DESCRIPTION);
+  });
+});
+
+describe('DEFAULT_DESCRIPTION', () => {
+  it('is defined and is a non-empty string', () => {
+    expect(DEFAULT_DESCRIPTION).toBeDefined();
+    expect(typeof DEFAULT_DESCRIPTION).toBe('string');
+    expect(DEFAULT_DESCRIPTION.length).toBeGreaterThan(0);
   });
 });

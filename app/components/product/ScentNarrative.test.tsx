@@ -1,5 +1,24 @@
 import {describe, expect, it, vi} from 'vitest';
 import {render, screen} from '@testing-library/react';
+
+let lastMotionDivProps: any;
+
+const motionModule = vi.hoisted(() => ({
+  module: {
+    MotionDiv: (props: any) => {
+      lastMotionDivProps = props;
+      return (
+        <div data-testid="motion-div" {...props}>
+          {props.children}
+        </div>
+      );
+    },
+    prefersReducedMotion: () => false,
+  },
+}));
+
+vi.mock('~/lib/motion', () => motionModule.module);
+
 import {ScentNarrative} from './ScentNarrative';
 
 describe('ScentNarrative', () => {
@@ -26,9 +45,9 @@ describe('ScentNarrative', () => {
   it('applies fluid-body typography class', () => {
     render(<ScentNarrative narrative={mockNarrative} isVisible={true} />);
 
-    const narrativeElement = screen.getByText(mockNarrative);
-    // Check that the text is styled with typography (could be on parent)
-    expect(narrativeElement.closest('div, p')).toHaveClass(/fluid-body|text-/);
+    // Typography class is applied on the MotionDiv wrapper
+    const wrapper = screen.getByTestId('motion-div');
+    expect(wrapper).toHaveClass(/fluid-body|text-/);
   });
 
   it('renders as paragraph element', () => {
@@ -80,10 +99,10 @@ describe('ScentNarrative', () => {
       />,
     );
 
-    // Note: Testing animation complete callback requires waiting for animation
-    // In practice, Framer Motion's onAnimationComplete is tested via integration tests
-    // This test validates the prop is accepted
-    expect(onAnimationComplete).toBeDefined();
+    // Simulate MotionDiv completing its animation
+    lastMotionDivProps.onAnimationComplete?.();
+
+    expect(onAnimationComplete).toHaveBeenCalledTimes(1);
   });
 
   it('has reduced motion support', () => {

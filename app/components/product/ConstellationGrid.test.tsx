@@ -48,6 +48,7 @@ const mockProducts: RecommendedProductFragment[] = [
     id: 'gid://shopify/Product/1',
     title: 'Lavender Bliss',
     handle: 'lavender-bliss',
+    description: 'Soothing lavender soap',
     priceRange: {
       minVariantPrice: {
         amount: '12.00',
@@ -66,6 +67,7 @@ const mockProducts: RecommendedProductFragment[] = [
     id: 'gid://shopify/Product/2',
     title: 'Citrus Sunrise',
     handle: 'citrus-sunrise',
+    description: 'Energizing citrus soap',
     priceRange: {
       minVariantPrice: {
         amount: '12.00',
@@ -84,6 +86,7 @@ const mockProducts: RecommendedProductFragment[] = [
     id: 'gid://shopify/Product/3',
     title: 'Mint Meadow',
     handle: 'mint-meadow',
+    description: 'Refreshing mint soap',
     priceRange: {
       minVariantPrice: {
         amount: '12.00',
@@ -102,6 +105,7 @@ const mockProducts: RecommendedProductFragment[] = [
     id: 'gid://shopify/Product/4',
     title: 'Rose Garden',
     handle: 'rose-garden',
+    description: 'Romantic rose soap',
     priceRange: {
       minVariantPrice: {
         amount: '12.00',
