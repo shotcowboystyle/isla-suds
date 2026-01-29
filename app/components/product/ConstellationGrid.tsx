@@ -1,9 +1,11 @@
 import {useMemo, useState, useEffect, useCallback, useRef} from 'react';
 import {useExplorationActions} from '~/hooks/use-exploration-state';
 import {usePreloadImages} from '~/hooks/use-preload-images';
+import {measureTextureReveal} from '~/lib/performance';
 import {getOptimizedImageUrl} from '~/lib/shopify/preload';
 import {cn} from '~/utils/cn';
 import {ProductCard} from './ProductCard';
+import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 export interface ConstellationGridProps {
@@ -35,7 +37,10 @@ export function ConstellationGrid({
 }: ConstellationGridProps) {
   // Hooks must be called unconditionally before any early returns
   const [focusedProductId, setFocusedProductId] = useState<string | null>(null);
-  const {addProductExplored} = useExplorationActions();
+  const [revealedProductId, setRevealedProductId] = useState<string | null>(
+    null,
+  );
+  const {addProductExplored, incrementTextureReveals} = useExplorationActions();
   const gridRef = useRef<HTMLElement>(null);
 
   // Extract and optimize image URLs for preloading (Story 3.1, AC2)
@@ -67,6 +72,49 @@ export function ConstellationGrid({
     setFocusedProductId(null);
   }, []);
 
+  // Handle texture reveal trigger (Story 3.2)
+  const handleProductReveal = useCallback(
+    (productId: string) => {
+      // Track exploration and increment reveal counter
+      addProductExplored(productId);
+      incrementTextureReveals();
+
+      // Mark start of texture reveal (AC2, AC3)
+      if (typeof performance !== 'undefined') {
+        performance.mark('texture-reveal-start');
+      }
+
+      // Set revealed product immediately for UI responsiveness
+      setRevealedProductId(productId);
+    },
+    [addProductExplored, incrementTextureReveals],
+  );
+
+  // Handle animation completion for performance measurement (AC2, AC3)
+  const handleAnimationComplete = useCallback(() => {
+    // Mark end of texture reveal animation and create measure
+    if (typeof performance !== 'undefined') {
+      try {
+        performance.mark('texture-reveal-end');
+        performance.measure(
+          'texture-reveal',
+          'texture-reveal-start',
+          'texture-reveal-end',
+        );
+      } catch (error) {
+        // Safe to ignore: mark creation may fail if start mark missing
+        if (import.meta.env.DEV) {
+          console.warn('[TextureReveal] Performance mark failed:', error);
+        }
+      }
+    }
+  }, []);
+
+  // Close texture reveal
+  const handleCloseReveal = useCallback(() => {
+    setRevealedProductId(null);
+  }, []);
+
   // Handle click outside to clear focus (AC3: any click not on a product card clears)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -93,6 +141,22 @@ export function ConstellationGrid({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [focusedProductId, handleClearFocus]);
+
+  // Find the currently revealed product for TextureReveal component
+  const revealedProduct = useMemo(
+    () => products?.find((p) => p.id === revealedProductId) ?? null,
+    [products, revealedProductId],
+  );
+
+  // Get texture image URL for revealed product (using featuredImage as texture for now)
+  const textureImageUrl = useMemo(() => {
+    if (!revealedProduct?.featuredImage?.url) return '';
+    return getOptimizedImageUrl(
+      revealedProduct.featuredImage.url,
+      1200,
+      'webp',
+    );
+  }, [revealedProduct]);
 
   // Early return after all hooks
   if (!products || products.length === 0) {
@@ -149,11 +213,23 @@ export function ConstellationGrid({
                 isDimmed={isDimmed}
                 onFocus={handleProductFocus}
                 onClearFocus={handleClearFocus}
+                onReveal={handleProductReveal}
               />
             </div>
           );
         })}
       </div>
+
+      {/* Texture reveal modal (Story 3.2) */}
+      {revealedProduct && (
+        <TextureReveal
+          product={revealedProduct}
+          isOpen={revealedProductId !== null}
+          onClose={handleCloseReveal}
+          textureImageUrl={textureImageUrl}
+          onAnimationComplete={handleAnimationComplete}
+        />
+      )}
     </section>
   );
 }

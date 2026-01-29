@@ -17,6 +17,8 @@ export interface ProductCardProps {
   onFocus?: (productId: string) => void;
   /** Callback to clear all focus state (Story 2.4) */
   onClearFocus?: () => void;
+  /** Callback when texture reveal should trigger (Story 3.2) */
+  onReveal?: (productId: string) => void;
 }
 
 /**
@@ -36,22 +38,39 @@ export function ProductCard({
   isDimmed = false,
   onFocus,
   onClearFocus,
+  onReveal,
 }: ProductCardProps) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
 
-  // Handle hover/tap to focus
+  // Handle hover/tap to focus and reveal (Story 2.4, Story 3.2)
   const handleMouseEnter = () => {
     if (onFocus) {
       onFocus(product.id);
     }
+    if (onReveal) {
+      onReveal(product.id);
+    }
   };
 
-  // Handle keyboard activation (Enter/Space)
+  // Handle click for mobile tap reveal (Story 3.2)
+  const handleClick = (event: React.MouseEvent) => {
+    if (onReveal) {
+      event.preventDefault(); // Prevent navigation when triggering reveal
+      onReveal(product.id);
+    }
+  };
+
+  // Handle keyboard activation (Enter/Space) for focus and reveal (Story 2.4, Story 3.2)
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if ((event.key === 'Enter' || event.key === ' ') && onFocus) {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault(); // Prevent default link navigation on Space
-      onFocus(product.id);
+      if (onFocus) {
+        onFocus(product.id);
+      }
+      if (onReveal) {
+        onReveal(product.id);
+      }
     }
   };
 
@@ -74,6 +93,7 @@ export function ProductCard({
       to={variantUrl}
       aria-label={`View ${product.title}`}
       onMouseEnter={handleMouseEnter}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
       <div className="aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]">

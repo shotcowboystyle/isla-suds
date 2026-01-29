@@ -47,38 +47,47 @@ test.describe('Texture Reveal Performance', () => {
 
       const card = productCards.nth(i % cardCount);
 
-      // Mark start of reveal
-      await page.evaluate(() => {
-        performance.mark('texture-reveal-start');
-      });
+      // Clear any existing marks before this iteration
+      await clearPerformanceMarks(page);
 
       // Trigger reveal (hover or tap depending on implementation)
+      // This will call handleProductReveal which creates 'texture-reveal-start' mark
       await card.hover();
 
-      // Wait for reveal animation to complete
-      // Note: Adjust selector based on actual texture reveal implementation
-      await page.waitForTimeout(200); // Brief wait for animation
+      // Wait for dialog to appear (Radix Dialog)
+      const dialog = page.locator('[role="dialog"]');
+      await dialog.waitFor({state: 'visible', timeout: 1000});
 
-      // Mark end of reveal
-      await page.evaluate(() => {
-        performance.mark('texture-reveal-end');
-        performance.measure(
-          'texture-reveal',
-          'texture-reveal-start',
-          'texture-reveal-end',
-        );
-      });
+      // Wait for animation to complete by checking for 'texture-reveal-end' mark
+      // The actual implementation creates this mark in handleAnimationComplete callback
+      // Animation duration is 300ms, but wait up to 500ms to account for timing variations
+      await page.waitForFunction(
+        () => {
+          const marks = performance.getEntriesByType('mark');
+          return marks.some((m) => m.name === 'texture-reveal-end');
+        },
+        {timeout: 500},
+      );
 
-      // Get measurement
+      // Verify that the actual implementation created the marks and measure
       const measurements = await getPerformanceMeasurements(
         page,
         'texture-reveal',
       );
       if (measurements.length > 0) {
         durations.push(measurements[measurements.length - 1].duration);
+      } else {
+        // If no measurement found, the implementation didn't create it - this is a test failure
+        throw new Error(
+          'Performance measurement not found. Implementation may not be creating marks correctly.',
+        );
       }
 
-      // Clear for next iteration
+      // Close dialog for next iteration
+      await page.keyboard.press('Escape');
+      await dialog.waitFor({state: 'hidden', timeout: 500});
+
+      // Clear marks for next iteration
       await clearPerformanceMarks(page);
     }
 
@@ -94,7 +103,9 @@ test.describe('Texture Reveal Performance', () => {
     console.log('\n📊 Texture Reveal Performance:');
     console.log(`   Average: ${average.toFixed(2)}ms`);
     console.log(`   p95: ${p95.toFixed(2)}ms`);
-    console.log(`   All measurements: ${durations.map((d) => d.toFixed(2)).join(', ')}`);
+    console.log(
+      `   All measurements: ${durations.map((d) => d.toFixed(2)).join(', ')}`,
+    );
 
     expect(
       p95,
