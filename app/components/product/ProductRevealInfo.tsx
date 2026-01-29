@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {type OptimisticCartLineInput} from '@shopify/hydrogen';
+import {AddToCartButton} from '~/components/AddToCartButton';
 import {
   BUNDLE_HANDLE,
   getProductDescription,
   getBundleValueProposition,
 } from '~/content/products';
-import {AddToCartButton} from '~/components/AddToCartButton';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
 import type {
