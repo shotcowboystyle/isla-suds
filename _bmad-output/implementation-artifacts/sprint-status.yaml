@@ -95,30 +95,30 @@ development_status:
   # ============================================================================
   # Epic 5: Cart Experience (10 stories)
   # ============================================================================
-  epic-5: in-progress
+  epic-5: done
   5-1-implement-cart-creation-and-persistence: done
   5-2-add-individual-product-to-cart: done
   5-3-add-variety-pack-bundle-to-cart: done
   5-4-build-cart-drawer-component: done
   5-5-display-cart-line-items: done
   5-6-modify-cart-quantities: done
-  5-7-remove-items-from-cart: review
+  5-7-remove-items-from-cart: done
   5-8-display-empty-cart-state: done
   5-9-implement-proceed-to-checkout: done
   5-10-add-cart-icon-to-sticky-header: done
-  epic-5-retrospective: optional
+  epic-5-retrospective: done
 
   # ============================================================================
   # Epic 6: Checkout & Communication (7 stories)
   # ============================================================================
-  epic-6: backlog
-  6-1-integrate-shopify-managed-checkout: backlog
-  6-2-configure-order-confirmation-email: backlog
-  6-3-implement-payment-retry-flow: backlog
-  6-4-add-booth-attribution-code-field: backlog
-  6-5-add-how-did-you-find-us-survey: backlog
-  6-6-include-day-3-survey-link-in-confirmation-email: backlog
-  6-7-create-contact-page: backlog
+  epic-6: in-progress
+  6-1-integrate-shopify-managed-checkout: done
+  6-2-configure-order-confirmation-email: ready-for-dev
+  6-3-implement-payment-retry-flow: ready-for-dev
+  6-4-add-booth-attribution-code-field: ready-for-dev
+  6-5-add-how-did-you-find-us-survey: ready-for-dev
+  6-6-include-day-3-survey-link-in-confirmation-email: ready-for-dev
+  6-7-create-contact-page: ready-for-dev
   epic-6-retrospective: optional
 
   # ============================================================================
