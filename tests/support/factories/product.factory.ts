@@ -20,6 +20,12 @@ export type TestProduct = {
   price?: number;
   compareAtPrice?: number;
   variantId?: string;
+  featuredImage?: {
+    url: string;
+    altText?: string;
+    width?: number;
+    height?: number;
+  };
 };
 
 let productIdCounter = 1;
@@ -33,16 +39,23 @@ let productIdCounter = 1;
  */
 export function createProduct(overrides: Partial<TestProduct> = {}): TestProduct {
   const id = `gid://shopify/Product/${productIdCounter++}`;
+  const currentId = productIdCounter;
 
   return {
     id,
-    title: `Test Product ${productIdCounter}`,
-    handle: `test-product-${productIdCounter}`,
+    title: `Test Product ${currentId}`,
+    handle: `test-product-${currentId}`,
     description: 'A test product for automated testing',
     availableForSale: true,
     price: 29.99,
     compareAtPrice: 39.99,
-    variantId: `gid://shopify/ProductVariant/${productIdCounter}`,
+    variantId: `gid://shopify/ProductVariant/${currentId}`,
+    featuredImage: {
+      url: `https://cdn.shopify.com/s/files/1/0000/0000/products/test-product-${currentId}.jpg`,
+      altText: `Test Product ${currentId} Image`,
+      width: 1024,
+      height: 1024,
+    },
     ...overrides,
   };
 }

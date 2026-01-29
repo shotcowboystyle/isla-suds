@@ -10,9 +10,13 @@ tests/
 │   ├── cart-flow.spec.ts
 │   ├── cart-persistence.spec.ts
 │   ├── product-display.spec.ts
-│   └── navigation.spec.ts
+│   ├── navigation.spec.ts
+│   └── image-preloading.spec.ts         # Story 3.1: Image preloading
+├── integration/            # Integration tests (component + hook behavior)
+│   └── constellation-preload.spec.ts    # Story 3.1: ConstellationGrid integration
 ├── performance/            # Performance tests (CI gates)
-│   └── texture-reveal.perf.spec.ts
+│   ├── texture-reveal.perf.spec.ts
+│   └── image-preload.perf.spec.ts       # Story 3.1: Preload timing (<100ms)
 ├── component/              # Component unit tests
 │   ├── AddToCartButton.test.tsx
 │   └── ProductForm.test.tsx
@@ -21,7 +25,13 @@ tests/
 └── support/                # Test infrastructure
     ├── fixtures/           # Playwright fixtures
     ├── factories/          # Test data factories
+    │   ├── product.factory.ts       # ✨ Enhanced with featuredImage support
+    │   ├── cart.factory.ts
+    │   └── variant.factory.ts
     └── helpers/            # Test utilities
+        ├── wait-for.ts
+        ├── performance.ts
+        └── preload.ts               # ✨ NEW: Preload validation helpers
 ```
 
 ## Running Tests
@@ -182,9 +192,45 @@ const unavailableProduct = createProduct({
 
 ### Available Factories
 
-- **product.factory.ts** - Product data generation
+- **product.factory.ts** - Product data generation (includes `featuredImage` URL)
 - **cart.factory.ts** - Cart data generation
 - **variant.factory.ts** - Product variant generation
+
+## Test Helpers
+
+### Preload Validation Helpers (Story 3.1)
+
+The `preload.ts` helper provides utilities for validating image preload behavior:
+
+```typescript
+import {
+  getPreloadLinks,
+  waitForPreloadLinks,
+  getPreloadLinkAttributes,
+  hasOptimizationParams,
+} from '../support/helpers/preload';
+
+// Get all preload links from page head
+const links = await getPreloadLinks(page);
+expect(links.length).toBeGreaterThan(0);
+
+// Wait for specific number of preload links
+await waitForPreloadLinks(page, 4, {timeout: 3000});
+
+// Validate link attributes (AC2: fetchpriority, URL optimization)
+const attrs = await getPreloadLinkAttributes(page, imageUrl);
+expect(attrs.fetchpriority).toBe('high');
+
+// Check for Shopify CDN optimization (width, format)
+const isOptimized = await hasOptimizationParams(page, imageUrl);
+expect(isOptimized).toBe(true);
+```
+
+### Available Helpers
+
+- **wait-for.ts** - Deterministic async polling utilities
+- **performance.ts** - Performance measurement helpers
+- **preload.ts** - Image preload validation (Story 3.1)
 
 ## Performance Testing
 

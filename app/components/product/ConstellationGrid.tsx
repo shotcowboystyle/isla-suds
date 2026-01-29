@@ -1,5 +1,7 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useMemo, useState, useEffect, useCallback, useRef} from 'react';
 import {useExplorationActions} from '~/hooks/use-exploration-state';
+import {usePreloadImages} from '~/hooks/use-preload-images';
+import {getOptimizedImageUrl} from '~/lib/shopify/preload';
 import {cn} from '~/utils/cn';
 import {ProductCard} from './ProductCard';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
@@ -34,6 +36,22 @@ export function ConstellationGrid({
   // Hooks must be called unconditionally before any early returns
   const [focusedProductId, setFocusedProductId] = useState<string | null>(null);
   const {addProductExplored} = useExplorationActions();
+  const gridRef = useRef<HTMLElement>(null);
+
+  // Extract and optimize image URLs for preloading (Story 3.1, AC2)
+  // Using featuredImage URLs as texture macro images will be in Story 3.2
+  const imageUrls = useMemo(
+    () =>
+      products
+        ?.map((product) => product.featuredImage?.url)
+        .filter((url): url is string => Boolean(url))
+        .map((url) => getOptimizedImageUrl(url)) ?? [],
+    [products],
+  );
+
+  // Preload images when constellation approaches viewport (Story 3.1, AC2: fetchpriority)
+  const preloadOptions = useMemo(() => ({fetchpriority: 'high' as const}), []);
+  usePreloadImages(gridRef, imageUrls, preloadOptions);
 
   // Handle focus state and track exploration
   const handleProductFocus = useCallback(
@@ -98,6 +116,7 @@ export function ConstellationGrid({
 
   return (
     <section
+      ref={gridRef}
       className={cn(
         'constellation-grid',
         'py-[var(--space-2xl)] px-[var(--space-md)]',
