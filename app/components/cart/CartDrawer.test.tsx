@@ -112,6 +112,35 @@ describe('CartDrawer', () => {
 
     it('closes drawer when Continue Shopping is clicked', async () => {
       const user = userEvent.setup();
+      // Need cart with items for Continue Shopping button to be visible
+      mockCartData = {
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {
+                  handle: 'test-soap',
+                },
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
+      };
+      mockCartDrawerOpen = true;
+
       render(<CartDrawer />);
 
       const continueButton = screen.getByRole('button', {
@@ -176,17 +205,98 @@ describe('CartDrawer', () => {
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
-    it('shows empty cart component when cart has no items', () => {
+    it('shows EmptyCart component when cart has no items (AC7, AC10)', () => {
       mockCartData = {
         lines: {nodes: []},
         cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
       };
+      mockCartDrawerOpen = true;
 
       render(<CartDrawer />);
 
+      // Verify EmptyCart message displays
       expect(
-        screen.getByText(/empty cart state will be implemented/i),
+        screen.getByText(/Your cart is empty. Let's find something you'll love./i),
       ).toBeInTheDocument();
+
+      // Verify "Explore the Collection" button displays
+      expect(
+        screen.getByRole('link', {name: /Explore the Collection/i}),
+      ).toBeInTheDocument();
+    });
+
+    it('hides subtotal and checkout button when cart is empty (AC7)', () => {
+      mockCartData = {
+        lines: {nodes: []},
+        cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
+      };
+      mockCartDrawerOpen = true;
+
+      render(<CartDrawer />);
+
+      // Verify subtotal is hidden
+      expect(screen.queryByText('Subtotal')).not.toBeInTheDocument();
+
+      // Verify checkout button is hidden
+      expect(
+        screen.queryByRole('button', {name: /Proceed to checkout/i}),
+      ).not.toBeInTheDocument();
+
+      // Verify continue shopping is hidden (only in footer)
+      expect(
+        screen.queryByRole('button', {name: /Continue Shopping/i}),
+      ).not.toBeInTheDocument();
+    });
+
+    it('uses aria-labelledby for proper dialog labeling (AC5)', () => {
+      mockCartData = {
+        lines: {nodes: []},
+        cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
+      };
+      mockCartDrawerOpen = true;
+
+      render(<CartDrawer />);
+
+      // Verify dialog has aria-labelledby pointing to title
+      const dialog = screen.getByRole('dialog');
+      expect(dialog).toHaveAttribute('aria-labelledby', 'cart-title');
+    });
+
+    it('announces "Cart is now empty" via ARIA live region when cart becomes empty (AC5, AC8)', async () => {
+      mockCartData = {
+        lines: {nodes: []},
+        cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
+      };
+      mockCartDrawerOpen = true;
+
+      render(<CartDrawer />);
+
+      // Wait for live region to announce
+      await waitFor(() => {
+        const liveRegion = screen.getByRole('status');
+        expect(liveRegion).toHaveTextContent('Cart is now empty');
+      });
+    });
+
+    it('drawer remains open when cart becomes empty (AC3)', () => {
+      mockCartData = {
+        lines: {nodes: []},
+        cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
+      };
+      mockCartDrawerOpen = true;
+
+      render(<CartDrawer />);
+
+      // Verify drawer is still open (dialog is rendered)
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+      // Verify EmptyCart component is displayed
+      expect(
+        screen.getByText(/Your cart is empty. Let's find something you'll love./i),
+      ).toBeInTheDocument();
+
+      // Verify setCartDrawerOpen was NOT called (drawer stays open)
+      expect(mockSetCartDrawerOpen).not.toHaveBeenCalledWith(false);
     });
 
     it('shows CartLineItems component when cart has items', () => {
@@ -318,11 +428,34 @@ describe('CartDrawer', () => {
       expect(prices.length).toBeGreaterThan(0);
     });
 
-    it('shows checkout button', () => {
+    it('shows checkout button when cart has items', () => {
       mockCartData = {
-        lines: {nodes: []},
-        cost: {subtotalAmount: {amount: '0', currencyCode: 'USD'}},
+        lines: {
+          nodes: [
+            {
+              id: 'line-1',
+              quantity: 1,
+              attributes: [],
+              cost: {
+                totalAmount: {amount: '10.00', currencyCode: 'USD'},
+                amountPerQuantity: {amount: '10.00', currencyCode: 'USD'},
+                compareAtAmountPerQuantity: null,
+              },
+              merchandise: {
+                id: 'product-1',
+                title: 'Test Soap',
+                image: {url: 'https://via.placeholder.com/150', altText: 'Test Soap'},
+                product: {
+                  handle: 'test-soap',
+                },
+                selectedOptions: [],
+              },
+            },
+          ],
+        },
+        cost: {subtotalAmount: {amount: '10.00', currencyCode: 'USD'}},
       };
+      mockCartDrawerOpen = true;
 
       render(<CartDrawer />);
 
