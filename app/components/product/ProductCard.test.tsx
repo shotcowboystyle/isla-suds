@@ -54,6 +54,7 @@ const mockProduct: RecommendedProductFragment = {
     width: 800,
     height: 800,
   },
+variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
 };
 
 describe('ProductCard', () => {
@@ -85,6 +86,7 @@ describe('ProductCard', () => {
         ...mockProduct.featuredImage!,
         altText: null,
       },
+    variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
     };
 
     render(<ProductCard product={productNoAlt} />);

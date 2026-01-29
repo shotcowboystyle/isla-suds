@@ -36,3 +36,11 @@ export const TEXTURE_REVEAL_FALLBACK_MESSAGE = '';
  */
 export const PAYMENT_RETRY_MESSAGE =
   "That didn't go through. No worries—let's try again.";
+
+/**
+ * Collection prompt cart add error message
+ * Displayed when: Adding variety pack from collection prompt fails
+ * Recovery: User can retry by clicking button again
+ */
+export const COLLECTION_PROMPT_ADD_ERROR_MESSAGE =
+  "Something went wrong. Let's try again.";

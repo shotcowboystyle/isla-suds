@@ -62,6 +62,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/2',
@@ -81,6 +82,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/3',
@@ -100,6 +102,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/4',
@@ -119,6 +122,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
 ];
 
@@ -418,6 +422,7 @@ describe('ConstellationGrid - Focus State (Story 2.4)', () => {
           width: 1200,
           height: 1200,
         },
+        variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
         scentNarrative: {
           value: 'Four distinct journeys.',
         },

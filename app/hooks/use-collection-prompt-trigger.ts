@@ -1,6 +1,26 @@
 import {useExplorationStore} from '~/stores/exploration';
 
 /**
+ * Cart line type (subset of Hydrogen cart line structure)
+ */
+export interface CartLineForPrompt {
+  merchandise: {
+    product: {
+      productType?: string;
+      handle?: string;
+    };
+  };
+}
+
+/**
+ * Hook parameters
+ */
+export interface UseCollectionPromptTriggerParams {
+  /** Cart lines from Hydrogen cart context (optional, SSR-safe) */
+  cartLines?: Array<CartLineForPrompt> | null;
+}
+
+/**
  * Hook return interface
  */
 export interface UseCollectionPromptTriggerResult {
@@ -9,31 +29,35 @@ export interface UseCollectionPromptTriggerResult {
 }
 
 /**
- * useCollectionPromptTrigger hook (Story 4.2, Task 3)
+ * useCollectionPromptTrigger hook (Story 4.2 + 4.3)
  *
  * Determines if collection prompt should be shown based on:
  * - AC1: User has explored 2+ products
  * - AC2: Prompt hasn't been shown before (storyMomentShown = false)
- * - AC3: Variety pack is NOT in cart (stub implementation - will be completed in Story 4.3)
+ * - AC3: Variety pack is NOT in cart (Story 4.3, Task 1)
  *
  * SSR-safe with graceful fallbacks for undefined cart data
  *
+ * @param {UseCollectionPromptTriggerParams} params - Hook parameters
  * @returns {UseCollectionPromptTriggerResult} Object with shouldShowPrompt boolean
  *
  * @example
- * const { shouldShowPrompt } = useCollectionPromptTrigger();
+ * const { shouldShowPrompt } = useCollectionPromptTrigger({cartLines: cart?.lines});
  * if (shouldShowPrompt) {
  *   // Show collection prompt
  * }
  */
-export function useCollectionPromptTrigger(): UseCollectionPromptTriggerResult {
+export function useCollectionPromptTrigger(
+  params: UseCollectionPromptTriggerParams = {},
+): UseCollectionPromptTriggerResult {
+  const {cartLines} = params;
+
   // Subscribe to Zustand exploration store
   const productsExplored = useExplorationStore((state) => state.productsExplored);
   const storyMomentShown = useExplorationStore((state) => state.storyMomentShown);
 
-  // TODO Story 4.3: Get cart data from Hydrogen Cart Context via loader
-  // For now, cart checking is stubbed out (always returns empty cart)
-  const lines: any[] = [];
+  // Use cart lines from parameter (Story 4.3, Task 1)
+  const lines = cartLines ?? [];
 
   // AC1: Check if user has explored 2+ products
   const hasExploredEnoughProducts = productsExplored.size >= 2;
@@ -64,7 +88,7 @@ export function useCollectionPromptTrigger(): UseCollectionPromptTriggerResult {
  * @returns true if variety pack is in cart, false otherwise
  */
 function checkForVarietyPackInCart(
-  lines: Array<{merchandise: {product: {productType?: string; handle?: string}}}>| undefined | null,
+  lines: Array<CartLineForPrompt> | undefined | null,
 ): boolean {
   // SSR safety: If lines is undefined or null, return false (no variety pack)
   if (!lines || !Array.isArray(lines)) {

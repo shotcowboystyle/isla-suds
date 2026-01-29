@@ -32,6 +32,7 @@ const mockBundleProduct: RecommendedProductFragment = {
     width: 1200,
     height: 1200,
   },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   scentNarrative: {
     value: 'Four distinct journeys. One complete experience.',
   },

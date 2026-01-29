@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import {useOptimisticCart} from '@shopify/hydrogen';
 import {useCollectionPromptTrigger} from '~/hooks/use-collection-prompt-trigger';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {useExplorationStore} from '~/stores/exploration';
@@ -28,6 +29,8 @@ export interface TextureRevealProps {
   scentNarrative?: string;
   /** Callback when animation completes (for performance measurement) */
   onAnimationComplete?: () => void;
+  /** Variety pack variant ID for collection prompt cart mutation (Story 4.3) */
+  varietyPackVariantId?: string;
 }
 
 /**
@@ -89,6 +92,7 @@ export const TextureReveal = React.forwardRef<
       textureImageUrl,
       scentNarrative,
       onAnimationComplete,
+      varietyPackVariantId,
     },
     ref,
   ) => {
@@ -111,8 +115,12 @@ export const TextureReveal = React.forwardRef<
       (state) => state.setStoryMomentShown,
     );
 
-    // Check if collection prompt should be triggered (Story 4.2, Task 5)
-    const {shouldShowPrompt} = useCollectionPromptTrigger();
+    // Get cart data for prompt trigger (Story 4.3, Task 1)
+    const optimisticCart = useOptimisticCart();
+    const cartLines = (optimisticCart?.lines as unknown as any)?.nodes || [];
+
+    // Check if collection prompt should be triggered (Story 4.2 + 4.3)
+    const {shouldShowPrompt} = useCollectionPromptTrigger({cartLines});
 
     // Reset animation completion state when dialog closes
     React.useEffect(() => {
@@ -307,10 +315,11 @@ export const TextureReveal = React.forwardRef<
           </DialogPrimitive.Portal>
         </DialogPrimitive.Root>
 
-        {/* Collection Prompt (Story 4.2, Task 5 + AC4) - animated, appears after reveal closes */}
+        {/* Collection Prompt (Story 4.2 + 4.3) - animated, appears after reveal closes */}
         <CollectionPromptWithAnimation
           open={showCollectionPrompt}
           onClose={() => setShowCollectionPrompt(false)}
+          variantId={varietyPackVariantId}
         />
       </>
     );

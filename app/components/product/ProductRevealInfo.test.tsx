@@ -26,6 +26,7 @@ describe('ProductRevealInfo', () => {
       width: 800,
       height: 800,
     },
+    variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
     scentNarrative: {
       value: 'Lavender fields in Provence',
     },

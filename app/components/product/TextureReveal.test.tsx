@@ -84,6 +84,7 @@ const mockProduct: RecommendedProductFragment = {
     width: 800,
     height: 800,
   },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   priceRange: {
     minVariantPrice: {
       amount: '12.00',
