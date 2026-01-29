@@ -4,7 +4,7 @@ import {ConstellationGrid} from './ConstellationGrid';
 import {useExplorationStore} from '~/stores/exploration';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
-// Mock Hydrogen Image component
+// Mock Hydrogen components and hooks
 vi.mock('@shopify/hydrogen', () => ({
   Image: ({
     alt,
@@ -13,6 +13,9 @@ vi.mock('@shopify/hydrogen', () => ({
     alt: string;
     'data-testid'?: string;
   }) => <img alt={alt} data-testid={testId} />,
+  useOptimisticCart: () => ({
+    lines: {nodes: []},
+  }),
 }));
 
 // Mock useVariantUrl hook
@@ -41,6 +44,20 @@ vi.mock('react-router', () => ({
     state: null,
     key: 'default',
   }),
+  useFetcher: () => ({
+    state: 'idle',
+    data: null,
+    formData: null,
+    submit: vi.fn(),
+    load: vi.fn(),
+  }),
+}));
+
+// Mock collection prompt trigger hook
+vi.mock('~/hooks/use-collection-prompt-trigger', () => ({
+  useCollectionPromptTrigger: () => ({
+    shouldShowPrompt: false,
+  }),
 }));
 
 const mockProducts: RecommendedProductFragment[] = [
@@ -62,6 +79,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/2',
@@ -81,6 +99,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/3',
@@ -100,6 +119,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
   {
     id: 'gid://shopify/Product/4',
@@ -119,6 +139,7 @@ const mockProducts: RecommendedProductFragment[] = [
       width: 800,
       height: 800,
     },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   },
 ];
 
@@ -418,6 +439,7 @@ describe('ConstellationGrid - Focus State (Story 2.4)', () => {
           width: 1200,
           height: 1200,
         },
+        variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
         scentNarrative: {
           value: 'Four distinct journeys.',
         },

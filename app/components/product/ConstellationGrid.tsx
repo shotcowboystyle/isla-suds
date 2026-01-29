@@ -176,6 +176,18 @@ export function ConstellationGrid({
     );
   }, [revealedProduct]);
 
+  // Extract variety pack variant ID (Story 4.3, Task 4, AC1)
+  const varietyPackVariantId = useMemo(() => {
+    const varietyPack = products?.find((p) => p.handle === BUNDLE_HANDLE);
+    // Access first variant via GraphQL structure: variants.nodes[0].id
+    // Type is from RecommendedProductFragment which includes variants field
+    const variantId = varietyPack?.variants?.nodes?.[0]?.id;
+    if (!variantId && import.meta.env.DEV) {
+      console.warn('[ConstellationGrid] Variety pack variant ID not found');
+    }
+    return variantId;
+  }, [products]);
+
   // Early return after all hooks
   if (!products || products.length === 0) {
     return null;
@@ -242,7 +254,7 @@ export function ConstellationGrid({
         })}
       </div>
 
-      {/* Texture reveal modal (Story 3.2, 3.3) */}
+      {/* Texture reveal modal (Story 3.2, 3.3, 4.3) */}
       {revealedProduct && (
         <TextureReveal
           product={revealedProduct}
@@ -251,6 +263,7 @@ export function ConstellationGrid({
           textureImageUrl={textureImageUrl}
           scentNarrative={scentNarrative}
           onAnimationComplete={handleAnimationComplete}
+          varietyPackVariantId={varietyPackVariantId}
         />
       )}
     </section>

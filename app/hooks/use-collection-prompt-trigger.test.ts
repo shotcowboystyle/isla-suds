@@ -97,23 +97,149 @@ describe('useCollectionPromptTrigger', () => {
   });
 
   describe('AC3 - Prevent trigger if variety pack is in cart', () => {
-    it.skip('returns false when variety pack (bundle) is in cart (Story 4.3)', () => {
-      // TODO Story 4.3: Implement cart checking
-      // This test will be enabled when cart context is available
+    it('[P0] returns false when variety pack (bundle) is in cart (Story 4.3)', () => {
+      // Add 2 products to exploration (meets AC1)
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Mock cart lines with variety pack identified by productType = 'Bundle'
+      const mockCartLines = [
+        {
+          merchandise: {
+            product: {
+              productType: 'Bundle',
+              handle: 'four-bar-variety-pack',
+            },
+          },
+        },
+      ];
+
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: mockCartLines}),
+      );
+
+      // Should return false because variety pack is in cart (AC3)
+      expect(result.current.shouldShowPrompt).toBe(false);
     });
 
-    it.skip('returns false when variety pack (handle: variety-pack) is in cart (Story 4.3)', () => {
-      // TODO Story 4.3: Implement cart checking
-      // This test will be enabled when cart context is available
+    it('[P0] returns false when variety pack (handle: variety-pack) is in cart (Story 4.3)', () => {
+      // Add 2 products to exploration (meets AC1)
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Mock cart lines with variety pack identified by handle
+      const mockCartLines = [
+        {
+          merchandise: {
+            product: {
+              productType: 'Soap Bar',
+              handle: 'variety-pack',
+            },
+          },
+        },
+      ];
+
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: mockCartLines}),
+      );
+
+      // Should return false because variety pack is in cart (AC3)
+      expect(result.current.shouldShowPrompt).toBe(false);
     });
 
-    it('returns true when cart is empty (stub implementation)', () => {
+    it('[P1] returns false when variety pack (handle: four-bar-variety-pack) is in cart', () => {
+      // Add 2 products to exploration (meets AC1)
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Mock cart lines with variety pack identified by full handle
+      const mockCartLines = [
+        {
+          merchandise: {
+            product: {
+              productType: 'Soap Bar',
+              handle: 'four-bar-variety-pack',
+            },
+          },
+        },
+      ];
+
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: mockCartLines}),
+      );
+
+      // Should return false because variety pack is in cart (AC3)
+      expect(result.current.shouldShowPrompt).toBe(false);
+    });
+
+    it('[P1] returns true when cart has other products but NOT variety pack', () => {
+      // Add 2 products to exploration (meets AC1)
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Mock cart lines with regular products (NOT variety pack)
+      const mockCartLines = [
+        {
+          merchandise: {
+            product: {
+              productType: 'Soap Bar',
+              handle: 'lavender-dreams',
+            },
+          },
+        },
+        {
+          merchandise: {
+            product: {
+              productType: 'Soap Bar',
+              handle: 'eucalyptus-refresh',
+            },
+          },
+        },
+      ];
+
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: mockCartLines}),
+      );
+
+      // Should return true because variety pack is NOT in cart
+      expect(result.current.shouldShowPrompt).toBe(true);
+    });
+
+    it('returns true when cart is empty', () => {
       // Add 2 products to exploration
       useExplorationStore.getState().addProductExplored('product-1');
       useExplorationStore.getState().addProductExplored('product-2');
 
-      // Cart is stubbed as empty for now
-      const {result} = renderHook(() => useCollectionPromptTrigger());
+      // Empty cart (cartLines = [])
+      const {result} = renderHook(() => useCollectionPromptTrigger({cartLines: []}));
+      expect(result.current.shouldShowPrompt).toBe(true);
+    });
+
+    it('[P1] returns true when cartLines is undefined (SSR-safe)', () => {
+      // Add 2 products to exploration
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Cart lines undefined (SSR or initial load)
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: undefined}),
+      );
+
+      // Should return true (graceful fallback)
+      expect(result.current.shouldShowPrompt).toBe(true);
+    });
+
+    it('[P2] returns true when cartLines is null (SSR-safe)', () => {
+      // Add 2 products to exploration
+      useExplorationStore.getState().addProductExplored('product-1');
+      useExplorationStore.getState().addProductExplored('product-2');
+
+      // Cart lines null (SSR or initial load)
+      const {result} = renderHook(() =>
+        useCollectionPromptTrigger({cartLines: null}),
+      );
+
+      // Should return true (graceful fallback)
       expect(result.current.shouldShowPrompt).toBe(true);
     });
   });

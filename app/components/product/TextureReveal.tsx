@@ -1,7 +1,11 @@
 import * as React from 'react';
 import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import {useCollectionPromptTrigger} from '~/hooks/use-collection-prompt-trigger';
+import {useOptimisticCart} from '@shopify/hydrogen';
+import {
+  useCollectionPromptTrigger,
+  type CartLineForPrompt,
+} from '~/hooks/use-collection-prompt-trigger';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -28,6 +32,8 @@ export interface TextureRevealProps {
   scentNarrative?: string;
   /** Callback when animation completes (for performance measurement) */
   onAnimationComplete?: () => void;
+  /** Variety pack variant ID for collection prompt cart mutation (Story 4.3) */
+  varietyPackVariantId?: string;
 }
 
 /**
@@ -89,6 +95,7 @@ export const TextureReveal = React.forwardRef<
       textureImageUrl,
       scentNarrative,
       onAnimationComplete,
+      varietyPackVariantId,
     },
     ref,
   ) => {
@@ -107,12 +114,14 @@ export const TextureReveal = React.forwardRef<
     const addProductExplored = useExplorationStore(
       (state) => state.addProductExplored,
     );
-    const setStoryMomentShown = useExplorationStore(
-      (state) => state.setStoryMomentShown,
-    );
 
-    // Check if collection prompt should be triggered (Story 4.2, Task 5)
-    const {shouldShowPrompt} = useCollectionPromptTrigger();
+    // Get cart data for prompt trigger (Story 4.3, Task 1)
+    const optimisticCart = useOptimisticCart();
+    const cartLines = (optimisticCart?.lines?.nodes ??
+      []) as CartLineForPrompt[];
+
+    // Check if collection prompt should be triggered (Story 4.2 + 4.3)
+    const {shouldShowPrompt} = useCollectionPromptTrigger({cartLines});
 
     // Reset animation completion state when dialog closes
     React.useEffect(() => {
@@ -163,19 +172,13 @@ export const TextureReveal = React.forwardRef<
 
       // Story 4.2: After reveal closes, check if collection prompt should show
       // Wait for reveal exit animation to complete (~200ms) before showing prompt
+      // AC5: storyMomentShown is set only on successful cart add in CollectionPrompt, not here
       setTimeout(() => {
         if (shouldShowPrompt) {
           setShowCollectionPrompt(true);
-          setStoryMomentShown(true); // Mark as shown to prevent re-trigger
         }
       }, 250); // Slightly longer than exit animation (200ms)
-    }, [
-      addProductExplored,
-      product.id,
-      onClose,
-      shouldShowPrompt,
-      setStoryMomentShown,
-    ]);
+    }, [addProductExplored, product.id, onClose, shouldShowPrompt]);
 
     return (
       <>
@@ -307,10 +310,11 @@ export const TextureReveal = React.forwardRef<
           </DialogPrimitive.Portal>
         </DialogPrimitive.Root>
 
-        {/* Collection Prompt (Story 4.2, Task 5 + AC4) - animated, appears after reveal closes */}
+        {/* Collection Prompt (Story 4.2 + 4.3) - animated, appears after reveal closes */}
         <CollectionPromptWithAnimation
           open={showCollectionPrompt}
           onClose={() => setShowCollectionPrompt(false)}
+          variantId={varietyPackVariantId}
         />
       </>
     );

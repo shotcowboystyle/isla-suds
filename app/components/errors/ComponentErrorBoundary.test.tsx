@@ -65,10 +65,13 @@ describe('ComponentErrorBoundary', () => {
       </ComponentErrorBoundary>,
     );
 
+    // Verify console.error was called (React logs internally + our boundary logs)
     expect(console.error).toHaveBeenCalled();
+
+    // Find our structured log among all console.error calls
     const calls = (console.error as ReturnType<typeof vi.fn>).mock.calls;
     const errorCall = calls.find((args) => {
-      // First arg is message string, second arg is details object
+      // Our log has: message string with specific text + details object
       const message = args[0];
       const details = args[1];
       return (
@@ -81,12 +84,16 @@ describe('ComponentErrorBoundary', () => {
       );
     });
 
+    // Verify our structured log was present
     expect(errorCall).toBeDefined();
-    const details = errorCall![1];
-    expect(details).toHaveProperty('error');
-    expect(details).toHaveProperty('stack');
-    expect(details).toHaveProperty('componentStack');
-    expect(details).toHaveProperty('timestamp');
+    if (errorCall) {
+      const details = errorCall[1];
+      expect(details).toHaveProperty('error');
+      expect(details).toHaveProperty('stack');
+      expect(details).toHaveProperty('componentStack');
+      expect(details).toHaveProperty('timestamp');
+      expect(details.boundaryType).toBe('component');
+    }
   });
 
   it('calls onError callback when error occurs', () => {

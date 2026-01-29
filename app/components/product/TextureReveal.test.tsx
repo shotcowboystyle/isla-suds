@@ -1,9 +1,19 @@
+import * as React from 'react';
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {act} from 'react-dom/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
+
+// Mock Hydrogen cart (Story 4.3)
+vi.mock('@shopify/hydrogen', () => ({
+  useOptimisticCart: vi.fn().mockReturnValue({
+    lines: {
+      nodes: [],
+    },
+  }),
+}));
 
 // Mock exploration store
 const mockAddProductExplored = vi.fn();
@@ -55,6 +65,23 @@ vi.mock('~/hooks/use-collection-prompt-trigger', () => ({
   }),
 }));
 
+vi.mock('./CollectionPrompt', () => ({
+  CollectionPromptWithAnimation: (props: any) => {
+    // Simulate marking story moment as shown when prompt opens
+    React.useEffect(() => {
+      if (props.open) {
+        mockSetStoryMomentShown(true);
+      }
+    }, [props.open]);
+
+    return props.open ? (
+      <div data-testid="collection-prompt">
+        <div>Loving what you see? Get the whole collection.</div>
+      </div>
+    ) : null;
+  },
+}));
+
 vi.mock('./ScentNarrative', () => ({
   ScentNarrative: (props: any) => {
     scentNarrativeProps.push(props);
@@ -84,6 +111,7 @@ const mockProduct: RecommendedProductFragment = {
     width: 800,
     height: 800,
   },
+  variants: {nodes: [{id: 'gid://shopify/ProductVariant/12345'}]},
   priceRange: {
     minVariantPrice: {
       amount: '12.00',

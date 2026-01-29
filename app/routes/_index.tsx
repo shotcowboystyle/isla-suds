@@ -194,6 +194,11 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       width
       height
     }
+    variants(first: 1) {
+      nodes {
+        id
+      }
+    }
     scentNarrative: metafield(namespace: "custom", key: "scent_narrative") {
       value
     }
