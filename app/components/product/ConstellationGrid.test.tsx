@@ -395,4 +395,54 @@ describe('ConstellationGrid - Focus State (Story 2.4)', () => {
     expect(cards[1]).toHaveClass('scale-[1.02]');
     expect(cards[2]).not.toHaveClass('scale-[1.02]');
   });
+
+  it('renders BundleCard for variety pack bundle (Story 3.6)', () => {
+    // Add bundle product to products array
+    const productsWithBundle: RecommendedProductFragment[] = [
+      ...mockProducts.slice(0, 3),
+      {
+        id: 'gid://shopify/Product/5',
+        title: 'The Collection',
+        handle: 'four-bar-variety-pack',
+        description: 'All four soaps together',
+        priceRange: {
+          minVariantPrice: {
+            amount: '48.00',
+            currencyCode: 'USD',
+          },
+        },
+        featuredImage: {
+          id: 'gid://shopify/ProductImage/5',
+          url: 'https://cdn.shopify.com/bundle.jpg',
+          altText: 'Four bar variety pack',
+          width: 1200,
+          height: 1200,
+        },
+        scentNarrative: {
+          value: 'Four distinct journeys.',
+        },
+        bundleValueProposition: {
+          value: 'All four soaps, one price.',
+        },
+      },
+    ];
+
+    const {container} = render(
+      <ConstellationGrid products={productsWithBundle} />,
+    );
+
+    // Verify bundle product renders with "The Collection" title
+    expect(screen.getByText('The Collection')).toBeInTheDocument();
+
+    // Verify bundle card has data-bundle attribute
+    const bundleCard = container.querySelector('[data-bundle="true"]');
+    expect(bundleCard).toBeInTheDocument();
+
+    // Verify non-bundle products don't have bundle attribute
+    const allLinks = container.querySelectorAll('a');
+    const nonBundleLinks = Array.from(allLinks).filter(
+      (link) => link.getAttribute('data-bundle') !== 'true',
+    );
+    expect(nonBundleLinks).toHaveLength(3);
+  });
 });

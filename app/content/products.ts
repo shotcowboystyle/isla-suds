@@ -7,6 +7,12 @@
  */
 
 /**
+ * Product handle for the variety pack bundle (Story 3.6).
+ * Single source of truth for bundle detection across constellation, reveal, and content.
+ */
+export const BUNDLE_HANDLE = 'four-bar-variety-pack';
+
+/**
  * Map of product handles to scent narrative copy
  */
 export const SCENT_NARRATIVES: Record<string, string> = {
@@ -24,6 +30,8 @@ export const SCENT_NARRATIVES: Record<string, string> = {
     'Smooth warmth. Scraped pods and memories. Comfort in every breath.',
   'rose-garden':
     'Petals unfold. Morning dew on velvet. Romance distilled to essence.',
+  [BUNDLE_HANDLE]:
+    'Four distinct journeys. One complete experience. Every mood, every moment.',
 };
 
 /**
@@ -78,6 +86,8 @@ export const PRODUCT_DESCRIPTIONS: Record<string, string> = {
   'vanilla-bean':
     'Classic vanilla with natural bean essence. Warm and familiar.',
   'rose-garden': 'Delicate rose petal soap, soft and romantic. Gentle on skin.',
+  [BUNDLE_HANDLE]:
+    'All four handcrafted soaps together. Rotate scents with your mood.',
 };
 
 /**
@@ -109,4 +119,45 @@ export function getProductDescription(
 
   // Fall back to hardcoded descriptions
   return PRODUCT_DESCRIPTIONS[handle] ?? DEFAULT_DESCRIPTION;
+}
+
+/**
+ * Bundle value proposition copy
+ *
+ * Fallback value proposition for the variety pack bundle when
+ * Shopify metafield is not configured.
+ */
+export const BUNDLE_VALUE_PROPOSITIONS: Record<string, string> = {
+  [BUNDLE_HANDLE]: 'All four soaps, one price. Rotate scents with your mood.',
+};
+
+/**
+ * Default bundle value proposition
+ */
+export const DEFAULT_BUNDLE_VALUE_PROPOSITION =
+  'Get all four handcrafted soaps together.';
+
+/**
+ * Get bundle value proposition for a product
+ *
+ * Priority order:
+ * 1. Shopify bundleValueProposition metafield (if provided)
+ * 2. Fallback from BUNDLE_VALUE_PROPOSITIONS map (if handle matches)
+ * 3. Default value proposition (if handle unknown)
+ *
+ * @param handle - Product handle (e.g., 'four-bar-variety-pack')
+ * @param metafieldValue - Optional value proposition from Shopify metafield
+ * @returns Bundle value proposition copy to display
+ */
+export function getBundleValueProposition(
+  handle: string,
+  metafieldValue?: string | null,
+): string {
+  // Prefer CMS metafield if provided
+  if (metafieldValue) {
+    return metafieldValue;
+  }
+
+  // Fall back to hardcoded value propositions
+  return BUNDLE_VALUE_PROPOSITIONS[handle] ?? DEFAULT_BUNDLE_VALUE_PROPOSITION;
 }

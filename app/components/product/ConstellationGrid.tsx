@@ -1,9 +1,10 @@
 import {useMemo, useState, useEffect, useCallback, useRef} from 'react';
-import {getScentNarrative} from '~/content/products';
+import {BUNDLE_HANDLE, getScentNarrative} from '~/content/products';
 import {useExplorationActions} from '~/hooks/use-exploration-state';
 import {usePreloadImages} from '~/hooks/use-preload-images';
 import {getOptimizedImageUrl} from '~/lib/shopify/preload';
 import {cn} from '~/utils/cn';
+import {BundleCard} from './BundleCard';
 import {ProductCard} from './ProductCard';
 import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
@@ -11,6 +12,13 @@ import type {RecommendedProductFragment} from 'storefrontapi.generated';
 export interface ConstellationGridProps {
   products: RecommendedProductFragment[] | null;
   className?: string;
+}
+
+/**
+ * Helper: Detect if a product is the variety pack bundle (Story 3.6)
+ */
+function isBundle(product: RecommendedProductFragment): boolean {
+  return product.handle === BUNDLE_HANDLE;
 }
 
 /**
@@ -209,13 +217,17 @@ export function ConstellationGrid({
           const i = index % 4;
           const isFocused = focusedProductId === product.id;
           const isDimmed = focusedProductId !== null && !isFocused;
+          const isProductBundle = isBundle(product);
+
+          // Story 3.6, Task 2: Render BundleCard for variety pack, ProductCard for individuals
+          const CardComponent = isProductBundle ? BundleCard : ProductCard;
 
           return (
             <div
               key={product.id}
               className={cn('min-w-0', placementClasses[i])}
             >
-              <ProductCard
+              <CardComponent
                 product={product}
                 rotationClass={rotationClasses[i]}
                 loading={index < 2 ? 'eager' : 'lazy'}
