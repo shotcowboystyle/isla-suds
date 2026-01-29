@@ -80,7 +80,6 @@ export function CartDrawer() {
       window.location.href = cart.checkoutUrl;
     } catch (error) {
       // AC6: Handle redirect failure
-      console.error('Checkout redirect failed:', error);
       setCheckoutError(CHECKOUT_ERROR_MESSAGE);
       setIsCheckingOut(false);
 
@@ -111,7 +110,7 @@ export function CartDrawer() {
         {/* Drawer */}
         <DialogPrimitive.Content
           aria-labelledby="cart-title"
-          aria-describedby={itemCount === 0 ? 'cart-empty-description' : undefined}
+          aria-describedby={itemCount === 0 ? 'cart-empty-description' : 'cart-description'}
           className={cn(
             'fixed right-0 top-0 z-50 h-full',
             'w-full sm:w-[90%] md:max-w-[480px]',
@@ -248,10 +247,14 @@ export function CartDrawer() {
             {liveMessage}
           </div>
 
-          {/* Hidden description for empty cart state */}
-          {itemCount === 0 && (
+          {/* Hidden descriptions for screen readers */}
+          {itemCount === 0 ? (
             <div id="cart-empty-description" className="sr-only">
               Your shopping cart is empty
+            </div>
+          ) : (
+            <div id="cart-description" className="sr-only">
+              Shopping cart with {itemCount} {itemCount === 1 ? 'item' : 'items'}
             </div>
           )}
         </DialogPrimitive.Content>
