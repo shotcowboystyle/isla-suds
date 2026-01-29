@@ -348,6 +348,15 @@ const FALLBACK_HEADER_MENU = {
       url: '/about', // Hydrogen route (Story 4.4), not Shopify CMS /pages/about
       items: [],
     },
+    {
+      id: 'gid://shopify/MenuItem/wholesale-portal',
+      resourceId: null,
+      tags: [],
+      title: 'Wholesale',
+      type: 'HTTP',
+      url: '/wholesale/login',
+      items: [],
+    },
   ],
 };
 
@@ -360,6 +369,6 @@ function activeLinkStyle({
 }) {
   return {
     fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'black',
+    color: isPending ? 'var(--text-muted)' : 'var(--text-primary)',
   };
 }
