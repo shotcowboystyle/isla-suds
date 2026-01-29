@@ -87,7 +87,7 @@ development_status:
   4-2-display-collection-prompt-after-2-products-explored: done
   4-3-add-variety-pack-from-collection-prompt: done
   4-4-create-about-page-fallback-for-direct-traffic: done
-  4-5-implement-footer-with-navigation-links: backlog
+  4-5-implement-footer-with-navigation-links: done
   4-6-add-wholesale-portal-link-in-header-footer: backlog
   4-7-smoke-test-full-journey-verification: backlog
   epic-4-retrospective: optional
