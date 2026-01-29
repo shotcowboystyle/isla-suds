@@ -1,4 +1,5 @@
 import {useMemo, useState, useEffect, useCallback, useRef} from 'react';
+import {getScentNarrative} from '~/content/products';
 import {useExplorationActions} from '~/hooks/use-exploration-state';
 import {usePreloadImages} from '~/hooks/use-preload-images';
 import {measureTextureReveal} from '~/lib/performance';
@@ -158,6 +159,16 @@ export function ConstellationGrid({
     );
   }, [revealedProduct]);
 
+  // Get scent narrative for revealed product (Story 3.3)
+  // Resolves from metafield or fallback to hardcoded narrative
+  const scentNarrative = useMemo(() => {
+    if (!revealedProduct) return undefined;
+    return getScentNarrative(
+      revealedProduct.handle,
+      revealedProduct.scentNarrative?.value,
+    );
+  }, [revealedProduct]);
+
   // Early return after all hooks
   if (!products || products.length === 0) {
     return null;
@@ -220,13 +231,14 @@ export function ConstellationGrid({
         })}
       </div>
 
-      {/* Texture reveal modal (Story 3.2) */}
+      {/* Texture reveal modal (Story 3.2, 3.3) */}
       {revealedProduct && (
         <TextureReveal
           product={revealedProduct}
           isOpen={revealedProductId !== null}
           onClose={handleCloseReveal}
           textureImageUrl={textureImageUrl}
+          scentNarrative={scentNarrative}
           onAnimationComplete={handleAnimationComplete}
         />
       )}

@@ -187,6 +187,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       width
       height
     }
+    scentNarrative: metafield(namespace: "custom", key: "scent_narrative") {
+      value
+    }
   }
   query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {

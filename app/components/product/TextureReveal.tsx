@@ -3,6 +3,7 @@ import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {cn} from '~/utils/cn';
+import {ScentNarrative} from './ScentNarrative';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 /**
@@ -19,6 +20,8 @@ export interface TextureRevealProps {
   onClose: () => void;
   /** URL to the texture macro image (should be preloaded from Story 3.1) */
   textureImageUrl: string;
+  /** Optional scent narrative copy to display after reveal animation */
+  scentNarrative?: string;
   /** Callback when animation completes (for performance measurement) */
   onAnimationComplete?: () => void;
 }
@@ -71,114 +74,158 @@ const revealVariants = {
 export const TextureReveal = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   TextureRevealProps
->(({product, isOpen, onClose, textureImageUrl, onAnimationComplete}, ref) => {
-  // Check for reduced motion preference
-  const shouldReduceMotion = prefersReducedMotion();
+>(
+  (
+    {
+      product,
+      isOpen,
+      onClose,
+      textureImageUrl,
+      scentNarrative,
+      onAnimationComplete,
+    },
+    ref,
+  ) => {
+    // Check for reduced motion preference
+    const shouldReduceMotion = prefersReducedMotion();
 
-  // Handle animation completion for performance measurement (AC2, AC3)
-  const handleAnimationComplete = React.useCallback(() => {
-    // Only call callback when animation completes (not on exit)
-    if (isOpen && onAnimationComplete) {
-      onAnimationComplete();
-    }
-  }, [isOpen, onAnimationComplete]);
+    // Track when reveal animation has completed to show narrative
+    const [revealAnimationComplete, setRevealAnimationComplete] =
+      React.useState(false);
 
-  return (
-    <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
-      <DialogPrimitive.Portal>
-        {/* Overlay */}
-        <DialogPrimitive.Overlay
-          className={cn(
-            'fixed inset-0 z-50 bg-black/80',
-            'transition-opacity duration-300',
-            'data-[state=closed]:opacity-0 data-[state=open]:opacity-100',
-            'motion-reduce:transition-none',
-          )}
-        />
+    // Reset animation completion state when dialog closes
+    React.useEffect(() => {
+      if (!isOpen) {
+        setRevealAnimationComplete(false);
+      } else if (shouldReduceMotion) {
+        // For reduced motion, show narrative immediately
+        setRevealAnimationComplete(true);
+      }
+    }, [isOpen, shouldReduceMotion]);
 
-        {/* Content */}
-        <DialogPrimitive.Content
-          ref={ref}
-          aria-label={`Texture view expanded for ${product.title}`}
-          className={cn(
-            'fixed left-[50%] top-[50%] z-[51]',
-            'w-[90vw] max-w-2xl',
-            'translate-x-[-50%] translate-y-[-50%]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
-          )}
-        >
-          {/* Visually hidden title for screen readers */}
-          <DialogPrimitive.Title className="sr-only">
-            {product.title} texture view
-          </DialogPrimitive.Title>
+    // Handle animation completion for performance measurement (AC2, AC3)
+    const handleAnimationComplete = React.useCallback(() => {
+      // Only call callback when animation completes (not on exit)
+      if (isOpen) {
+        setRevealAnimationComplete(true);
+        if (onAnimationComplete) {
+          onAnimationComplete();
+        }
+      }
+    }, [isOpen, onAnimationComplete]);
 
-          {/* Visually hidden description for screen readers */}
-          <DialogPrimitive.Description className="sr-only">
-            Close-up view of {product.title} soap texture showing detail and
-            quality
-          </DialogPrimitive.Description>
+    return (
+      <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
+        <DialogPrimitive.Portal>
+          {/* Overlay */}
+          <DialogPrimitive.Overlay
+            className={cn(
+              'fixed inset-0 z-50 bg-black/80',
+              'transition-opacity duration-300',
+              'data-[state=closed]:opacity-0 data-[state=open]:opacity-100',
+              'motion-reduce:transition-none',
+            )}
+          />
 
-          {/* Texture image with Framer Motion animation */}
-          {/* Suspense for lazy-loaded MotionDiv (graceful fallback) */}
-          <Suspense
-            fallback={
-              // Static fallback if Framer Motion fails to load (AC5)
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]">
+          {/* Content */}
+          <DialogPrimitive.Content
+            ref={ref}
+            aria-label={`Texture view expanded for ${product.title}`}
+            className={cn(
+              'fixed left-[50%] top-[50%] z-[51]',
+              'w-[90vw] max-w-2xl',
+              'translate-x-[-50%] translate-y-[-50%]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
+            )}
+          >
+            {/* Visually hidden title for screen readers */}
+            <DialogPrimitive.Title className="sr-only">
+              {product.title} texture view
+            </DialogPrimitive.Title>
+
+            {/* Visually hidden description for screen readers */}
+            <DialogPrimitive.Description className="sr-only">
+              Close-up view of {product.title} soap texture showing detail and
+              quality
+            </DialogPrimitive.Description>
+
+            {/* Texture image with Framer Motion animation */}
+            {/* Suspense for lazy-loaded MotionDiv (graceful fallback) */}
+            <Suspense
+              fallback={
+                // Static fallback if Framer Motion fails to load (AC5)
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]">
+                  <img
+                    src={textureImageUrl}
+                    alt={`${product.title} texture close-up`}
+                    loading="eager"
+                    className="h-full w-full object-cover"
+                  />
+                  {/* Include narrative in fallback too, without motion dependencies */}
+                  {scentNarrative && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                      <p className="text-fluid-body text-white italic">
+                        {scentNarrative}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              }
+            >
+              <MotionDiv
+                initial="hidden"
+                animate={isOpen ? 'visible' : 'hidden'}
+                exit="exit"
+                variants={shouldReduceMotion ? undefined : revealVariants}
+                onAnimationComplete={handleAnimationComplete}
+                className="relative aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]"
+              >
                 <img
                   src={textureImageUrl}
                   alt={`${product.title} texture close-up`}
                   loading="eager"
                   className="h-full w-full object-cover"
                 />
-              </div>
-            }
-          >
-            <MotionDiv
-              initial="hidden"
-              animate={isOpen ? 'visible' : 'hidden'}
-              exit="exit"
-              variants={shouldReduceMotion ? undefined : revealVariants}
-              onAnimationComplete={handleAnimationComplete}
-              className="relative aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]"
-            >
-              <img
-                src={textureImageUrl}
-                alt={`${product.title} texture close-up`}
-                loading="eager"
-                className="h-full w-full object-cover"
-              />
-            </MotionDiv>
-          </Suspense>
+                {/* Scent narrative - fades in after reveal animation completes */}
+                {scentNarrative && (
+                  <ScentNarrative
+                    narrative={scentNarrative}
+                    isVisible={revealAnimationComplete}
+                  />
+                )}
+              </MotionDiv>
+            </Suspense>
 
-          {/* Close button for explicit dismissal */}
-          <DialogPrimitive.Close
-            className={cn(
-              'absolute right-4 top-4 rounded-full bg-white/90 p-2',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
-              'hover:bg-white transition-colors',
-            )}
-            aria-label="Close texture view"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+            {/* Close button for explicit dismissal */}
+            <DialogPrimitive.Close
+              className={cn(
+                'absolute right-4 top-4 rounded-full bg-white/90 p-2',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
+                'hover:bg-white transition-colors',
+              )}
+              aria-label="Close texture view"
             >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
-  );
-});
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </DialogPrimitive.Close>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
+    );
+  },
+);
 
 TextureReveal.displayName = 'TextureReveal';
