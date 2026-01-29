@@ -4,6 +4,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {useOptimisticCart} from '@shopify/hydrogen';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
+import {formatMoney} from '~/utils/format-money';
 import {CartLineItems} from './CartLineItems';
 import {EmptyCart} from './EmptyCart';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
@@ -15,18 +16,14 @@ export function CartDrawer() {
   const originalCart = rootData?.cart as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
 
+  const isLoading = !rootData?.cart;
   const itemCount = cart?.lines?.nodes?.length ?? 0;
   const subtotal = cart?.cost?.subtotalAmount;
 
-  // Format money helper
-  const formatMoney = (
-    amount?: {amount?: string; currencyCode?: string} | null,
-  ) => {
-    if (!amount?.amount || !amount?.currencyCode) return '$0.00';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: amount.currencyCode,
-    }).format(parseFloat(amount.amount));
+  // Format money - uses centralized utility
+  const formatSubtotal = () => {
+    if (!subtotal?.amount || !subtotal?.currencyCode) return '—';
+    return formatMoney(subtotal.amount, subtotal.currencyCode);
   };
 
   return (
@@ -48,7 +45,6 @@ export function CartDrawer() {
         {/* Drawer */}
         <DialogPrimitive.Content
           aria-labelledby="cart-title"
-          aria-describedby="cart-description"
           className={cn(
             'fixed right-0 top-0 z-50 h-full',
             'w-full sm:w-[90%] md:max-w-[480px]',
@@ -67,14 +63,8 @@ export function CartDrawer() {
                 id="cart-title"
                 className="text-lg font-semibold text-[var(--text-primary)]"
               >
-                Your Cart
+                Your Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
               </DialogPrimitive.Title>
-              <DialogPrimitive.Description
-                id="cart-description"
-                className="sr-only"
-              >
-                Shopping cart with {itemCount} items
-              </DialogPrimitive.Description>
             </div>
 
             {/* Close Button */}
@@ -107,7 +97,17 @@ export function CartDrawer() {
 
           {/* Cart Contents - Scrollable */}
           <div className="flex-1 overflow-y-auto p-4">
-            {itemCount === 0 ? <EmptyCart /> : <CartLineItems />}
+            {isLoading ? (
+              <div className="space-y-4 animate-pulse">
+                <div className="h-20 bg-neutral-200 rounded" />
+                <div className="h-20 bg-neutral-200 rounded" />
+                <div className="h-20 bg-neutral-200 rounded" />
+              </div>
+            ) : itemCount === 0 ? (
+              <EmptyCart />
+            ) : (
+              <CartLineItems />
+            )}
           </div>
 
           {/* Footer - Subtotal & Checkout */}
@@ -116,7 +116,7 @@ export function CartDrawer() {
             <div className="flex justify-between items-center">
               <span className="text-[var(--text-muted)]">Subtotal</span>
               <span className="font-medium text-[var(--text-primary)]">
-                {subtotal ? formatMoney(subtotal) : '—'}
+                {formatSubtotal()}
               </span>
             </div>
 
@@ -130,7 +130,7 @@ export function CartDrawer() {
                 'hover:opacity-90 transition-opacity',
                 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
               )}
-              aria-label={`Proceed to checkout with ${itemCount} items, total ${subtotal ? formatMoney(subtotal) : '$0.00'}`}
+              aria-label={`Proceed to checkout with ${itemCount} items, total ${formatSubtotal()}`}
             >
               Proceed to Checkout
             </button>

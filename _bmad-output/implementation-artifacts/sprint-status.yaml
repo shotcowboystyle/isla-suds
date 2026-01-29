@@ -99,7 +99,7 @@ development_status:
   5-1-implement-cart-creation-and-persistence: done
   5-2-add-individual-product-to-cart: done
   5-3-add-variety-pack-bundle-to-cart: done
-  5-4-build-cart-drawer-component: review
+  5-4-build-cart-drawer-component: done
   5-5-display-cart-line-items: backlog
   5-6-modify-cart-quantities: backlog
   5-7-remove-items-from-cart: backlog

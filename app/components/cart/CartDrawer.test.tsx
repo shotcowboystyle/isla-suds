@@ -41,7 +41,7 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Your Cart')).toBeInTheDocument();
+      expect(screen.getByText(/Your Cart/i)).toBeInTheDocument();
     });
 
     it('does not render drawer when cartDrawerOpen is false', () => {
@@ -91,6 +91,18 @@ describe('CartDrawer', () => {
       // The onOpenChange handler should be wired to setCartDrawerOpen
       // This is verified by the component rendering and closing via other means
     });
+
+    it('closes drawer when Continue Shopping is clicked', async () => {
+      const user = userEvent.setup();
+      render(<CartDrawer />);
+
+      const continueButton = screen.getByRole('button', {
+        name: /continue shopping/i,
+      });
+      await user.click(continueButton);
+
+      expect(mockSetCartDrawerOpen).toHaveBeenCalledWith(false);
+    });
   });
 
   describe('Accessibility', () => {
@@ -116,13 +128,34 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       const heading = screen.getByRole('heading', {level: 2});
-      expect(heading).toHaveTextContent('Your Cart');
+      expect(heading).toHaveTextContent(/Your Cart/);
+    });
+
+    it('respects prefers-reduced-motion setting', () => {
+      render(<CartDrawer />);
+
+      const content = screen.getByRole('dialog');
+      // Verify motion-reduce classes are present
+      expect(content).toHaveClass('motion-reduce:transition-none');
+      expect(content).toHaveClass('motion-reduce:transform-none');
     });
   });
 
   describe('Cart content display', () => {
     beforeEach(() => {
       mockCartDrawerOpen = true;
+    });
+
+    it('shows loading skeleton when cart is loading', () => {
+      mockCartData = null; // Simulate loading state
+
+      render(<CartDrawer />);
+
+      // Check for skeleton loading elements
+      const skeletons = screen
+        .getByRole('dialog')
+        .querySelectorAll('.animate-pulse');
+      expect(skeletons.length).toBeGreaterThan(0);
     });
 
     it('shows empty cart component when cart has no items', () => {
