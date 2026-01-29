@@ -103,7 +103,7 @@ development_status:
   5-5-display-cart-line-items: done
   5-6-modify-cart-quantities: done
   5-7-remove-items-from-cart: review
-  5-8-display-empty-cart-state: ready-for-dev
+  5-8-display-empty-cart-state: done
   5-9-implement-proceed-to-checkout: ready-for-dev
   5-10-add-cart-icon-to-sticky-header: ready-for-dev
   epic-5-retrospective: optional

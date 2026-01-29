@@ -19,6 +19,17 @@ export function CartDrawer() {
   const isLoading = !rootData?.cart;
   const itemCount = cart?.lines?.nodes?.length ?? 0;
   const subtotal = cart?.cost?.subtotalAmount;
+  const [liveMessage, setLiveMessage] = React.useState('');
+
+  // Announce when cart becomes empty
+  React.useEffect(() => {
+    if (itemCount === 0 && !isLoading && cartDrawerOpen) {
+      setLiveMessage('Cart is now empty');
+      // Clear message after announcement
+      const timer = setTimeout(() => setLiveMessage(''), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [itemCount, isLoading, cartDrawerOpen]);
 
   // Format money - uses centralized utility
   const formatSubtotal = () => {
@@ -45,6 +56,7 @@ export function CartDrawer() {
         {/* Drawer */}
         <DialogPrimitive.Content
           aria-labelledby="cart-title"
+          aria-describedby={itemCount === 0 ? 'cart-empty-description' : undefined}
           className={cn(
             'fixed right-0 top-0 z-50 h-full',
             'w-full sm:w-[90%] md:max-w-[480px]',
@@ -110,40 +122,59 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer - Subtotal & Checkout */}
-          <div className="border-t border-neutral-200 p-4 space-y-4">
-            {/* Subtotal */}
-            <div className="flex justify-between items-center">
-              <span className="text-[var(--text-muted)]">Subtotal</span>
-              <span className="font-medium text-[var(--text-primary)]">
-                {formatSubtotal()}
-              </span>
+          {/* Footer - Subtotal & Checkout - Only show when cart has items (AC7) */}
+          {itemCount > 0 && (
+            <div className="border-t border-neutral-200 p-4 space-y-4">
+              {/* Subtotal */}
+              <div className="flex justify-between items-center">
+                <span className="text-[var(--text-muted)]">Subtotal</span>
+                <span className="font-medium text-[var(--text-primary)]">
+                  {formatSubtotal()}
+                </span>
+              </div>
+
+              {/* Checkout Button */}
+              <button
+                type="button"
+                className={cn(
+                  'w-full py-3 rounded',
+                  'bg-[var(--accent-primary)] text-white',
+                  'font-medium',
+                  'hover:opacity-90 transition-opacity',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
+                )}
+                aria-label={`Proceed to checkout with ${itemCount} items, total ${formatSubtotal()}`}
+              >
+                Proceed to Checkout
+              </button>
+
+              {/* Continue Shopping Link */}
+              <button
+                type="button"
+                onClick={() => setCartDrawerOpen(false)}
+                className="w-full text-center text-[var(--accent-primary)] underline hover:no-underline"
+              >
+                Continue Shopping
+              </button>
             </div>
+          )}
 
-            {/* Checkout Button */}
-            <button
-              type="button"
-              className={cn(
-                'w-full py-3 rounded',
-                'bg-[var(--accent-primary)] text-white',
-                'font-medium',
-                'hover:opacity-90 transition-opacity',
-                'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
-              )}
-              aria-label={`Proceed to checkout with ${itemCount} items, total ${formatSubtotal()}`}
-            >
-              Proceed to Checkout
-            </button>
-
-            {/* Continue Shopping Link */}
-            <button
-              type="button"
-              onClick={() => setCartDrawerOpen(false)}
-              className="w-full text-center text-[var(--accent-primary)] underline hover:no-underline"
-            >
-              Continue Shopping
-            </button>
+          {/* ARIA live region for cart state announcements */}
+          <div
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+          >
+            {liveMessage}
           </div>
+
+          {/* Hidden description for empty cart state */}
+          {itemCount === 0 && (
+            <div id="cart-empty-description" className="sr-only">
+              Your shopping cart is empty
+            </div>
+          )}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
