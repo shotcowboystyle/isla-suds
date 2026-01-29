@@ -7,12 +7,15 @@ import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 // Mock exploration store
 const mockAddProductExplored = vi.fn();
+const mockSetStoryMomentShown = vi.fn();
 vi.mock('~/stores/exploration', () => ({
   useExplorationStore: (selector: any) => {
     const mockState = {
       productsExplored: new Set<string>(),
       textureRevealsTriggered: 0,
+      storyMomentShown: false,
       addProductExplored: mockAddProductExplored,
+      setStoryMomentShown: mockSetStoryMomentShown,
     };
     return selector ? selector(mockState) : mockState;
   },
@@ -41,6 +44,16 @@ const motionModule = vi.hoisted(() => {
 });
 
 vi.mock('~/lib/motion', () => motionModule.module);
+
+// Control collection prompt trigger for integration test (Story 4.2)
+const collectionPromptTriggerState = vi.hoisted(() => ({
+  shouldShowPrompt: false,
+}));
+vi.mock('~/hooks/use-collection-prompt-trigger', () => ({
+  useCollectionPromptTrigger: () => ({
+    shouldShowPrompt: collectionPromptTriggerState.shouldShowPrompt,
+  }),
+}));
 
 vi.mock('./ScentNarrative', () => ({
   ScentNarrative: (props: any) => {
@@ -85,6 +98,8 @@ describe('TextureReveal', () => {
     scentNarrativeProps.length = 0;
     lastMotionDivProps = undefined;
     mockAddProductExplored.mockClear();
+    mockSetStoryMomentShown.mockClear();
+    collectionPromptTriggerState.shouldShowPrompt = false;
   });
   it('renders with required props', () => {
     const onClose = vi.fn();
@@ -518,6 +533,83 @@ describe('TextureReveal', () => {
 
       // Should also call parent onClose callback
       expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  describe('Story 4.2 - Collection prompt after 2 products explored', () => {
+    it('shows collection prompt after closing reveal when shouldShowPrompt is true', async () => {
+      vi.useFakeTimers();
+      const onClose = vi.fn();
+
+      // Simulate hook returning true (2+ products explored, prompt not shown yet)
+      collectionPromptTriggerState.shouldShowPrompt = true;
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      // Texture reveal dialog is open (close button implies dialog is present)
+      expect(
+        screen.getByLabelText('Close texture view for Lavender Dreams Soap'),
+      ).toBeInTheDocument();
+
+      // Close the texture reveal (e.g. user clicks close button)
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      // Advance past the 250ms delay before showing collection prompt
+      await act(async () => {
+        vi.advanceTimersByTime(300);
+      });
+
+      // Collection prompt dialog should now be visible
+      expect(screen.getByTestId('collection-prompt')).toBeInTheDocument();
+      expect(
+        screen.getByText('Loving what you see? Get the whole collection.'),
+      ).toBeInTheDocument();
+
+      // Story moment should be marked as shown
+      expect(mockSetStoryMomentShown).toHaveBeenCalledWith(true);
+
+      vi.useRealTimers();
+    });
+
+    it('does not show collection prompt when shouldShowPrompt is false', async () => {
+      vi.useFakeTimers();
+      const onClose = vi.fn();
+
+      collectionPromptTriggerState.shouldShowPrompt = false;
+
+      render(
+        <TextureReveal
+          product={mockProduct}
+          isOpen={true}
+          onClose={onClose}
+          textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        />,
+      );
+
+      const closeButton = screen.getByLabelText(
+        'Close texture view for Lavender Dreams Soap',
+      );
+      closeButton.click();
+
+      await act(async () => {
+        vi.advanceTimersByTime(300);
+      });
+
+      // Only texture reveal dialog was present; collection prompt never appears
+      expect(screen.queryByTestId('collection-prompt')).not.toBeInTheDocument();
+      expect(onClose).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
     });
   });
 });
