@@ -44,3 +44,21 @@ export const PAYMENT_RETRY_MESSAGE =
  */
 export const COLLECTION_PROMPT_ADD_ERROR_MESSAGE =
   "Something went wrong. Let's try again.";
+
+/**
+ * Add to cart error message
+ * Displayed when: Adding individual product to cart fails
+ * Recovery: User can retry by clicking button again
+ */
+export const ADD_TO_CART_ERROR_MESSAGE =
+  "Something went wrong. Let's try again.";
+
+/**
+ * Add to cart button state text
+ * Displayed during: Button state transitions (loading, success)
+ * Recovery: N/A (informational states)
+ */
+export const ADD_TO_CART_BUTTON_STATES = {
+  LOADING: 'Adding...',
+  SUCCESS: 'Added ✓',
+} as const;
