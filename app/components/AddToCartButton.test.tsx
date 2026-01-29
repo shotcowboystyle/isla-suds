@@ -308,8 +308,8 @@ describe('AddToCartButton', () => {
     // WHEN: Check button state during success
     const button = screen.getByRole('button');
 
-    // THEN: Button is enabled (allows immediate re-add)
-    expect(button).not.toBeDisabled();
+    // THEN: Button is disabled (prevents double-submission during success animation)
+    expect(button).toBeDisabled();
 
     // Reset mock state
     mockFetcherData = null;

@@ -1,9 +1,11 @@
 import * as React from 'react';
+import {type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {
   BUNDLE_HANDLE,
   getProductDescription,
   getBundleValueProposition,
 } from '~/content/products';
+import {AddToCartButton} from '~/components/AddToCartButton';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
 import type {
@@ -56,6 +58,7 @@ export const ProductRevealInfo = React.forwardRef<
 
   // Detect bundle product (Story 3.6)
   const isBundle = product.handle === BUNDLE_HANDLE;
+  const variantId = product.variants.nodes[0]?.id;
 
   // Get bundle value proposition if this is a bundle (Story 3.6, Task 4)
   const bundleValueProp = isBundle
@@ -83,12 +86,6 @@ export const ProductRevealInfo = React.forwardRef<
 
     return brief;
   }, [description]);
-
-  // Placeholder handler for Add to Cart (no mutation until Epic 5) (AC4)
-  const handleAddToCart = React.useCallback(() => {
-    // Placeholder: no-op until Epic 5 implements cart mutation
-    // Cart mutation will be added in Story 5.2: Add individual product to cart
-  }, []);
 
   return (
     <div
@@ -121,21 +118,51 @@ export const ProductRevealInfo = React.forwardRef<
         </p>
       )}
 
-      {/* Add to Cart button (AC4, AC6) */}
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        aria-label={`Add ${product.title} to cart`}
-        className={cn(
-          'mt-2 px-6 py-3 rounded-lg',
-          'bg-[var(--accent-primary)] text-white font-semibold',
-          'hover:bg-[var(--accent-primary)]/90 transition-colors',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/60',
-          'active:scale-[0.98] transition-transform',
-        )}
-      >
-        Add to Cart
-      </button>
+      {/* Add to Cart button (Story 5.3 for bundles) (AC4, AC6) */}
+      {isBundle ? (
+        <div className="mt-2">
+          {variantId ? (
+            <AddToCartButton
+              lines={
+                [
+                  {
+                    merchandiseId: variantId,
+                    quantity: 1,
+                  },
+                ] as OptimisticCartLineInput[]
+              }
+              analytics={{
+                products: [product],
+                totalValue: parseFloat(money.amount),
+              }}
+            >
+              Add to Cart
+            </AddToCartButton>
+          ) : (
+            <div
+              className="text-fluid-body text-white/90 text-center"
+              role="alert"
+            >
+              Product unavailable
+            </div>
+          )}
+        </div>
+      ) : (
+        // Placeholder button for individual products (until Story 5.2 adds real functionality)
+        <button
+          type="button"
+          disabled
+          aria-label={`Add ${product.title} to cart — Available in bundle only`}
+          title="Individual soaps available in the variety pack bundle"
+          className={cn(
+            'mt-2 px-6 py-3 rounded-lg',
+            'bg-[var(--accent-primary)] text-white font-semibold',
+            'opacity-50 cursor-not-allowed',
+          )}
+        >
+          Add to Cart
+        </button>
+      )}
     </div>
   );
 });

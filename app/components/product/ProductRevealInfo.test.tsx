@@ -1,4 +1,4 @@
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, vi} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
 import {BUNDLE_HANDLE} from '~/content/products';
 import {ProductRevealInfo} from './ProductRevealInfo';
@@ -6,6 +6,35 @@ import type {
   MoneyFragment,
   RecommendedProductFragment,
 } from 'storefrontapi.generated';
+
+// Mock CartForm from Shopify Hydrogen (Story 5.3)
+let mockFetcherState = 'idle';
+let mockFetcherData: any = null;
+vi.mock('@shopify/hydrogen', async () => {
+  const actual = await vi.importActual('@shopify/hydrogen');
+  return {
+    ...actual,
+    CartForm: ({children, route, inputs, action}: any) => {
+      const mockFetcher = {
+        state: mockFetcherState,
+        data: mockFetcherData,
+        Form: 'form',
+      };
+      return <div data-testid="cart-form-mock">{children(mockFetcher)}</div>;
+    },
+  };
+});
+
+// Mock Zustand exploration store (Story 5.3)
+const mockSetCartDrawerOpen = vi.fn();
+vi.mock('~/stores/exploration', () => ({
+  useExplorationStore: vi.fn((selector) => {
+    const mockState = {
+      setCartDrawerOpen: mockSetCartDrawerOpen,
+    };
+    return selector ? selector(mockState) : mockState;
+  }),
+}));
 
 describe('ProductRevealInfo', () => {
   const mockProduct: RecommendedProductFragment = {
@@ -76,23 +105,30 @@ describe('ProductRevealInfo', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('Add to Cart button has focus ring styling', () => {
+  it('Individual product Add to Cart button is disabled placeholder (Story 5.3)', () => {
     render(<ProductRevealInfo product={mockProduct} />);
 
     const button = screen.getByRole('button', {
       name: /add.*to cart/i,
     });
-    expect(button.className).toContain('focus-visible:ring');
+    // Individual products get disabled placeholder until Story 5.2
+    expect(button).toHaveAttribute('disabled');
+    expect(button.className).toContain('opacity-50');
+    expect(button.className).toContain('cursor-not-allowed');
   });
 
-  it('Add to Cart button is keyboard focusable', () => {
-    render(<ProductRevealInfo product={mockProduct} />);
+  it('Bundle product has functional Add to Cart button (Story 5.3)', () => {
+    const bundleProduct = {
+      ...mockProduct,
+      handle: BUNDLE_HANDLE,
+    };
 
-    const button = screen.getByRole('button', {
-      name: /add.*to cart/i,
-    });
+    render(<ProductRevealInfo product={bundleProduct} />);
+
+    // Bundle products get real AddToCartButton
+    const button = screen.getByTestId('add-to-cart-button');
+    expect(button).toBeInTheDocument();
     expect(button).not.toHaveAttribute('disabled');
-    expect(button.tabIndex).toBe(0);
   });
 
   it('truncates long description to 1-2 sentences', () => {

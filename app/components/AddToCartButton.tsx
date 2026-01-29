@@ -125,7 +125,7 @@ export function AddToCartButton({
                 }
                 onClick?.();
               }}
-              disabled={disabled ?? fetcher.state !== 'idle'}
+              disabled={disabled ?? (fetcher.state !== 'idle' || isSuccess)}
               data-testid="add-to-cart-button"
               className={cn('min-w-[auto]')}
             >
