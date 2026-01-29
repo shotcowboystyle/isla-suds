@@ -59,19 +59,19 @@ development_status:
   # ============================================================================
   # Epic 2: Landing & Constellation Layout (5 stories)
   # ============================================================================
-  epic-2: in-progress
+  epic-2: done
   2-1-create-hero-section-with-brand-identity: done
   2-2-implement-scroll-experience-with-lenis-native-hybrid: done
   2-3-build-constellation-grid-layout: done
   2-4-enable-non-linear-product-exploration: done
   2-5-implement-sticky-header-with-scroll-trigger: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
   # ============================================================================
   # Epic 3: Texture Reveals & Product Discovery (6 stories)
   # ============================================================================
-  epic-3: backlog
-  3-1-implement-image-preloading-with-intersection-observer: backlog
+  epic-3: in-progress
+  3-1-implement-image-preloading-with-intersection-observer: done
   3-2-build-texture-reveal-interaction: backlog
   3-3-display-scent-narrative-copy-in-reveal: backlog
   3-4-display-product-information-in-reveal: backlog
