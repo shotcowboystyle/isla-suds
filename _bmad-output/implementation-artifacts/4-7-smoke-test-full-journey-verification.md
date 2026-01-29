@@ -1,6 +1,6 @@
 # Story 4.7: Smoke Test - Full Journey Verification
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -160,81 +160,81 @@ So that **we catch any integration issues before moving to cart functionality**.
   - [x] Set up page fixtures for each device viewport
 
 - [x] **Task 2: Implement LCP performance test** (AC1)
-  - [ ] Navigate to home page (`/`)
-  - [ ] Wait for LCP metric using Performance API
-  - [ ] Assert LCP <2.5 seconds
-  - [ ] Verify hero section visible (`data-testid="hero-section"` or `h1` with brand name)
-  - [ ] Test on all 3 devices (iPhone SE, Pixel 7, Desktop)
+  - [x] Navigate to home page (`/`)
+  - [x] Wait for LCP metric using Performance API
+  - [x] Assert LCP <2.5 seconds
+  - [x] Verify hero section visible (`data-testid="hero-section"` or `h1` with brand name)
+  - [x] Test on all 3 devices (iPhone SE, Pixel 7, Desktop)
 
 - [x] **Task 3: Implement constellation display test** (AC2)
-  - [ ] Scroll to constellation layout section
-  - [ ] Count visible product cards (should be 4)
-  - [ ] Verify each card has image, name, price
-  - [ ] Check layout positions (non-linear constellation, not grid)
-  - [ ] Assert CLS <0.1 using Performance API
-  - [ ] Test responsive layout on all 3 devices
+  - [x] Scroll to constellation layout section
+  - [x] Count visible product cards (should be 4)
+  - [x] Verify each card has image, name, price
+  - [x] Check layout positions (non-linear constellation, not grid)
+  - [x] Assert CLS <0.1 using Performance API
+  - [x] Test responsive layout on all 3 devices
 
 - [x] **Task 4: Implement texture reveal timing test** (AC3)
-  - [ ] Locate first product card
-  - [ ] Trigger texture reveal (hover on desktop, tap on mobile)
-  - [ ] Measure time from interaction to reveal start using Performance API marks
-  - [ ] Assert reveal timing <100ms at p95
-  - [ ] Verify macro texture image loaded (no broken images)
-  - [ ] Verify scent narrative copy visible
-  - [ ] Verify product information visible (name, price, description)
-  - [ ] Check no network requests during reveal (image preloaded)
-  - [ ] Test reduced motion preference (static reveal, no animation)
+  - [x] Locate first product card
+  - [x] Trigger texture reveal (hover on desktop, tap on mobile)
+  - [x] Measure time from interaction to reveal start using Performance API marks
+  - [x] Assert reveal timing <100ms at p95
+  - [x] Verify macro texture image loaded (no broken images)
+  - [x] Verify scent narrative copy visible
+  - [x] Verify product information visible (name, price, description)
+  - [x] Check no network requests during reveal (image preloaded)
+  - [x] Test reduced motion preference (static reveal, no animation)
 
 - [x] **Task 5: Implement story fragments scroll test** (AC4)
-  - [ ] Scroll to story fragments section
-  - [ ] Verify story fragments visible (check for `data-testid="story-fragment"` or similar)
-  - [ ] Verify copy is warm and inviting (matches `app/content/story.ts`)
-  - [ ] Check fade-in animation (if Framer Motion loaded)
-  - [ ] Verify smooth scroll (Lenis on desktop >= 1024px, native on mobile)
-  - [ ] Assert no console errors during scroll
+  - [x] Scroll to story fragments section
+  - [x] Verify story fragments visible (check for `data-testid="story-fragment"` or similar)
+  - [x] Verify copy is warm and inviting (matches `app/content/story.ts`)
+  - [x] Check fade-in animation (if Framer Motion loaded)
+  - [x] Verify smooth scroll (Lenis on desktop >= 1024px, native on mobile)
+  - [x] Assert no console errors during scroll
 
 - [x] **Task 6: Implement collection prompt test** (AC5)
-  - [ ] Trigger texture reveals on 2+ products (hover/tap)
-  - [ ] Scroll to collection prompt trigger point
-  - [ ] Verify collection prompt visible
-  - [ ] Verify CTA text ("Get the Collection" or similar)
-  - [ ] Verify variety pack mention (all 4 soaps)
-  - [ ] Check Zustand store: `productsExplored >= 2` (optional, may need test harness)
-  - [ ] Test that prompt does NOT appear if <2 products explored
-  - [ ] Test keyboard accessibility (Tab to CTA, Enter to activate)
+  - [x] Trigger texture reveals on 2+ products (hover/tap)
+  - [x] Scroll to collection prompt trigger point
+  - [x] Verify collection prompt visible
+  - [x] Verify CTA text ("Get the Collection" or similar)
+  - [x] Verify variety pack mention (all 4 soaps)
+  - [x] Check Zustand store: `productsExplored >= 2` (optional, may need test harness)
+  - [x] Test that prompt does NOT appear if <2 products explored
+  - [x] Test keyboard accessibility (Tab to CTA, Enter to activate)
 
 - [x] **Task 7: Implement footer navigation test** (AC6)
-  - [ ] Scroll to footer
-  - [ ] Verify footer links present: Home, About, Contact, Wholesale, Privacy Policy, Terms
-  - [ ] Click each link and verify navigation works
-  - [ ] Verify design token colors applied (check computed styles)
-  - [ ] Test keyboard accessibility (Tab through links, Enter to navigate)
-  - [ ] Verify social media placeholder icons visible
+  - [x] Scroll to footer
+  - [x] Verify footer links present: Home, About, Contact, Wholesale, Privacy Policy, Terms
+  - [x] Click each link and verify navigation works
+  - [x] Verify design token colors applied (check computed styles)
+  - [x] Test keyboard accessibility (Tab through links, Enter to navigate)
+  - [x] Verify social media placeholder icons visible
 
 - [x] **Task 8: Implement console error and accessibility audit** (AC7)
-  - [ ] Capture console errors during test run (Playwright `page.on('console')`)
-  - [ ] Assert zero console errors (filter out warnings if needed)
-  - [ ] Run axe-core accessibility audit using `@axe-core/playwright`
-  - [ ] Assert zero accessibility violations
-  - [ ] (Optional) Run Lighthouse accessibility audit, assert score >= 90
-  - [ ] Verify keyboard navigation works for all interactive elements
-  - [ ] Verify images have alt text
-  - [ ] Verify color contrast meets WCAG 2.1 AA (4.5:1)
+  - [x] Capture console errors during test run (Playwright `page.on('console')`)
+  - [x] Assert zero console errors (filter out warnings if needed)
+  - [x] Run axe-core accessibility audit using `@axe-core/playwright`
+  - [x] Assert zero accessibility violations
+  - [x] (Optional) Run Lighthouse accessibility audit, assert score >= 90
+  - [x] Verify keyboard navigation works for all interactive elements
+  - [x] Verify images have alt text
+  - [x] Verify color contrast meets WCAG 2.1 AA (4.5:1)
 
 - [x] **Task 9: Configure CI pipeline for smoke tests** (AC9)
-  - [ ] Verify `.github/workflows/ci.yml` includes Playwright smoke tests
-  - [ ] Ensure tests run on every PR
-  - [ ] Configure headless Chromium with mobile + desktop viewports
-  - [ ] Verify test results are visible in GitHub Actions output
-  - [ ] Ensure PR is blocked if tests fail
-  - [ ] Verify Lighthouse CI runs and enforces Core Web Vitals
+  - [x] Verify `.github/workflows/ci.yml` includes Playwright smoke tests
+  - [x] Ensure tests run on every PR
+  - [x] Configure headless Chromium with mobile + desktop viewports
+  - [x] Verify test results are visible in GitHub Actions output
+  - [x] Ensure PR is blocked if tests fail
+  - [x] Verify Lighthouse CI runs and enforces Core Web Vitals
 
 - [x] **Task 10: Document smoke test coverage and results** (Post-implementation)
-  - [ ] Document test coverage in story file (Dev Completion Notes)
-  - [ ] Note any edge cases discovered during testing
-  - [ ] Document any performance bottlenecks found
-  - [ ] Document any accessibility issues fixed
-  - [ ] Update sprint-status.yaml to mark story as `done`
+  - [x] Document test coverage in story file (Dev Completion Notes)
+  - [x] Note any edge cases discovered during testing
+  - [x] Document any performance bottlenecks found
+  - [x] Document any accessibility issues fixed
+  - [x] Update sprint-status.yaml to mark story as `done`
 
 ---
 
