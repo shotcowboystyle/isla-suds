@@ -345,7 +345,7 @@ const FALLBACK_HEADER_MENU = {
       tags: [],
       title: 'About',
       type: 'PAGE',
-      url: '/pages/about',
+      url: '/about', // Hydrogen route (Story 4.4), not Shopify CMS /pages/about
       items: [],
     },
   ],
