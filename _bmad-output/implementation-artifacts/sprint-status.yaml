@@ -70,20 +70,20 @@ development_status:
   # ============================================================================
   # Epic 3: Texture Reveals & Product Discovery (6 stories)
   # ============================================================================
-  epic-3: in-progress
+  epic-3: done
   3-1-implement-image-preloading-with-intersection-observer: done
   3-2-build-texture-reveal-interaction: done
   3-3-display-scent-narrative-copy-in-reveal: done
   3-4-display-product-information-in-reveal: done
   3-5-implement-close-dismiss-reveal-behavior: done
   3-6-create-variety-pack-bundle-display: done
-  epic-3-retrospective: optional
+  epic-3-retrospective: done
 
   # ============================================================================
   # Epic 4: Story Moments & Site Navigation (7 stories)
   # ============================================================================
-  epic-4: backlog
-  4-1-implement-story-fragments-during-scroll: backlog
+  epic-4: in-progress
+  4-1-implement-story-fragments-during-scroll: ready-for-dev
   4-2-display-collection-prompt-after-2-products-explored: backlog
   4-3-add-variety-pack-from-collection-prompt: backlog
   4-4-create-about-page-fallback-for-direct-traffic: backlog
