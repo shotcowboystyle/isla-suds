@@ -4,7 +4,7 @@ import {ConstellationGrid} from './ConstellationGrid';
 import {useExplorationStore} from '~/stores/exploration';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
-// Mock Hydrogen Image component
+// Mock Hydrogen components and hooks
 vi.mock('@shopify/hydrogen', () => ({
   Image: ({
     alt,
@@ -13,6 +13,9 @@ vi.mock('@shopify/hydrogen', () => ({
     alt: string;
     'data-testid'?: string;
   }) => <img alt={alt} data-testid={testId} />,
+  useOptimisticCart: () => ({
+    lines: {nodes: []},
+  }),
 }));
 
 // Mock useVariantUrl hook
@@ -40,6 +43,20 @@ vi.mock('react-router', () => ({
     hash: '',
     state: null,
     key: 'default',
+  }),
+  useFetcher: () => ({
+    state: 'idle',
+    data: null,
+    formData: null,
+    submit: vi.fn(),
+    load: vi.fn(),
+  }),
+}));
+
+// Mock collection prompt trigger hook
+vi.mock('~/hooks/use-collection-prompt-trigger', () => ({
+  useCollectionPromptTrigger: () => ({
+    shouldShowPrompt: false,
   }),
 }));
 

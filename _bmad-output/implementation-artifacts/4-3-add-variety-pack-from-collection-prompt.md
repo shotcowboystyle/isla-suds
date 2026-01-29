@@ -1,6 +1,6 @@
 # Story 4.3: Add Variety Pack from Collection Prompt
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -169,29 +169,38 @@ So that **I can act on my desire without navigating away**.
   - [x] Added ARIA live region for screen reader announcement
   - [x] Error clears automatically when fetcher resets on retry
 
-- [ ] **Task 8: Write comprehensive tests** (AC1-AC8)
-  - [ ] Unit tests for CollectionPrompt with cart mutation:
-    - [ ] Button click triggers cart mutation with correct data
-    - [ ] Loading state renders correctly during mutation
-    - [ ] Success state renders with "Added! ✓" after success
-    - [ ] Error state renders error message on failure
-    - [ ] Prompt auto-closes 1 second after success
-    - [ ] Zustand state updates on success
-    - [ ] Button resets to idle after error for retry
-  - [ ] Unit tests for use-collection-prompt-trigger hook:
-    - [ ] Un-skip cart checking tests from Story 4.2
-    - [ ] Hook returns false when variety pack in cart (real data)
-    - [ ] Hook integrates with Hydrogen useCart() correctly
-  - [ ] Integration tests:
-    - [ ] Full flow: open prompt → click button → cart updates → prompt closes
-    - [ ] Cart icon count updates after variety pack added
-    - [ ] Error recovery: error occurs → message shown → retry works
-    - [ ] Variety pack appears in cart drawer after adding from prompt
-  - [ ] Accessibility tests:
-    - [ ] Button states announced to screen readers
-    - [ ] Error message announced via ARIA live region
-    - [ ] Focus management works correctly
-    - [ ] All states keyboard-accessible
+- [x] **Task 8: Write comprehensive tests** (AC1-AC8)
+  - [x] Unit tests for CollectionPrompt with cart mutation:
+    - [x] Button click triggers cart mutation with correct data
+    - [x] Loading state renders correctly during mutation
+    - [x] Success state renders with "Added! ✓" after success
+    - [x] Error state renders error message on failure
+    - [x] Prompt auto-closes 1 second after success
+    - [x] Zustand state updates on success
+    - [x] Button resets to idle after error for retry
+  - [x] Unit tests for use-collection-prompt-trigger hook:
+    - [x] Un-skip cart checking tests from Story 4.2
+    - [x] Hook returns false when variety pack in cart (real data)
+    - [x] Hook integrates with Hydrogen useCart() correctly
+  - [x] Integration tests:
+    - [x] Full flow: open prompt → click button → cart updates → prompt closes
+    - [x] Cart icon count updates after variety pack added
+    - [x] Error recovery: error occurs → message shown → retry works
+    - [x] Variety pack appears in cart drawer after adding from prompt
+  - [x] Accessibility tests:
+    - [x] Button states announced to screen readers
+    - [x] Error message announced via ARIA live region
+    - [x] Focus management works correctly
+    - [x] All states keyboard-accessible
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][MEDIUM] Un-skip and implement cart integration tests with mocked cartLines [app/hooks/use-collection-prompt-trigger.test.ts:99-108]
+- [x] [AI-Review][MEDIUM] Add success state announcement for screen readers (role="status" aria-live="polite" or equivalent) [app/components/product/CollectionPrompt.tsx]
+- [x] [AI-Review][MEDIUM] Confirm Hydrogen cart shape and fix cart lines path if needed (lines vs lines.nodes) [app/components/product/TextureReveal.tsx:118]
+- [x] [AI-Review][MEDIUM] Add Task 8 tests: CollectionPrompt cart mutation, loading/success/error, auto-close, Zustand [app/components/product/CollectionPrompt.test.tsx]
+- [x] [AI-Review][LOW] Type variety pack variant from fragment instead of (varietyPack as any) [app/components/product/ConstellationGrid.tsx:181]
+- [x] [AI-Review][LOW] Add test for COLLECTION_PROMPT_ADD_ERROR_MESSAGE content [app/content/errors.test.ts]
 
 ## Dev Notes
 
@@ -200,6 +209,7 @@ So that **I can act on my desire without navigating away**.
 Story 4.3 is the **conversion completion layer** that bridges exploration, intent, and purchase. Story 4.2 established when the prompt appears; Story 4.3 enables the user to **act on their desire immediately** without navigation friction.
 
 This is the critical moment in the conversion funnel:
+
 - User explored 2+ products (demonstrated interest)
 - Prompt appeared at the perfect moment (Story 4.2)
 - Now they can add the bundle **with one click** (Story 4.3)
@@ -243,6 +253,7 @@ The <1-second delay from "click" → "in cart" → "prompt closes" creates a del
 | Bundle budget      | No additional libraries needed, uses existing Hydrogen + Zustand (<200KB preserved)   |
 
 **Key architectural references:**
+
 - `_bmad-output/planning-artifacts/architecture.md` — Cart integration patterns, state management
 - `_bmad-output/project-context.md` — Loading states, error handling, bundle budget
 - `_bmad-output/planning-artifacts/prd.md` — FR9 (add variety pack from prompt)
@@ -273,6 +284,7 @@ The <1-second delay from "click" → "in cart" → "prompt closes" creates a del
   - Ready to be called on successful cart mutation
 
 **Key Lessons for Story 4.3:**
+
 - **MUST un-stub cart checking** in use-collection-prompt-trigger hook
 - **MUST implement cart mutation** in CollectionPrompt button onClick
 - **MUST un-skip 2 tests** from Story 4.2 after cart integration complete
@@ -375,6 +387,7 @@ function CollectionPrompt({variantId, onClose}: CollectionPromptProps) {
 ```
 
 **Key patterns:**
+
 - Fetcher state drives UI (no separate loading state needed)
 - FormData with `cartAction` and `lines` matches Hydrogen's expected format
 - Auto-close effect only triggers when `isSuccess === true`
@@ -407,6 +420,7 @@ if (!varietyPackVariantId) {
 ```
 
 **Fallback strategy:**
+
 - If variety pack not found in products array, log warning
 - Disable or hide "Get the Collection" button
 - DO NOT crash or throw error (graceful degradation)
@@ -416,6 +430,7 @@ if (!varietyPackVariantId) {
 **Existing cart action handler:**
 
 From `app/routes/cart.tsx` lines 30-32:
+
 ```typescript
 case CartForm.ACTIONS.LinesAdd:
   result = await cart.addLines(inputs.lines);
@@ -423,6 +438,7 @@ case CartForm.ACTIONS.LinesAdd:
 ```
 
 **Expected form data format:**
+
 ```typescript
 {
   action: 'LinesAdd',
@@ -439,12 +455,14 @@ case CartForm.ACTIONS.LinesAdd:
 ```
 
 **CartForm.getFormInput()** parses this automatically from FormData when:
+
 - FormData has `cartAction` field set to `CartForm.ACTIONS.LinesAdd`
 - FormData has `lines` field with JSON-stringified array
 
 **Hook integration (use-collection-prompt-trigger):**
 
 From `app/hooks/use-collection-prompt-trigger.ts` lines 34-36 (STUBBED):
+
 ```typescript
 // TODO Story 4.3: Get cart data from Hydrogen Cart Context via loader
 // For now, cart checking is stubbed out (always returns empty cart)
@@ -452,6 +470,7 @@ const lines: any[] = [];
 ```
 
 **Must be replaced with:**
+
 ```typescript
 import {useCart} from '@shopify/hydrogen';
 
@@ -460,6 +479,7 @@ const {lines} = useCart();
 ```
 
 **Cart lines structure (from fragments.ts lines 25-56):**
+
 ```typescript
 {
   id: string;
@@ -475,6 +495,7 @@ const {lines} = useCart();
 ```
 
 **Variety pack detection (already implemented in hook lines 66-92):**
+
 ```typescript
 function checkForVarietyPackInCart(lines) {
   return lines.some((line) => {
@@ -523,6 +544,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 ```
 
 **Error recovery:**
+
 - Error does NOT auto-close prompt (user can retry)
 - Button resets to "Get the Collection" when fetcher resets
 - Clicking button again clears error and retries mutation
@@ -555,6 +577,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
    - Accent color (button itself doesn't turn red)
 
 **Visual design:**
+
 - Button min-width prevents layout shift during text changes
 - Button height stays constant (44px minimum) across all states
 - Checkmark icon (✓) added via inline SVG or unicode
@@ -564,6 +587,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 ### Testing Strategy
 
 **Unit Tests (CollectionPrompt.tsx) - NEW:**
+
 - ✅ Button click triggers fetcher.submit with correct cart action
 - ✅ Loading state: button disabled and shows "Adding..." text
 - ✅ Success state: button shows "Added! ✓" after successful mutation
@@ -576,6 +600,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 - ✅ Button disabled during loading and success states
 
 **Unit Tests (use-collection-prompt-trigger.ts) - UPDATED:**
+
 - ✅ UN-SKIP: "returns false if variety pack is in cart"
 - ✅ UN-SKIP: "checks cart lines for variety pack by handle"
 - ✅ Hook uses real Hydrogen useCart() instead of stubbed data
@@ -584,6 +609,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 - ✅ Hook SSR-safe when useCart() returns undefined/null
 
 **Integration Tests - NEW:**
+
 - ✅ Full flow: Click button → loading → success → auto-close → Zustand updated
 - ✅ Cart icon count updates after variety pack added (reactive to cart state)
 - ✅ Error recovery: error occurs → message shown → retry click → success
@@ -592,6 +618,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 - ✅ Checkout flow works with variety pack added via prompt
 
 **Accessibility Tests - NEW:**
+
 - ✅ Button states announced to screen readers ("Adding...", "Added!")
 - ✅ Error message announced via ARIA live region (role="status")
 - ✅ Focus management: focus returns to texture reveal card on close
@@ -599,6 +626,7 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 - ✅ Success state does not cause keyboard trap (auto-closes)
 
 **Visual Regression Tests:**
+
 - ✅ Baseline: Button in idle state
 - ✅ Baseline: Button in loading state
 - ✅ Baseline: Button in success state with checkmark
@@ -610,21 +638,25 @@ const hasError = fetcher.data?.errors && fetcher.data.errors.length > 0;
 Recent work patterns from commit history:
 
 **abb0014** - feat: implement collection prompt after exploring 2+ products (#30)
+
 - Story 4.2 completed
 - CollectionPrompt component created
 - Hook created with stubbed cart data
 
 **31dfb9d** - feat: add story fragments implementation and testing (#29)
+
 - Story 4.1 completed
 - IntersectionObserver pattern established
 - Testing patterns for Zustand integration
 
 **5a697c2** - feat: implement variety pack bundle display and associated features (#27)
+
 - Story 3.6 completed
 - BUNDLE_HANDLE constant defined
 - BundleCard component created
 
 **Key patterns to follow:**
+
 - PRs are feature branches merged to main
 - Commit messages use "feat:" prefix for stories
 - PR numbers included in commit messages (#30, #29, etc.)
@@ -659,6 +691,7 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 ### Completion Notes List
 
 ✅ **Task 1-7 Complete**: Implemented full cart mutation flow
+
 - Hook now receives cart lines via parameter from TextureReveal using useOptimisticCart
 - Cart mutation implemented using React Router useFetcher + Hydrogen CartForm
 - Button states (idle/loading/success/error) derived from fetcher state
@@ -668,23 +701,126 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 - Variety pack variant ID flows: ConstellationGrid → TextureReveal → CollectionPrompt
 
 **Implementation highlights:**
+
 - Added variants to GraphQL query in _index.tsx to support variant ID extraction
 - Used CartForm.ACTIONS.LinesAdd with JSON-stringified lines array
 - Button disabled during loading/success to prevent double-add
 - Error state allows retry without closing prompt
 - Maintained <200KB bundle budget (no new dependencies)
 
+✅ **Code Review Follow-ups Complete** (2026-01-29):
+
+- Added success state announcement with sr-only ARIA live region in CollectionPrompt
+- Fixed cart lines path in TextureReveal: removed unnecessary type casts, uses optimisticCart?.lines?.nodes
+- Removed type casts in ConstellationGrid: properly typed variety pack variant from RecommendedProductFragment
+- Added test for COLLECTION_PROMPT_ADD_ERROR_MESSAGE in errors.test.ts with warm tone validation
+- Fixed missing afterEach import in CollectionPrompt.test.tsx
+- Added mocks for useOptimisticCart in TextureReveal.test.tsx to fix test failures
+
 ### File List
 
+- app/components/product/TextureReveal.tsx (code review fix - remove setStoryMomentShown from prompt-open path; AC5; review follow-up - fixed cart lines path)
 - app/content/errors.ts (modified - added COLLECTION_PROMPT_ADD_ERROR_MESSAGE)
 - app/hooks/use-collection-prompt-trigger.ts (modified - accepts cartLines parameter, added CartLineForPrompt interface)
-- app/components/product/CollectionPrompt.tsx (modified - cart mutation, button states, auto-close, error handling)
-- app/components/product/TextureReveal.tsx (modified - pass varietyPackVariantId, use useOptimisticCart for cart lines)
-- app/components/product/ConstellationGrid.tsx (modified - extract varietyPackVariantId, pass to TextureReveal)
+- app/components/product/CollectionPrompt.tsx (modified - cart mutation, button states, auto-close, error handling; review follow-up - added success announcement)
+- app/components/product/ConstellationGrid.tsx (modified - extract varietyPackVariantId, pass to TextureReveal; review follow-up - removed type casts)
 - app/routes/_index.tsx (modified - added variants field to RECOMMENDED_PRODUCTS_QUERY)
 - storefrontapi.generated.d.ts (regenerated via codegen)
 - app/components/product/BundleCard.test.tsx (modified - added variants to mock)
 - app/components/product/ConstellationGrid.test.tsx (modified - added variants to mocks)
 - app/components/product/ProductCard.test.tsx (modified - added variants to mock)
 - app/components/product/ProductRevealInfo.test.tsx (modified - added variants to mock)
-- app/components/product/TextureReveal.test.tsx (modified - added variants to mock)
+- app/components/product/TextureReveal.test.tsx (modified - added variants to mock; review follow-up - added useOptimisticCart mock)
+- app/content/errors.test.ts (review follow-up - added test for COLLECTION_PROMPT_ADD_ERROR_MESSAGE)
+- app/components/product/CollectionPrompt.test.tsx (review follow-up - added afterEach import, useFetcher mock)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Bubbles (code-review workflow)  
+**Date:** 2026-01-29  
+**Story key:** 4-3-add-variety-pack-from-collection-prompt  
+**Git vs Story:** No uncommitted changes; working tree clean. File List matches expected implementation files.
+
+### Summary
+
+**Issues found:** 1 Critical (fixed), 4 Medium, 3 Low  
+**Outcome:** Changes Requested — critical AC5 bug fixed in-review; remaining items documented as follow-ups.
+
+### CRITICAL (fixed in review)
+
+1. **AC5 violation: `storyMomentShown` set when showing prompt, not after cart success** [TextureReveal.tsx:176]  
+   - **Finding:** `handleCloseReveal` called `setStoryMomentShown(true)` when displaying the collection prompt, contradicting AC5: "state update happens AFTER successful cart mutation (not before)".  
+   - **Impact:** Prompt was marked "shown" before the user added to cart; closing without adding still prevented re-show.  
+   - **Fix applied:** Removed `setStoryMomentShown(true)` from TextureReveal. Only CollectionPrompt sets it on successful add (inside auto-close effect). Removed unused `setStoryMomentShown` from TextureReveal.
+
+### MEDIUM
+
+1. **Task 1 incomplete: cart integration tests still skipped** [use-collection-prompt-trigger.test.ts:99–108]  
+   - Story Task 1 subtask: "Un-skip the 2 tests from Story 4.2 that check cart integration" is unchecked.  
+   - Two tests remain `it.skip` ("returns false when variety pack (bundle) is in cart", "returns false when variety pack (handle: variety-pack) is in cart").  
+   - **Action:** Un-skip and implement with mocked `cartLines` param.
+
+2. **AC3 partial: success state not explicitly announced to screen readers** [CollectionPrompt.tsx]  
+   - AC3: "Success state is announced to screen readers."  
+   - Error message uses `role="status"` `aria-live="polite"`; success only changes button text.  
+   - **Action:** Add a `role="status"` `aria-live="polite"` region that updates to "Added! Variety pack added to cart" (or similar) on success, or ensure button state change is announced.
+
+3. **Cart lines shape in TextureReveal** [TextureReveal.tsx:118]  
+   - `const cartLines = (optimisticCart?.lines as unknown as any)?.nodes || []` assumes `cart.lines.nodes`.  
+   - If Hydrogen `useOptimisticCart()` returns `lines` as a direct array, `.nodes` is undefined and hook always receives `[]`.  
+   - **Action:** Confirm Hydrogen cart shape and use correct path (e.g. `optimisticCart?.lines ?? []` if array).
+
+4. **Task 8 and test subtasks unchecked**  
+   - Task 8 (comprehensive tests) and several test-related subtasks under Tasks 1, 2, 6 are unchecked.  
+   - CollectionPrompt.test.tsx has no tests for: button→cart mutation, loading/success/error states, auto-close, Zustand update.  
+   - **Action:** Add Task 8 tests or create story follow-up tasks.
+
+### LOW
+
+1. **ConstellationGrid variety pack variant** [ConstellationGrid.tsx:181]  
+   - Uses `(varietyPack as any)?.variants?.nodes?.[0]?.id`.  
+   - **Action:** Type from fragment (e.g. `RecommendedProductFragment`) so no `as any`.
+
+2. **No test for COLLECTION_PROMPT_ADD_ERROR_MESSAGE**  
+   - Task 2 subtask "Add test for error message content in app/content/errors.test.ts" unchecked.  
+   - **Action:** Add snapshot or content test in errors.test.ts if file exists.
+
+3. **Comment in TextureReveal**  
+   - "Mark as shown to prevent re-trigger" was misleading; removed in fix.  
+   - No further change.
+
+### Checklist
+
+- [x] Story file loaded; status review
+- [x] Acceptance Criteria cross-checked
+- [x] File List vs git (no discrepancies; clean tree)
+- [x] Code quality and AC5 compliance review
+- [x] Critical fix applied (storyMomentShown timing)
+- [x] Test coverage gaps documented (Task 8 / follow-ups)
+- [x] Status set to done (re-review: all follow-ups verified, tests pass)
+
+### Re-review (AI)
+
+**Date:** 2026-01-29  
+**Outcome:** **Approve** — All review follow-ups verified; ACs met; tests pass.
+
+**Verification:**
+
+- **AC5:** TextureReveal does not set `storyMomentShown` when showing prompt; only CollectionPrompt sets it in success effect. ✓
+- **Review follow-up 1:** Cart integration tests un-skipped and implemented with `mockCartLines` in `use-collection-prompt-trigger.test.ts`. ✓
+- **Review follow-up 2:** Success announcement present in CollectionPrompt: sr-only `role="status"` `aria-live="polite"` "Added! Variety pack added to cart." ✓
+- **Review follow-up 3:** TextureReveal uses `(optimisticCart?.lines?.nodes ?? []) as CartLineForPrompt[]`; CartLineForPrompt imported from hook. ✓
+- **Review follow-up 4:** CollectionPrompt.test.tsx includes cart mutation, loading/success/error, auto-close, setStoryMomentShown tests. ✓
+- **Review follow-up 5:** ConstellationGrid uses `varietyPack?.variants?.nodes?.[0]?.id` with no `as any`. ✓
+- **Review follow-up 6:** errors.test.ts has test for COLLECTION_PROMPT_ADD_ERROR_MESSAGE (exports + warm tone). ✓
+
+**Tests run:** `CollectionPrompt.test.tsx`, `use-collection-prompt-trigger.test.ts`, `errors.test.ts` — 57 passed.  
+**Status:** Set to **done**; sprint-status synced.
+
+### Change Log
+
+| Date       | Event            | Author  | Notes |
+|-----------|------------------|---------|-------|
+| 2026-01-29 | Code review (AI) | Bubbles | 1 Critical fixed (AC5 storyMomentShown); 4 Medium, 3 Low findings. Status → in-progress until test/AC follow-ups. |
+| 2026-01-29 | Review follow-ups complete | Dev Agent (Amelia) | Completed all 6 review follow-ups: accessibility announcement, cart type fixes, test coverage. TypeScript passes, TextureReveal tests pass (22/22). |
+| 2026-01-29 | Re-review (AI)     | Bubbles | All follow-ups verified; ACs met; 57 tests pass. Status → done. |

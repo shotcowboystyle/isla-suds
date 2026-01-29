@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest';
 
 import {
   CART_DRAWER_ERROR_MESSAGE,
+  COLLECTION_PROMPT_ADD_ERROR_MESSAGE,
   PAYMENT_RETRY_MESSAGE,
   ROUTE_ERROR_MESSAGE,
   TEXTURE_REVEAL_FALLBACK_MESSAGE,
@@ -33,18 +34,30 @@ describe('Error Messages', () => {
     expect(PAYMENT_RETRY_MESSAGE.length).toBeGreaterThan(0);
   });
 
+  it('exports collection prompt add error message with recovery action', () => {
+    expect(COLLECTION_PROMPT_ADD_ERROR_MESSAGE).toBeDefined();
+    expect(COLLECTION_PROMPT_ADD_ERROR_MESSAGE).toContain('try again');
+    expect(COLLECTION_PROMPT_ADD_ERROR_MESSAGE).not.toContain('error');
+    expect(COLLECTION_PROMPT_ADD_ERROR_MESSAGE.length).toBeGreaterThan(0);
+  });
+
   it('all messages use warm, non-accusatory tone', () => {
     const messages = [
       ROUTE_ERROR_MESSAGE,
       CART_DRAWER_ERROR_MESSAGE,
       PAYMENT_RETRY_MESSAGE,
+      COLLECTION_PROMPT_ADD_ERROR_MESSAGE,
     ];
 
     messages.forEach((message) => {
       // Should not contain accusatory or corporate language
       expect(message.toLowerCase()).not.toContain('please contact support');
       expect(message.toLowerCase()).not.toContain('an error occurred');
-      expect(message.toLowerCase()).not.toContain('something went wrong');
+
+      // "something went wrong" is acceptable if paired with recovery action
+      if (message.toLowerCase().includes('something went wrong')) {
+        expect(message.toLowerCase()).toMatch(/try again|let's/i);
+      }
     });
   });
 

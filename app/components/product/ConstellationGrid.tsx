@@ -180,11 +180,12 @@ export function ConstellationGrid({
   const varietyPackVariantId = useMemo(() => {
     const varietyPack = products?.find((p) => p.handle === BUNDLE_HANDLE);
     // Access first variant via GraphQL structure: variants.nodes[0].id
-    const variantId = (varietyPack as any)?.variants?.nodes?.[0]?.id;
+    // Type is from RecommendedProductFragment which includes variants field
+    const variantId = varietyPack?.variants?.nodes?.[0]?.id;
     if (!variantId && import.meta.env.DEV) {
       console.warn('[ConstellationGrid] Variety pack variant ID not found');
     }
-    return variantId as string | undefined;
+    return variantId;
   }, [products]);
 
   // Early return after all hooks

@@ -2,7 +2,10 @@ import * as React from 'react';
 import {Suspense} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {useOptimisticCart} from '@shopify/hydrogen';
-import {useCollectionPromptTrigger} from '~/hooks/use-collection-prompt-trigger';
+import {
+  useCollectionPromptTrigger,
+  type CartLineForPrompt,
+} from '~/hooks/use-collection-prompt-trigger';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -111,13 +114,11 @@ export const TextureReveal = React.forwardRef<
     const addProductExplored = useExplorationStore(
       (state) => state.addProductExplored,
     );
-    const setStoryMomentShown = useExplorationStore(
-      (state) => state.setStoryMomentShown,
-    );
 
     // Get cart data for prompt trigger (Story 4.3, Task 1)
     const optimisticCart = useOptimisticCart();
-    const cartLines = (optimisticCart?.lines as unknown as any)?.nodes || [];
+    const cartLines = (optimisticCart?.lines?.nodes ??
+      []) as CartLineForPrompt[];
 
     // Check if collection prompt should be triggered (Story 4.2 + 4.3)
     const {shouldShowPrompt} = useCollectionPromptTrigger({cartLines});
@@ -171,19 +172,13 @@ export const TextureReveal = React.forwardRef<
 
       // Story 4.2: After reveal closes, check if collection prompt should show
       // Wait for reveal exit animation to complete (~200ms) before showing prompt
+      // AC5: storyMomentShown is set only on successful cart add in CollectionPrompt, not here
       setTimeout(() => {
         if (shouldShowPrompt) {
           setShowCollectionPrompt(true);
-          setStoryMomentShown(true); // Mark as shown to prevent re-trigger
         }
       }, 250); // Slightly longer than exit animation (200ms)
-    }, [
-      addProductExplored,
-      product.id,
-      onClose,
-      shouldShowPrompt,
-      setStoryMomentShown,
-    ]);
+    }, [addProductExplored, product.id, onClose, shouldShowPrompt]);
 
     return (
       <>

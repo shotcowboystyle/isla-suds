@@ -187,6 +187,18 @@ export function CollectionPrompt({
             {getButtonText()}
           </button>
 
+          {/* Success announcement for screen readers (Story 4.3, AC3, Code Review) */}
+          {isSuccess && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="sr-only"
+              aria-atomic="true"
+            >
+              Added! Variety pack added to cart.
+            </div>
+          )}
+
           {/* Error message (Story 4.3, AC7, Task 7) */}
           {isError && (
             <div
