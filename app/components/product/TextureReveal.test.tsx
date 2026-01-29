@@ -1,7 +1,39 @@
 import {render, screen} from '@testing-library/react';
+import {act} from 'react-dom/test-utils';
 import {describe, it, expect, vi} from 'vitest';
 import {TextureReveal} from './TextureReveal';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
+
+let lastMotionDivProps: any;
+const scentNarrativeProps: any[] = [];
+
+const motionModule = vi.hoisted(() => {
+  const state = {prefersReducedMotion: false};
+
+  return {
+    state,
+    module: {
+      MotionDiv: (props: any) => {
+        lastMotionDivProps = props;
+        return (
+          <div data-testid="motion-div" {...props}>
+            {props.children}
+          </div>
+        );
+      },
+      prefersReducedMotion: () => state.prefersReducedMotion,
+    },
+  };
+});
+
+vi.mock('~/lib/motion', () => motionModule.module);
+
+vi.mock('./ScentNarrative', () => ({
+  ScentNarrative: (props: any) => {
+    scentNarrativeProps.push(props);
+    return <div data-testid="scent-narrative">{props.narrative}</div>;
+  },
+}));
 
 // Mock product data matching RecommendedProductFragment structure
 const mockProduct: RecommendedProductFragment = {
@@ -24,6 +56,11 @@ const mockProduct: RecommendedProductFragment = {
 };
 
 describe('TextureReveal', () => {
+  beforeEach(() => {
+    motionModule.state.prefersReducedMotion = false;
+    scentNarrativeProps.length = 0;
+    lastMotionDivProps = undefined;
+  });
   it('renders with required props', () => {
     const onClose = vi.fn();
 
@@ -152,25 +189,12 @@ describe('TextureReveal', () => {
     expect(overlay).toBeInTheDocument();
   });
 
-  it('respects prefers-reduced-motion', () => {
+  it('shows scent narrative immediately when prefers-reduced-motion is true', () => {
     const onClose = vi.fn();
+    const scentNarrative = 'Close your eyes. A field at dusk.';
 
-    // Mock matchMedia to return reduced motion preference
-    const matchMediaMock = vi.fn().mockImplementation((query) => ({
-      matches: query === '(prefers-reduced-motion: reduce)',
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaMock,
-    });
+    motionModule.state.prefersReducedMotion = true;
+    scentNarrativeProps.length = 0;
 
     render(
       <TextureReveal
@@ -178,17 +202,15 @@ describe('TextureReveal', () => {
         isOpen={true}
         onClose={onClose}
         textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        scentNarrative={scentNarrative}
       />,
     );
 
-    // Dialog should render (reduced motion doesn't prevent rendering)
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
 
-    // matchMedia should have been called to check for reduced motion
-    expect(matchMediaMock).toHaveBeenCalledWith(
-      '(prefers-reduced-motion: reduce)',
-    );
+    const props = scentNarrativeProps.at(-1);
+    expect(props?.isVisible).toBe(true);
   });
 
   it('has focusable content for keyboard navigation (AC4)', () => {
@@ -211,5 +233,78 @@ describe('TextureReveal', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
     // Radix Dialog.Content automatically receives focus when opened (AC4 requirement)
+  });
+
+  it('displays scent narrative when provided', () => {
+    const onClose = vi.fn();
+    const scentNarrative = 'Close your eyes. A field at dusk.';
+
+    render(
+      <TextureReveal
+        product={mockProduct}
+        isOpen={true}
+        onClose={onClose}
+        textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        scentNarrative={scentNarrative}
+      />,
+    );
+
+    // Narrative text should be present
+    expect(screen.getByText(scentNarrative)).toBeInTheDocument();
+  });
+
+  it('does not display narrative when not provided', () => {
+    const onClose = vi.fn();
+
+    render(
+      <TextureReveal
+        product={mockProduct}
+        isOpen={true}
+        onClose={onClose}
+        textureImageUrl="https://cdn.shopify.com/texture.jpg"
+      />,
+    );
+
+    // Dialog should render without narrative
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('only shows scent narrative after reveal animation completes', () => {
+    const onClose = vi.fn();
+    const scentNarrative = 'Close your eyes. A field at dusk.';
+
+    scentNarrativeProps.length = 0;
+
+    const {rerender} = render(
+      <TextureReveal
+        product={mockProduct}
+        isOpen={false}
+        onClose={onClose}
+        textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        scentNarrative={scentNarrative}
+      />,
+    );
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    rerender(
+      <TextureReveal
+        product={mockProduct}
+        isOpen={true}
+        onClose={onClose}
+        textureImageUrl="https://cdn.shopify.com/texture.jpg"
+        scentNarrative={scentNarrative}
+      />,
+    );
+
+    const firstRenderProps = scentNarrativeProps.at(-1);
+    expect(firstRenderProps?.isVisible).toBe(false);
+
+    act(() => {
+      lastMotionDivProps.onAnimationComplete?.();
+    });
+
+    const afterAnimationProps = scentNarrativeProps.at(-1);
+    expect(afterAnimationProps?.isVisible).toBe(true);
   });
 });
