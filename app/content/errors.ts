@@ -86,3 +86,19 @@ export const CART_QUANTITY_INVENTORY_ERROR_MESSAGE =
  */
 export const CART_QUANTITY_NETWORK_ERROR_MESSAGE =
   "Connection hiccup. Check your internet and try again.";
+
+/**
+ * Cart item removal error messages (Story 5.7)
+ * Displayed when: Removing cart line item fails
+ * Recovery: User can retry by clicking remove button again
+ */
+export const CART_REMOVE_ERROR_MESSAGE =
+  "Couldn't remove that. Let's try again.";
+
+/**
+ * Cart item removal generic fallback message
+ * Displayed when: Removal fails with unspecified error
+ * Recovery: User can retry removal
+ */
+export const CART_REMOVE_GENERIC_ERROR_MESSAGE =
+  "Something went wrong. Please try again.";

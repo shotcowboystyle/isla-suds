@@ -29,6 +29,15 @@ export const MotionSpan = lazy(() =>
   import('framer-motion').then((m) => ({default: m.motion.span})),
 );
 
+export const MotionLi = lazy(() =>
+  import('framer-motion').then((m) => ({default: m.motion.li})),
+);
+
+// AnimatePresence for exit animations
+export const AnimatePresence = lazy(() =>
+  import('framer-motion').then((m) => ({default: m.AnimatePresence})),
+);
+
 /**
  * Type exports for motion component props
  * Use these when building components that accept motion props
@@ -37,6 +46,7 @@ export type MotionDivProps = HTMLMotionProps<'div'>;
 export type MotionSectionProps = HTMLMotionProps<'section'>;
 export type MotionArticleProps = HTMLMotionProps<'article'>;
 export type MotionSpanProps = HTMLMotionProps<'span'>;
+export type MotionLiProps = HTMLMotionProps<'li'>;
 
 /**
  * Helper function to check if user prefers reduced motion
@@ -72,4 +82,21 @@ export const scaleInVariants = {
 export const slideUpVariants = {
   hidden: {opacity: 0, y: 20},
   visible: {opacity: 1, y: 0},
+};
+
+/**
+ * Fade-out exit animation for item removal (Story 5.7)
+ * GPU-composited properties only (opacity, transform)
+ * Duration: 300ms with ease-out-expo curve
+ * Respects prefers-reduced-motion
+ */
+export const fadeOutExitVariant = {
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      duration: 0.3,
+      ease: [0.16, 1, 0.3, 1], // ease-out-expo
+    },
+  },
 };

@@ -24,6 +24,7 @@ vi.mock('@shopify/hydrogen', () => ({
   CartForm: {
     ACTIONS: {
       LinesUpdate: 'LinesUpdate',
+      LinesRemove: 'LinesRemove',
     },
   },
 }));
@@ -1100,6 +1101,297 @@ describe('CartLineItems', () => {
         /don't have that many in stock/i,
       );
       expect(errorMessages.length).toBe(2); // Mobile + desktop
+    });
+  });
+
+  // Story 5.7: Remove Items from Cart - NEW TESTS
+  describe('Story 5.7 - AC1: Remove button for each line item', () => {
+    it('renders remove button for each line item', () => {
+      const cart = createMockCart(2);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButtons = screen.getAllByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      expect(removeButtons).toHaveLength(2);
+    });
+
+    it('remove button has trash icon', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const {container} = render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      const svg = removeButton.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('remove button uses 44x44px touch target on mobile', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      // Mobile size: h-11 w-11 = 44px
+      expect(removeButton.className).toMatch(/h-11/);
+      expect(removeButton.className).toMatch(/w-11/);
+    });
+
+    it('remove button has hover state', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      expect(removeButton.className).toMatch(/hover:/);
+    });
+
+    it('remove button has correct ARIA label with product name', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove lavender fields.*from cart/i,
+      });
+      expect(removeButton).toHaveAttribute('aria-label');
+      expect(removeButton.getAttribute('aria-label')).toContain(
+        'Lavender Fields',
+      );
+    });
+
+    it('remove button is keyboard accessible', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      expect(removeButton).toHaveAttribute('type', 'button');
+    });
+  });
+
+  describe('Story 5.7 - AC2: Remove item via API call', () => {
+    it('clicking remove button triggers API call', async () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'idle',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+
+      await user.click(removeButton);
+
+      expect(mockSubmit).toHaveBeenCalled();
+    });
+
+    it('remove button shows loading state during API call', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'submitting',
+        data: null,
+      });
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      expect(removeButton).toBeDisabled();
+    });
+  });
+
+  describe('Story 5.7 - AC5: Error handling for remove failures', () => {
+    it('displays warm error message when removal fails', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Cart removal failed'}],
+        },
+      });
+
+      render(<CartLineItems />);
+
+      // Error appears in both mobile and desktop sections
+      const errorMessages = screen.getAllByText(/couldn't remove that/i);
+      expect(errorMessages.length).toBeGreaterThan(0);
+    });
+
+    it('error message is displayed near the line item', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Error'}],
+        },
+      });
+
+      const {container} = render(<CartLineItems />);
+
+      const lineItem = container.querySelector('li');
+      const errorMessage = lineItem?.querySelector('[role="alert"]');
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('error message has ARIA live region', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      mockUseFetcher.mockReturnValue({
+        submit: vi.fn(),
+        state: 'idle',
+        data: {
+          errors: [{message: 'Error'}],
+        },
+      });
+
+      const {container} = render(<CartLineItems />);
+
+      const liveRegion = container.querySelector('[aria-live]');
+      expect(liveRegion).toBeInTheDocument();
+    });
+  });
+
+  describe('Story 5.7 - AC9: Keyboard accessibility', () => {
+    it('remove button is tab-accessible', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+      expect(removeButton).toBeInTheDocument();
+      expect(removeButton.tagName).toBe('BUTTON');
+    });
+
+    it('remove button announces product name to screen readers', () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove lavender fields.*from cart/i,
+      });
+      const ariaLabel = removeButton.getAttribute('aria-label');
+      expect(ariaLabel).toContain('Lavender Fields');
+      expect(ariaLabel).toContain('from cart');
+    });
+  });
+
+  describe('Story 5.7 - Integration: Remove mutation flow', () => {
+    it('submits correct data structure when removing item', async () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'idle',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+
+      await user.click(removeButton);
+
+      expect(mockSubmit).toHaveBeenCalledWith(
+        {
+          action: 'LinesRemove',
+          inputs: {
+            lineIds: ['line-1'],
+          },
+        },
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      );
+    });
+
+    it('prevents multiple rapid remove clicks', async () => {
+      const cart = createMockCart(1);
+      mockUseRouteLoaderData.mockReturnValue({cart});
+      mockUseOptimisticCart.mockReturnValue(cart);
+
+      const mockSubmit = vi.fn();
+      mockUseFetcher.mockReturnValue({
+        submit: mockSubmit,
+        state: 'submitting',
+        data: null,
+      });
+
+      const user = userEvent.setup();
+
+      render(<CartLineItems />);
+
+      const removeButton = screen.getByRole('button', {
+        name: /remove.*from cart/i,
+      });
+
+      // Button should be disabled during submission
+      expect(removeButton).toBeDisabled();
+
+      // Attempting to click should not trigger submission
+      await user.click(removeButton);
+      expect(mockSubmit).not.toHaveBeenCalled();
     });
   });
 });
