@@ -5,6 +5,8 @@ import {useExplorationStore} from '~/stores/exploration';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 // Mock Hydrogen components and hooks
+let mockFetcherState = 'idle';
+let mockFetcherData: any = null;
 vi.mock('@shopify/hydrogen', () => ({
   Image: ({
     alt,
@@ -16,6 +18,14 @@ vi.mock('@shopify/hydrogen', () => ({
   useOptimisticCart: () => ({
     lines: {nodes: []},
   }),
+  CartForm: ({children, route, inputs, action}: any) => {
+    const mockFetcher = {
+      state: mockFetcherState,
+      data: mockFetcherData,
+      Form: 'form',
+    };
+    return <div data-testid="cart-form-mock">{children(mockFetcher)}</div>;
+  },
 }));
 
 // Mock useVariantUrl hook

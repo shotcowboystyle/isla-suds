@@ -1,7 +1,8 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
+import {Image, type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variant-url';
 import {cn} from '~/utils/cn';
+import {AddToCartButton} from '~/components/AddToCartButton';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
 export interface BundleCardProps {
@@ -43,6 +44,7 @@ export function BundleCard({
 }: BundleCardProps) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
+  const variantId = product.variants.nodes[0]?.id;
 
   // Handle hover/tap to focus and reveal (Story 2.4, Story 3.2)
   const handleMouseEnter = () => {
@@ -135,6 +137,43 @@ export function BundleCard({
         </h3>
         {/* Subtle indicator that this is all 4 soaps (Story 3.6, AC2) */}
         <p className="text-xs text-[var(--text-muted)] mt-1">All 4 soaps</p>
+
+        {/* Add to Cart Button (Story 5.3) */}
+        <div
+          className="mt-[var(--space-sm)]"
+          onClick={(e) => {
+            // Stop propagation to prevent link navigation when clicking button
+            e.stopPropagation();
+          }}
+        >
+          {variantId ? (
+            <AddToCartButton
+              lines={
+                [
+                  {
+                    merchandiseId: variantId,
+                    quantity: 1,
+                  },
+                ] as OptimisticCartLineInput[]
+              }
+              analytics={{
+                products: [product],
+                totalValue: parseFloat(
+                  product.priceRange.minVariantPrice.amount,
+                ),
+              }}
+            >
+              Add to Cart
+            </AddToCartButton>
+          ) : (
+            <div
+              className="text-sm text-[var(--text-muted)] text-center"
+              role="alert"
+            >
+              Product unavailable
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );

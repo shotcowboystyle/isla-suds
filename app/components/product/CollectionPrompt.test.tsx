@@ -37,12 +37,14 @@ vi.mock('@shopify/hydrogen', () => ({
   ),
 }));
 
-// Mock exploration store (Story 4.3)
+// Mock exploration store (Story 4.3, Story 5.3)
 const mockSetStoryMomentShown = vi.fn();
+const mockSetCartDrawerOpen = vi.fn();
 vi.mock('~/stores/exploration', () => ({
   useExplorationStore: (selector: any) => {
     const mockState = {
       setStoryMomentShown: mockSetStoryMomentShown,
+      setCartDrawerOpen: mockSetCartDrawerOpen,
     };
     return selector ? selector(mockState) : mockState;
   },
@@ -573,6 +575,30 @@ describe('CollectionPrompt - Cart Mutation (Story 4.3)', () => {
       expect(mockSetStoryMomentShown).toHaveBeenCalledWith(true);
       expect(mockSetStoryMomentShown).toHaveBeenCalledTimes(1);
     });
+
+    it('[P0] calls setCartDrawerOpen(true) after successful cart mutation (Story 5.3, AC4)', () => {
+      // Mock successful state
+      fetcherState.state = 'idle';
+      fetcherState.data = {cart: {id: 'cart-123'}};
+
+      render(
+        <CollectionPrompt
+          open={true}
+          onClose={mockOnClose}
+          variantId={varietyPackVariantId}
+        />,
+      );
+
+      // Should not be called immediately
+      expect(mockSetCartDrawerOpen).not.toHaveBeenCalled();
+
+      // Fast-forward 1 second to auto-close
+      vi.advanceTimersByTime(1000);
+
+      // Should be called with true to open cart drawer
+      expect(mockSetCartDrawerOpen).toHaveBeenCalledWith(true);
+      expect(mockSetCartDrawerOpen).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('AC7 - Error handling', () => {
@@ -633,6 +659,86 @@ describe('CollectionPrompt - Cart Mutation (Story 4.3)', () => {
 
       // Should NOT close on error
       expect(mockOnClose).not.toHaveBeenCalled();
+    });
+  });
+
+  // Keyboard accessibility tests (Story 5.3, AC7)
+  describe('Keyboard Accessibility', () => {
+    it('[P0] button is keyboard accessible and focusable', () => {
+      render(
+        <CollectionPrompt
+          open={true}
+          onClose={mockOnClose}
+          variantId={varietyPackVariantId}
+        />,
+      );
+
+      const button = screen.getByRole('button', {
+        name: /get the collection/i,
+      });
+
+      // Verify button is keyboard accessible (type=button allows Enter/Space)
+      expect(button).toHaveAttribute('type', 'button');
+      expect(button).not.toBeDisabled();
+
+      // Button can be focused
+      button.focus();
+      expect(document.activeElement).toBe(button);
+    });
+
+    it('[P0] button can be triggered with click (Enter/Space delegated to browser)', () => {
+      render(
+        <CollectionPrompt
+          open={true}
+          onClose={mockOnClose}
+          variantId={varietyPackVariantId}
+        />,
+      );
+
+      const button = screen.getByRole('button', {
+        name: /get the collection/i,
+      });
+
+      // Simulate button click (browsers handle Enter/Space → click automatically)
+      button.click();
+
+      // Verify submit was called
+      expect(mockSubmit).toHaveBeenCalled();
+    });
+  });
+
+  // Analytics verification (Story 5.3, AC1)
+  describe('Analytics Tracking', () => {
+    it('[P1] includes variant ID in cart submission', () => {
+      render(
+        <CollectionPrompt
+          open={true}
+          onClose={mockOnClose}
+          variantId={varietyPackVariantId}
+        />,
+      );
+
+      const button = screen.getByRole('button', {
+        name: /get the collection/i,
+      });
+
+      // Click button to trigger form submission
+      button.click();
+
+      // Verify mockSubmit was called with FormData containing variant ID
+      expect(mockSubmit).toHaveBeenCalledTimes(1);
+      const formData = mockSubmit.mock.calls[0][0];
+      expect(formData).toBeInstanceOf(FormData);
+
+      // Verify lines contain variety pack variant ID
+      const linesJson = formData.get('lines');
+      expect(linesJson).toBeTruthy();
+      const lines = JSON.parse(linesJson as string) as Array<{
+        merchandiseId: string;
+        quantity: number;
+      }>;
+      expect(lines[0].merchandiseId).toBe(varietyPackVariantId);
+      expect(lines[0].quantity).toBe(1);
     });
   });
 });

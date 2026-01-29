@@ -60,6 +60,9 @@ export function CollectionPrompt({
   const setStoryMomentShown = useExplorationStore(
     (state) => state.setStoryMomentShown,
   );
+  const setCartDrawerOpen = useExplorationStore(
+    (state) => state.setCartDrawerOpen,
+  );
 
   // Button state derived from fetcher (Story 4.3, AC2, AC3, AC7)
   const isLoading =
@@ -105,12 +108,14 @@ export function CollectionPrompt({
       const timer = setTimeout(() => {
         // Update Zustand state AFTER success (Story 4.3, AC5, Task 6)
         setStoryMomentShown(true);
+        // Open cart drawer on success (Story 5.3, AC4)
+        setCartDrawerOpen(true);
         onClose();
       }, delay);
 
       return () => clearTimeout(timer);
     }
-  }, [isSuccess, onClose, setStoryMomentShown]);
+  }, [isSuccess, onClose, setStoryMomentShown, setCartDrawerOpen]);
 
   // Button text based on state (Story 4.3, AC2, AC3)
   const getButtonText = () => {
