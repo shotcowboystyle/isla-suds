@@ -95,8 +95,8 @@ development_status:
   # ============================================================================
   # Epic 5: Cart Experience (10 stories)
   # ============================================================================
-  epic-5: backlog
-  5-1-implement-cart-creation-and-persistence: backlog
+  epic-5: in-progress
+  5-1-implement-cart-creation-and-persistence: done
   5-2-add-individual-product-to-cart: backlog
   5-3-add-variety-pack-bundle-to-cart: backlog
   5-4-build-cart-drawer-component: backlog
