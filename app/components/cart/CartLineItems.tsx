@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Suspense} from 'react';
 import {useRouteLoaderData, Link, useFetcher} from 'react-router';
 import {useOptimisticCart, CartForm} from '@shopify/hydrogen';
 import {cn} from '~/utils/cn';
@@ -10,18 +11,26 @@ import {
   CART_REMOVE_ERROR_MESSAGE,
   CART_REMOVE_GENERIC_ERROR_MESSAGE,
 } from '~/content/errors';
+import {
+  AnimatePresence,
+  MotionLi,
+  fadeOutExitVariant,
+  prefersReducedMotion,
+} from '~/lib/motion';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {RootLoader} from '~/root';
 
 /**
  * CartLineItems Component
  * Story 5.5: Display Cart Line Items
+ * Story 5.7: Added remove functionality with fade-out animation (AC3)
  *
  * Displays cart line items with:
  * - Product thumbnail images
  * - Product names and variant details
  * - Prices (unit and line total)
- * - Quantities (read-only)
+ * - Quantities with +/- controls
+ * - Remove buttons with animated fade-out
  * - Semantic HTML and accessibility
  */
 export function CartLineItems() {
@@ -40,31 +49,44 @@ export function CartLineItems() {
   }
 
   const itemCount = cart.lines.nodes.length;
+  const reducedMotion = prefersReducedMotion();
 
   return (
-    <ul
-      // eslint-disable-next-line jsx-a11y/no-redundant-roles
-      role="list" // Required for screen readers when CSS removes list semantics (AC6, AC10)
-      aria-label={`Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
-      className="space-y-4"
-    >
-      {cart.lines.nodes.map((line) => (
-        <CartLineItem key={line.id} line={line} cart={cart as CartApiQueryFragment} />
-      ))}
-    </ul>
+    <Suspense fallback={<CartLineItemsSkeleton />}>
+      <AnimatePresence mode="popLayout">
+        <ul
+          // eslint-disable-next-line jsx-a11y/no-redundant-roles
+          role="list" // Required for screen readers when CSS removes list semantics (AC6, AC10)
+          aria-label={`Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+          className="space-y-4"
+        >
+          {cart.lines.nodes.map((line) => (
+            <CartLineItem
+              key={line.id}
+              line={line}
+              cart={cart as CartApiQueryFragment}
+              reducedMotion={reducedMotion}
+            />
+          ))}
+        </ul>
+      </AnimatePresence>
+    </Suspense>
   );
 }
 
 /**
  * Individual cart line item
  * Story 5.6: Added quantity controls with increment/decrement handlers
+ * Story 5.7: Added remove button with animation and ARIA announcements
  */
 function CartLineItem({
   line,
   cart,
+  reducedMotion,
 }: {
   line: CartApiQueryFragment['lines']['nodes'][0];
   cart: CartApiQueryFragment;
+  reducedMotion: boolean;
 }) {
   const {merchandise, quantity} = line;
   const {product, image, selectedOptions} = merchandise;
@@ -75,6 +97,11 @@ function CartLineItem({
 
   // Story 5.6 Task 7: Error handling with warm messaging (AC7)
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+  // Story 5.7 AC10: Success announcement for screen readers (Fix #6)
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(
+    null,
+  );
 
   // Detect and handle fetcher errors (Story 5.6 & 5.7)
   React.useEffect(() => {
@@ -125,6 +152,30 @@ function CartLineItem({
       }
     }
   }, [fetcher.data]);
+
+  // Story 5.7 AC10: Announce successful removal to screen readers (Fix #6)
+  React.useEffect(() => {
+    // When fetcher completes successfully and this item is no longer in cart
+    if (
+      fetcher.state === 'idle' &&
+      fetcher.data &&
+      !('errors' in fetcher.data)
+    ) {
+      // Check if this was a removal (item no longer exists in cart)
+      const itemStillInCart = cart.lines.nodes.some((l) => l.id === line.id);
+      if (!itemStillInCart) {
+        const announcement = `${product.title} removed from cart`;
+        setSuccessMessage(announcement);
+
+        // Auto-dismiss after 2 seconds
+        const timer = setTimeout(() => {
+          setSuccessMessage(null);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [fetcher.state, fetcher.data, cart.lines.nodes, line.id, product.title]);
 
   // Story 5.6 Task 2: Increment quantity handler (AC2)
   const handleIncrement = () => {
@@ -225,7 +276,30 @@ function CartLineItem({
   const altText = `${product.title} thumbnail`;
 
   return (
-    <li className="flex gap-4">
+    <MotionLi
+      layout
+      initial={{opacity: 1, scale: 1}}
+      animate={{opacity: 1, scale: 1}}
+      exit={
+        reducedMotion
+          ? {opacity: 0}
+          : {
+              opacity: 0,
+              scale: 0.95,
+              transition: {
+                duration: 0.3,
+                ease: [0.16, 1, 0.3, 1],
+              },
+            }
+      }
+      className="flex gap-4"
+    >
+      {/* Story 5.7 AC10: ARIA live region for success announcements (Fix #6) */}
+      {successMessage && (
+        <div role="status" aria-live="polite" className="sr-only">
+          {successMessage}
+        </div>
+      )}
       {/* Product Image */}
       <div className="flex-shrink-0">
         {imageUrl ? (
@@ -452,7 +526,7 @@ function CartLineItem({
             aria-label={`Remove ${product.title} from cart`}
           >
             {isUpdating ? (
-              '...'
+              <span className="sr-only">Removing...</span>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -475,7 +549,7 @@ function CartLineItem({
           </button>
         </div>
       </div>
-    </li>
+    </MotionLi>
   );
 }
 

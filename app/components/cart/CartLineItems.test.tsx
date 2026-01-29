@@ -29,6 +29,14 @@ vi.mock('@shopify/hydrogen', () => ({
   },
 }));
 
+// Mock motion library components (Story 5.7 - animation integration)
+vi.mock('~/lib/motion', () => ({
+  AnimatePresence: ({children}: any) => children,
+  MotionLi: ({children, ...props}: any) => <li {...props}>{children}</li>,
+  fadeOutExitVariant: {},
+  prefersReducedMotion: vi.fn(() => false),
+}));
+
 // Import mocks after vi.mock
 import {useRouteLoaderData, useFetcher} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
@@ -1254,7 +1262,7 @@ describe('CartLineItems', () => {
       render(<CartLineItems />);
 
       // Error appears in both mobile and desktop sections
-      const errorMessages = screen.getAllByText(/couldn't remove that/i);
+      const errorMessages = screen.getAllByText(/couldn't remove this item/i);
       expect(errorMessages.length).toBeGreaterThan(0);
     });
 

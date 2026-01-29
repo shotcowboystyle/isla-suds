@@ -24,11 +24,24 @@ vi.mock('react-router', () => ({
   useRouteLoaderData: () => ({
     cart: mockCartData,
   }),
+  useFetcher: vi.fn(() => ({
+    submit: vi.fn(),
+    state: 'idle',
+    data: null,
+  })),
   Link: ({to, children, ...props}: any) => (
     <a href={to} {...props}>
       {children}
     </a>
   ),
+}));
+
+// Mock motion library components (Story 5.7 - animation integration)
+vi.mock('~/lib/motion', () => ({
+  AnimatePresence: ({children}: any) => children,
+  MotionLi: ({children, ...props}: any) => <li {...props}>{children}</li>,
+  fadeOutExitVariant: {},
+  prefersReducedMotion: vi.fn(() => false),
 }));
 
 describe('CartDrawer', () => {

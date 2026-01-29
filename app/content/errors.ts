@@ -93,7 +93,7 @@ export const CART_QUANTITY_NETWORK_ERROR_MESSAGE =
  * Recovery: User can retry by clicking remove button again
  */
 export const CART_REMOVE_ERROR_MESSAGE =
-  "Couldn't remove that. Let's try again.";
+  "Couldn't remove this item. Let's try again.";
 
 /**
  * Cart item removal generic fallback message
