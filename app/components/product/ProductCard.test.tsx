@@ -1,5 +1,5 @@
 import {describe, it, expect, vi} from 'vitest';
-import {render, screen} from '@testing-library/react';
+import {render, screen, fireEvent} from '@testing-library/react';
 import {ProductCard} from './ProductCard';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
 
@@ -135,5 +135,69 @@ describe('ProductCard', () => {
 
     const card = container.querySelector('a');
     expect(card?.className).toContain('focus-visible:ring');
+  });
+
+  // Story 3.2: Texture reveal interaction tests
+  describe('texture reveal interaction', () => {
+    it('calls onReveal callback on mouse enter (desktop hover)', () => {
+      const onReveal = vi.fn();
+      render(<ProductCard product={mockProduct} onReveal={onReveal} />);
+
+      const card = screen.getByRole('link');
+      fireEvent.mouseEnter(card);
+
+      expect(onReveal).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('calls onReveal callback on click (mobile tap)', () => {
+      const onReveal = vi.fn();
+      const {container} = render(
+        <ProductCard product={mockProduct} onReveal={onReveal} />,
+      );
+
+      const card = container.querySelector('a');
+      card?.click();
+
+      expect(onReveal).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('calls onReveal callback on keyboard Enter', () => {
+      const onReveal = vi.fn();
+      const {container} = render(
+        <ProductCard product={mockProduct} onReveal={onReveal} />,
+      );
+
+      const card = container.querySelector('a');
+      card?.dispatchEvent(
+        new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}),
+      );
+
+      expect(onReveal).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('calls onReveal callback on keyboard Space', () => {
+      const onReveal = vi.fn();
+      const {container} = render(
+        <ProductCard product={mockProduct} onReveal={onReveal} />,
+      );
+
+      const card = container.querySelector('a');
+      card?.dispatchEvent(
+        new KeyboardEvent('keydown', {key: ' ', bubbles: true}),
+      );
+
+      expect(onReveal).toHaveBeenCalledWith(mockProduct.id);
+    });
+
+    it('does not call onReveal if callback not provided', () => {
+      const {container} = render(<ProductCard product={mockProduct} />);
+
+      const card = container.querySelector('a');
+      // Should not throw when onReveal is undefined
+      expect(() => {
+        card?.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true}));
+        card?.click();
+      }).not.toThrow();
+    });
   });
 });
