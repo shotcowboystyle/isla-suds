@@ -2,8 +2,6 @@ import * as React from 'react';
 import {Suspense} from 'react';
 import {useRouteLoaderData, Link, useFetcher} from 'react-router';
 import {useOptimisticCart, CartForm} from '@shopify/hydrogen';
-import {cn} from '~/utils/cn';
-import {formatMoney} from '~/utils/format-money';
 import {
   CART_QUANTITY_UPDATE_ERROR_MESSAGE,
   CART_QUANTITY_INVENTORY_ERROR_MESSAGE,
@@ -17,6 +15,8 @@ import {
   fadeOutExitVariant,
   prefersReducedMotion,
 } from '~/lib/motion';
+import {cn} from '~/utils/cn';
+import {formatMoney} from '~/utils/format-money';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {RootLoader} from '~/root';
 
@@ -55,7 +55,7 @@ export function CartLineItems() {
     <Suspense fallback={<CartLineItemsSkeleton />}>
       <AnimatePresence mode="popLayout">
         <ul
-          // eslint-disable-next-line jsx-a11y/no-redundant-roles
+           
           role="list" // Required for screen readers when CSS removes list semantics (AC6, AC10)
           aria-label={`Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
           className="space-y-4"

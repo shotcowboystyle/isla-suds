@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
 import {type FetcherWithComponents} from 'react-router';
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
-import {useExplorationStore} from '~/stores/exploration';
 import {
   ADD_TO_CART_ERROR_MESSAGE,
   ADD_TO_CART_BUTTON_STATES,
 } from '~/content/errors';
+import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 
 export function AddToCartButton({

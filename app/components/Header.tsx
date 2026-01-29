@@ -5,17 +5,17 @@ import {
   useAsyncValue,
   useLocation,
   useNavigate,
+  useRouteLoaderData,
 } from 'react-router';
-import {
-  type CartViewPayload,
-  useAnalytics,
-  useOptimisticCart,
-} from '@shopify/hydrogen';
+import {useOptimisticCart} from '@shopify/hydrogen';
+import {ShoppingBag} from 'lucide-react';
 import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
 import {useHomeScroll} from '~/contexts/home-scroll-context';
+import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
+import type {RootLoader} from '~/root';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -102,9 +102,14 @@ export function Header({
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
         />
-        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+        <HeaderCtas isLoggedIn={isLoggedIn} />
 
-        {isPathNotShowCloseButton && <CartToggle cart={cart} />}
+        {/* Story 5.10: Cart icon with badge */}
+        <Suspense fallback={<CartIconButton itemCount={0} />}>
+          <Await resolve={cart}>
+            <CartIconButtonWrapper />
+          </Await>
+        </Suspense>
 
         {!isPathNotShowCloseButton && (
           <button
@@ -221,8 +226,7 @@ export function HeaderMenu({
 
 function HeaderCtas({
   isLoggedIn,
-  cart,
-}: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
+}: Pick<HeaderProps, 'isLoggedIn'>) {
   return (
     <nav className="header-ctas" role="navigation" aria-label="Header CTAs">
       <HeaderMenuMobileToggle />
@@ -234,7 +238,6 @@ function HeaderCtas({
         </Suspense>
       </NavLink>
       <SearchToggle />
-      <CartToggle cart={cart} />
     </nav>
   );
 }
@@ -262,51 +265,68 @@ function SearchToggle() {
   );
 }
 
-function CartBadge({count}: {count: number | null}) {
-  const {open} = useAside();
-  const {publish, shop, cart, prevCart} = useAnalytics();
-
-  return (
-    <a
-      href="/cart"
-      className="group flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2"
-      aria-label="Shopping cart"
-      onClick={(e) => {
-        e.preventDefault();
-        open('cart');
-        publish('cart_viewed', {
-          cart,
-          prevCart,
-          shop,
-          url: window.location.href || '',
-        } as CartViewPayload);
-      }}
-    >
-      <span className="relative shrink-0 hidden sm:block">
-        <span className="size-8 sm:size-9 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full relative">
-          <span className="text-sm absolute leading-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-[39%] text-black dark:text-white group-hover:text-white dark:group-hover:text-black transition duration-300">
-            Cart {count === null ? <span>&nbsp;</span> : count}
-          </span>
-        </span>
-      </span>
-    </a>
-  );
-}
-
-function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
-  return (
-    <Suspense fallback={<CartBadge count={null} />}>
-      <Await resolve={cart}>
-        <CartBanner />
-      </Await>
-    </Suspense>
-  );
-}
-
-function CartBanner() {
+/**
+ * Story 5.10: Cart Icon Button Wrapper
+ * Wraps CartIconButton with cart data from useOptimisticCart
+ */
+function CartIconButtonWrapper() {
   const originalCart = useAsyncValue() as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
-  return <CartBadge count={cart?.totalQuantity ?? 0} />;
+  return <CartIconButton itemCount={cart?.totalQuantity ?? 0} />;
+}
+
+/**
+ * Story 5.10: Cart Icon Button
+ * Cart icon with badge that opens CartDrawer via Zustand
+ */
+function CartIconButton({itemCount}: {itemCount: number}) {
+  const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
+
+  const hasItems = itemCount > 0;
+
+  const handleCartClick = () => {
+    setCartDrawerOpen(true);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCartClick}
+      className={cn(
+        'relative',
+        'p-2.5', // 10px padding = 44px touch target with 24px icon
+        'text-[var(--text-primary)]',
+        'hover:text-[var(--accent-primary)]',
+        'transition-colors',
+        'rounded',
+        'focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]',
+      )}
+      aria-label={
+        hasItems
+          ? `Shopping cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
+          : 'Shopping cart, empty'
+      }
+    >
+      <ShoppingBag className="h-6 w-6" />
+
+      {/* Badge - only show if has items (AC2, AC3) */}
+      {hasItems && (
+        <span
+          className={cn(
+            'absolute -top-1 -right-1',
+            'min-w-[20px] h-5 px-1.5',
+            'bg-[var(--accent-primary)] text-white',
+            'rounded-full',
+            'text-xs font-medium',
+            'flex items-center justify-center',
+          )}
+          aria-hidden="true" // Screen reader gets count from button aria-label
+        >
+          {itemCount > 99 ? '99+' : itemCount}
+        </span>
+      )}
+    </button>
+  );
 }
 
 const FALLBACK_HEADER_MENU = {

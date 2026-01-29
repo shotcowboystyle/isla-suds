@@ -1,7 +1,7 @@
 import {Link} from 'react-router';
+import {CART_MESSAGES} from '~/content/cart';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
-import {CART_MESSAGES} from '~/content/cart';
 
 /**
  * EmptyCart Component

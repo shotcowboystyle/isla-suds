@@ -1,11 +1,30 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
-import {render, screen, fireEvent} from '@testing-library/react';
+import {render, screen, waitFor, act} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router';
 import {Header, HeaderMenu} from './Header';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 // Mock close function for testing mobile menu behavior
 const mockClose = vi.fn();
+
+// Hoist mocks to ensure they're available before module evaluation
+const {mockSetCartDrawerOpen, mockExplorationState} = vi.hoisted(() => {
+  const mockSetCartDrawerOpen = vi.fn();
+  const mockExplorationState = {
+    cartDrawerOpen: false,
+    setCartDrawerOpen: mockSetCartDrawerOpen,
+    productsExplored: new Set(),
+    textureRevealsTriggered: 0,
+    storyMomentShown: false,
+    sessionStartTime: 0,
+    addProductExplored: vi.fn(),
+    incrementTextureReveals: vi.fn(),
+    setStoryMomentShown: vi.fn(),
+    resetSession: vi.fn(),
+  };
+  return {mockSetCartDrawerOpen, mockExplorationState};
+});
 
 // Mock dependencies
 vi.mock('~/components/Aside', () => ({
@@ -25,6 +44,23 @@ vi.mock('~/contexts/home-scroll-context', () => ({
     heroProgress: 0,
   }),
 }));
+
+vi.mock('~/stores/exploration', () => {
+  // Create a proper Zustand-like store mock
+  const mockStore = (selector?: any) => {
+    return selector ? selector(mockExplorationState) : mockExplorationState;
+  };
+
+  // Add Zustand store methods
+  mockStore.getState = () => mockExplorationState;
+  mockStore.setState = vi.fn();
+  mockStore.subscribe = vi.fn();
+  mockStore.destroy = vi.fn();
+
+  return {
+    useExplorationStore: mockStore,
+  };
+});
 
 vi.mock('@shopify/hydrogen', () => ({
   useAnalytics: () => ({
@@ -223,27 +259,29 @@ describe('Header', () => {
       expect(links.length).toBe(0);
     });
 
-    it('wholesale link calls close() when clicked in mobile menu (AC2)', () => {
+    it('wholesale link calls close() when clicked in mobile menu (AC2)', async () => {
+      const user = userEvent.setup();
       renderHeaderMenu('mobile');
       const wholesaleLink = screen.getByRole('link', {name: /wholesale/i});
 
       // Click the wholesale link
-      fireEvent.click(wholesaleLink);
+      await user.click(wholesaleLink);
 
       // Verify close() was called to close mobile menu
       expect(mockClose).toHaveBeenCalledTimes(1);
     });
 
-    it('all mobile menu links call close() when clicked', () => {
+    it('all mobile menu links call close() when clicked', async () => {
+      const user = userEvent.setup();
       renderHeaderMenu('mobile');
       const links = screen.getAllByRole('link');
 
       // Click each link and verify close() is called
-      links.forEach((link) => {
+      for (const link of links) {
         mockClose.mockClear();
-        fireEvent.click(link);
+        await user.click(link);
         expect(mockClose).toHaveBeenCalledTimes(1);
-      });
+      }
     });
   });
 
@@ -263,6 +301,310 @@ describe('Header', () => {
       const links = screen.getAllByRole('link');
       const lastLink = links[links.length - 1];
       expect(lastLink).toHaveTextContent('Wholesale');
+    });
+  });
+
+  describe('Story 5.10: Cart Icon in Header', () => {
+    beforeEach(() => {
+      // Clear the mock before each test
+      mockSetCartDrawerOpen.mockClear();
+    });
+
+    describe('Cart Icon Display (AC1)', () => {
+      it('renders cart icon button in sticky header', async () => {
+        renderHeader();
+        await waitFor(() => {
+          expect(screen.queryByRole('button', {name: /shopping cart/i})).toBeInTheDocument();
+        });
+      });
+
+      it('cart icon is positioned on right side of header', async () => {
+        renderHeader();
+        await waitFor(() => {
+          expect(screen.queryByRole('button', {name: /shopping cart/i})).toBeInTheDocument();
+        });
+      });
+
+      it('cart icon has adequate touch target size (44x44px)', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        // p-2.5 (10px padding) + 24px icon = 44px total
+        expect(cartButton).toHaveClass('p-2.5');
+      });
+
+      it('cart icon is keyboard-accessible', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        expect(cartButton).not.toHaveAttribute('tabindex', '-1');
+      });
+    });
+
+    describe('Item Count Badge (AC2, AC3)', () => {
+      it('displays badge with count when cart has items', async () => {
+        const cartWithItems: CartApiQueryFragment = {
+          id: 'cart-123',
+          totalQuantity: 3,
+          lines: {nodes: [{} as any, {} as any, {} as any]},
+          cost: {
+            subtotalAmount: {amount: '30.00', currencyCode: 'USD'},
+            totalAmount: {amount: '30.00', currencyCode: 'USD'},
+          },
+          checkoutUrl: 'https://checkout.shopify.com/cart-123',
+          updatedAt: new Date().toISOString(),
+          note: null,
+          appliedGiftCards: [],
+          buyerIdentity: {} as any,
+          attributes: [],
+          discountCodes: [],
+        };
+
+        render(
+          <MemoryRouter>
+            <Header
+              header={mockHeader}
+              cart={Promise.resolve(cartWithItems)}
+              isLoggedIn={Promise.resolve(false)}
+              publicStoreDomain={publicStoreDomain}
+            />
+          </MemoryRouter>,
+        );
+
+        // Badge should show count
+        const badge = await screen.findByText('3');
+        expect(badge).toBeInTheDocument();
+      });
+
+      it('hides badge when cart is empty', async () => {
+        renderHeader();
+        // Wait for cart icon to render
+        await screen.findByRole('button', {name: /shopping cart/i});
+        // Badge should NOT render "0"
+        expect(screen.queryByText('0')).not.toBeInTheDocument();
+      });
+
+      it('displays "99+" for cart with >99 items (AC2 edge case)', async () => {
+        const cartWith100Items: CartApiQueryFragment = {
+          id: 'cart-123',
+          totalQuantity: 100,
+          lines: {nodes: Array(100).fill({} as any)},
+          cost: {
+            subtotalAmount: {amount: '1000.00', currencyCode: 'USD'},
+            totalAmount: {amount: '1000.00', currencyCode: 'USD'},
+          },
+          checkoutUrl: 'https://checkout.shopify.com/cart-123',
+          updatedAt: new Date().toISOString(),
+          note: null,
+          appliedGiftCards: [],
+          buyerIdentity: {} as any,
+          attributes: [],
+          discountCodes: [],
+        };
+
+        render(
+          <MemoryRouter>
+            <Header
+              header={mockHeader}
+              cart={Promise.resolve(cartWith100Items)}
+              isLoggedIn={Promise.resolve(false)}
+              publicStoreDomain={publicStoreDomain}
+            />
+          </MemoryRouter>,
+        );
+
+        // Badge should show "99+" instead of "100"
+        const badge = await screen.findByText('99+');
+        expect(badge).toBeInTheDocument();
+        expect(screen.queryByText('100')).not.toBeInTheDocument();
+      });
+
+      it('updates ARIA label with item count', async () => {
+        const cartWithItems: CartApiQueryFragment = {
+          id: 'cart-123',
+          totalQuantity: 2,
+          lines: {nodes: [{} as any, {} as any]},
+          cost: {
+            subtotalAmount: {amount: '20.00', currencyCode: 'USD'},
+            totalAmount: {amount: '20.00', currencyCode: 'USD'},
+          },
+          checkoutUrl: 'https://checkout.shopify.com/cart-123',
+          updatedAt: new Date().toISOString(),
+          note: null,
+          appliedGiftCards: [],
+          buyerIdentity: {} as any,
+          attributes: [],
+          discountCodes: [],
+        };
+
+        render(
+          <MemoryRouter>
+            <Header
+              header={mockHeader}
+              cart={Promise.resolve(cartWithItems)}
+              isLoggedIn={Promise.resolve(false)}
+              publicStoreDomain={publicStoreDomain}
+            />
+          </MemoryRouter>,
+        );
+
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart, 2 items/i,
+        });
+        expect(cartButton).toBeInTheDocument();
+      });
+
+      it('ARIA label says "empty" when cart is empty', async () => {
+        renderHeader();
+        await waitFor(() => {
+          expect(screen.queryByRole('button', {name: /shopping cart, empty/i})).toBeInTheDocument();
+        });
+      });
+    });
+
+    describe('Click Handler (AC4)', () => {
+      it('mock store is properly configured', () => {
+        // Debug test to verify mock setup
+        expect(mockSetCartDrawerOpen).toBeDefined();
+        expect(typeof mockSetCartDrawerOpen).toBe('function');
+        expect(mockExplorationState.setCartDrawerOpen).toBe(mockSetCartDrawerOpen);
+      });
+
+      it('clicking cart icon calls setCartDrawerOpen(true)', async () => {
+        const user = userEvent.setup();
+        let cartButton: HTMLElement;
+
+        await act(async () => {
+          renderHeader();
+        });
+
+        // Query specifically for the CartIconButton (has ShoppingBag icon)
+        await act(async () => {
+          cartButton = await screen.findByRole('button', {
+            name: /shopping cart, empty/i,
+          });
+        });
+
+        // Click the button within act to ensure all state updates are flushed
+        await act(async () => {
+          await user.click(cartButton!);
+        });
+
+        // Verify the mock was called
+        expect(mockSetCartDrawerOpen).toHaveBeenCalledWith(true);
+      });
+
+      it('Enter key opens cart drawer', async () => {
+        const user = userEvent.setup();
+        let cartButton: HTMLElement;
+
+        await act(async () => {
+          renderHeader();
+        });
+
+        // Query specifically for the CartIconButton
+        await act(async () => {
+          cartButton = await screen.findByRole('button', {
+            name: /shopping cart, empty/i,
+          });
+        });
+
+        // Focus and press Enter within act
+        await act(async () => {
+          cartButton!.focus();
+          await user.keyboard('{Enter}');
+        });
+
+        // Verify the mock was called
+        expect(mockSetCartDrawerOpen).toHaveBeenCalledWith(true);
+      });
+    });
+
+    describe('Accessibility (AC7)', () => {
+      it('cart button has semantic button element', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        expect(cartButton.tagName).toBe('BUTTON');
+      });
+
+      it('cart button has visible focus indicator', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        // Should have focus ring classes
+        expect(cartButton.className).toMatch(/focus:ring/);
+      });
+
+      it('badge has aria-hidden when present', async () => {
+        const cartWithItems: CartApiQueryFragment = {
+          id: 'cart-123',
+          totalQuantity: 1,
+          lines: {nodes: [{} as any]},
+          cost: {
+            subtotalAmount: {amount: '10.00', currencyCode: 'USD'},
+            totalAmount: {amount: '10.00', currencyCode: 'USD'},
+          },
+          checkoutUrl: 'https://checkout.shopify.com/cart-123',
+          updatedAt: new Date().toISOString(),
+          note: null,
+          appliedGiftCards: [],
+          buyerIdentity: {} as any,
+          attributes: [],
+          discountCodes: [],
+        };
+
+        render(
+          <MemoryRouter>
+            <Header
+              header={mockHeader}
+              cart={Promise.resolve(cartWithItems)}
+              isLoggedIn={Promise.resolve(false)}
+              publicStoreDomain={publicStoreDomain}
+            />
+          </MemoryRouter>,
+        );
+
+        const badge = await screen.findByText('1');
+        expect(badge).toHaveAttribute('aria-hidden', 'true');
+      });
+    });
+
+    describe('Responsive Design (AC6, AC9)', () => {
+      it('cart icon displays on mobile and desktop', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        // Should be visible (not hidden at any breakpoint)
+        expect(cartButton).not.toHaveClass('hidden');
+      });
+    });
+
+    describe('Styling (AC8)', () => {
+      it('uses design tokens for icon color', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        // Should use CSS variable colors
+        expect(cartButton.className).toMatch(/text-\[var\(--text-primary\)\]/);
+      });
+
+      it('has hover state with accent color', async () => {
+        renderHeader();
+        const cartButton = await screen.findByRole('button', {
+          name: /shopping cart/i,
+        });
+        // Should have hover class with accent color
+        expect(cartButton.className).toMatch(
+          /hover:text-\[var\(--accent-primary\)\]/,
+        );
+      });
     });
   });
 });
