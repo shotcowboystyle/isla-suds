@@ -62,3 +62,27 @@ export const ADD_TO_CART_BUTTON_STATES = {
   LOADING: 'Adding...',
   SUCCESS: 'Added ✓',
 } as const;
+
+/**
+ * Cart quantity update error messages (Story 5.6)
+ * Displayed when: Updating cart line item quantity fails
+ * Recovery: User can retry by clicking +/- button again
+ */
+export const CART_QUANTITY_UPDATE_ERROR_MESSAGE =
+  "Couldn't update quantity. Let's try again.";
+
+/**
+ * Cart quantity update inventory error message
+ * Displayed when: Requested quantity exceeds available inventory
+ * Recovery: Quantity stays at current value, user informed of limit
+ */
+export const CART_QUANTITY_INVENTORY_ERROR_MESSAGE =
+  "We don't have that many in stock right now.";
+
+/**
+ * Cart quantity update network error message
+ * Displayed when: Network request fails or times out
+ * Recovery: User can retry when connection is restored
+ */
+export const CART_QUANTITY_NETWORK_ERROR_MESSAGE =
+  "Connection hiccup. Check your internet and try again.";

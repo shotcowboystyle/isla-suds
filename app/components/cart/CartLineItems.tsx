@@ -1,8 +1,13 @@
 import * as React from 'react';
-import {useRouteLoaderData,Link} from 'react-router';
-import {useOptimisticCart} from '@shopify/hydrogen';
+import {useRouteLoaderData, Link, useFetcher} from 'react-router';
+import {useOptimisticCart, CartForm} from '@shopify/hydrogen';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
+import {
+  CART_QUANTITY_UPDATE_ERROR_MESSAGE,
+  CART_QUANTITY_INVENTORY_ERROR_MESSAGE,
+  CART_QUANTITY_NETWORK_ERROR_MESSAGE,
+} from '~/content/errors';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {RootLoader} from '~/root';
 
@@ -50,6 +55,7 @@ export function CartLineItems() {
 
 /**
  * Individual cart line item
+ * Story 5.6: Added quantity controls with increment/decrement handlers
  */
 function CartLineItem({
   line,
@@ -60,6 +66,101 @@ function CartLineItem({
 }) {
   const {merchandise, quantity} = line;
   const {product, image, selectedOptions} = merchandise;
+
+  // Story 5.6: useFetcher for cart mutations
+  const fetcher = useFetcher();
+  const isUpdating = fetcher.state === 'submitting';
+
+  // Story 5.6 Task 7: Error handling with warm messaging (AC7)
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+  // Detect and handle fetcher errors
+  React.useEffect(() => {
+    if (fetcher.data && 'errors' in fetcher.data && fetcher.data.errors) {
+      const errors = fetcher.data.errors as Array<{message: string}>;
+      if (errors.length > 0) {
+        const errorMsg = errors[0].message.toLowerCase();
+
+        // Differentiate error types
+        let message = CART_QUANTITY_UPDATE_ERROR_MESSAGE;
+
+        if (
+          errorMsg.includes('inventory') ||
+          errorMsg.includes('stock') ||
+          errorMsg.includes('available')
+        ) {
+          message = CART_QUANTITY_INVENTORY_ERROR_MESSAGE;
+        } else if (
+          errorMsg.includes('network') ||
+          errorMsg.includes('connection') ||
+          errorMsg.includes('timeout')
+        ) {
+          message = CART_QUANTITY_NETWORK_ERROR_MESSAGE;
+        }
+
+        setErrorMessage(message);
+
+        // Log error for debugging (AC7)
+        console.error('Cart quantity update error:', errors[0]);
+
+        // Auto-dismiss after 3 seconds (AC7)
+        const timer = setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [fetcher.data]);
+
+  // Story 5.6 Task 2: Increment quantity handler (AC2)
+  const handleIncrement = () => {
+    const newQuantity = quantity + 1;
+
+    fetcher.submit(
+      {
+        action: CartForm.ACTIONS.LinesUpdate,
+        inputs: {
+          lines: [
+            {
+              id: line.id,
+              quantity: newQuantity,
+            },
+          ],
+        },
+      },
+      {
+        method: 'POST',
+        action: '/cart',
+      },
+    );
+  };
+
+  // Story 5.6 Task 3: Decrement quantity handler (AC3)
+  const handleDecrement = () => {
+    // Defensive: prevent decrement below 1 (button should already be disabled)
+    if (quantity <= 1) return;
+
+    const newQuantity = quantity - 1;
+
+    fetcher.submit(
+      {
+        action: CartForm.ACTIONS.LinesUpdate,
+        inputs: {
+          lines: [
+            {
+              id: line.id,
+              quantity: newQuantity,
+            },
+          ],
+        },
+      },
+      {
+        method: 'POST',
+        action: '/cart',
+      },
+    );
+  };
 
   // Calculate prices
   const lineTotal = line.cost.totalAmount;
@@ -170,10 +271,61 @@ function CartLineItem({
             </span>
           )}
 
-          {/* Quantity - Mobile Only */}
-          <span className="sm:hidden text-sm text-[var(--text-muted)]">
-            Qty: {quantity}
-          </span>
+          {/* Quantity Controls - Mobile Only */}
+          <div className="sm:hidden flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDecrement}
+                disabled={quantity <= 1 || isUpdating}
+                className={cn(
+                  'inline-flex items-center justify-center rounded transition-colors',
+                  'h-11 w-11', // 44px touch target for mobile
+                  quantity <= 1 || isUpdating
+                    ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                )}
+                aria-label={`Decrease quantity for ${product.title}`}
+                aria-disabled={quantity <= 1}
+              >
+                {isUpdating ? '...' : '−'}
+              </button>
+
+              <span
+                className="text-base font-medium min-w-[2ch] text-center"
+                aria-label={`Quantity: ${quantity}`}
+              >
+                {quantity}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleIncrement}
+                disabled={isUpdating}
+                className={cn(
+                  'inline-flex items-center justify-center rounded transition-colors',
+                  'h-11 w-11', // 44px touch target for mobile
+                  isUpdating
+                    ? 'bg-neutral-200 text-neutral-400 cursor-wait'
+                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                )}
+                aria-label={`Increase quantity for ${product.title}`}
+              >
+                {isUpdating ? '...' : '+'}
+              </button>
+            </div>
+
+            {/* Error message - Mobile (AC7) */}
+            {errorMessage && (
+              <div
+                role="alert"
+                aria-live="polite"
+                className="text-sm text-red-600 mt-1"
+              >
+                {errorMessage}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Pricing - Desktop: Right-aligned Column */}
@@ -190,10 +342,61 @@ function CartLineItem({
             </span>
           </div>
 
-          {/* Quantity - Desktop Only */}
-          <span className="hidden sm:inline text-sm text-[var(--text-muted)]">
-            Qty: {quantity}
-          </span>
+          {/* Quantity Controls - Desktop Only */}
+          <div className="hidden sm:flex flex-col gap-1 items-end">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDecrement}
+                disabled={quantity <= 1 || isUpdating}
+                className={cn(
+                  'inline-flex items-center justify-center rounded transition-colors',
+                  'h-8 w-8', // 32px button for desktop
+                  quantity <= 1 || isUpdating
+                    ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                )}
+                aria-label={`Decrease quantity for ${product.title}`}
+                aria-disabled={quantity <= 1}
+              >
+                {isUpdating ? '...' : '−'}
+              </button>
+
+              <span
+                className="text-base font-medium min-w-[2ch] text-center"
+                aria-label={`Quantity: ${quantity}`}
+              >
+                {quantity}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleIncrement}
+                disabled={isUpdating}
+                className={cn(
+                  'inline-flex items-center justify-center rounded transition-colors',
+                  'h-8 w-8', // 32px button for desktop
+                  isUpdating
+                    ? 'bg-neutral-200 text-neutral-400 cursor-wait'
+                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                )}
+                aria-label={`Increase quantity for ${product.title}`}
+              >
+                {isUpdating ? '...' : '+'}
+              </button>
+            </div>
+
+            {/* Error message - Desktop (AC7) */}
+            {errorMessage && (
+              <div
+                role="alert"
+                aria-live="polite"
+                className="text-sm text-red-600"
+              >
+                {errorMessage}
+              </div>
+            )}
+          </div>
 
           {/* Line Total */}
           <span className="text-base font-medium text-[var(--text-primary)]">
