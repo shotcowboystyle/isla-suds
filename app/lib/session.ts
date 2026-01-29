@@ -29,6 +29,8 @@ export class AppSession implements HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
+        // HTTPS-only in production (prevents MITM attacks)
+        secure: process.env.NODE_ENV === 'production',
       },
     });
 
