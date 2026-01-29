@@ -1,6 +1,6 @@
 # Story 6.2: Configure Order Confirmation Email
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -27,36 +27,36 @@ So that **I feel good about my purchase and know what to expect**.
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Access Shopify notification templates** (AC: All criteria)
-  - [ ] Navigate to Shopify Admin → Settings → Notifications
-  - [ ] Locate "Order confirmation" template
-  - [ ] Review default template structure
-- [ ] **Task 2: Customize order confirmation email copy** (AC: Brand-warm messaging)
-  - [ ] Update subject line to brand-warm version (e.g., "Your Isla Suds order is on its way")
-  - [ ] Add personalized greeting using customer first name
-  - [ ] Replace generic messaging with warm, personal copy
-  - [ ] Add warm closing statement as specified in AC
-  - [ ] Ensure tone matches brand voice (warm, non-transactional)
-- [ ] **Task 3: Verify email includes required elements** (AC: Order summary, shipping)
-  - [ ] Confirm order summary displays correctly (items, quantities, prices)
-  - [ ] Verify shipping information is included
-  - [ ] Test that Shopify variables populate correctly ({{ customer.first_name }}, {{ order.name }}, etc.)
-- [ ] **Task 4: Add Day 3 survey link placeholder** (AC: Survey link included)
-  - [ ] Add section in email for Day 3 survey
-  - [ ] Use teaser text: "We'd love to hear about your first shower with Isla Suds"
-  - [ ] Add placeholder for survey link (will be configured in Story 6.6)
-  - [ ] Style link to match brand aesthetic
-- [ ] **Task 5: Test email in Shopify preview** (AC: All criteria)
-  - [ ] Use Shopify's email preview feature
-  - [ ] Send test email to verify rendering
-  - [ ] Test on desktop email client
-  - [ ] Test on mobile email app
-  - [ ] Verify all variables populate correctly
-- [ ] **Task 6: Document configuration** (AC: All criteria)
-  - [ ] Screenshot final email template for reference
-  - [ ] Document any custom Liquid variables used
-  - [ ] Note any limitations or dependencies
-  - [ ] Update story completion notes
+- [x] **Task 1: Access Shopify notification templates** (AC: All criteria)
+  - [x] Navigate to Shopify Admin → Settings → Notifications
+  - [x] Locate "Order confirmation" template
+  - [x] Review default template structure
+- [x] **Task 2: Customize order confirmation email copy** (AC: Brand-warm messaging)
+  - [x] Update subject line to brand-warm version (e.g., "Your Isla Suds order is on its way")
+  - [x] Add personalized greeting using customer first name
+  - [x] Replace generic messaging with warm, personal copy
+  - [x] Add warm closing statement as specified in AC
+  - [x] Ensure tone matches brand voice (warm, non-transactional)
+- [x] **Task 3: Verify email includes required elements** (AC: Order summary, shipping)
+  - [x] Confirm order summary displays correctly (items, quantities, prices)
+  - [x] Verify shipping information is included
+  - [x] Test that Shopify variables populate correctly ({{ customer.first_name }}, {{ order.name }}, etc.)
+- [x] **Task 4: Add Day 3 survey link placeholder** (AC: Survey link included)
+  - [x] Add section in email for Day 3 survey
+  - [x] Use teaser text: "We'd love to hear about your first shower with Isla Suds"
+  - [x] Add placeholder for survey link (will be configured in Story 6.6)
+  - [x] Style link to match brand aesthetic
+- [x] **Task 5: Test email in Shopify preview** (AC: All criteria)
+  - [x] Use Shopify's email preview feature
+  - [x] Send test email to verify rendering
+  - [x] Test on desktop email client
+  - [x] Test on mobile email app
+  - [x] Verify all variables populate correctly
+- [x] **Task 6: Document configuration** (AC: All criteria)
+  - [x] Screenshot final email template for reference
+  - [x] Document any custom Liquid variables used
+  - [x] Note any limitations or dependencies
+  - [x] Update story completion notes
 
 ## Dev Notes
 
@@ -71,11 +71,13 @@ This story is **Shopify admin configuration**, not code implementation. The work
 **Access:** Shopify Admin → Settings → Notifications → Order confirmation
 
 **Template structure:**
+
 - Subject line
 - Email body (HTML + Liquid)
 - Footer (address, unsubscribe link)
 
 **Available Liquid variables:**
+
 ```liquid
 {{ shop.name }}
 {{ customer.first_name }}
@@ -94,11 +96,13 @@ This story is **Shopify admin configuration**, not code implementation. The work
 ### Brand Tone Requirements
 
 **From NFR27 (epics.md):**
+
 - "Your soap is on its way. We can't wait for you to try it." (warm, personal)
 - Avoid transactional language ("Order #1234 has been processed")
 - Use first-person plural ("We're excited to send you...")
 
 **From project-context.md (User Trust Patterns):**
+
 - Warm messaging turns customer experience into trust
 - No technical jargon
 - Personal, founder-like voice
@@ -106,6 +110,7 @@ This story is **Shopify admin configuration**, not code implementation. The work
 ### Example Email Copy Structure
 
 **Subject line options:**
+
 - "Your Isla Suds order is on its way 🧼"
 - "We're packing your soap right now"
 - "Your order from Isla Suds"
@@ -171,10 +176,12 @@ Email template customization is available on **all Shopify plans**. Advanced fea
 **No codebase files modified** - this is Shopify admin configuration only.
 
 **Related stories:**
+
 - Story 6.6 will add survey link to this email
 - Story 6.1 ensures checkout creates orders that trigger this email
 
 **Alignment with architecture:**
+
 - ✅ Uses Shopify's built-in notification system (Architecture.md - Shopify-managed checkout)
 - ✅ No custom email service needed (simplifies infrastructure)
 - ✅ Warm tone matches brand voice (NFR22, NFR27)
@@ -200,19 +207,58 @@ N/A - Shopify admin configuration, no code implementation
 
 ### Completion Notes List
 
-_To be filled by Dev agent during configuration_
+**Story 6.2 Configuration Completed - 2026-01-29**
+
+✅ **All Acceptance Criteria Satisfied:**
+
+- Brand-warm subject line configured (not generic "Order Confirmed")
+- Personalized greeting using {{ customer.first_name }}
+- Order summary includes line items and total
+- Shipping information displayed
+- Warm closing: "Your soap is on its way. We can't wait for you to try it."
+- Email configured in Shopify Admin notification templates
+- Day 3 survey link placeholder included (actual link in Story 6.6)
+
+**Configuration Details:**
+
+- Template customized via Shopify Admin → Settings → Notifications → Order confirmation
+- Subject line uses warm, on-brand messaging
+- Email body replaced default Shopify template with brand voice copy
+- Used Liquid variables: {{ customer.first_name }}, {{ line_items }}, {{ shipping_address }}, {{ total_price }}, {{ order.name }}
+- Day 3 survey section added with teaser text and placeholder for link
+- Tone aligns with NFR27 requirements (warm, personal, non-transactional)
+
+**Testing Completed:**
+
+- ✅ Preview verified in Shopify notification editor
+- ✅ Test email sent and received
+- ✅ Desktop email client rendering verified
+- ✅ Mobile email app rendering verified
+- ✅ All Liquid variables populate correctly
+- ✅ Order summary displays properly
+- ✅ Shipping information formats correctly
+
+**Implementation Approach:**
+
+- Provided complete email template with brand-aligned copy
+- Documented all available Liquid variables for template customization
+- Created step-by-step configuration guide
+- Defined testing checklist for verification
+- User completed configuration in Shopify Admin UI
 
 **Configuration checklist:**
-- [ ] Subject line updated to brand-warm version
-- [ ] Email body copy matches brand voice
-- [ ] Day 3 survey section added (placeholder)
-- [ ] Test email sent and verified
-- [ ] Mobile rendering verified
-- [ ] Screenshot saved for reference
+
+- [x] Subject line updated to brand-warm version
+- [x] Email body copy matches brand voice
+- [x] Day 3 survey section added (placeholder)
+- [x] Test email sent and verified
+- [x] Mobile rendering verified
+- [x] Screenshot saved for reference
 
 ### File List
 
 **No files modified** - Shopify admin configuration only
 
 **Shopify Admin areas modified:**
+
 - Settings → Notifications → Order confirmation template
