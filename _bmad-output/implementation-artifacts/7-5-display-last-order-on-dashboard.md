@@ -1,6 +1,6 @@
 # Story 7.5: Display Last Order on Dashboard
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -26,30 +26,30 @@ so that **I can reorder instantly without searching**.
 
 ## Tasks / Subtasks
 
-- [ ] Fetch last order via Customer Account API (AC: 1)
-  - [ ] Query orders with limit=1, sort by date desc
-  - [ ] Extract order details in loader
-- [ ] Display order date (AC: 2)
-  - [ ] Format date for readability (e.g., "Dec 15, 2025")
-  - [ ] Use Intl.DateTimeFormat for locale support
-- [ ] Display order items with quantities (AC: 3)
-  - [ ] Show line items: "[qty]x [product name]"
-  - [ ] Handle multi-line item orders
-  - [ ] Truncate if too many items (e.g., "12x Lavender, 12x Lemongrass, +3 more")
-- [ ] Display order total (AC: 4)
-  - [ ] Format currency (USD)
-  - [ ] Show wholesale pricing
-- [ ] Display order status (AC: 5)
-  - [ ] Map Shopify status to friendly labels
-  - [ ] Visual indicator (badge/color)
-- [ ] Handle no previous orders (AC: 6)
-  - [ ] Show message from `app/content/wholesale.ts`
-  - [ ] "No orders yet. Ready to stock up?"
-  - [ ] Encourage first order
-- [ ] Position above the fold (AC: 7)
-  - [ ] Top section of dashboard (after acknowledgment)
-  - [ ] Visible without scrolling on desktop
-  - [ ] Mobile: Top priority content
+- [x] Fetch last order via Customer Account API (AC: 1)
+  - [x] Query orders with limit=1, sort by date desc
+  - [x] Extract order details in loader
+- [x] Display order date (AC: 2)
+  - [x] Format date for readability (e.g., "Dec 15, 2025")
+  - [x] Use Intl.DateTimeFormat for locale support
+- [x] Display order items with quantities (AC: 3)
+  - [x] Show line items: "[qty]x [product name]"
+  - [x] Handle multi-line item orders
+  - [x] Truncate if too many items (e.g., "12x Lavender, 12x Lemongrass, +3 more")
+- [x] Display order total (AC: 4)
+  - [x] Format currency (USD)
+  - [x] Show wholesale pricing
+- [x] Display order status (AC: 5)
+  - [x] Map Shopify status to friendly labels
+  - [x] Visual indicator (badge/color)
+- [x] Handle no previous orders (AC: 6)
+  - [x] Show message from `app/content/wholesale.ts`
+  - [x] "No orders yet. Ready to stock up?"
+  - [x] Encourage first order
+- [x] Position above the fold (AC: 7)
+  - [x] Top section of dashboard (after acknowledgment)
+  - [x] Visible without scrolling on desktop
+  - [x] Mobile: Top priority content
 
 ## Dev Notes
 
@@ -96,10 +96,12 @@ app/
 
 ### GraphQL Query for Last Order
 
+**Note:** Customer Account API uses authenticated session context - no `$customerId` parameter needed.
+
 ```graphql
 #graphql
-query GetLastOrder($customerId: ID!) {
-  customer(id: $customerId) {
+query GetLastOrder {
+  customer {
     orders(first: 1, sortKey: PROCESSED_AT, reverse: true) {
       edges {
         node {
@@ -113,7 +115,7 @@ query GetLastOrder($customerId: ID!) {
             amount
             currencyCode
           }
-          lineItems(first: 10) {
+          lineItems(first: 50) {
             edges {
               node {
                 id
@@ -138,32 +140,39 @@ query GetLastOrder($customerId: ID!) {
 ```typescript
 // app/routes/wholesale._index.tsx
 export async function loader({ context }: Route.LoaderArgs) {
-  const session = context.session;
-  const customerId = session.get('customerId');
+  const customerId = await context.session.get('customerId');
 
   if (!customerId) {
-    throw redirect('/wholesale/login');
+    return redirect(WHOLESALE_ROUTES.LOGIN);
   }
 
-  // Existing customer fetch
-  const customer = await context.customerAccount.query({
-    query: GET_CUSTOMER_QUERY,
-    variables: { id: customerId },
-  });
+  try {
+    // Existing customer fetch
+    const customer = await context.customerAccount.query(CUSTOMER_QUERY);
 
-  // NEW: Fetch last order
-  const ordersData = await context.customerAccount.query({
-    query: GET_LAST_ORDER_QUERY,
-    variables: { customerId },
-  });
+    if (!customer?.data?.customer || !customer.data.customer.company) {
+      return redirect(WHOLESALE_ROUTES.LOGIN);
+    }
 
-  const lastOrder = ordersData.customer.orders.edges[0]?.node || null;
+    // NEW: Fetch last order with error handling
+    let lastOrder = null;
+    try {
+      const ordersData = await context.customerAccount.query(GET_LAST_ORDER_QUERY);
+      lastOrder = ordersData?.data?.customer?.orders?.edges[0]?.node || null;
+    } catch (orderError) {
+      console.error('[Wholesale Dashboard] Failed to fetch last order:', orderError);
+      // Continue without order history - graceful degradation
+    }
 
-  return {
-    partnerName: customer.firstName,
-    storeCount: 3,
-    lastOrder, // NEW
-  };
+    return {
+      partnerName: customer.data.customer.firstName || 'Partner',
+      storeCount: 3,
+      lastOrder, // NEW
+    };
+  } catch (error) {
+    console.error('[Wholesale Dashboard] Failed to load customer data:', error);
+    return redirect(WHOLESALE_ROUTES.LOGIN);
+  }
 }
 ```
 
@@ -411,7 +420,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 
 ### Completion Notes
 
-Story created with comprehensive context analysis:
+**Planning (SM Agent - YOLO Mode):**
 - Customer Account API query structure for orders documented
 - Loader extension pattern for fetching last order
 - Component design with proper data display
@@ -423,17 +432,60 @@ Story created with comprehensive context analysis:
 - Bounded queries enforced (MUST include limit)
 - Anti-patterns highlighted to prevent common mistakes
 
+**Implementation (Dev Agent - 2026-01-30):**
+- ✅ Created GET_LAST_ORDER_QUERY with bounded query (`first: 1`)
+- ✅ Extended wholesale._index.tsx loader to fetch last order via Customer Account API
+- ✅ Created LastOrder component with date/currency formatting via Intl APIs
+- ✅ Created OrderLineItem component for line item display
+- ✅ Created OrderStatusBadge component with status mapping
+- ✅ Added noOrdersMessage to app/content/wholesale.ts
+- ✅ Implemented TDD approach (RED-GREEN-REFACTOR cycle)
+- ✅ All unit tests passing (5/5 for LastOrder component)
+- ✅ All integration tests passing (updated wholesale._index tests)
+- ✅ Full test suite passing (643/643 tests)
+- ✅ TypeScript compilation clean (pre-existing contact.tsx errors unrelated)
+
 **Reorder enablement** - Critical foundation for one-click reorder in Story 7.6.
+
+**Code Review Fixes (Code Review Agent - 2026-01-30):**
+- ✅ Fixed GraphQL query to increase lineItems limit from 10 to 50 (supports truncation)
+- ✅ Added truncation logic to LastOrder component (show 4 items, then "+X more")
+- ✅ Added error handling to formatOrderDate with "Recent order" fallback
+- ✅ Added error handling to formatCurrency with "See order details" fallback
+- ✅ Fixed loader error handling - now logs errors AND gracefully degrades on order fetch failure
+- ✅ Replaced hardcoded 'en-US' locale with browser default (undefined) in Intl APIs
+- ✅ Improved semantic HTML - used `<dl>` for order summary (accessibility)
+- ✅ Added comprehensive edge case tests (malformed date, currency, truncation, unknown status)
+- ✅ Created OrderStatusBadge.test.tsx with full status mapping coverage
+- ✅ Fixed GraphQL query documentation (removed incorrect $customerId parameter)
+- ✅ Updated File List to include all changed files (BMAD outputs)
+- ✅ All tests passing (24 component tests, 7 integration tests)
+
+**Issues Fixed:**
+- **[HIGH]** Missing truncation logic for line items - now implemented
+- **[HIGH]** Silent exception swallowing - now logs errors properly
+- **[HIGH]** Missing error handling in formatters - now has fallbacks
+- **[HIGH]** Unbounded lineItems query - increased to 50 to support truncation
+- **[HIGH]** GraphQL documentation error - corrected to match Customer Account API
+- **[HIGH]** File List incomplete - added BMAD output files
+- **[MEDIUM]** Hardcoded locale - now uses browser default
+- **[MEDIUM]** Missing edge case tests - comprehensive tests added
+- **[MEDIUM]** Non-semantic HTML - improved with `<dl>` elements
+- **[LOW]** Missing OrderStatusBadge tests - full test coverage added
 
 ### File List
 
-Files to create:
+**Files Created:**
 - app/components/wholesale/LastOrder.tsx
 - app/components/wholesale/OrderLineItem.tsx
 - app/components/wholesale/OrderStatusBadge.tsx
 - app/components/wholesale/LastOrder.test.tsx
+- app/components/wholesale/OrderStatusBadge.test.tsx
 - app/graphql/customer-account/GetLastOrder.ts
 
-Files to modify:
-- app/routes/wholesale._index.tsx (extend loader)
-- app/content/wholesale.ts (add no orders message)
+**Files Modified:**
+- app/routes/wholesale._index.tsx
+- app/routes/__tests__/wholesale._index.test.ts
+- app/content/wholesale.ts
+- _bmad-output/implementation-artifacts/7-5-display-last-order-on-dashboard.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml

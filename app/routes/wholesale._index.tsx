@@ -1,7 +1,9 @@
 import {redirect, useLoaderData} from 'react-router';
+import {LastOrder} from '~/components/wholesale/LastOrder';
 import {PartnerAcknowledgment} from '~/components/wholesale/PartnerAcknowledgment';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+import {GET_LAST_ORDER_QUERY} from '~/graphql/customer-account/GetLastOrder';
 import type {Route} from './+types/wholesale._index';
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -17,6 +19,7 @@ export async function loader({context}: Route.LoaderArgs) {
 
     // Validate response structure
     if (!customer?.data?.customer) {
+      console.error('[Wholesale Dashboard] Invalid customer response structure');
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
 
@@ -24,15 +27,30 @@ export async function loader({context}: Route.LoaderArgs) {
 
     // Validate B2B status
     if (!company) {
+      console.error('[Wholesale Dashboard] Customer is not a B2B customer');
       return redirect(WHOLESALE_ROUTES.LOGIN);
+    }
+
+    // Fetch last order
+    let lastOrder = null;
+    try {
+      const ordersData = await context.customerAccount.query(
+        GET_LAST_ORDER_QUERY,
+      );
+      lastOrder = ordersData?.data?.customer?.orders?.edges[0]?.node || null;
+    } catch (orderError) {
+      // Log error but continue - show dashboard without order history
+      console.error('[Wholesale Dashboard] Failed to fetch last order:', orderError);
     }
 
     return {
       partnerName: firstName || 'Partner',
       storeCount: wholesaleContent.dashboard.storeCount,
+      lastOrder,
     };
   } catch (error) {
-    // API error - redirect to login
+    console.error('[Wholesale Dashboard] Failed to load customer data:', error);
+    // Only redirect on auth/customer errors - user session likely invalid
     return redirect(WHOLESALE_ROUTES.LOGIN);
   }
 }
@@ -54,7 +72,7 @@ const CUSTOMER_QUERY = `#graphql
 `;
 
 export default function WholesaleDashboard() {
-  const {partnerName, storeCount} = useLoaderData<typeof loader>();
+  const {partnerName, storeCount, lastOrder} = useLoaderData<typeof loader>();
 
   return (
     <div>
@@ -62,7 +80,7 @@ export default function WholesaleDashboard() {
         partnerName={partnerName}
         storeCount={storeCount}
       />
-      {/* Dashboard content will be added in future stories */}
+      <LastOrder order={lastOrder} />
     </div>
   );
 }

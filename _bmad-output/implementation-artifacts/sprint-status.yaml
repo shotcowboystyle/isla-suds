@@ -129,7 +129,7 @@ development_status:
   7-2-create-wholesale-portal-layout: done
   7-3-implement-wholesale-login-page: done
   7-4-display-partner-acknowledgment-message: done
-  7-5-display-last-order-on-dashboard: ready-for-dev
+  7-5-display-last-order-on-dashboard: done
   7-6-implement-one-click-reorder: ready-for-dev
   7-7-display-order-history: ready-for-dev
   7-8-implement-invoice-request: ready-for-dev
