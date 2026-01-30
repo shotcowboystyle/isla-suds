@@ -25,6 +25,19 @@ export const wholesaleContent = {
     genericError: 'Something went wrong. Please try again.',
   },
 
+  // Header
+  header: {
+    welcomePrefix: 'Welcome',
+  },
+
+  // Logout Confirmation
+  logout: {
+    confirmTitle: 'Log Out',
+    confirmMessage: 'Are you sure you want to log out of the wholesale portal?',
+    confirmButton: 'Yes, Log Out',
+    cancelButton: 'Cancel',
+  },
+
   // Dashboard
   dashboard: {
     welcomeMessage: 'Welcome back, {partnerName}',

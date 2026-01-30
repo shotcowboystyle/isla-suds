@@ -1,6 +1,7 @@
-import {Outlet, redirect} from 'react-router';
-import {wholesaleContent} from '~/content/wholesale';
+import {Outlet, redirect, useLoaderData} from 'react-router';
+import {WholesaleHeader} from '~/components/wholesale/WholesaleHeader';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+import {cn} from '~/utils/cn';
 
 import type {Route} from './+types/wholesale';
 
@@ -23,13 +24,6 @@ export async function loader({context}: Route.LoaderArgs) {
 
     // Validate response structure before accessing
     if (!customer?.data?.customer) {
-      console.error(
-        'Customer Account API returned invalid response structure in dashboard guard',
-        {
-          hasData: !!customer?.data,
-          hasCustomer: !!customer?.data?.customer,
-        },
-      );
       // Clear invalid session and redirect
       context.session.unset('customerId');
       return redirect(WHOLESALE_ROUTES.LOGIN, {
@@ -54,8 +48,7 @@ export async function loader({context}: Route.LoaderArgs) {
       customer: customer.data.customer,
     };
   } catch (error) {
-    // Session invalid or customer query failed - log and redirect to login
-    console.error('Session validation failed in wholesale dashboard:', error);
+    // Session invalid or customer query failed - redirect to login
     context.session.unset('customerId');
     return redirect(WHOLESALE_ROUTES.LOGIN, {
       headers: {
@@ -81,21 +74,17 @@ const CUSTOMER_QUERY = `#graphql
 `;
 
 export default function WholesaleLayout() {
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-semibold">
-          {wholesaleContent.dashboard.welcomeMessage.replace(
-            '{partnerName}',
-            'Partner',
-          )}
-        </h1>
-        <p className="mt-2 text-gray-600">
-          {wholesaleContent.dashboard.acknowledgment}
-        </p>
+  const {customer} = useLoaderData<typeof loader>();
 
+  // Extract customer first name for header display
+  const customerName = customer.displayName?.split(' ')[0] || 'Partner';
+
+  return (
+    <div className={cn('min-h-screen bg-canvas-base')}>
+      <WholesaleHeader customerName={customerName} />
+      <main className={cn('mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8')}>
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 }
