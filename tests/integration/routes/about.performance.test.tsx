@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import {render} from '@testing-library/react';
-import AboutPage from '../about';
+import AboutPage from '~/routes/about';
 
 describe('About Page Performance', () => {
   it('uses design tokens (no inline styles that block paint)', () => {

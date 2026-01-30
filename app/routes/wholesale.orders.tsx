@@ -60,7 +60,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
           first: 10, // BOUNDED QUERY: MUST have limit
           after,
         },
-        cache: context.storefront.CacheShort(), // 5 min TTL per story requirements
+        // cache: context.storefront.CacheShort(), // 5 min TTL per story requirements
       },
     )) as OrdersResponse;
 

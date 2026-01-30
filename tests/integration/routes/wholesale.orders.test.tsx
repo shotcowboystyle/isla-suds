@@ -123,7 +123,9 @@ describe('Order History Route', () => {
     it('supports pagination via after cursor from URL', async () => {
       const loaderArgs = {
         context: mockContext,
-        request: new Request('http://localhost/wholesale/orders?after=cursor-2'),
+        request: new Request(
+          'http://localhost/wholesale/orders?after=cursor-2',
+        ),
         params: {},
       };
 
@@ -149,7 +151,9 @@ describe('Order History Route', () => {
       const result = await loader(loaderArgs as any);
 
       expect(result).toEqual({
-        orders: mockOrdersData.data.customer.orders.edges.map((edge) => edge.node),
+        orders: mockOrdersData.data.customer.orders.edges.map(
+          (edge) => edge.node,
+        ),
         pageInfo: mockOrdersData.data.customer.orders.pageInfo,
       });
     });
@@ -201,7 +205,9 @@ describe('Order History Route', () => {
         },
       ]);
 
-      const {container} = render(<RemixStub initialEntries={['/wholesale/orders']} />);
+      const {container} = render(
+        <RemixStub initialEntries={['/wholesale/orders']} />,
+      );
 
       await waitFor(() => {
         const orders = container.querySelectorAll('[data-testid="order-item"]');

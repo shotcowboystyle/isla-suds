@@ -12,7 +12,7 @@ interface LastOrderProps {
     name: string;
     processedAt: string;
     fulfillmentStatus: string;
-    currentTotalPrice: {
+    totalPrice: {
       amount: string;
       currencyCode: string;
     };
@@ -22,10 +22,8 @@ interface LastOrderProps {
           id: string;
           title: string;
           quantity: number;
-          variant?: {
-            id: string;
-            title: string;
-          } | null;
+          variantId?: string | null;
+          variantTitle?: string | null;
         };
       }>;
     };
@@ -49,10 +47,7 @@ function formatOrderDate(dateString: string): string {
   }
 }
 
-function formatCurrency(price: {
-  amount: string;
-  currencyCode: string;
-}): string {
+function formatCurrency(price: {amount: string; currencyCode: string}): string {
   try {
     const amount = parseFloat(price.amount);
     if (isNaN(amount)) {
@@ -69,7 +64,11 @@ function formatCurrency(price: {
 }
 
 export function LastOrder({order}: LastOrderProps) {
-  const fetcher = useFetcher<{success: boolean; checkoutUrl?: string; error?: string}>();
+  const fetcher = useFetcher<{
+    success: boolean;
+    checkoutUrl?: string;
+    error?: string;
+  }>();
   const isReordering = fetcher.state === 'submitting';
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -81,7 +80,7 @@ export function LastOrder({order}: LastOrderProps) {
 
       // Redirect with timeout protection (max 3s wait)
       const redirectTimer = setTimeout(() => {
-        window.location.href = fetcher.data.checkoutUrl!;
+        window.location.href = fetcher.data?.checkoutUrl ?? '';
       }, 1500);
 
       // Cleanup timeout if component unmounts
@@ -141,11 +140,8 @@ export function LastOrder({order}: LastOrderProps) {
         {/* Order total */}
         <div>
           <dt className={cn('sr-only')}>Total</dt>
-          <dd
-            className={cn('text-lg font-semibold')}
-            data-testid="order-total"
-          >
-            {formatCurrency(order.currentTotalPrice)}
+          <dd className={cn('text-lg font-semibold')} data-testid="order-total">
+            {formatCurrency(order.totalPrice)}
           </dd>
         </div>
 

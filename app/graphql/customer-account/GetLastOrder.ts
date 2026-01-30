@@ -6,11 +6,11 @@ export const GET_LAST_ORDER_QUERY = `#graphql
           node {
             id
             name
-            orderNumber
+            number
             processedAt
             financialStatus
             fulfillmentStatus
-            currentTotalPrice {
+            totalPrice {
               amount
               currencyCode
             }
@@ -20,10 +20,8 @@ export const GET_LAST_ORDER_QUERY = `#graphql
                   id
                   title
                   quantity
-                  variant {
-                    id
-                    title
-                  }
+                  variantId
+                  variantTitle
                 }
               }
             }

@@ -139,23 +139,23 @@ development_status:
   # ============================================================================
   # Epic 8: Analytics & Attribution (6 stories) - CAN BE DEPRIORITIZED
   # ============================================================================
-  epic-8: backlog
-  8-1-implement-analytics-event-infrastructure: backlog
-  8-2-track-texture-reveal-events: backlog
-  8-3-track-products-explored: backlog
-  8-4-track-session-duration: backlog
-  8-5-generate-shareable-links: backlog
-  8-6-track-share-link-clicks-and-conversions: backlog
+  epic-8: in-progress
+  8-1-implement-analytics-event-infrastructure: ready-for-dev
+  8-2-track-texture-reveal-events: ready-for-dev
+  8-3-track-products-explored: ready-for-dev
+  8-4-track-session-duration: ready-for-dev
+  8-5-generate-shareable-links: ready-for-dev
+  8-6-track-share-link-clicks-and-conversions: ready-for-dev
   epic-8-retrospective: optional
 
   # ============================================================================
   # Epic 9: Accessibility Validation (6 stories)
   # ============================================================================
-  epic-9: backlog
-  9-1-keyboard-navigation-audit: backlog
-  9-2-screen-reader-compatibility-audit: backlog
-  9-3-reduced-motion-verification: backlog
-  9-4-color-contrast-and-visual-accessibility-audit: backlog
-  9-5-touch-target-size-verification: backlog
-  9-6-automated-accessibility-ci-validation: backlog
+  epic-9: in-progress
+  9-1-keyboard-navigation-audit: ready-for-dev
+  9-2-screen-reader-compatibility-audit: ready-for-dev
+  9-3-reduced-motion-verification: ready-for-dev
+  9-4-color-contrast-and-visual-accessibility-audit: ready-for-dev
+  9-5-touch-target-size-verification: ready-for-dev
+  9-6-automated-accessibility-ci-validation: ready-for-dev
   epic-9-retrospective: optional

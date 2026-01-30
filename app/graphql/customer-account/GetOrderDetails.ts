@@ -11,57 +11,61 @@
  */
 
 export const GET_ORDER_DETAILS_QUERY = `#graphql
-  query GetOrderDetails($orderId: ID!) {
-    order(id: $orderId) {
-      id
-      name
-      orderNumber
-      processedAt
-      financialStatus
-      fulfillmentStatus
-      currentTotalPrice {
-        amount
-        currencyCode
-      }
-      subtotalPrice {
-        amount
-        currencyCode
-      }
-      totalTax {
-        amount
-        currencyCode
-      }
-      shippingCost {
-        amount
-        currencyCode
-      }
-      lineItems(first: 50) {
+  query GetOrderDetails($query: String!) {
+    customer {
+      orders(first: 1, query: $query) {
         edges {
           node {
             id
-            title
-            quantity
-            variant {
-              id
-              title
-              image {
-                url
-                altText
+            name
+            number
+            processedAt
+            financialStatus
+            fulfillmentStatus
+            totalPrice {
+              amount
+              currencyCode
+            }
+            subtotal {
+              amount
+              currencyCode
+            }
+            totalTax {
+              amount
+              currencyCode
+            }
+            totalShipping {
+              amount
+              currencyCode
+            }
+            lineItems(first: 50) {
+              edges {
+                node {
+                  id
+                  title
+                  quantity
+                  variantId
+                  variantTitle
+                  image {
+                    url
+                    altText
+                  }
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  currentTotalPrice {
+                    amount
+                    currencyCode
+                  }
+                }
               }
             }
-            originalTotalPrice {
-              amount
-              currencyCode
-            }
-            discountedTotalPrice {
-              amount
-              currencyCode
+            shippingAddress {
+              formatted
             }
           }
         }
-      }
-      shippingAddress {
-        formatted
       }
     }
   }

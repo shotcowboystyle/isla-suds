@@ -4,6 +4,8 @@ import {PartnerAcknowledgment} from '~/components/wholesale/PartnerAcknowledgmen
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_LAST_ORDER_QUERY} from '~/graphql/customer-account/GetLastOrder';
+import {GET_ORDER_FOR_REORDER_QUERY} from '~/graphql/customer-account/GetOrderForReorder';
+import {WHOLESALE_DASHBOARD_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleDashboardCustomer';
 import type {Route} from './+types/wholesale._index';
 
 interface ReorderActionResponse {
@@ -21,16 +23,19 @@ export async function loader({context}: Route.LoaderArgs) {
 
   // Fetch B2B customer data including firstName
   try {
-    const customer = await context.customerAccount.query(CUSTOMER_QUERY);
+    const customer = await context.customerAccount.query(
+      WHOLESALE_DASHBOARD_CUSTOMER_QUERY,
+    );
 
     // Validate response structure
     if (!customer?.data?.customer) {
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
 
-    const {firstName, company} = customer.data.customer;
+    const {firstName, companyContacts} = customer.data.customer;
 
     // Validate B2B status
+    const company = companyContacts?.edges?.[0]?.node?.company;
     if (!company) {
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
@@ -38,9 +43,8 @@ export async function loader({context}: Route.LoaderArgs) {
     // Fetch last order
     let lastOrder = null;
     try {
-      const ordersData = await context.customerAccount.query(
-        GET_LAST_ORDER_QUERY,
-      );
+      const ordersData =
+        await context.customerAccount.query(GET_LAST_ORDER_QUERY);
       lastOrder = ordersData?.data?.customer?.orders?.edges[0]?.node || null;
     } catch (orderError) {
       // Safe to continue: order history is optional, dashboard still functional
@@ -82,8 +86,13 @@ export async function action({
 
     try {
       // Verify B2B customer status before allowing reorder
-      const customerData = await context.customerAccount.query(CUSTOMER_QUERY);
-      if (!customerData?.data?.customer?.company) {
+      const customerData = await context.customerAccount.query(
+        WHOLESALE_DASHBOARD_CUSTOMER_QUERY,
+      );
+      const company =
+        customerData?.data?.customer?.companyContacts?.edges?.[0]?.node
+          ?.company;
+      if (!company) {
         return {
           success: false,
           error: wholesaleContent.auth.notWholesaleCustomer,
@@ -92,11 +101,11 @@ export async function action({
 
       // Fetch order details to get line items with variant IDs
       const orderData = await context.customerAccount.query(
-        GET_ORDER_DETAILS_FOR_REORDER_QUERY,
-        {variables: {orderId}},
+        GET_ORDER_FOR_REORDER_QUERY,
+        {variables: {query: `id:${orderId}`}},
       );
 
-      const order = orderData?.data?.order;
+      const order = orderData?.data?.customer?.orders?.edges?.[0]?.node;
 
       if (!order || !order.lineItems?.edges?.length) {
         return {
@@ -107,14 +116,14 @@ export async function action({
 
       // Extract line items for cart - filter out items without variants
       interface LineItemNode {
-        variant?: {id: string; title: string} | null;
+        variantId?: string | null;
         quantity: number;
       }
 
       const lineItems = order.lineItems.edges
-        .filter(({node}: {node: LineItemNode}) => Boolean(node.variant?.id))
+        .filter(({node}: {node: LineItemNode}) => Boolean(node.variantId))
         .map(({node}: {node: LineItemNode}) => ({
-          merchandiseId: node.variant!.id,
+          merchandiseId: node.variantId!,
           quantity: node.quantity,
         }));
 
@@ -126,7 +135,9 @@ export async function action({
       }
 
       // Create new cart with B2B customer identity for wholesale pricing
-      const customerAccessToken = await context.session.get('customerAccessToken');
+      const customerAccessToken = await context.session.get(
+        'customerAccessToken',
+      );
       const result = await context.cart.create({
         lines: lineItems,
         buyerIdentity: customerAccessToken
@@ -140,11 +151,12 @@ export async function action({
 
       // Check for specific error types
       if (result.errors?.length) {
-        const errorCode = result.errors[0]?.code;
+        const errorCode = result.errors[0]?.name;
         if (errorCode === 'MERCHANDISE_NOT_FOUND') {
           return {
             success: false,
-            error: 'Some items are out of stock. Please contact us for substitutions.',
+            error:
+              'Some items are out of stock. Please contact us for substitutions.',
           };
         }
 
@@ -185,46 +197,6 @@ export async function action({
 
   return {success: false};
 }
-
-// GraphQL query to fetch order details for reorder (with variant IDs)
-// Note: first: 50 limit is based on typical wholesale order size (12-24 items).
-// Shopify B2B orders rarely exceed 50 unique SKUs. If needed, implement pagination.
-const GET_ORDER_DETAILS_FOR_REORDER_QUERY = `#graphql
-  query GetOrderForReorder($orderId: ID!) {
-    order(id: $orderId) {
-      id
-      lineItems(first: 50) {
-        edges {
-          node {
-            id
-            title
-            quantity
-            variant {
-              id
-              title
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-// GraphQL query to fetch customer with firstName for personalization
-const CUSTOMER_QUERY = `#graphql
-  query GetCustomer {
-    customer {
-      id
-      firstName
-      lastName
-      email
-      company {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function WholesaleDashboard() {
   const {partnerName, storeCount, lastOrder} = useLoaderData<typeof loader>();

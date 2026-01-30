@@ -2,7 +2,7 @@ import {describe, it, expect, vi} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {createMemoryRouter, RouterProvider} from 'react-router';
 import userEvent from '@testing-library/user-event';
-import ContactPage, {meta, action} from './contact';
+import ContactPage, {meta, action} from '~/routes/contact';
 
 describe('Contact Page', () => {
   it('renders at /contact route', () => {
@@ -183,19 +183,14 @@ describe('Contact Page - Form Submission', () => {
     // Fill out form
     await user.type(screen.getByLabelText(/name/i), 'John Doe');
     await user.type(screen.getByLabelText(/email/i), 'john@example.com');
-    await user.type(
-      screen.getByLabelText(/message/i),
-      'I love your soaps!',
-    );
+    await user.type(screen.getByLabelText(/message/i), 'I love your soaps!');
 
     // Submit form
     await user.click(screen.getByRole('button', {name: /send message/i}));
 
     // Should show success message
     await waitFor(() => {
-      expect(
-        screen.getByText(/thanks for reaching out/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/thanks for reaching out/i)).toBeInTheDocument();
     });
   });
 

@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
-import {loader} from '../wholesale._index';
+import {loader} from '~/routes/wholesale._index';
 
 /**
  * Integration tests for wholesale dashboard

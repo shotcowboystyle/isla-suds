@@ -55,8 +55,6 @@ export function CartLineItems() {
     <Suspense fallback={<CartLineItemsSkeleton />}>
       <AnimatePresence mode="popLayout">
         <ul
-           
-          role="list" // Required for screen readers when CSS removes list semantics (AC6, AC10)
           aria-label={`Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
           className="space-y-4"
         >
@@ -181,23 +179,25 @@ function CartLineItem({
   const handleIncrement = () => {
     const newQuantity = quantity + 1;
 
-    fetcher.submit(
-      {
-        action: CartForm.ACTIONS.LinesUpdate,
-        inputs: {
-          lines: [
-            {
-              id: line.id,
-              quantity: newQuantity,
-            },
-          ],
+    fetcher
+      .submit(
+        {
+          action: CartForm.ACTIONS.LinesUpdate,
+          inputs: {
+            lines: [
+              {
+                id: line.id,
+                quantity: newQuantity,
+              },
+            ],
+          },
         },
-      },
-      {
-        method: 'POST',
-        action: '/cart',
-      },
-    );
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      )
+      .catch(console.error);
   };
 
   // Story 5.6 Task 3: Decrement quantity handler (AC3)
@@ -207,39 +207,43 @@ function CartLineItem({
 
     const newQuantity = quantity - 1;
 
-    fetcher.submit(
-      {
-        action: CartForm.ACTIONS.LinesUpdate,
-        inputs: {
-          lines: [
-            {
-              id: line.id,
-              quantity: newQuantity,
-            },
-          ],
+    fetcher
+      .submit(
+        {
+          action: CartForm.ACTIONS.LinesUpdate,
+          inputs: {
+            lines: [
+              {
+                id: line.id,
+                quantity: newQuantity,
+              },
+            ],
+          },
         },
-      },
-      {
-        method: 'POST',
-        action: '/cart',
-      },
-    );
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      )
+      .catch(console.error);
   };
 
   // Story 5.7 Task 2: Remove item handler (AC2)
   const handleRemove = () => {
-    fetcher.submit(
-      {
-        action: CartForm.ACTIONS.LinesRemove,
-        inputs: {
-          lineIds: [line.id],
+    fetcher
+      .submit(
+        {
+          action: CartForm.ACTIONS.LinesRemove,
+          inputs: {
+            lineIds: [line.id],
+          },
         },
-      },
-      {
-        method: 'POST',
-        action: '/cart',
-      },
-    );
+        {
+          method: 'POST',
+          action: '/cart',
+        },
+      )
+      .catch(console.error);
   };
 
   // Calculate prices
@@ -356,158 +360,158 @@ function CartLineItem({
       <div className="flex-1 flex flex-col gap-2">
         {/* Content - Mobile: Stacked, Desktop: Inline */}
         <div className="flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-        {/* Product Info */}
-        <div className="flex-1 flex flex-col gap-1">
-          <Link
-            to={productUrl}
-            className={cn(
-              'text-[var(--text-primary)] hover:text-[var(--accent-primary)]',
-              'transition-colors',
-              'text-base font-medium',
-            )}
-          >
-            {product.title}
-          </Link>
+          {/* Product Info */}
+          <div className="flex-1 flex flex-col gap-1">
+            <Link
+              to={productUrl}
+              className={cn(
+                'text-[var(--text-primary)] hover:text-[var(--accent-primary)]',
+                'transition-colors',
+                'text-base font-medium',
+              )}
+            >
+              {product.title}
+            </Link>
 
-          {/* Variant Details */}
-          {variantText && (
-            <span className="text-sm text-[var(--text-muted)]">
-              {variantText}
-            </span>
-          )}
-
-          {/* Quantity Controls - Mobile Only */}
-          <div className="sm:hidden flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleDecrement}
-                disabled={quantity <= 1 || isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center rounded transition-colors',
-                  'h-11 w-11', // 44px touch target for mobile
-                  quantity <= 1 || isUpdating
-                    ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
-                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
-                )}
-                aria-label={`Decrease quantity for ${product.title}`}
-                aria-disabled={quantity <= 1}
-              >
-                {isUpdating ? '...' : '−'}
-              </button>
-
-              <span
-                className="text-base font-medium min-w-[2ch] text-center"
-                aria-label={`Quantity: ${quantity}`}
-              >
-                {quantity}
+            {/* Variant Details */}
+            {variantText && (
+              <span className="text-sm text-[var(--text-muted)]">
+                {variantText}
               </span>
+            )}
 
-              <button
-                type="button"
-                onClick={handleIncrement}
-                disabled={isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center rounded transition-colors',
-                  'h-11 w-11', // 44px touch target for mobile
-                  isUpdating
-                    ? 'bg-neutral-200 text-neutral-400 cursor-wait'
-                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
-                )}
-                aria-label={`Increase quantity for ${product.title}`}
-              >
-                {isUpdating ? '...' : '+'}
-              </button>
+            {/* Quantity Controls - Mobile Only */}
+            <div className="sm:hidden flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1 || isUpdating}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded transition-colors',
+                    'h-11 w-11', // 44px touch target for mobile
+                    quantity <= 1 || isUpdating
+                      ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                      : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                  )}
+                  aria-label={`Decrease quantity for ${product.title}`}
+                  aria-disabled={quantity <= 1}
+                >
+                  {isUpdating ? '...' : '−'}
+                </button>
+
+                <span
+                  className="text-base font-medium min-w-[2ch] text-center"
+                  aria-label={`Quantity: ${quantity}`}
+                >
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleIncrement}
+                  disabled={isUpdating}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded transition-colors',
+                    'h-11 w-11', // 44px touch target for mobile
+                    isUpdating
+                      ? 'bg-neutral-200 text-neutral-400 cursor-wait'
+                      : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                  )}
+                  aria-label={`Increase quantity for ${product.title}`}
+                >
+                  {isUpdating ? '...' : '+'}
+                </button>
+              </div>
+
+              {/* Error message - Mobile (AC7) */}
+              {errorMessage && (
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="text-sm text-red-600 mt-1"
+                >
+                  {errorMessage}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Pricing - Desktop: Right-aligned Column */}
+          <div className="flex flex-col gap-1 items-start sm:items-end">
+            {/* Unit Price */}
+            <div className="flex items-center gap-2">
+              {formattedComparePrice && (
+                <span className="text-sm text-[var(--text-muted)] line-through">
+                  {formattedComparePrice}
+                </span>
+              )}
+              <span className="text-sm text-[var(--text-muted)]">
+                {formattedUnitPrice}
+              </span>
             </div>
 
-            {/* Error message - Mobile (AC7) */}
-            {errorMessage && (
-              <div
-                role="alert"
-                aria-live="polite"
-                className="text-sm text-red-600 mt-1"
-              >
-                {errorMessage}
+            {/* Quantity Controls - Desktop Only */}
+            <div className="hidden sm:flex flex-col gap-1 items-end">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1 || isUpdating}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded transition-colors',
+                    'h-8 w-8', // 32px button for desktop
+                    quantity <= 1 || isUpdating
+                      ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                      : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                  )}
+                  aria-label={`Decrease quantity for ${product.title}`}
+                  aria-disabled={quantity <= 1}
+                >
+                  {isUpdating ? '...' : '−'}
+                </button>
+
+                <span
+                  className="text-base font-medium min-w-[2ch] text-center"
+                  aria-label={`Quantity: ${quantity}`}
+                >
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleIncrement}
+                  disabled={isUpdating}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded transition-colors',
+                    'h-8 w-8', // 32px button for desktop
+                    isUpdating
+                      ? 'bg-neutral-200 text-neutral-400 cursor-wait'
+                      : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
+                  )}
+                  aria-label={`Increase quantity for ${product.title}`}
+                >
+                  {isUpdating ? '...' : '+'}
+                </button>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* Pricing - Desktop: Right-aligned Column */}
-        <div className="flex flex-col gap-1 items-start sm:items-end">
-          {/* Unit Price */}
-          <div className="flex items-center gap-2">
-            {formattedComparePrice && (
-              <span className="text-sm text-[var(--text-muted)] line-through">
-                {formattedComparePrice}
-              </span>
-            )}
-            <span className="text-sm text-[var(--text-muted)]">
-              {formattedUnitPrice}
-            </span>
-          </div>
-
-          {/* Quantity Controls - Desktop Only */}
-          <div className="hidden sm:flex flex-col gap-1 items-end">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleDecrement}
-                disabled={quantity <= 1 || isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center rounded transition-colors',
-                  'h-8 w-8', // 32px button for desktop
-                  quantity <= 1 || isUpdating
-                    ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
-                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
-                )}
-                aria-label={`Decrease quantity for ${product.title}`}
-                aria-disabled={quantity <= 1}
-              >
-                {isUpdating ? '...' : '−'}
-              </button>
-
-              <span
-                className="text-base font-medium min-w-[2ch] text-center"
-                aria-label={`Quantity: ${quantity}`}
-              >
-                {quantity}
-              </span>
-
-              <button
-                type="button"
-                onClick={handleIncrement}
-                disabled={isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center rounded transition-colors',
-                  'h-8 w-8', // 32px button for desktop
-                  isUpdating
-                    ? 'bg-neutral-200 text-neutral-400 cursor-wait'
-                    : 'bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-dark)]',
-                )}
-                aria-label={`Increase quantity for ${product.title}`}
-              >
-                {isUpdating ? '...' : '+'}
-              </button>
+              {/* Error message - Desktop (AC7) */}
+              {errorMessage && (
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="text-sm text-red-600"
+                >
+                  {errorMessage}
+                </div>
+              )}
             </div>
 
-            {/* Error message - Desktop (AC7) */}
-            {errorMessage && (
-              <div
-                role="alert"
-                aria-live="polite"
-                className="text-sm text-red-600"
-              >
-                {errorMessage}
-              </div>
-            )}
+            {/* Line Total */}
+            <span className="text-base font-medium text-[var(--text-primary)]">
+              {formattedLineTotal}
+            </span>
           </div>
-
-          {/* Line Total */}
-          <span className="text-base font-medium text-[var(--text-primary)]">
-            {formattedLineTotal}
-          </span>
-        </div>
         </div>
 
         {/* Story 5.7 Task 1: Remove button (AC1, AC8) */}
