@@ -2,7 +2,6 @@ import {Outlet, redirect, useLoaderData} from 'react-router';
 import {WholesaleHeader} from '~/components/wholesale/WholesaleHeader';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {cn} from '~/utils/cn';
-
 import type {Route} from './+types/wholesale';
 
 export const meta: Route.MetaFunction = () => {

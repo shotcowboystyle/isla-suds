@@ -1,3 +1,6 @@
+import {useEffect, useState} from 'react';
+import {useFetcher} from 'react-router';
+import {Button} from '~/components/ui/Button';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
 import {OrderLineItem} from './OrderLineItem';
@@ -41,7 +44,7 @@ function formatOrderDate(dateString: string): string {
       year: 'numeric',
     }).format(date);
   } catch (error) {
-    console.error('[LastOrder] Failed to format date:', error);
+    // Safe to continue: fallback to generic message on date parsing failure
     return 'Recent order';
   }
 }
@@ -60,12 +63,32 @@ function formatCurrency(price: {
       currency: price.currencyCode,
     }).format(amount);
   } catch (error) {
-    console.error('[LastOrder] Failed to format currency:', error);
+    // Safe to continue: fallback to generic message on currency formatting failure
     return 'See order details';
   }
 }
 
 export function LastOrder({order}: LastOrderProps) {
+  const fetcher = useFetcher<{success: boolean; checkoutUrl?: string; error?: string}>();
+  const isReordering = fetcher.state === 'submitting';
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Redirect to checkout on successful reorder with timeout protection
+  useEffect(() => {
+    if (fetcher.data?.success && fetcher.data.checkoutUrl) {
+      // Show success message briefly before redirect
+      setShowSuccess(true);
+
+      // Redirect with timeout protection (max 3s wait)
+      const redirectTimer = setTimeout(() => {
+        window.location.href = fetcher.data.checkoutUrl!;
+      }, 1500);
+
+      // Cleanup timeout if component unmounts
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [fetcher.data]);
+
   if (!order) {
     return (
       <div className={cn('mb-8 rounded-lg bg-canvas-elevated p-6')}>
@@ -83,7 +106,10 @@ export function LastOrder({order}: LastOrderProps) {
   const remainingCount = allItems.length - MAX_DISPLAY_ITEMS;
 
   return (
-    <div className={cn('mb-8 rounded-lg bg-canvas-elevated p-6')}>
+    <div
+      className={cn('mb-8 rounded-lg bg-canvas-elevated p-6')}
+      data-testid="last-order-section"
+    >
       <h2 className={cn('text-xl font-semibold mb-4')}>Last Order</h2>
 
       <dl className={cn('space-y-2')}>
@@ -100,7 +126,9 @@ export function LastOrder({order}: LastOrderProps) {
           <dt className={cn('sr-only')}>Items</dt>
           <dd className={cn('space-y-1')}>
             {visibleItems.map(({node}) => (
-              <OrderLineItem key={node.id} item={node} />
+              <div key={node.id} data-testid="line-item">
+                <OrderLineItem item={node} />
+              </div>
             ))}
             {remainingCount > 0 && (
               <p className={cn('text-text-muted text-sm')}>
@@ -113,7 +141,10 @@ export function LastOrder({order}: LastOrderProps) {
         {/* Order total */}
         <div>
           <dt className={cn('sr-only')}>Total</dt>
-          <dd className={cn('text-lg font-semibold')}>
+          <dd
+            className={cn('text-lg font-semibold')}
+            data-testid="order-total"
+          >
             {formatCurrency(order.currentTotalPrice)}
           </dd>
         </div>
@@ -126,6 +157,45 @@ export function LastOrder({order}: LastOrderProps) {
           </dd>
         </div>
       </dl>
+
+      {/* Success message - displayed briefly before redirect */}
+      {showSuccess && (
+        <div
+          className={cn('mt-4 p-3 rounded-md bg-green-50 text-green-800')}
+          role="status"
+          data-testid="reorder-success"
+        >
+          {wholesaleContent.reorder.successMessage('your store')}
+        </div>
+      )}
+
+      {/* Reorder button */}
+      <fetcher.Form method="post">
+        <input type="hidden" name="intent" value="reorder" />
+        <input type="hidden" name="orderId" value={order.id} />
+
+        <Button
+          type="submit"
+          disabled={isReordering || showSuccess}
+          className={cn('mt-4 w-full')}
+          data-testid="reorder-button"
+        >
+          {isReordering
+            ? wholesaleContent.reorder.buttonLoading
+            : wholesaleContent.reorder.button}
+        </Button>
+      </fetcher.Form>
+
+      {/* Error message */}
+      {fetcher.data?.error && (
+        <p
+          className={cn('mt-2 text-sm text-red-600')}
+          role="alert"
+          data-testid="reorder-error"
+        >
+          {fetcher.data.error}
+        </p>
+      )}
     </div>
   );
 }

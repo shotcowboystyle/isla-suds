@@ -1,7 +1,6 @@
 import {redirect} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
-
 import type {Route} from './+types/wholesale.login';
 
 export const meta: Route.MetaFunction = () => {
