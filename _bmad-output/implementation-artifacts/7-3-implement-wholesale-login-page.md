@@ -1,6 +1,30 @@
 # Story 7.3: Implement Wholesale Login Page
 
-Status: ready-for-dev
+Status: superseded
+
+**⚠️ STORY SUPERSEDED BY STORY 7.1**
+
+This story was superseded by Story 7.1 which already implemented wholesale login functionality using Shopify's OAuth 2.0 Customer Account API. The business need (wholesale partners can log in to access the portal) is fully satisfied by the existing implementation.
+
+**Why Superseded:**
+- Shopify B2B authentication uses OAuth 2.0, NOT traditional form-based login
+- Story 7.1 already implemented: `/wholesale/login` route, OAuth flow, B2B verification, session management, error handling
+- Implementing a traditional login form would be non-functional (Shopify handles credentials via OAuth)
+- All acceptance criteria business value already achieved
+
+**Existing Implementation:**
+- Route: `app/routes/wholesale.login.tsx` (OAuth initiator)
+- Callback: `app/routes/wholesale.login.callback.tsx` (B2B verification)
+- Content: `app/content/wholesale.ts` (warm error messages)
+- Tests: 9 passing integration tests covering all flows
+
+**Recommendation:** Close as duplicate. If UX enhancements needed (branding, loading states), create new story with OAuth-aware requirements.
+
+---
+
+Original story preserved below for reference:
+
+---
 
 ## Story
 
@@ -284,6 +308,39 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 
 ### Completion Notes
 
+**Story Marked as SUPERSEDED - 2026-01-29**
+
+**Implementation Agent:** Claude Sonnet 4.5 (Dev Agent)
+
+**Decision Rationale:**
+During implementation discovery, identified critical conflict between story requirements and Shopify B2B technical reality:
+
+- **Story assumed:** Traditional form-based login (email/password inputs, POST action)
+- **Shopify reality:** OAuth 2.0 flow (redirect to Shopify, OAuth callback)
+- **Story 7.1 already implemented:** Full OAuth login flow with all required functionality
+
+**Business Value Already Achieved:**
+✅ Wholesale partners can log in at `/wholesale/login`
+✅ B2B status verified via company field
+✅ Session management working
+✅ Friendly error messages for auth failures
+✅ B2C customers rejected with warm messaging
+✅ Redirects to `/wholesale` dashboard on success
+✅ 9 integration tests passing
+
+**Technical Analysis:**
+- Shopify Customer Account API exclusively uses OAuth 2.0 (no form-based auth)
+- Implementing fake login form would be non-functional
+- All acceptance criteria business intent satisfied by Story 7.1
+- No additional implementation needed
+
+**User Decision:** Marked as superseded (duplicate functionality)
+
+**Recommendation:** If UX polish needed (better branding, loading states), create new story with OAuth-aware requirements rather than form-based assumptions.
+
+---
+
+**Original Story Creation Notes (SM Agent - YOLO Mode):**
 Story created with comprehensive context analysis:
 - React Router 7 action pattern for form handling documented
 - Shopify Customer Account API authentication flow detailed
@@ -295,14 +352,20 @@ Story created with comprehensive context analysis:
 - UI design guidance for clean, functional layout
 - Anti-patterns documented to prevent over-engineering
 
-**Entry point to wholesale portal** - Critical user experience for B2B customers.
-
 ### File List
 
-Files to create:
-- app/routes/wholesale.login.tsx
-- tests/integration/wholesale-login.test.ts
+**No files created or modified** - Story superseded by existing implementation from Story 7.1.
 
-Files to modify:
-- app/content/wholesale.ts (add login copy and error messages)
-- tests/fixtures/shopify/customer-account-responses.ts (add mock data if needed)
+**Existing files that satisfy requirements:**
+- app/routes/wholesale.login.tsx (OAuth login initiator)
+- app/routes/wholesale.login.callback.tsx (B2B verification and session creation)
+- app/content/wholesale.ts (wholesale copy and error messages)
+- app/routes/__tests__/wholesale.login.test.ts (9 integration tests)
+
+### Change Log
+
+**2026-01-29** - Story marked as superseded
+- Identified conflict between story requirements (form-based auth) and Shopify technical reality (OAuth 2.0)
+- Verified Story 7.1 already implements all business value
+- User decision: Mark as superseded/duplicate
+- No implementation needed - existing code satisfies business need
