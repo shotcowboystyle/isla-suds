@@ -1,6 +1,7 @@
 import {redirect} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+import {WHOLESALE_LOGIN_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleLoginCustomer';
 import type {Route} from './+types/wholesale.login';
 
 export const meta: Route.MetaFunction = () => {
@@ -18,7 +19,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
   if (customerId) {
     // Verify B2B status for existing session
     try {
-      const customer = await context.customerAccount.query(CUSTOMER_QUERY);
+      const customer = await context.customerAccount.query(WHOLESALE_LOGIN_CUSTOMER_QUERY);
 
       // Validate response structure before accessing
       if (!customer?.data?.customer) {
@@ -36,7 +37,8 @@ export async function loader({request, context}: Route.LoaderArgs) {
         });
       }
 
-      if (customer.data.customer.company) {
+      const company = customer.data.customer.companyContacts?.edges?.[0]?.node?.company;
+      if (company) {
         // B2B customer with valid session - redirect to dashboard
         return redirect(WHOLESALE_ROUTES.DASHBOARD);
       } else {
@@ -100,21 +102,6 @@ export async function action({request, context}: Route.ActionArgs) {
     },
   });
 }
-
-// GraphQL query to fetch customer with B2B company field
-const CUSTOMER_QUERY = `#graphql
-  query CustomerWithCompany {
-    customer {
-      id
-      email
-      displayName
-      company {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function WholesaleLogin({loaderData}: Route.ComponentProps) {
   const error = loaderData?.error;

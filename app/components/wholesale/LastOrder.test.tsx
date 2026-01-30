@@ -29,7 +29,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -49,7 +49,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -69,7 +69,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -89,7 +89,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -130,7 +130,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -168,7 +168,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: 'invalid-date',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -188,7 +188,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: 'not-a-number',
         currencyCode: 'USD',
       },
@@ -202,13 +202,13 @@ describe('LastOrder', () => {
     expect(screen.getByText('See order details')).toBeInTheDocument();
   });
 
-  it('handles missing currentTotalPrice gracefully', () => {
+  it('handles missing totalPrice gracefully', () => {
     const mockOrder = {
       id: 'order-123',
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'FULFILLED',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '',
         currencyCode: 'USD',
       },
@@ -228,7 +228,7 @@ describe('LastOrder', () => {
       name: '#1001',
       processedAt: '2025-12-15T10:00:00Z',
       fulfillmentStatus: 'UNKNOWN_STATUS',
-      currentTotalPrice: {
+      totalPrice: {
         amount: '324.00',
         currencyCode: 'USD',
       },
@@ -251,7 +251,7 @@ describe('LastOrder', () => {
         name: '#1001',
         processedAt: '2025-12-15T10:00:00Z',
         fulfillmentStatus: 'FULFILLED',
-        currentTotalPrice: {
+        totalPrice: {
           amount: '324.00',
           currencyCode: 'USD',
         },
@@ -274,13 +274,17 @@ describe('LastOrder', () => {
 
       render(<LastOrder order={mockOrder} />);
 
-      expect(screen.getByRole('button', {name: /reorder/i})).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {name: /reorder/i}),
+      ).toBeInTheDocument();
     });
 
     it('does not display Reorder button when no order exists', () => {
       render(<LastOrder order={null} />);
 
-      expect(screen.queryByRole('button', {name: /reorder/i})).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', {name: /reorder/i}),
+      ).not.toBeInTheDocument();
     });
 
     it('button is enabled by default', () => {
@@ -289,7 +293,7 @@ describe('LastOrder', () => {
         name: '#1001',
         processedAt: '2025-12-15T10:00:00Z',
         fulfillmentStatus: 'FULFILLED',
-        currentTotalPrice: {
+        totalPrice: {
           amount: '324.00',
           currencyCode: 'USD',
         },

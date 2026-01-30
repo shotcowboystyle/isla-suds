@@ -1,6 +1,7 @@
 import {Outlet, redirect, useLoaderData} from 'react-router';
 import {WholesaleHeader} from '~/components/wholesale/WholesaleHeader';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+import {WHOLESALE_LAYOUT_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleLayoutCustomer';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/wholesale';
 
@@ -19,7 +20,7 @@ export async function loader({context}: Route.LoaderArgs) {
 
   // Verify customer still has B2B status
   try {
-    const customer = await context.customerAccount.query(CUSTOMER_QUERY);
+    const customer = await context.customerAccount.query(WHOLESALE_LAYOUT_CUSTOMER_QUERY);
 
     // Validate response structure before accessing
     if (!customer?.data?.customer) {
@@ -32,7 +33,8 @@ export async function loader({context}: Route.LoaderArgs) {
       });
     }
 
-    if (!customer.data.customer.company) {
+    const company = customer.data.customer.companyContacts?.edges?.[0]?.node?.company;
+    if (!company) {
       // No longer B2B - clear session and redirect
       context.session.unset('customerId');
       return redirect(WHOLESALE_ROUTES.LOGIN, {
@@ -56,21 +58,6 @@ export async function loader({context}: Route.LoaderArgs) {
     });
   }
 }
-
-// GraphQL query to fetch customer with B2B company field
-const CUSTOMER_QUERY = `#graphql
-  query CustomerWithCompany {
-    customer {
-      id
-      email
-      displayName
-      company {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function WholesaleLayout() {
   const {customer} = useLoaderData<typeof loader>();

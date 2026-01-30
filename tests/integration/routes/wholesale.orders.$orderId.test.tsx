@@ -17,7 +17,10 @@ import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {userEvent} from '@testing-library/user-event';
 import {createRoutesStub} from 'react-router';
-import OrderDetailsPage, {loader, action} from '~/routes/wholesale.orders.$orderId';
+import OrderDetailsPage, {
+  loader,
+  action,
+} from '~/routes/wholesale.orders.$orderId';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {wholesaleContent} from '~/content/wholesale';
 
@@ -131,7 +134,9 @@ describe('Order Details Route', () => {
 
       const loaderArgs = {
         context: contextWithoutSession,
-        request: new Request(`http://localhost/wholesale/orders/${TEST_ORDER_ID}`),
+        request: new Request(
+          `http://localhost/wholesale/orders/${TEST_ORDER_ID}`,
+        ),
         params: {orderId: TEST_ORDER_ID},
       };
 
@@ -144,7 +149,9 @@ describe('Order Details Route', () => {
     it('fetches order details by ID', async () => {
       const loaderArgs = {
         context: mockContext,
-        request: new Request(`http://localhost/wholesale/orders/${TEST_ORDER_ID}`),
+        request: new Request(
+          `http://localhost/wholesale/orders/${TEST_ORDER_ID}`,
+        ),
         params: {orderId: TEST_ORDER_ID},
       };
 
@@ -163,7 +170,9 @@ describe('Order Details Route', () => {
     it('returns order data', async () => {
       const loaderArgs = {
         context: mockContext,
-        request: new Request(`http://localhost/wholesale/orders/${TEST_ORDER_ID}`),
+        request: new Request(
+          `http://localhost/wholesale/orders/${TEST_ORDER_ID}`,
+        ),
         params: {orderId: TEST_ORDER_ID},
       };
 
@@ -200,7 +209,9 @@ describe('Order Details Route', () => {
         },
       ]);
 
-      render(<RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />);
+      render(
+        <RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />,
+      );
 
       await waitFor(() => {
         expect(screen.getByText(/Order #1001/i)).toBeInTheDocument();
@@ -218,7 +229,9 @@ describe('Order Details Route', () => {
         },
       ]);
 
-      render(<RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />);
+      render(
+        <RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />,
+      );
 
       await waitFor(() => {
         // Line item 1
@@ -240,7 +253,9 @@ describe('Order Details Route', () => {
         },
       ]);
 
-      render(<RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />);
+      render(
+        <RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />,
+      );
 
       // Check for order summary heading
       await waitFor(() => {
@@ -268,7 +283,9 @@ describe('Order Details Route', () => {
         },
       ]);
 
-      render(<RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />);
+      render(
+        <RemixStub initialEntries={[`/wholesale/orders/${TEST_ORDER_ID}`]} />,
+      );
 
       await waitFor(() => {
         expect(screen.getByText(/Shipping Address/i)).toBeInTheDocument();
@@ -288,7 +305,7 @@ describe('Order Details Route', () => {
           lastName: 'Doe',
           email: 'jane@example.com',
           company: {
-            name: 'Jane\'s Store',
+            name: "Jane's Store",
           },
         },
       },
@@ -594,7 +611,10 @@ describe('Order Details Route', () => {
         await waitFor(() => {
           const storedData = sessionStorage.getItem(STORAGE_KEY);
           expect(storedData).toBeTruthy();
-          const invoiceRequests = JSON.parse(storedData!);
+          const invoiceRequests = JSON.parse(storedData!) as Record<
+            string,
+            boolean
+          >;
           expect(invoiceRequests[mockOrderData.data.order.id]).toBe(true);
         });
       });

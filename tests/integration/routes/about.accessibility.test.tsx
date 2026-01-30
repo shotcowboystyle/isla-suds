@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import {render} from '@testing-library/react';
-import AboutPage from '../about';
+import AboutPage from '~/routes/about';
 
 describe('About Page Accessibility (WCAG 2.1 AA)', () => {
   it('has proper heading hierarchy (h1 → h2, no skipped levels)', () => {

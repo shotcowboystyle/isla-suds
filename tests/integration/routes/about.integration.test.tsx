@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import {render, screen} from '@testing-library/react';
-import AboutPage from '../about';
+import AboutPage from '~/routes/about';
 
 /**
  * Integration Tests: Component Integration (not router-based)
@@ -47,16 +47,16 @@ describe('About Page Integration', () => {
     expect(container.textContent).toContain('Sarah never intended');
     expect(container.textContent).toContain('Isla is our daughter');
     expect(container.textContent).toContain("Sarah's grandmother");
-    expect(container.textContent).toContain('Every batch starts in our kitchen');
+    expect(container.textContent).toContain(
+      'Every batch starts in our kitchen',
+    );
   });
 
   it('maintains responsive layout structure', () => {
     const {container} = render(<AboutPage />);
 
     // Check responsive classes exist (sm: breakpoints)
-    const elementsWithResponsive = container.querySelectorAll(
-      '[class*="sm:"]',
-    );
+    const elementsWithResponsive = container.querySelectorAll('[class*="sm:"]');
     expect(elementsWithResponsive.length).toBeGreaterThan(0);
   });
 

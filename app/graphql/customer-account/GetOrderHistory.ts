@@ -18,11 +18,11 @@ export const GET_ORDER_HISTORY_QUERY = `#graphql
           node {
             id
             name
-            orderNumber
+            number
             processedAt
             financialStatus
             fulfillmentStatus
-            currentTotalPrice {
+            totalPrice {
               amount
               currencyCode
             }

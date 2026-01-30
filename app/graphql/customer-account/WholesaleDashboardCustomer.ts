@@ -1,16 +1,14 @@
 /**
- * GraphQL Query: Get Customer
+ * GraphQL Query: Wholesale Dashboard Customer
  *
- * Fetches customer details for invoice request:
+ * Fetches customer details for dashboard:
  * - Name (first, last)
  * - Email
- * - Company name (if wholesale partner)
- *
- * Story: 7.8
+ * - Company association (B2B validation)
  */
 
-export const GET_CUSTOMER_QUERY = `#graphql
-  query GetCustomer {
+export const WHOLESALE_DASHBOARD_CUSTOMER_QUERY = `#graphql
+  query WholesaleDashboardCustomer {
     customer {
       id
       firstName
@@ -22,6 +20,7 @@ export const GET_CUSTOMER_QUERY = `#graphql
         edges {
           node {
             company {
+              id
               name
             }
           }

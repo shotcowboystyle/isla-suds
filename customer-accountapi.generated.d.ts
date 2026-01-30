@@ -503,6 +503,265 @@ export type CustomerUpdateMutation = {
   }>;
 };
 
+export type GetCustomerQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type GetCustomerQuery = {
+  customer: Pick<
+    CustomerAccountAPI.Customer,
+    'id' | 'firstName' | 'lastName'
+  > & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    companyContacts: {
+      edges: Array<{
+        node: {
+          company?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.Company, 'name'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
+export type GetLastOrderQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type GetLastOrderQuery = {
+  customer: {
+    orders: {
+      edges: Array<{
+        node: Pick<
+          CustomerAccountAPI.Order,
+          | 'id'
+          | 'name'
+          | 'number'
+          | 'processedAt'
+          | 'financialStatus'
+          | 'fulfillmentStatus'
+        > & {
+          totalPrice: Pick<
+            CustomerAccountAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+          lineItems: {
+            edges: Array<{
+              node: Pick<
+                CustomerAccountAPI.LineItem,
+                'id' | 'title' | 'quantity' | 'variantId' | 'variantTitle'
+              >;
+            }>;
+          };
+        };
+      }>;
+    };
+  };
+};
+
+export type GetOrderDetailsQueryVariables = CustomerAccountAPI.Exact<{
+  query: CustomerAccountAPI.Scalars['String']['input'];
+}>;
+
+export type GetOrderDetailsQuery = {
+  customer: {
+    orders: {
+      edges: Array<{
+        node: Pick<
+          CustomerAccountAPI.Order,
+          | 'id'
+          | 'name'
+          | 'number'
+          | 'processedAt'
+          | 'financialStatus'
+          | 'fulfillmentStatus'
+        > & {
+          totalPrice: Pick<
+            CustomerAccountAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+          subtotal?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>
+          >;
+          totalTax?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>
+          >;
+          totalShipping: Pick<
+            CustomerAccountAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+          lineItems: {
+            edges: Array<{
+              node: Pick<
+                CustomerAccountAPI.LineItem,
+                'id' | 'title' | 'quantity' | 'variantId' | 'variantTitle'
+              > & {
+                image?: CustomerAccountAPI.Maybe<
+                  Pick<CustomerAccountAPI.Image, 'url' | 'altText'>
+                >;
+                price?: CustomerAccountAPI.Maybe<
+                  Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>
+                >;
+                currentTotalPrice?: CustomerAccountAPI.Maybe<
+                  Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>
+                >;
+              };
+            }>;
+          };
+          shippingAddress?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.CustomerAddress, 'formatted'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
+export type GetOrderForReorderQueryVariables = CustomerAccountAPI.Exact<{
+  query: CustomerAccountAPI.Scalars['String']['input'];
+}>;
+
+export type GetOrderForReorderQuery = {
+  customer: {
+    orders: {
+      edges: Array<{
+        node: Pick<CustomerAccountAPI.Order, 'id'> & {
+          lineItems: {
+            edges: Array<{
+              node: Pick<
+                CustomerAccountAPI.LineItem,
+                'id' | 'title' | 'quantity' | 'variantId' | 'variantTitle'
+              >;
+            }>;
+          };
+        };
+      }>;
+    };
+  };
+};
+
+export type GetOrderHistoryQueryVariables = CustomerAccountAPI.Exact<{
+  first: CustomerAccountAPI.Scalars['Int']['input'];
+  after?: CustomerAccountAPI.InputMaybe<
+    CustomerAccountAPI.Scalars['String']['input']
+  >;
+}>;
+
+export type GetOrderHistoryQuery = {
+  customer: {
+    orders: {
+      edges: Array<
+        Pick<CustomerAccountAPI.OrderEdge, 'cursor'> & {
+          node: Pick<
+            CustomerAccountAPI.Order,
+            | 'id'
+            | 'name'
+            | 'number'
+            | 'processedAt'
+            | 'financialStatus'
+            | 'fulfillmentStatus'
+          > & {
+            totalPrice: Pick<
+              CustomerAccountAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+      pageInfo: Pick<CustomerAccountAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
+    };
+  };
+};
+
+export type WholesaleCallbackCustomerQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type WholesaleCallbackCustomerQuery = {
+  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    companyContacts: {
+      edges: Array<{
+        node: {
+          company?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
+export type WholesaleDashboardCustomerQueryVariables =
+  CustomerAccountAPI.Exact<{[key: string]: never}>;
+
+export type WholesaleDashboardCustomerQuery = {
+  customer: Pick<
+    CustomerAccountAPI.Customer,
+    'id' | 'firstName' | 'lastName'
+  > & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    companyContacts: {
+      edges: Array<{
+        node: {
+          company?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
+export type WholesaleLayoutCustomerQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type WholesaleLayoutCustomerQuery = {
+  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    companyContacts: {
+      edges: Array<{
+        node: {
+          company?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
+export type WholesaleLoginCustomerQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type WholesaleLoginCustomerQuery = {
+  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    companyContacts: {
+      edges: Array<{
+        node: {
+          company?: CustomerAccountAPI.Maybe<
+            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
+          >;
+        };
+      }>;
+    };
+  };
+};
+
 interface GeneratedQueryTypes {
   '#graphql\n  query CustomerDetails($language: LanguageCode) @inContext(language: $language) {\n    customer {\n      ...Customer\n    }\n  }\n  #graphql\n  fragment Customer on Customer {\n    id\n    firstName\n    lastName\n    defaultAddress {\n      ...Address\n    }\n    addresses(first: 6) {\n      nodes {\n        ...Address\n      }\n    }\n  }\n  fragment Address on CustomerAddress {\n    id\n    formatted\n    firstName\n    lastName\n    company\n    address1\n    address2\n    territoryCode\n    zoneCode\n    city\n    zip\n    phoneNumber\n  }\n\n': {
     return: CustomerDetailsQuery;
@@ -515,6 +774,42 @@ interface GeneratedQueryTypes {
   '#graphql\n  #graphql\n  fragment CustomerOrders on Customer {\n    orders(\n      sortKey: PROCESSED_AT,\n      reverse: true,\n      first: $first,\n      last: $last,\n      before: $startCursor,\n      after: $endCursor,\n      query: $query\n    ) {\n      nodes {\n        ...OrderItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n  #graphql\n  fragment OrderItem on Order {\n    totalPrice {\n      amount\n      currencyCode\n    }\n    financialStatus\n    fulfillmentStatus\n    fulfillments(first: 1) {\n      nodes {\n        status\n      }\n    }\n    id\n    number\n    confirmationNumber\n    processedAt\n  }\n\n\n  query CustomerOrders(\n    $endCursor: String\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $query: String\n    $language: LanguageCode\n  ) @inContext(language: $language) {\n    customer {\n      ...CustomerOrders\n    }\n  }\n': {
     return: CustomerOrdersQuery;
     variables: CustomerOrdersQueryVariables;
+  };
+  '#graphql\n  query GetCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: GetCustomerQuery;
+    variables: GetCustomerQueryVariables;
+  };
+  '#graphql\n  query GetLastOrder {\n    customer {\n      orders(first: 1, sortKey: PROCESSED_AT, reverse: true) {\n        edges {\n          node {\n            id\n            name\n            number\n            processedAt\n            financialStatus\n            fulfillmentStatus\n            totalPrice {\n              amount\n              currencyCode\n            }\n            lineItems(first: 50) {\n              edges {\n                node {\n                  id\n                  title\n                  quantity\n                  variantId\n                  variantTitle\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: GetLastOrderQuery;
+    variables: GetLastOrderQueryVariables;
+  };
+  '#graphql\n  query GetOrderDetails($query: String!) {\n    customer {\n      orders(first: 1, query: $query) {\n        edges {\n          node {\n            id\n            name\n            number\n            processedAt\n            financialStatus\n            fulfillmentStatus\n            totalPrice {\n              amount\n              currencyCode\n            }\n            subtotal {\n              amount\n              currencyCode\n            }\n            totalTax {\n              amount\n              currencyCode\n            }\n            totalShipping {\n              amount\n              currencyCode\n            }\n            lineItems(first: 50) {\n              edges {\n                node {\n                  id\n                  title\n                  quantity\n                  variantId\n                  variantTitle\n                  image {\n                    url\n                    altText\n                  }\n                  price {\n                    amount\n                    currencyCode\n                  }\n                  currentTotalPrice {\n                    amount\n                    currencyCode\n                  }\n                }\n              }\n            }\n            shippingAddress {\n              formatted\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: GetOrderDetailsQuery;
+    variables: GetOrderDetailsQueryVariables;
+  };
+  '#graphql\n  query GetOrderForReorder($query: String!) {\n    customer {\n      orders(first: 1, query: $query) {\n        edges {\n          node {\n            id\n            lineItems(first: 50) {\n              edges {\n                node {\n                  id\n                  title\n                  quantity\n                  variantId\n                  variantTitle\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: GetOrderForReorderQuery;
+    variables: GetOrderForReorderQueryVariables;
+  };
+  '#graphql\n  query GetOrderHistory($first: Int!, $after: String) {\n    customer {\n      orders(first: $first, after: $after, sortKey: PROCESSED_AT, reverse: true) {\n        edges {\n          cursor\n          node {\n            id\n            name\n            number\n            processedAt\n            financialStatus\n            fulfillmentStatus\n            totalPrice {\n              amount\n              currencyCode\n            }\n          }\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n': {
+    return: GetOrderHistoryQuery;
+    variables: GetOrderHistoryQueryVariables;
+  };
+  '#graphql\n  query WholesaleCallbackCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: WholesaleCallbackCustomerQuery;
+    variables: WholesaleCallbackCustomerQueryVariables;
+  };
+  '#graphql\n  query WholesaleDashboardCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: WholesaleDashboardCustomerQuery;
+    variables: WholesaleDashboardCustomerQueryVariables;
+  };
+  '#graphql\n  query WholesaleLayoutCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: WholesaleLayoutCustomerQuery;
+    variables: WholesaleLayoutCustomerQueryVariables;
+  };
+  '#graphql\n  query WholesaleLoginCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: WholesaleLoginCustomerQuery;
+    variables: WholesaleLoginCustomerQueryVariables;
   };
 }
 

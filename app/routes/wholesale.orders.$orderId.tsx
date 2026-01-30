@@ -78,7 +78,7 @@ export async function loader({params, context}: Route.LoaderArgs) {
   try {
     const orderData = (await context.customerAccount.query(
       GET_ORDER_DETAILS_QUERY,
-      {variables: {orderId}},
+      {variables: {query: orderId}},
     )) as OrderDetailsResponse;
 
     if (!orderData?.data?.order) {
@@ -114,7 +114,7 @@ export async function action({request, params, context}: Route.ActionArgs) {
     // Get order details
     const orderData = (await context.customerAccount.query(
       GET_ORDER_DETAILS_QUERY,
-      {variables: {orderId}},
+      {variables: {query: orderId}},
     )) as OrderDetailsResponse;
 
     const order = orderData?.data?.order;
@@ -127,9 +127,8 @@ export async function action({request, params, context}: Route.ActionArgs) {
     }
 
     // Get customer details
-    const customerData = await context.customerAccount.query(
-      GET_CUSTOMER_QUERY,
-    );
+    const customerData =
+      await context.customerAccount.query(GET_CUSTOMER_QUERY);
 
     const customer = customerData?.data?.customer;
 
@@ -154,7 +153,12 @@ export async function action({request, params, context}: Route.ActionArgs) {
 
     await sendInvoiceRequestEmail({
       order,
-      customer,
+      customer: {
+        email: customer.emailAddress?.emailAddress ?? '',
+        firstName: customer.firstName ?? null,
+        lastName: customer.lastName ?? null,
+        ...customer,
+      },
       founderEmail,
     });
 
@@ -189,7 +193,9 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     try {
       const storedData = sessionStorage.getItem(INVOICE_STORAGE_KEY);
-      const invoiceRequests = storedData ? JSON.parse(storedData) : {};
+      const invoiceRequests = storedData
+        ? (JSON.parse(storedData) as Record<string, boolean>)
+        : {};
 
       if (fetcher.data?.success) {
         // Add this order to the requests object
