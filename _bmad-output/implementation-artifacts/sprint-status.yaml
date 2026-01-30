@@ -124,16 +124,16 @@ development_status:
   # ============================================================================
   # Epic 7: Wholesale Partner Portal (9 stories)
   # ============================================================================
-  epic-7: backlog
-  7-1-validate-shopify-b2b-authentication: backlog
-  7-2-create-wholesale-portal-layout: backlog
-  7-3-implement-wholesale-login-page: backlog
-  7-4-display-partner-acknowledgment-message: backlog
-  7-5-display-last-order-on-dashboard: backlog
-  7-6-implement-one-click-reorder: backlog
-  7-7-display-order-history: backlog
-  7-8-implement-invoice-request: backlog
-  7-9-apply-wholesale-pricing: backlog
+  epic-7: in-progress
+  7-1-validate-shopify-b2b-authentication: done
+  7-2-create-wholesale-portal-layout: ready-for-dev
+  7-3-implement-wholesale-login-page: ready-for-dev
+  7-4-display-partner-acknowledgment-message: ready-for-dev
+  7-5-display-last-order-on-dashboard: ready-for-dev
+  7-6-implement-one-click-reorder: ready-for-dev
+  7-7-display-order-history: ready-for-dev
+  7-8-implement-invoice-request: ready-for-dev
+  7-9-apply-wholesale-pricing: ready-for-dev
   epic-7-retrospective: optional
 
   # ============================================================================
