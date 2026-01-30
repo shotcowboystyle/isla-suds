@@ -56,4 +56,12 @@ export const wholesaleContent = {
     successMessage: (storeName: string) =>
       `Another batch heading to ${storeName}. Your customers are lucky.`,
   },
+
+  // Order History (Story 7.7)
+  orders: {
+    title: 'Order History',
+    noOrdersMessage: "You haven't placed any orders yet. Ready to stock up?",
+    loadMoreButton: 'Load More Orders',
+    viewDetailsLink: 'View Details',
+  },
 } as const;

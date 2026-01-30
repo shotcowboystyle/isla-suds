@@ -9,4 +9,5 @@ export const WHOLESALE_ROUTES = {
   LOGOUT: '/wholesale/logout',
   DASHBOARD: '/wholesale',
   CALLBACK: '/wholesale/login/callback',
+  ORDERS: '/wholesale/orders',
 } as const;

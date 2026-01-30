@@ -290,6 +290,14 @@ describe('Wholesale Portal Layout', () => {
       await user.tab();
       expect(screen.getByRole('link', {name: /isla suds/i})).toHaveFocus();
 
+      // Tab to Dashboard navigation link
+      await user.tab();
+      expect(screen.getByRole('link', {name: /^Dashboard$/i})).toHaveFocus();
+
+      // Tab to Order History navigation link
+      await user.tab();
+      expect(screen.getByRole('link', {name: /Order History/i})).toHaveFocus();
+
       // Tab to logout button
       await user.tab();
       expect(
@@ -343,7 +351,9 @@ describe('Wholesale Portal Layout', () => {
         ).toBeInTheDocument();
       });
 
-      // Tab to logout button
+      // Tab to logout button (logo + 2 nav links + logout = 4 tabs)
+      await user.tab();
+      await user.tab();
       await user.tab();
       await user.tab();
 

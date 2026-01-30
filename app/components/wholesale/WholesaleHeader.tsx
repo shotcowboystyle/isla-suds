@@ -81,18 +81,46 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
           'bg-canvas-elevated',
         )}
       >
-        {/* Logo */}
-        <Link
-          to={WHOLESALE_ROUTES.DASHBOARD}
-          className={cn(
-            'text-xl font-semibold text-[--text-primary]',
-            'hover:text-[--text-muted] transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--text-primary]',
-            'rounded-sm',
-          )}
-        >
-          Isla Suds
-        </Link>
+        {/* Logo & Navigation */}
+        <div className="flex items-center gap-6">
+          <Link
+            to={WHOLESALE_ROUTES.DASHBOARD}
+            className={cn(
+              'text-xl font-semibold text-[--text-primary]',
+              'hover:text-[--text-muted] transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--text-primary]',
+              'rounded-sm',
+            )}
+          >
+            Isla Suds
+          </Link>
+
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-4">
+            <Link
+              to={WHOLESALE_ROUTES.DASHBOARD}
+              className={cn(
+                'text-sm font-medium text-[--text-primary]',
+                'hover:text-[--text-muted] transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--text-primary]',
+                'rounded-sm',
+              )}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to={WHOLESALE_ROUTES.ORDERS}
+              className={cn(
+                'text-sm font-medium text-[--text-primary]',
+                'hover:text-[--text-muted] transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--text-primary]',
+                'rounded-sm',
+              )}
+            >
+              Order History
+            </Link>
+          </nav>
+        </div>
 
         {/* Partner Info & Actions */}
         <div className="flex items-center gap-4 sm:gap-6">
