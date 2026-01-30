@@ -64,4 +64,15 @@ export const wholesaleContent = {
     loadMoreButton: 'Load More Orders',
     viewDetailsLink: 'View Details',
   },
+
+  // Invoice Request (Story 7.8)
+  invoice: {
+    requestButton: 'Request Invoice',
+    requestedButton: 'Invoice Requested',
+    requestingButton: 'Requesting...',
+    confirmationMessage:
+      "We'll send your invoice within 1-2 business days.",
+    errorMessage:
+      "Couldn't send your request. Please try again or email us directly.",
+  },
 } as const;
