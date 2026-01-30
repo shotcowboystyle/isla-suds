@@ -47,4 +47,13 @@ export const wholesaleContent = {
     storeCount: 3, // MVP hardcoded, future: fetch from Shopify metafields
     noOrdersMessage: 'No orders yet. Ready to stock up?',
   },
+
+  // Reorder functionality (Story 7.6)
+  reorder: {
+    button: 'Reorder',
+    buttonLoading: 'Reordering...',
+    errorMessage: "Something went wrong. Let's try again.",
+    successMessage: (storeName: string) =>
+      `Another batch heading to ${storeName}. Your customers are lucky.`,
+  },
 } as const;

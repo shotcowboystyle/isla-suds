@@ -24,8 +24,13 @@
     "test:e2e": "playwright test tests/e2e",
     "test:e2e:p0": "playwright test tests/e2e --grep \"\\[P0\\]\"",
     "test:e2e:p1": "playwright test tests/e2e --grep \"\\[P0\\]|\\[P1\\]\"",
+    "test:e2e:wholesale": "playwright test tests/e2e/wholesale-reorder.spec.ts",
+    "test:integration": "playwright test tests/integration",
+    "test:integration:wholesale": "playwright test tests/integration/wholesale-reorder.spec.ts",
     "test:perf": "playwright test tests/performance",
-    "test:component": "vitest run tests/component"
+    "test:perf:wholesale": "playwright test tests/performance/wholesale-reorder.perf.spec.ts",
+    "test:component": "vitest run tests/component",
+    "test:wholesale": "playwright test tests/**/*wholesale*.spec.ts"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

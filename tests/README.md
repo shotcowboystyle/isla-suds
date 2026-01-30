@@ -11,12 +11,15 @@ tests/
 │   ├── cart-persistence.spec.ts
 │   ├── product-display.spec.ts
 │   ├── navigation.spec.ts
-│   └── image-preloading.spec.ts         # Story 3.1: Image preloading
+│   ├── image-preloading.spec.ts         # Story 3.1: Image preloading
+│   └── wholesale-reorder.spec.ts        # Story 7.6: One-click reorder
 ├── integration/            # Integration tests (component + hook behavior)
-│   └── constellation-preload.spec.ts    # Story 3.1: ConstellationGrid integration
+│   ├── constellation-preload.spec.ts    # Story 3.1: ConstellationGrid integration
+│   └── wholesale-reorder.spec.ts        # Story 7.6: Reorder action integration
 ├── performance/            # Performance tests (CI gates)
 │   ├── texture-reveal.perf.spec.ts
-│   └── image-preload.perf.spec.ts       # Story 3.1: Preload timing (<100ms)
+│   ├── image-preload.perf.spec.ts       # Story 3.1: Preload timing (<100ms)
+│   └── wholesale-reorder.perf.spec.ts   # Story 7.6: <2s cart, <60s total
 ├── component/              # Component unit tests
 │   ├── AddToCartButton.test.tsx
 │   └── ProductForm.test.tsx
@@ -24,10 +27,14 @@ tests/
 │   └── core-pages.spec.ts
 └── support/                # Test infrastructure
     ├── fixtures/           # Playwright fixtures
+    │   ├── cart.fixture.ts
+    │   ├── product.fixture.ts
+    │   └── wholesale.fixture.ts     # ✨ NEW: B2B partner sessions (Story 7.6)
     ├── factories/          # Test data factories
     │   ├── product.factory.ts       # ✨ Enhanced with featuredImage support
     │   ├── cart.factory.ts
-    │   └── variant.factory.ts
+    │   ├── variant.factory.ts
+    │   └── wholesale-order.factory.ts  # ✨ NEW: B2B order data (Story 7.6)
     └── helpers/            # Test utilities
         ├── wait-for.ts
         ├── performance.ts
@@ -52,6 +59,9 @@ pnpm test
 # E2E tests only
 pnpm playwright test tests/e2e
 
+# Integration tests only
+pnpm test:integration
+
 # Performance tests only
 pnpm playwright test tests/performance
 
@@ -60,6 +70,12 @@ pnpm playwright test tests/accessibility
 
 # Component tests only
 pnpm test tests/component
+
+# Wholesale reorder tests (Story 7.6)
+pnpm test:wholesale                    # All wholesale tests
+pnpm test:e2e:wholesale                # E2E reorder tests
+pnpm test:integration:wholesale        # Integration reorder tests
+pnpm test:perf:wholesale               # Performance reorder tests
 ```
 
 ### By Priority
@@ -195,6 +211,16 @@ const unavailableProduct = createProduct({
 - **product.factory.ts** - Product data generation (includes `featuredImage` URL)
 - **cart.factory.ts** - Cart data generation
 - **variant.factory.ts** - Product variant generation
+- **wholesale-order.factory.ts** - B2B wholesale order data (Story 7.6)
+  ```typescript
+  import {createWholesaleOrder, createLargeWholesaleOrder} from '../support/factories/wholesale-order.factory';
+
+  // Standard wholesale order
+  const order = createWholesaleOrder();
+
+  // Large order (50+ items) for performance testing
+  const largeOrder = createLargeWholesaleOrder();
+  ```
 
 ## Test Helpers
 

@@ -1,6 +1,5 @@
 import {redirect} from 'react-router';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
-
 import type {Route} from './+types/wholesale.logout';
 
 export async function loader({context}: Route.LoaderArgs) {

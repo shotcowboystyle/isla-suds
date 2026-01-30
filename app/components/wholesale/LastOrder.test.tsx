@@ -1,6 +1,19 @@
 import {render, screen} from '@testing-library/react';
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi, beforeEach} from 'vitest';
 import {LastOrder} from './LastOrder';
+
+// Mock useFetcher from react-router
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useFetcher: () => ({
+      state: 'idle',
+      data: null,
+      Form: ({children, ...props}: any) => <form {...props}>{children}</form>,
+    }),
+  };
+});
 
 describe('LastOrder', () => {
   it('shows no orders message when order is null', () => {
@@ -228,5 +241,79 @@ describe('LastOrder', () => {
 
     // OrderStatusBadge should display the raw status as fallback
     expect(screen.getByText('UNKNOWN_STATUS')).toBeInTheDocument();
+  });
+
+  // Reorder functionality tests (Story 7.6)
+  describe('Reorder functionality', () => {
+    it('displays Reorder button when order exists', () => {
+      const mockOrder = {
+        id: 'order-123',
+        name: '#1001',
+        processedAt: '2025-12-15T10:00:00Z',
+        fulfillmentStatus: 'FULFILLED',
+        currentTotalPrice: {
+          amount: '324.00',
+          currencyCode: 'USD',
+        },
+        lineItems: {
+          edges: [
+            {
+              node: {
+                id: 'line-1',
+                title: 'Lavender Soap',
+                quantity: 12,
+                variant: {
+                  id: 'gid://shopify/ProductVariant/123',
+                  title: 'Regular',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      render(<LastOrder order={mockOrder} />);
+
+      expect(screen.getByRole('button', {name: /reorder/i})).toBeInTheDocument();
+    });
+
+    it('does not display Reorder button when no order exists', () => {
+      render(<LastOrder order={null} />);
+
+      expect(screen.queryByRole('button', {name: /reorder/i})).not.toBeInTheDocument();
+    });
+
+    it('button is enabled by default', () => {
+      const mockOrder = {
+        id: 'order-123',
+        name: '#1001',
+        processedAt: '2025-12-15T10:00:00Z',
+        fulfillmentStatus: 'FULFILLED',
+        currentTotalPrice: {
+          amount: '324.00',
+          currencyCode: 'USD',
+        },
+        lineItems: {
+          edges: [
+            {
+              node: {
+                id: 'line-1',
+                title: 'Lavender Soap',
+                quantity: 12,
+                variant: {
+                  id: 'gid://shopify/ProductVariant/123',
+                  title: 'Regular',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      render(<LastOrder order={mockOrder} />);
+
+      const button = screen.getByRole('button', {name: /reorder/i});
+      expect(button).not.toBeDisabled();
+    });
   });
 });
