@@ -132,7 +132,7 @@ development_status:
   7-5-display-last-order-on-dashboard: done
   7-6-implement-one-click-reorder: done
   7-7-display-order-history: done
-  7-8-implement-invoice-request: ready-for-dev
+  7-8-implement-invoice-request: done
   7-9-apply-wholesale-pricing: ready-for-dev
   epic-7-retrospective: optional
 

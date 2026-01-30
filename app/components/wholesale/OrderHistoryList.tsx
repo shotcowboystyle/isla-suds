@@ -1,7 +1,7 @@
 import {useNavigate} from 'react-router';
-import {OrderHistoryItem} from './OrderHistoryItem';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
+import {OrderHistoryItem} from './OrderHistoryItem';
 
 interface Order {
   id: string;

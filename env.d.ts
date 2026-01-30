@@ -5,3 +5,10 @@
 
 // Enhance TypeScript's built-in typings.
 import '@total-typescript/ts-reset';
+
+// Extend Env interface with custom environment variables
+declare global {
+  interface Env {
+    FOUNDER_EMAIL?: string;
+  }
+}
