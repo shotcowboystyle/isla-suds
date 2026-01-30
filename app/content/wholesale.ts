@@ -45,5 +45,6 @@ export const wholesaleContent = {
     acknowledgmentTemplate: (partnerName: string, storeCount: number) =>
       `Isla Suds is in ${storeCount} local stores. Thanks for being one of them, ${partnerName}.`,
     storeCount: 3, // MVP hardcoded, future: fetch from Shopify metafields
+    noOrdersMessage: 'No orders yet. Ready to stock up?',
   },
 } as const;

@@ -56,12 +56,25 @@ describe('Wholesale Dashboard Integration', () => {
         },
       };
 
+      const mockOrdersResponse = {
+        data: {
+          customer: {
+            orders: {
+              edges: [],
+            },
+          },
+        },
+      };
+
       const mockContext = {
         session: {
           get: vi.fn().mockResolvedValue('customer-123'),
         },
         customerAccount: {
-          query: vi.fn().mockResolvedValue(mockCustomerResponse),
+          query: vi
+            .fn()
+            .mockResolvedValueOnce(mockCustomerResponse)
+            .mockResolvedValueOnce(mockOrdersResponse),
         },
       };
 
@@ -74,6 +87,7 @@ describe('Wholesale Dashboard Integration', () => {
       expect(response).toEqual({
         partnerName: 'Sarah',
         storeCount: 3,
+        lastOrder: null,
       });
     });
 
@@ -93,12 +107,25 @@ describe('Wholesale Dashboard Integration', () => {
         },
       };
 
+      const mockOrdersResponse = {
+        data: {
+          customer: {
+            orders: {
+              edges: [],
+            },
+          },
+        },
+      };
+
       const mockContext = {
         session: {
           get: vi.fn().mockResolvedValue('customer-123'),
         },
         customerAccount: {
-          query: vi.fn().mockResolvedValue(mockCustomerResponse),
+          query: vi
+            .fn()
+            .mockResolvedValueOnce(mockCustomerResponse)
+            .mockResolvedValueOnce(mockOrdersResponse),
         },
       };
 
@@ -174,7 +201,7 @@ describe('Wholesale Dashboard Integration', () => {
   });
 
   describe('loader data structure', () => {
-    it('returns partnerName and storeCount', async () => {
+    it('returns partnerName, storeCount, and lastOrder', async () => {
       const mockCustomerResponse = {
         data: {
           customer: {
@@ -190,12 +217,25 @@ describe('Wholesale Dashboard Integration', () => {
         },
       };
 
+      const mockOrdersResponse = {
+        data: {
+          customer: {
+            orders: {
+              edges: [],
+            },
+          },
+        },
+      };
+
       const mockContext = {
         session: {
           get: vi.fn().mockResolvedValue('customer-123'),
         },
         customerAccount: {
-          query: vi.fn().mockResolvedValue(mockCustomerResponse),
+          query: vi
+            .fn()
+            .mockResolvedValueOnce(mockCustomerResponse)
+            .mockResolvedValueOnce(mockOrdersResponse),
         },
       };
 
@@ -207,6 +247,7 @@ describe('Wholesale Dashboard Integration', () => {
 
       expect(response).toHaveProperty('partnerName', 'Michael');
       expect(response).toHaveProperty('storeCount', 3);
+      expect(response).toHaveProperty('lastOrder', null);
     });
   });
 });
