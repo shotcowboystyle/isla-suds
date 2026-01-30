@@ -114,7 +114,7 @@ development_status:
   epic-6: in-progress
   6-1-integrate-shopify-managed-checkout: done
   6-2-configure-order-confirmation-email: done
-  6-3-implement-payment-retry-flow: ready-for-dev
+  6-3-implement-payment-retry-flow: done
   6-4-add-booth-attribution-code-field: ready-for-dev
   6-5-add-how-did-you-find-us-survey: ready-for-dev
   6-6-include-day-3-survey-link-in-confirmation-email: ready-for-dev
