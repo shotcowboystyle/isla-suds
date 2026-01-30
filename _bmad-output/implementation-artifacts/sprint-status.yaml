@@ -126,7 +126,7 @@ development_status:
   # ============================================================================
   epic-7: in-progress
   7-1-validate-shopify-b2b-authentication: done
-  7-2-create-wholesale-portal-layout: ready-for-dev
+  7-2-create-wholesale-portal-layout: done
   7-3-implement-wholesale-login-page: ready-for-dev
   7-4-display-partner-acknowledgment-message: ready-for-dev
   7-5-display-last-order-on-dashboard: ready-for-dev
