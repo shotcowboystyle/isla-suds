@@ -49,6 +49,7 @@ so that **I can complete expense reporting without emailing the founder**.
 ### Critical Architecture Requirements
 
 **MVP Simplicity:**
+
 - Manual invoice generation by founder (not automated)
 - Email notification is the key deliverable
 - State persistence nice-to-have but not critical
@@ -233,7 +234,7 @@ Email: ${customer.email}
 
 Order Details:
 - Order Number: ${order.orderNumber}
-- Order Date: ${formatOrderDate(order.processedAt)}
+- Order Date: ${formatDate(order.processedAt)}
 - Total: ${formatCurrency(order.currentTotalPrice)}
 - Status: ${order.fulfillmentStatus}
 
@@ -280,7 +281,7 @@ export async function sendInvoiceRequestEmail({
       <p><strong>Email:</strong> ${customer.email}</p>
       <h3>Order Details</h3>
       <p><strong>Order #:</strong> ${order.orderNumber}</p>
-      <p><strong>Date:</strong> ${formatOrderDate(order.processedAt)}</p>
+      <p><strong>Date:</strong> ${formatDate(order.processedAt)}</p>
       <p><strong>Total:</strong> ${formatCurrency(order.currentTotalPrice)}</p>
       <h3>Items</h3>
       <ul>
@@ -313,11 +314,13 @@ export const WHOLESALE_ERRORS = {
 ### State Persistence Strategies
 
 **MVP: Session Storage**
+
 - Persists during browser session
 - Cleared when browser closed
 - Simple, no backend changes
 
 **Better: Order Metafields (Future)**
+
 ```typescript
 // Store invoice request in Shopify order metafield
 await context.admin.query({
@@ -333,6 +336,7 @@ await context.admin.query({
 ```
 
 **Read metafield in loader:**
+
 ```typescript
 const order = await context.admin.query({
   query: GET_ORDER_WITH_METAFIELDS,
@@ -345,6 +349,7 @@ const invoiceRequested = order.metafield?.value || false;
 ### Environment Variables
 
 Add to `.env`:
+
 ```
 FOUNDER_EMAIL=wholesale@islasuds.com
 RESEND_API_KEY=re_xxxx  # If using Resend
@@ -353,34 +358,40 @@ RESEND_API_KEY=re_xxxx  # If using Resend
 ### Testing Requirements
 
 **Unit Tests:**
+
 - Invoice Request button renders
 - Button disabled after click
 - Confirmation message displays
 - Error message displays
 
 **Integration Tests:**
+
 - Invoice request action sends email
 - Button state persists across reloads (if using metafields)
 - Error handled gracefully
 - Email contains correct order details
 
 **Manual Tests (MVP):**
+
 - Click button → check founder email inbox
 - Verify email contains all order details
 - Test button disabled state
 - Test confirmation message
 
 **Test Location:**
+
 - `app/components/wholesale/OrderDetails.test.tsx`
 - `tests/integration/wholesale-invoice-request.test.ts`
 
 ### Email Testing Strategy
 
 **Development:**
+
 - Use console.log to verify email content
 - Or use email testing service (Mailtrap, MailHog)
 
 **Production:**
+
 - Test with real email to founder
 - Verify email deliverability
 - Check spam folder if not received
@@ -388,17 +399,20 @@ RESEND_API_KEY=re_xxxx  # If using Resend
 ### Error Handling
 
 **Email Send Failures:**
+
 - Catch error from email service
 - Show friendly message to user
 - Log error for debugging
-- Provide fallback: "Email us at wholesale@islasuds.com"
+- Provide fallback: "Email us at <wholesale@islasuds.com>"
 
 **Network Errors:**
+
 - Timeout after 10s
 - Show retry option
 - Don't disable button permanently
 
 **Rate Limiting:**
+
 - Prevent spam: 1 request per order per session
 - Or: 1 request per order ever (if using metafields)
 
@@ -441,12 +455,14 @@ RESEND_API_KEY=re_xxxx  # If using Resend
 ### MVP Implementation Recommendation
 
 **Simplest Path:**
+
 1. Use Shopify's built-in email notifications (if available)
 2. Or use webhook to Zapier → Email → Founder
 3. State persistence: Session storage (good enough for MVP)
 4. Manual invoice generation by founder (not automated)
 
 **Future Iteration:**
+
 - Upgrade to Resend/SendGrid for better templates
 - Add automated PDF invoice generation
 - Store invoice request in order metafields
@@ -475,6 +491,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 ### Implementation Plan
 
 **Approach:**
+
 - MVP implementation with console logging for email (no external service required yet)
 - Session storage for state persistence (simple, effective for MVP)
 - React Router 7 action pattern for invoice request
@@ -482,6 +499,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 - Button component from ui/ with variant support
 
 **Architecture:**
+
 - Action handler in wholesale.orders.$orderId.tsx route
 - Email utility in lib/email.server.ts (server-side only)
 - Customer query in graphql/customer-account/GetCustomer.ts
@@ -492,6 +510,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 ✅ **Implementation Complete** (2026-01-30)
 
 **Features Implemented:**
+
 - Request Invoice button added to order details page
 - React Router 7 action handler for invoice requests
 - Email utility with MVP console logging (ready for external service integration)
@@ -503,6 +522,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 - TypeScript Env interface extended for FOUNDER_EMAIL
 
 **Technical Decisions:**
+
 - MVP: Console logging instead of actual email service (easily upgradeable to Resend/SendGrid)
 - Session storage for state persistence (good enough for MVP, future: order metafields)
 - GET_CUSTOMER_QUERY created to fetch customer details for email
@@ -510,6 +530,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 - Error handling catches failures and displays friendly fallback message
 
 **Files Implemented:**
+
 - ✅ app/lib/email.server.ts - Email sending utility with MVP logging
 - ✅ app/graphql/customer-account/GetCustomer.ts - Customer details query
 - ✅ app/routes/wholesale.orders.$orderId.tsx - Action + button integration
@@ -517,12 +538,14 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 - ✅ env.d.ts - Extended Env interface with FOUNDER_EMAIL
 
 **Testing Status:**
+
 - TypeScript compilation: ✅ Passed
 - Import order enforcement: ✅ Passed (auto-fixed)
 - Unit/Integration tests: ✅ 11 tests passing (Story 7.8 coverage), 2 skipped as redundant
 - Manual testing: Ready for manual verification
 
 **Code Review Fixes (2026-01-30):**
+
 - ✅ Added 13 comprehensive tests for invoice request functionality (AC coverage)
 - ✅ Fixed console logging violation (console.log → console.warn)
 - ✅ Added input validation for intent parameter
@@ -533,6 +556,7 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 - ✅ Removed TODO without issue link
 
 **Next Steps for Production:**
+
 1. Add FOUNDER_EMAIL to .env and Oxygen environment variables (REQUIRED - no fallback)
 2. Integrate actual email service (Resend recommended, example code included in email.server.ts)
 3. Manual test: Click button → verify email in console → test founder receives notification
@@ -543,12 +567,14 @@ Claude Sonnet 4.5 (Dev Agent - Amelia)
 ### File List
 
 Files created:
+
 - app/lib/email.server.ts
 - app/graphql/customer-account/GetCustomer.ts
 
 Files modified:
+
 - app/routes/wholesale.orders.$orderId.tsx (action handler, button UI, accessibility improvements)
-- app/routes/__tests__/wholesale.orders.$orderId.test.tsx (13 tests added for Story 7.8)
+- app/routes/**tests**/wholesale.orders.$orderId.test.tsx (13 tests added for Story 7.8)
 - app/content/wholesale.ts (invoice request content strings)
 - app/components/wholesale/OrderHistoryList.tsx (import order fix only)
 - env.d.ts (FOUNDER_EMAIL type definition)

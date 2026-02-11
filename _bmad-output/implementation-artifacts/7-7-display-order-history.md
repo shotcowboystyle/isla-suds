@@ -52,17 +52,20 @@ so that **I can reference past orders and track my purchases**.
 ### Critical Architecture Requirements
 
 **Data Fetching:**
+
 - Use Shopify Customer Account API
 - Query paginated orders (default: 10 per page)
 - MUST include limit (bounded queries rule)
 - Sort newest first: `sortKey: PROCESSED_AT, reverse: true`
 
 **Navigation Pattern:**
+
 - Add "Order History" link to wholesale header/navigation
 - Breadcrumb: Dashboard → Order History
 - Individual order: Dashboard → Order History → Order #1234
 
 **Performance:**
+
 - Don't load all orders at once (unbounded query violation)
 - Use pagination or cursor-based loading
 - Cache order list with short TTL (5 min)
@@ -208,7 +211,7 @@ export function OrderHistoryItem({ order }: { order: Order }) {
       <div className={cn("flex-1")}>
         {/* Order date */}
         <p className={cn("text-sm text-text-muted mb-1")}>
-          {formatOrderDate(order.processedAt)}
+          {formatDate(order.processedAt)}
         </p>
 
         {/* Order number */}
@@ -259,6 +262,7 @@ function LoadMoreButton({ cursor }: { cursor: string }) {
 ```
 
 **Alternative: Infinite Scroll**
+
 - Use Intersection Observer
 - Trigger when user scrolls near bottom
 - Append new orders to existing list
@@ -314,7 +318,7 @@ export function OrderDetails({ order }: { order: Order }) {
           Order #{order.orderNumber}
         </h1>
         <p className={cn("text-sm text-text-muted")}>
-          {formatOrderDate(order.processedAt)}
+          {formatDate(order.processedAt)}
         </p>
         <OrderStatusBadge status={order.fulfillmentStatus} />
       </div>
@@ -437,6 +441,7 @@ query GetOrderDetails($orderId: ID!) {
 ### Testing Requirements
 
 **Unit Tests:**
+
 - OrderHistoryList renders with orders
 - OrderHistoryList shows empty state
 - OrderHistoryItem displays correctly
@@ -444,6 +449,7 @@ query GetOrderDetails($orderId: ID!) {
 - Load more button works
 
 **Integration Tests:**
+
 - Order history loader fetches paginated orders
 - Order details loader fetches single order
 - Navigation between pages works
@@ -451,6 +457,7 @@ query GetOrderDetails($orderId: ID!) {
 - 404 for invalid order ID
 
 **Test Location:**
+
 - `app/components/wholesale/OrderHistoryList.test.tsx`
 - `app/components/wholesale/OrderDetails.test.tsx`
 - `tests/integration/wholesale-order-history.test.ts`
@@ -458,11 +465,13 @@ query GetOrderDetails($orderId: ID!) {
 ### Performance Considerations
 
 **Pagination:**
+
 - Default 10 orders per page (balance UX and performance)
 - Cursor-based pagination (Shopify standard)
 - Cache each page separately (5 min TTL)
 
 **Order Details:**
+
 - Fetch on-demand when user clicks "View Details"
 - Cache individual orders (longer TTL: 15 min, less likely to change)
 - Limit line items to 50 (reasonable for wholesale orders)
@@ -486,19 +495,23 @@ query GetOrderDetails($orderId: ID!) {
 ### Edge Cases
 
 **No Orders:**
+
 - Show empty state with friendly message
 - Link to product catalog (future enhancement)
 
 **Large Orders:**
+
 - Limit line items to 50 in query
 - If more, show "View full order in Shopify" link
 
 **Invalid Order ID:**
+
 - Return 404 response
 - Show friendly error: "Order not found"
 - Link back to order history
 
 **Pagination Edge Cases:**
+
 - Last page: Hide "Load More" button
 - First load: Start with most recent orders
 - Error loading next page: Show retry option
@@ -548,6 +561,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 ### Implementation Plan
 
 **Task 1 - Create Order History Route:**
+
 - Created `/app/routes/wholesale.orders.tsx` with loader for paginated orders
 - Implemented bounded query (first: 10) per project rules
 - Added cursor-based pagination support via URL query params
@@ -557,13 +571,15 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 - Tests: 10 passing tests covering authentication, pagination, display
 
 **Files Created:**
+
 - app/routes/wholesale.orders.tsx (route with loader)
 - app/components/wholesale/OrderHistoryList.tsx (list wrapper)
 - app/components/wholesale/OrderHistoryItem.tsx (individual order)
 - app/graphql/customer-account/GetOrderHistory.ts (GraphQL query)
-- app/routes/__tests__/wholesale.orders.test.tsx (tests)
+- app/routes/**tests**/wholesale.orders.test.tsx (tests)
 
 **Task 6 - Create Order Details Page:**
+
 - Created `/app/routes/wholesale.orders.$orderId.tsx` with loader
 - Implemented full order breakdown display
 - Shows order header, line items with images, order summary, shipping address
@@ -571,15 +587,17 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 - Tests: 8 passing tests covering all display requirements
 
 **Files Created (Task 6):**
+
 - app/routes/wholesale.orders.$orderId.tsx (order details route)
 - app/graphql/customer-account/GetOrderDetails.ts (GraphQL query)
-- app/routes/__tests__/wholesale.orders.$orderId.test.tsx (tests)
+- app/routes/**tests**/wholesale.orders.$orderId.test.tsx (tests)
 
 **Files Modified:**
+
 - app/components/wholesale/WholesaleHeader.tsx (added Order History navigation link)
 - app/content/wholesale-routes.ts (added ORDERS constant)
 - app/content/wholesale.ts (added orders content section)
-- app/routes/__tests__/wholesale.layout.test.tsx (updated for new navigation)
+- app/routes/**tests**/wholesale.layout.test.tsx (updated for new navigation)
 
 **All Tests Passing:** 51 wholesale tests (100% pass rate)
 
@@ -591,6 +609,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 Story 7.7 successfully implemented following red-green-refactor TDD cycle. All acceptance criteria satisfied with comprehensive test coverage (51 tests passing, 100% pass rate).
 
 **Key Achievements:**
+
 - ✅ Order history route with paginated list display
 - ✅ Bounded queries enforced (first: 10 per project rules)
 - ✅ Cursor-based pagination (Shopify standard)
@@ -601,6 +620,7 @@ Story 7.7 successfully implemented following red-green-refactor TDD cycle. All a
 - ✅ All existing tests remain passing (no regressions)
 
 **Story Context (from SM creation):**
+
 - Customer Account API paginated queries documented
 - Cursor-based pagination pattern (Shopify standard)
 - Order history list and details page structure
@@ -619,16 +639,19 @@ Story 7.7 successfully implemented following red-green-refactor TDD cycle. All a
 **Adversarial review by Amelia (Dev Agent) identified and fixed:**
 
 **HIGH Issues Fixed:**
+
 1. **TypeScript strict mode violations** - Replaced all `any` types with proper interfaces
 2. **Silent exception swallowing** - Added `console.error()` logging before graceful degradation
 
 **MEDIUM Issues Fixed:**
+
 1. **Hardcoded currency display** - Created `formatCurrency()` utility with Intl.NumberFormat
 2. **Missing cache strategy** - Added `context.storefront.CacheShort()` to order history loader
 3. **Accessibility gaps** - Added aria-labels with `getCurrencyLabel()` for screen readers
 
 **LOW Issues Fixed:**
-1. **Code duplication** - Extracted `formatOrderDate()` to shared utility
+
+1. **Code duplication** - Extracted `formatDate()` to shared utility
 2. **Missing error test** - Added test coverage for API error graceful degradation
 
 **Result:** 677/677 tests passing (100%), all issues resolved, accessibility improved for international wholesale partners
@@ -636,22 +659,24 @@ Story 7.7 successfully implemented following red-green-refactor TDD cycle. All a
 ### File List
 
 **Files Created:**
+
 - app/routes/wholesale.orders.tsx
 - app/routes/wholesale.orders.$orderId.tsx
 - app/components/wholesale/OrderHistoryList.tsx
 - app/components/wholesale/OrderHistoryItem.tsx
 - app/graphql/customer-account/GetOrderHistory.ts
 - app/graphql/customer-account/GetOrderDetails.ts
-- app/routes/__tests__/wholesale.orders.test.tsx
-- app/routes/__tests__/wholesale.orders.$orderId.test.tsx
+- app/routes/**tests**/wholesale.orders.test.tsx
+- app/routes/**tests**/wholesale.orders.$orderId.test.tsx
 - app/utils/format-currency.ts (code review fix)
 - app/utils/format-date.ts (code review fix)
 
 **Files Modified:**
+
 - app/components/wholesale/WholesaleHeader.tsx (added Order History navigation link)
 - app/content/wholesale-routes.ts (added ORDERS route constant)
 - app/content/wholesale.ts (added orders content section)
-- app/routes/__tests__/wholesale.layout.test.tsx (updated keyboard navigation tests)
+- app/routes/**tests**/wholesale.layout.test.tsx (updated keyboard navigation tests)
 - app/routes/wholesale.orders.tsx (code review fixes: types, caching, error logging)
 - app/routes/wholesale.orders.$orderId.tsx (code review fixes: types, currency formatting, aria-labels)
 - app/components/wholesale/OrderHistoryItem.tsx (code review fixes: currency formatting, aria-labels)

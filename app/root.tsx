@@ -11,13 +11,7 @@ import {
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
-import {
-  Analytics,
-  getShopAnalytics,
-  useNonce,
-  type CartQueryDataReturn,
-  type ShopAnalytics,
-} from '@shopify/hydrogen';
+import {Analytics, getShopAnalytics, useNonce, type CartQueryDataReturn, type ShopAnalytics} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
 import {CartDrawer} from '~/components/cart/CartDrawer';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
@@ -26,17 +20,13 @@ import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {usePastHero} from '~/hooks/use-past-hero';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import {initLenis, destroyLenis} from '~/lib/scroll';
-import appStyles from '~/styles/app.css?url';
-import resetStyles from '~/styles/reset.css?url';
+// import appStyles from '~/styles/app.css?url';
+// import resetStyles from '~/styles/reset.css?url';
 import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
 import {cn} from './utils/cn';
 import type {Route} from './+types/root';
-import type {
-  CartApiQueryFragment,
-  FooterQuery,
-  HeaderQuery,
-} from 'storefrontapi.generated';
+import type {CartApiQueryFragment, FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 // import {localizationCookie, themeCookie} from './cookie.server';
 
 export type RootLoader = typeof loader;
@@ -44,11 +34,7 @@ export type RootLoader = typeof loader;
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
-export const shouldRevalidate: ShouldRevalidateFunction = ({
-  formMethod,
-  currentUrl,
-  nextUrl,
-}) => {
+export const shouldRevalidate: ShouldRevalidateFunction = ({formMethod, currentUrl, nextUrl}) => {
   // revalidate when a mutation is performed e.g add to cart, login...
   if (formMethod && formMethod !== 'GET') return true;
 
@@ -186,7 +172,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
     <html
       lang="en"
       // className={cn('text-base sm:text-[1.12vw] hide-scrollbar', theme)}
-      className={cn('text-base sm:text-[1.12vw] hide-scrollbar')}
+      // className={cn('text-base sm:text-[1.12vw] hide-scrollbar')}
     >
       <head>
         <meta charSet="utf-8" />
@@ -196,15 +182,22 @@ export function Layout({children}: {children?: React.ReactNode}) {
           content={theme === 'dark' ? '#000000' : '#ffffff'}
         /> */}
         <link rel="stylesheet" href={tailwindCss}></link>
-        <link rel="stylesheet" href={resetStyles}></link>
-        <link rel="stylesheet" href={appStyles}></link>
+        {/* <link rel="stylesheet" href={resetStyles}></link> */}
+        {/* <link rel="stylesheet" href={appStyles}></link> */}
         <Meta />
         <Links />
       </head>
-      <body className="flex flex-col min-h-[100dvh] bg-white dark:bg-black text-black dark:text-white transition duration-300">
+      <body>
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
+        {/* <script>
+          document.addEventListener("DOMContentLoaded", function() {
+            window.addEventListener("load", function() {
+              gsap
+            });
+          });
+        </script> */}
       </body>
     </html>
   );
@@ -271,29 +264,14 @@ export default function App() {
   }
 
   const layoutContent = (
-    <PageLayout
-      {...data}
-      theme="light"
-      setTheme={() => {}}
-      header={data.header}
-    >
+    <PageLayout {...data} theme="light" setTheme={() => {}} header={data.header}>
       <Outlet context={isHome ? {heroRef} : undefined} />
     </PageLayout>
   );
 
   return (
-    <Analytics.Provider
-      cart={data.cart}
-      shop={data.shop}
-      consent={data.consent}
-    >
-      {isHome ? (
-        <HomeScrollProvider isPastHero={isPastHero}>
-          {layoutContent}
-        </HomeScrollProvider>
-      ) : (
-        layoutContent
-      )}
+    <Analytics.Provider cart={data.cart} shop={data.shop} consent={data.consent}>
+      {isHome ? <HomeScrollProvider isPastHero={isPastHero}>{layoutContent}</HomeScrollProvider> : layoutContent}
       <CartDrawer />
     </Analytics.Provider>
   );
@@ -307,45 +285,25 @@ export default function App() {
  */
 export function ErrorBoundary() {
   const error = useRouteError();
-  const nonce = useNonce();
+  let errorMessage = 'Unknown error';
+  let errorStatus = 500;
 
-  // Log error details to console for debugging (never show to user)
-  useEffect(() => {
-    if (isRouteErrorResponse(error)) {
-      console.error('Route error (response):', {
-        status: error.status,
-        statusText: error.statusText,
-        data: error.data,
-        timestamp: new Date().toISOString(),
-        boundaryType: 'route',
-      });
-    } else if (error instanceof Error) {
-      console.error('Route error:', {
-        message: error.message,
-        stack: error.stack,
-        timestamp: new Date().toISOString(),
-        boundaryType: 'route',
-      });
-    } else {
-      console.error('Unknown route error:', error);
-    }
-  }, [error]);
+  if (isRouteErrorResponse(error)) {
+    errorMessage = error?.data?.message ?? error.data;
+    errorStatus = error.status;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  }
 
   return (
-    <html lang="en" className="text-base sm:text-[1.12vw] hide-scrollbar">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="stylesheet" href={tailwindCss}></link>
-        <link rel="stylesheet" href={resetStyles}></link>
-        <link rel="stylesheet" href={appStyles}></link>
-        <Meta />
-        <Links />
-      </head>
-      <body className="flex flex-col min-h-[100dvh] bg-white text-black">
-        <RouteErrorFallback fullPage />
-        <Scripts nonce={nonce} />
-      </body>
-    </html>
+    <div className="max-w-container mx-auto p-4 md:p-8 min-h-full flex items-center justify-center flex-col gap-4">
+      <h1 className="heading-display">Oops</h1>
+      <h2>{errorStatus}</h2>
+      {errorMessage && (
+        <fieldset>
+          <pre>{errorMessage}</pre>
+        </fieldset>
+      )}
+    </div>
   );
 }

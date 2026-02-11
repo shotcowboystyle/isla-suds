@@ -56,12 +56,14 @@ so that **I can reorder instantly without searching**.
 ### Critical Architecture Requirements
 
 **Above the Fold Priority:**
+
 - Last order is MOST IMPORTANT info for wholesale partners
 - Enables one-click reorder (Story 7.6) immediately
 - Desktop: Visible on page load (no scroll)
 - Mobile: First content after header
 
 **Data Fetching Strategy:**
+
 - Use Shopify Customer Account API (NOT Storefront API)
 - B2B orders accessible via Customer Account API
 - Query limited to last order only (performance)
@@ -203,7 +205,7 @@ export function LastOrder({ order }: LastOrderProps) {
 
       {/* Order date */}
       <p className={cn("text-sm text-text-muted mb-2")}>
-        {formatOrderDate(order.processedAt)}
+        {formatDate(order.processedAt)}
       </p>
 
       {/* Order items */}
@@ -229,7 +231,7 @@ export function LastOrder({ order }: LastOrderProps) {
 
 ```typescript
 // Utility function
-function formatOrderDate(dateString: string): string {
+function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -258,6 +260,7 @@ function formatCurrency(price: { amount: string; currencyCode: string }): string
 ### Line Items Display
 
 **Truncation Strategy:**
+
 - Show first 3-4 items fully
 - If more items: "12x Lavender, 12x Lemongrass, +3 more items"
 - Click "+3 more" to expand (optional, MVP can skip)
@@ -323,6 +326,7 @@ export function OrderStatusBadge({ status }: { status: string }) {
 ### Caching Strategy
 
 **Hydrogen Cache Pattern:**
+
 ```typescript
 // In loader
 const ordersData = await context.customerAccount.query({
@@ -333,6 +337,7 @@ const ordersData = await context.customerAccount.query({
 ```
 
 **Rationale:**
+
 - Orders don't change frequently
 - 5-minute cache reduces API calls
 - Still fresh enough for reorder flow
@@ -340,21 +345,25 @@ const ordersData = await context.customerAccount.query({
 ### Edge Cases & Error Handling
 
 **No Orders:**
+
 - Show friendly message
 - Encourage first order
 - Message from `app/content/wholesale.ts`
 
 **API Error:**
+
 - Catch error in loader
 - Show generic message: "Unable to load order history. Please refresh."
 - Log error for debugging
 
 **Many Line Items:**
+
 - Truncate display after 4 items
 - Show "+X more items" indicator
 - MVP: No expand functionality needed
 
 **Missing Data:**
+
 - If order missing fields, use fallbacks
 - Date missing: "Recent order"
 - Total missing: "See order details"
@@ -362,6 +371,7 @@ const ordersData = await context.customerAccount.query({
 ### Testing Requirements
 
 **Unit Tests:**
+
 - LastOrder component renders with order data
 - LastOrder shows no orders message
 - Date formatting works correctly
@@ -370,12 +380,14 @@ const ordersData = await context.customerAccount.query({
 - Status badge shows correct variant
 
 **Integration Tests:**
+
 - Dashboard loader fetches last order
 - Last order displays on dashboard
 - No orders shows correct message
 - API error handled gracefully
 
 **Test Location:**
+
 - `app/components/wholesale/LastOrder.test.tsx`
 - `tests/integration/wholesale-dashboard.test.ts`
 
@@ -421,6 +433,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 ### Completion Notes
 
 **Planning (SM Agent - YOLO Mode):**
+
 - Customer Account API query structure for orders documented
 - Loader extension pattern for fetching last order
 - Component design with proper data display
@@ -433,6 +446,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 - Anti-patterns highlighted to prevent common mistakes
 
 **Implementation (Dev Agent - 2026-01-30):**
+
 - ✅ Created GET_LAST_ORDER_QUERY with bounded query (`first: 1`)
 - ✅ Extended wholesale._index.tsx loader to fetch last order via Customer Account API
 - ✅ Created LastOrder component with date/currency formatting via Intl APIs
@@ -448,9 +462,10 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 **Reorder enablement** - Critical foundation for one-click reorder in Story 7.6.
 
 **Code Review Fixes (Code Review Agent - 2026-01-30):**
+
 - ✅ Fixed GraphQL query to increase lineItems limit from 10 to 50 (supports truncation)
 - ✅ Added truncation logic to LastOrder component (show 4 items, then "+X more")
-- ✅ Added error handling to formatOrderDate with "Recent order" fallback
+- ✅ Added error handling to formatDate with "Recent order" fallback
 - ✅ Added error handling to formatCurrency with "See order details" fallback
 - ✅ Fixed loader error handling - now logs errors AND gracefully degrades on order fetch failure
 - ✅ Replaced hardcoded 'en-US' locale with browser default (undefined) in Intl APIs
@@ -462,6 +477,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 - ✅ All tests passing (24 component tests, 7 integration tests)
 
 **Issues Fixed:**
+
 - **[HIGH]** Missing truncation logic for line items - now implemented
 - **[HIGH]** Silent exception swallowing - now logs errors properly
 - **[HIGH]** Missing error handling in formatters - now has fallbacks
@@ -476,6 +492,7 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 ### File List
 
 **Files Created:**
+
 - app/components/wholesale/LastOrder.tsx
 - app/components/wholesale/OrderLineItem.tsx
 - app/components/wholesale/OrderStatusBadge.tsx
@@ -484,8 +501,9 @@ Claude Sonnet 4.5 (SM Agent - YOLO Mode)
 - app/graphql/customer-account/GetLastOrder.ts
 
 **Files Modified:**
+
 - app/routes/wholesale._index.tsx
-- app/routes/__tests__/wholesale._index.test.ts
+- app/routes/**tests**/wholesale._index.test.ts
 - app/content/wholesale.ts
 - _bmad-output/implementation-artifacts/7-5-display-last-order-on-dashboard.md
 - _bmad-output/implementation-artifacts/sprint-status.yaml
