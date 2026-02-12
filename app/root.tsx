@@ -62,6 +62,20 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({formMethod, currentU
 export function links() {
   return [
     {
+      rel: 'preload',
+      as: 'font',
+      href: '/fonts/Antonio-VariableFont_wght.ttf',
+      type: 'font/ttf',
+      crossOrigin: 'anonymous' as const,
+    },
+    {
+      rel: 'preload',
+      as: 'font',
+      href: '/fonts/HelveticaNeue.woff2',
+      type: 'font/woff2',
+      crossOrigin: 'anonymous' as const,
+    },
+    {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
     },

@@ -1,0 +1,22 @@
+.navbar_logo_link.w--current {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.navbar_logo_link {
+  z-index: 102;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+}
+.navbar_logo_link.ab.w--current {
+  position: absolute;
+}
+@media screen and (min-width: 768px) {
+  .navbar_logo_link.ab,
+  .navbar_logo_link.ab.w--current {
+    position: absolute;
+  }
+}
+@media screen and (min-width: 992px) {
+  .navbar_logo_link.ab.w--current {
+    position: absolute;
+  }
+}

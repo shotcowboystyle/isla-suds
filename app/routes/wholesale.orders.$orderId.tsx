@@ -8,7 +8,7 @@ import {GET_ORDER_DETAILS_QUERY} from '~/graphql/customer-account/GetOrderDetail
 import {sendInvoiceRequestEmail} from '~/lib/email.server';
 import {cn} from '~/utils/cn';
 import {formatCurrency, getCurrencyLabel} from '~/utils/format-currency';
-import {formatOrderDate} from '~/utils/format-date';
+import {formatDate} from '~/utils/format-date';
 import type {Route} from './+types/wholesale.orders.$orderId';
 
 // TypeScript interfaces for Customer Account API response
@@ -223,7 +223,7 @@ export default function OrderDetailsPage() {
           Order #{order.orderNumber}
         </h1>
         <p className={cn('text-sm text-text-muted')}>
-          {formatOrderDate(order.processedAt)}
+          {formatDate(order.processedAt)}
         </p>
         <div className={cn('mt-2')}>
           <span

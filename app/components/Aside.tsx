@@ -1,10 +1,4 @@
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import {createContext, type ReactNode, useContext, useEffect, useState} from 'react';
 import {NavLink} from 'react-router';
 import GoatLogo from '~/assets/images/goat-logo.png?responsive';
 import {Picture} from '~/components/Picture';
@@ -60,11 +54,7 @@ export function Aside({
   if (type === 'cart') return;
 
   return (
-    <div
-      aria-modal
-      className={`overlay ${expanded ? 'expanded' : ''} !w-full`}
-      role="dialog"
-    >
+    <div aria-modal className={`overlay ${expanded ? 'expanded' : ''} !w-full`} role="dialog">
       <button className="close-outside" onClick={close} />
       <aside className="flex flex-col min-h-[100dvh]">
         <header>
@@ -76,11 +66,7 @@ export function Aside({
               onClick={close}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
             >
-              <Picture
-                src={GoatLogo}
-                alt="Isla Suds Logo"
-                className="w-[16.06rem] h-[3.44rem]"
-              />
+              <Picture loading="lazy" src={GoatLogo} alt="Isla Suds Logo" className="w-[16.06rem] h-[3.44rem]" />
             </button>
 
             <button className="close reset" onClick={close} aria-label="Close">

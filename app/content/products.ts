@@ -1,3 +1,15 @@
+import BrownBgImage from '../assets/images/brown-bg.png?responsive';
+import GreenBgImage from '../assets/images/green-bg.webp?responsive';
+import LavenderBarImage from '../assets/images/lavender-bar.webp?responsive';
+import LavenderElementsImage from '../assets/images/lavender-elements.webp?responsive';
+import LavenderMintBarImage from '../assets/images/lavender-mint-bar.webp?responsive';
+import LemongrassBarImage from '../assets/images/lemongrass-bar.webp?responsive';
+import LemongrassElementsImage from '../assets/images/lemongrass-elements.webp?responsive';
+import MintElementsImage from '../assets/images/mint-elements.webp?responsive';
+import PurpleBgImage from '../assets/images/purple-bg.webp?responsive';
+import RosemarySeaSaltBarImage from '../assets/images/rosemary-sea-salt-bar.webp?responsive';
+import WhiteBgImage from '../assets/images/white-bg.png?responsive';
+
 /**
  * Product Content Layer - Centralized content management with Shopify metafield fallbacks
  *
@@ -40,22 +52,15 @@ export const BUNDLE_HANDLE = 'four-bar-variety-pack';
  * Map of product handles to scent narrative copy
  */
 export const SCENT_NARRATIVES: Record<string, string> = {
-  'lavender-dreams':
-    'Close your eyes. A field at dusk. The last warmth of the day on your skin.',
+  'lavender-dreams': 'Close your eyes. A field at dusk. The last warmth of the day on your skin.',
   'citrus-sunrise': 'First light. Fresh squeezed. The promise of possibility.',
-  'forest-calm':
-    "Moss underfoot. Cedar overhead. The deep breath you've been holding.",
+  'forest-calm': "Moss underfoot. Cedar overhead. The deep breath you've been holding.",
   'ocean-breeze': 'Salt air. Horizon endless. Where the sky meets the sea.',
-  'honey-amber':
-    'Golden hour. Warm honey dripping slow. Sweet nostalgia wrapped in resin.',
-  'eucalyptus-mint':
-    'Breathe deep. Cool clarity cutting through. The forest after rain.',
-  'vanilla-bean':
-    'Smooth warmth. Scraped pods and memories. Comfort in every breath.',
-  'rose-garden':
-    'Petals unfold. Morning dew on velvet. Romance distilled to essence.',
-  [BUNDLE_HANDLE]:
-    'Four distinct journeys. One complete experience. Every mood, every moment.',
+  'honey-amber': 'Golden hour. Warm honey dripping slow. Sweet nostalgia wrapped in resin.',
+  'eucalyptus-mint': 'Breathe deep. Cool clarity cutting through. The forest after rain.',
+  'vanilla-bean': 'Smooth warmth. Scraped pods and memories. Comfort in every breath.',
+  'rose-garden': 'Petals unfold. Morning dew on velvet. Romance distilled to essence.',
+  [BUNDLE_HANDLE]: 'Four distinct journeys. One complete experience. Every mood, every moment.',
 };
 
 /**
@@ -70,10 +75,7 @@ export const DEFAULT_NARRATIVE = 'Discover the essence of craftsmanship.';
  * @param metafieldValue - Optional scent narrative from Shopify metafield
  * @returns Scent narrative copy to display
  */
-export function getScentNarrative(
-  handle: string,
-  metafieldValue?: string | null,
-): string {
+export function getScentNarrative(handle: string, metafieldValue?: string | null): string {
   // Prefer CMS metafield if provided
   if (metafieldValue) {
     return metafieldValue;
@@ -95,30 +97,21 @@ export function getScentNarrative(
  * is empty or missing. Keep descriptions brief and compelling.
  */
 export const PRODUCT_DESCRIPTIONS: Record<string, string> = {
-  'lavender-dreams':
-    'A soothing lavender soap with calming properties. Perfect for evening relaxation.',
-  'citrus-sunrise':
-    'Energizing citrus blend to start your day fresh. Awakens the senses.',
-  'forest-calm':
-    'Woodsy soap with cedar and moss notes. Grounding and peaceful.',
-  'ocean-breeze':
-    'Clean marine scent reminiscent of coastal air. Refreshing and crisp.',
-  'honey-amber':
-    'Warm honey and amber create a sweet, cozy lather. Comforting and rich.',
-  'eucalyptus-mint':
-    'Cooling eucalyptus and mint for clarity. Invigorating and fresh.',
-  'vanilla-bean':
-    'Classic vanilla with natural bean essence. Warm and familiar.',
+  'lavender-dreams': 'A soothing lavender soap with calming properties. Perfect for evening relaxation.',
+  'citrus-sunrise': 'Energizing citrus blend to start your day fresh. Awakens the senses.',
+  'forest-calm': 'Woodsy soap with cedar and moss notes. Grounding and peaceful.',
+  'ocean-breeze': 'Clean marine scent reminiscent of coastal air. Refreshing and crisp.',
+  'honey-amber': 'Warm honey and amber create a sweet, cozy lather. Comforting and rich.',
+  'eucalyptus-mint': 'Cooling eucalyptus and mint for clarity. Invigorating and fresh.',
+  'vanilla-bean': 'Classic vanilla with natural bean essence. Warm and familiar.',
   'rose-garden': 'Delicate rose petal soap, soft and romantic. Gentle on skin.',
-  [BUNDLE_HANDLE]:
-    'All four handcrafted soaps together. Rotate scents with your mood.',
+  [BUNDLE_HANDLE]: 'All four handcrafted soaps together. Rotate scents with your mood.',
 };
 
 /**
  * Default description for products without specific copy
  */
-export const DEFAULT_DESCRIPTION =
-  'Handcrafted soap made with premium natural ingredients.';
+export const DEFAULT_DESCRIPTION = 'Handcrafted soap made with premium natural ingredients.';
 
 /**
  * Get product description with fallback (follows standard priority order)
@@ -127,10 +120,7 @@ export const DEFAULT_DESCRIPTION =
  * @param apiDescription - Optional description from Shopify API
  * @returns Product description (1-2 sentences)
  */
-export function getProductDescription(
-  handle: string,
-  apiDescription?: string | null,
-): string {
+export function getProductDescription(handle: string, apiDescription?: string | null): string {
   // Prefer API description if provided
   if (apiDescription && apiDescription.trim()) {
     return apiDescription.trim();
@@ -158,8 +148,7 @@ export const BUNDLE_VALUE_PROPOSITIONS: Record<string, string> = {
 /**
  * Default bundle value proposition
  */
-export const DEFAULT_BUNDLE_VALUE_PROPOSITION =
-  'Get all four handcrafted soaps together.';
+export const DEFAULT_BUNDLE_VALUE_PROPOSITION = 'Get all four handcrafted soaps together.';
 
 /**
  * Get bundle value proposition for a product (follows standard priority order)
@@ -168,10 +157,7 @@ export const DEFAULT_BUNDLE_VALUE_PROPOSITION =
  * @param metafieldValue - Optional value proposition from Shopify metafield
  * @returns Bundle value proposition copy to display
  */
-export function getBundleValueProposition(
-  handle: string,
-  metafieldValue?: string | null,
-): string {
+export function getBundleValueProposition(handle: string, metafieldValue?: string | null): string {
   // Prefer CMS metafield if provided
   if (metafieldValue) {
     return metafieldValue;
@@ -194,3 +180,42 @@ export type ProductContent = {
   description: string;
   bundleValueProposition?: string;
 };
+
+export const productsList = [
+  {
+    name: 'Lavender Mint',
+    color: 'green',
+    toUrl: '/product/lavender-mint',
+    rotation: 'md:rotate-[-8deg] rotate-0',
+    productImageUrl: LavenderMintBarImage,
+    bgUrl: GreenBgImage,
+    particlesUrl: MintElementsImage,
+  },
+  {
+    name: 'Lemongrass',
+    color: 'yellow',
+    toUrl: '/product/lemongrass',
+    rotation: 'md:rotate-[8deg] rotate-0',
+    productImageUrl: LemongrassBarImage,
+    bgUrl: BrownBgImage,
+    particlesUrl: LemongrassElementsImage,
+  },
+  {
+    name: 'Lavender',
+    color: 'purple',
+    toUrl: '/product/lavender',
+    rotation: 'md:rotate-[-8deg] rotate-0',
+    productImageUrl: LavenderBarImage,
+    bgUrl: PurpleBgImage,
+    particlesUrl: LavenderElementsImage,
+  },
+  {
+    name: 'Rosemary Sea Salt',
+    color: 'orange',
+    toUrl: '/product/rosemary-sea-salt',
+    rotation: 'md:rotate-[8deg] rotate-0',
+    productImageUrl: RosemarySeaSaltBarImage,
+    bgUrl: WhiteBgImage,
+    particlesUrl: MintElementsImage,
+  },
+];

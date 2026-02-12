@@ -1,4 +1,4 @@
-import {fixupConfigRules, fixupPluginRules} from '@eslint/compat';
+import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import eslintComments from 'eslint-plugin-eslint-comments';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -9,9 +9,9 @@ import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
 import jest from 'eslint-plugin-jest';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
-import {FlatCompat} from '@eslint/eslintrc';
+import { FlatCompat } from '@eslint/eslintrc';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -137,7 +137,14 @@ export default [
         },
       ],
       'import/resolver': {
-        typescript: {},
+        typescript: {
+          extensions: [
+            '.js',
+            '.jsx',
+            '.ts',
+            '.tsx',
+          ],
+        },
       },
     },
     rules: {
@@ -177,7 +184,7 @@ export default [
     },
     settings: {
       'import/internal-regex': '^~/',
-      'import/resolvers': {
+      'import/resolver': {
         node: {
           extensions: ['.ts', '.tsx'],
         },
@@ -226,7 +233,7 @@ export default [
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
       'react/prop-types': 'off',
-      'import/no-unresolved': ['error', {ignore: ['^virtual:']}],
+      'import/no-unresolved': ['error', { ignore: ['^virtual:'] }],
       // Import order rules (AC2)
       'import/order': [
         'error',

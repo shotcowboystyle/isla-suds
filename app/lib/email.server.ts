@@ -6,7 +6,7 @@
  */
 
 import {formatCurrency} from '~/utils/format-currency';
-import {formatOrderDate} from '~/utils/format-date';
+import {formatDate} from '~/utils/format-date';
 
 interface MoneyV2 {
   amount: string;
@@ -74,7 +74,7 @@ Email: ${customer.email}
 
 Order Details:
 - Order Number: ${order.orderNumber}
-- Order Date: ${formatOrderDate(order.processedAt)}
+- Order Date: ${formatDate(order.processedAt)}
 - Total: ${formatCurrency(order.currentTotalPrice)}
 - Status: ${order.fulfillmentStatus}
 
@@ -131,7 +131,7 @@ export async function sendInvoiceRequestEmail({
 
       <h3>Order Details</h3>
       <p><strong>Order #:</strong> ${order.orderNumber}</p>
-      <p><strong>Date:</strong> ${formatOrderDate(order.processedAt)}</p>
+      <p><strong>Date:</strong> ${formatDate(order.processedAt)}</p>
       <p><strong>Total:</strong> ${formatCurrency(order.currentTotalPrice)}</p>
       <p><strong>Status:</strong> ${order.fulfillmentStatus}</p>
 

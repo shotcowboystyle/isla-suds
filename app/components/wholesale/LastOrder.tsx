@@ -30,7 +30,7 @@ interface LastOrderProps {
   } | null;
 }
 
-function formatOrderDate(dateString: string): string {
+function formatDate(dateString: string): string {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -116,7 +116,7 @@ export function LastOrder({order}: LastOrderProps) {
         <div>
           <dt className={cn('sr-only')}>Order Date</dt>
           <dd className={cn('text-sm text-text-muted')}>
-            {formatOrderDate(order.processedAt)}
+            {formatDate(order.processedAt)}
           </dd>
         </div>
 
