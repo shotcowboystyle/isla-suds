@@ -75,6 +75,7 @@ export const VideoSection = () => {
                       muted
                       loop
                       autoPlay
+                      preload="metadata"
                       src={PinVideo}
                       data-object-fit="cover"
                       className="absolute object-cover size-full -inset-full"
@@ -105,6 +106,7 @@ export const VideoSection = () => {
               loop
               muted
               playsInline
+              preload="metadata"
               data-object-fit="cover"
               src={PinVideo}
               className="absolute inset-0 object-cover size-full"

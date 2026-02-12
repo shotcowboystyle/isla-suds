@@ -42,7 +42,7 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
                 muted
                 playsInline
                 loop
-                preload="auto"
+                preload="none"
               />
             </div>
           </div>
@@ -50,13 +50,10 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
           <div className={styles['background-video']}>
             <video
               src={cardData.src}
-              ref={videoRef}
-              onMouseEnter={handlePlay}
-              onMouseLeave={handlePause}
               muted
               playsInline
               loop
-              preload="auto"
+              preload="none"
             />
           </div>
         </div>

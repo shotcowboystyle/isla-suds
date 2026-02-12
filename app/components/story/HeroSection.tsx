@@ -1,7 +1,7 @@
 import {forwardRef, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
-import {SplitText} from 'gsap/all';
+import {SplitText} from 'gsap/SplitText';
 import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.png?responsive';
 import HeroVideoThumbnail from '~/assets/images/hero-video-thumbnail.png?responsive';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
@@ -126,7 +126,13 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           <LiquidButton id="hero-button" href="/products" text="Shop Now" />
         </div>
 
-        <Picture src={HeroMobileBackgroundImage} loading="eager" fetchPriority="high" alt="" className={styles['hero-mobile']} />
+        <Picture
+          src={HeroMobileBackgroundImage}
+          loading="eager"
+          fetchpriority="high"
+          alt=""
+          className={styles['hero-mobile']}
+        />
 
         <div id="home-hero-video" className={styles['home-hero-video-wrapper']}>
           <video

@@ -1,6 +1,6 @@
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
-import {SplitText} from 'gsap/all';
+import {SplitText} from 'gsap/SplitText';
 import styles from './Ingredients.module.css';
 import ingredientsImage from '../../assets/images/ingredients-section-bg.png?responsive';
 import ingredientsDripImage from '../../assets/images/slider-dip.png?responsive';
@@ -15,6 +15,7 @@ export function IngredientsSection() {
       const paragraphSplit = SplitText.create('#ingredients-section-paragraph', {
         type: 'words, lines',
         linesClass: 'paragraph-line',
+        aria: 'none',
       });
 
       const contentTl = gsap.timeline({

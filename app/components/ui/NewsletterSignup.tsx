@@ -28,8 +28,8 @@ export const NewsletterSignup = () => {
 
         <button
           onClick={handleSubmit}
-          className="absolute top-1/2 right-2 -translate-y-1/2 transition-transform hover:translate-x-1"
-          aria-label="Submit"
+          className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center justify-center w-12 h-12 transition-transform hover:translate-x-1"
+          aria-label="Submit email"
         >
           <FaArrowRight />
         </button>

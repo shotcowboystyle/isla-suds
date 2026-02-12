@@ -18,7 +18,7 @@ export default defineConfig(({mode}) => ({
     tsconfigPaths(),
     setupPlugins({
       cache: true,
-      lqip: {type: 'thumbhash'},
+      // lqip: {type: 'thumbhash'},
       include: /^[^?]+\.(jpg|jpeg|png|webp)\?.*responsive.*$/,
       w: [320, 640, 768, 1024, 1280, 1920],
       format: ['original', 'avif', 'webp'],
@@ -54,56 +54,8 @@ export default defineConfig(({mode}) => ({
     },
     commonjsOptions: {transformMixedEsModules: true},
     // Allow a strict Content-Security-Policy
-    // withtout inlining assets as base64:
+    // without inlining assets as base64:
     assetsInlineLimit: 0,
-    // rollupOptions: {
-    //   treeshake: true,
-    //   // outDir: 'dist',
-    //   // sourcemap: true,
-    //   rollupOptions: {
-    //     onwarn(warning: any, warn: any) {
-    //       //console.log(inspect(warning, { depth: 5, colors: true }))
-    //       // Suppress ResponsiveImage sourcemap warnings
-    //       if (
-    //         warning.code === 'SOURCEMAP_BROKEN' &&
-    //         warning.plugin !== undefined &&
-    //         warning.plugin.startsWith('responsive-image/')
-    //       ) {
-    //         return;
-    //       }
-    //       warn(warning);
-    //     },
-    //     // output: {
-    //     //   hashCharacters: 'base36',
-    //     //   chunkFileNames: 'lib/[hash].js',
-    //     //   entryFileNames: 'lib/[hash].js',
-    //     //   assetFileNames(chunkInfo: any) {
-    //     //     if (chunkInfo.names.some((x: any) => x.endsWith('.css'))) {
-    //     //       return 'lib/[hash].[ext]';
-    //     //     }
-    //     //     if (chunkInfo.names.some((x: any) => x.endsWith('.jpg') || x.endsWith('.jpeg'))) {
-    //     //       // rename jpeg files
-    //     //       return 'lib/[hash].jpeg';
-    //     //     }
-    //     //     return 'lib/[hash].[ext]';
-    //     //   },
-
-    //     //   manualChunks: {
-    //     //     'react-vendor': ['react', 'react-dom'],
-    //     //     'router-vendor': ['react-router'],
-    //     //     'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-navigation-menu'],
-    //     //     'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
-    //     //     // 'chart-vendor': ['recharts'],
-    //     //     'utils-vendor': [
-    //     //       // 'date-fns',
-    //     //       'clsx',
-    //     //       'tailwind-merge',
-    //     //       'class-variance-authority',
-    //     //     ],
-    //     //   },
-    //     // },
-    //   },
-    // },
   },
   test: {
     globals: true,
@@ -149,7 +101,7 @@ export default defineConfig(({mode}) => ({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: ['@shopify/hydrogen-react', 'set-cookie-parser', 'cookie', 'react-router'],
+      include: ['set-cookie-parser', 'cookie', 'react-router'],
       noExternals: ['@responsive-image/react'],
     },
   },
