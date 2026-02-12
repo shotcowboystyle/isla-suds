@@ -64,20 +64,23 @@ const SOCIAL_LINKS: SocialLink[] = [
 
 export function SocialLinks() {
   return (
-    <div data-testid="social-icons" className="mb-20 flex gap-6" role="list" aria-label="Social media links">
-      {SOCIAL_LINKS.map((link) => (
-        <a
-          href={link.href}
-          key={link.platform}
-          className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/30 transition-colors hover:bg-white/10"
-          aria-label={link.ariaLabel}
-          title="Coming soon"
-          data-platform={link.platform}
-          tabIndex={0}
-        >
-          {link.icon}
-        </a>
-      ))}
-    </div>
+    <nav data-testid="social-icons" className="mb-20" aria-label="Social media links">
+      <ul className="flex gap-6 list-none m-0 p-0">
+        {SOCIAL_LINKS.map((link) => (
+          <li key={link.platform}>
+            <a
+              href={link.href}
+              className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/30 transition-colors hover:bg-white/10"
+              aria-label={link.ariaLabel}
+              title="Coming soon"
+              data-platform={link.platform}
+              tabIndex={0}
+            >
+              {link.icon}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }

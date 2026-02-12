@@ -24,10 +24,19 @@ import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {FeaturedCollectionFragment, RecommendedProductsQuery} from 'storefrontapi.generated';
 
-GSAP.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
+}
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [
+    {title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin'},
+    {
+      name: 'description',
+      content:
+        'Isla Suds crafts gentle, unscented goat milk soap for sensitive and reactive skin. 100% clean, natural ingredients — no dyes, no fragrances, just nourishing care.',
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {

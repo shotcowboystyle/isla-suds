@@ -21,6 +21,8 @@
   overflow: hidden;
   border-radius: 0;
   backface-visibility: hidden;
+  opacity: 0;
+  transform: translateY(100px);
 }
 
 @media screen and (min-width: 992px) {

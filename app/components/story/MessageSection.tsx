@@ -1,7 +1,7 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
-import {SplitText} from 'gsap/all';
+import {SplitText} from 'gsap/SplitText';
 // import {useIsMobile} from '~/hooks/use-is-mobile';
 import styles from './MessageSection.module.css';
 
@@ -26,6 +26,7 @@ export const MessageSection = () => {
       const splittedParagraph = SplitText.create('#message-paragraph', {
         type: 'words, lines',
         linesClass: 'paragraph-line',
+        aria: 'none',
       });
 
       gsap.to(text1Splitted.words, {
