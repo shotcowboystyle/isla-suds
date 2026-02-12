@@ -1,0 +1,116 @@
+.collection-item {
+  width: auto;
+  height: auto;
+  margin-right: 0;
+  align-self: center;
+}
+
+@media screen and (min-width: 768px) {
+  .collection-item {
+    margin-right: 15vw;
+    align-self: center;
+  }
+}
+
+.collection-item:nth-child(odd) {
+  width: 90%;
+  transform: rotate(0);
+}
+
+@media screen and (min-width: 768px) {
+  .collection-item:nth-child(odd) {
+    width: auto;
+    transform: rotate(-8deg);
+  }
+}
+
+.collection-item:nth-child(2n) {
+  width: 90%;
+  margin-right: 0;
+  transform: rotate(0);
+}
+
+@media screen and (min-width: 768px) {
+  .collection-item:nth-child(2n) {
+    width: auto;
+  }
+  .collection-item:nth-child(3) {
+    width: auto;
+    margin-left: 15vw;
+  }
+}
+
+.card {
+  z-index: 2;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  margin-top: 8rem;
+  margin-left: 0;
+  text-decoration: none;
+  display: block;
+  position: static;
+  transform: rotate(0);
+}
+
+@media screen and (min-width: 480px) {
+  .card {
+    margin-top: 7rem;
+    margin-bottom: 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .card {
+    width: 50vw;
+    margin-top: 0;
+    margin-bottom: 6vw;
+    margin-left: 0;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .card {
+    flex: none;
+    /* width: 80vw; */
+    margin-top: 12vw;
+    margin-bottom: 10vw;
+    margin-left: 0;
+    position: relative;
+    transform: rotate(0);
+  }
+}
+
+.card-background {
+  z-index: 2;
+  width: 100%;
+  position: relative;
+}
+
+.card-soap-bar {
+  z-index: 4;
+  width: 55vw;
+  margin-inline: auto;
+  position: absolute;
+  inset: auto 0% 0%;
+}
+@media screen and (min-width: 992px) {
+  .card-soap-bar {
+    width: 27vw;
+  }
+}
+
+.card-additional {
+  z-index: 3;
+  width: 85vw;
+  margin-left: auto;
+  margin-right: auto;
+  position: absolute;
+  inset: -5vw 0% 0%;
+}
+@media screen and (min-width: 992px) {
+  .card-additional {
+    width: 45vw;
+  }
+}
+

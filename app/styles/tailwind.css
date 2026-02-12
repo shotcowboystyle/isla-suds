@@ -1,63 +1,213 @@
-/**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
- */
-
-/* Import design tokens first */
-@import './tokens.css';
-
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
-/* Extend Tailwind theme with design token references */
-@theme {
-  /* Canvas colors */
-  --color-canvas-base: var(--canvas-base);
-  --color-canvas-elevated: var(--canvas-elevated);
+@custom-variant dark (&:is(.dark *));
 
-  /* Text colors */
-  --color-text-primary: var(--text-primary);
-  --color-text-muted: var(--text-muted);
-
-  /* Accent colors */
-  --color-accent-primary: var(--accent-primary);
-  --color-accent-hover: var(--accent-hover);
-
-  /* Spacing scale */
-  --spacing-xs: var(--space-xs);
-  --spacing-sm: var(--space-sm);
-  --spacing-md: var(--space-md);
-  --spacing-lg: var(--space-lg);
-  --spacing-xl: var(--space-xl);
-  --spacing-2xl: var(--space-2xl);
-
-  /* Fluid typography */
-  --text-fluid-small: var(--type-fluid-small);
-  --text-fluid-small--line-height: var(--leading-fluid-small);
-
-  --text-fluid-body: var(--type-fluid-body);
-  --text-fluid-body--line-height: var(--leading-fluid-body);
-
-  --text-fluid-heading: var(--type-fluid-heading);
-  --text-fluid-heading--line-height: var(--leading-fluid-heading);
-
-  --text-fluid-display: var(--type-fluid-display);
-  --text-fluid-display--line-height: var(--leading-fluid-display);
-
-  /* Animation timing functions */
-  --ease-out-expo: var(--ease-out-expo);
-
-  /* Animation durations */
-  --transition-duration-reveal: var(--duration-reveal);
-  --transition-duration-micro: var(--duration-micro);
+@font-face {
+  font-family: 'ProximaNova, sans-serif';
+  src: url('/fonts/HelveticaNeue.woff2') format('woff2');
+  font-display: swap;
 }
 
-/* Reduced motion support - disable animations when user prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@font-face {
+  font-family: 'Antonio';
+  src: url('/fonts/Antonio-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-black: #222123;
+  --color-main-bg: #232224;
+  --color-white: #ffffff;
+  --color-coral-light: #e8a090; /* CTAs, links */
+  --color-coral: #d4897a; /* Interactive states */
+  --color-dark-brown: #523122;
+  --color-mid-brown: #a26833;
+  --color-light-brown: #e3a458;
+  --color-red-brown: #7f3b2d;
+  --color-yellow-brown: #a26833;
+  --color-lighter-dark-brown: #865720;
+
+  --color-primary: #55bcbc;
+  --color-primary-light: #90cfd3;
+  --color-secondary: #fcf4e1;
+  --color-text: #000000;
+  --color-accent: #ea5d5d;
+  --color-accent-dark: #c04c4c;
+  --color-accent-secondary: #fcca75;
+
+  --color-teal-lighter: hsl(180 50% 97%); /* Very light - backgrounds */
+  --color-teal-light: hsl(180 50% 90%); /* Light backgrounds */
+  --color-teal: hsl(180 50% 40%); /* Brand - use for focus, borders */
+  --color-teal-dark: hsl(180 50% 30%); /* Dark enough for text (4.5:1) */
+  --color-teal-darker: hsl(180 50% 25%); /* Hover states, high contrast */
+
+  --color-milk-yellow: #e3d3bc;
+  --color-red: #a02128;
+  --color-milk: #faeade;
+  --color-light-yellow: #fed775;
+  --color-reddish-brown: #7f3b2d;
+  --color-moka: #c88e64;
+  --color-faint-text: #ffffff11;
+
+  --font-sans: 'Antonio', sans-serif;
+  --font-paragraph: 'ProximaNova, sans-serif';
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--text-black);
+  font-family: 'Antonio', sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  --webkit-text-size-adjust: 100%;
+}
+
+/* Story 2.2: scroll-snap on viewport for mobile (<1024px); viewport is the scroll container */
+@media (max-width: 480px) {
+  html {
+    background-attachment: scroll !important;
   }
+}
+
+@media (max-width: 1023px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-snap-type: none;
+  }
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  .col-center {
+    @apply flex flex-col items-center justify-center;
+  }
+  .abs-center {
+    @apply absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2;
+  }
+  .general-title {
+    @apply 2xl:text-[8.5rem] md:text-8xl text-5xl font-bold uppercase leading-[9vw] tracking-[-.35vw];
+  }
+}
+
+p {
+  color: var(--color-black);
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 115%;
+}
+
+@media screen and (min-width: 992px) {
+  p {
+    font-size: 1.04vw;
+  }
+}
+
+.spin-circle {
+  animation: spin 20s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+img {
+  vertical-align: middle;
+  max-width: 100%;
+  display: inline-block;
+  border: 0;
+}
+
+audio,
+canvas,
+progress,
+video {
+  vertical-align: baseline;
+  display: inline-block;
+}
+
+video {
+  object-fit: contain;
+  overflow-clip-margin: content-box;
+  overflow: clip;
+}
+
+h1 {
+  margin-top: 20px;
+  color: var(--text-black);
+  letter-spacing: -0.5vw;
+  text-transform: uppercase;
+  margin: 0;
+  font-family: Antonio, sans-serif;
+  font-size: 13vw;
+  font-weight: 700;
+  line-height: 105%;
+}
+
+@media screen and (min-width: 768px) {
+  h1 {
+    letter-spacing: -0.35vw;
+    font-size: 13vw;
+    line-height: 9vw;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  h1 {
+    font-size: 7.8vw;
+  }
+}
+
+h2 {
+  color: var(--text-black);
+  text-align: center;
+  letter-spacing: -0.35vw;
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family: Antonio, sans-serif;
+  font-size: 7.7vw;
+  font-weight: 700;
+  line-height: 120%;
+}
+
+.spacer {
+  height: 100vh;
+}
+
+.paragraph-line {
+  text-wrap: nowrap;
+  overflow: hidden;
 }

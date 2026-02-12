@@ -1,0 +1,229 @@
+.message-section-wrapper {
+  background-color: var(--color-accent);
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: auto;
+  display: flex;
+  position: relative;
+  /* Mobile first: overflow hidden by default, override at larger sizes */
+  overflow: hidden;
+  /* Mobile first: height 100vh on small screens, unset at larger sizes */
+  height: 100vh;
+}
+
+@media screen and (min-width: 768px) {
+  .message-section-wrapper {
+    height: auto;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .message-section-wrapper {
+    overflow: visible;
+  }
+}
+
+.text-wrapper {
+  z-index: 4;
+  flex-flow: column;
+  order: 0;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: auto;
+  margin-top: 0;
+  padding: 12vw 0;
+  display: flex;
+  position: relative;
+  inset: 0 0% 0%;
+}
+
+@media screen and (min-width: 480px) {
+  .text-wrapper {
+    padding-top: 7vw;
+    padding-bottom: 8vw;
+  }
+}
+
+.grid {
+  grid-auto-columns: 1fr;
+  display: grid;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  grid-template-rows: auto auto auto auto auto;
+  grid-template-columns: 1fr;
+  width: 100%;
+  padding-inline: 5%;
+}
+
+@media screen and (min-width: 480px) {
+  .grid {
+    padding-inline: 2vw;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .grid {
+    padding-inline: 24vw;
+  }
+}
+
+.heading-text-wrapper {
+  place-self: center;
+}
+
+.heading-text {
+  color: var(--color-red);
+  letter-spacing: -0.4vw;
+  margin-top: -1.4vw;
+  padding-inline: 0;
+  font-family: Antonio, sans-serif;
+  font-size: 12vw;
+  font-weight: 700;
+  text-align: center;
+  line-height: 110%;
+}
+
+@media screen and (min-width: 992px) {
+  .heading-text {
+    font-size: 7.2vw;
+    /* text-align: left; */
+    line-height: normal;
+  }
+}
+
+.clipped-text-wrapper {
+  place-self: center;
+  grid-gap: 0px;
+  grid-template-rows: auto auto;
+  grid-template-columns: 100%;
+  grid-auto-columns: 1fr;
+  justify-content: space-between;
+  place-items: center stretch;
+  width: 100%;
+  margin-top: -1vw;
+  margin-bottom: 0.5vw;
+  display: block;
+  position: static;
+}
+
+@media screen and (min-width: 992px) {
+  .clipped-text-wrapper {
+    grid-template-rows: auto;
+    grid-template-columns: auto auto auto;
+    margin-top: -1.5vw;
+    margin-bottom: -2.5vw;
+  }
+}
+
+.clipped-text-inner {
+  justify-content: center;
+  align-self: center;
+  align-items: center;
+  padding-block: 0;
+  display: flex;
+  /* grid-area only explicitly set at large screens if really needed;
+     otherwise removed for mobile-first clarity */
+}
+
+.clipped-text-content-wrapper {
+  place-self: center start;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  margin-left: 1vw;
+  margin-right: 0;
+  display: flex;
+}
+
+.clipped-text-content {
+  z-index: 10;
+  outline-offset: 0;
+  background-color: var(--color-teal);
+  outline: 0.5vw solid var(--color-accent);
+  flex: none;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: -3vw;
+  padding: 0;
+  display: flex;
+  position: relative;
+  inset: 0 auto 0;
+  overflow: hidden;
+  transform: rotate(3deg);
+}
+@media screen and (min-width: 992px) {
+  .clipped-text-content {
+    margin-bottom: 0;
+  }
+}
+
+.clipped-text {
+  color: var(--color-secondary);
+  letter-spacing: -0.4vw;
+  flex: none;
+  padding: 0 0.85vw 1vw 0.8vw;
+  font-family: Antonio, sans-serif;
+  font-weight: 700;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+  width: auto;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 50px;
+  /* Default mobile value */
+  line-height: 110%;
+}
+
+@media screen and (min-width: 480px) {
+  .clipped-text {
+    font-size: 7.8vw;
+  }
+}
+
+.paragraph-wrapper {
+  margin-top: 3vw;
+  /* Mobile first: default no flex centering, add on larger screens */
+}
+
+@media screen and (min-width: 992px) {
+  .paragraph-wrapper {
+    justify-content: center;
+    align-self: center;
+    align-items: center;
+    display: flex;
+  }
+}
+
+.paragraph {
+  color: var(--color-secondary);
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 120%;
+  text-align: center;
+  width: 80vw;
+  margin-block: 1rem 0;
+}
+
+@media screen and (min-width: 768px) {
+  .paragraph {
+    font-size: 16px;
+    /* Optionally line-height unchanged (120%) */
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .paragraph {
+    font-size: 1.04vw;
+    line-height: 115%;
+    width: 26vw;
+  }
+}

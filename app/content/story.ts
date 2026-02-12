@@ -1,5 +1,9 @@
 /** Hero section tagline (AC3 – brand essence message) */
 export const HERO_TAGLINE = 'Handcrafted soap, made with love';
+export const HERO_TAGLINE_START = 'Natural Skincare';
+export const HERO_TAGLINE_END = 'You Can Trust';
+export const HERO_CONTENT =
+  'A silky-smooth feel and abundant lather pair with delicious scents to make simple washing up with Isla Suds soap an experience to look forward to.';
 
 /** Story fragment type definition (AC3) */
 export interface StoryFragment {
@@ -44,8 +48,7 @@ export const STORY_FRAGMENTS: StoryFragment[] = [
   },
   {
     title: 'Our Community',
-    subtitle:
-      'We are a community of people who are committed to sustainability and ethical production.',
+    subtitle: 'We are a community of people who are committed to sustainability and ethical production.',
     content:
       'We are a community of people who are committed to sustainability and ethical production. We are a community of people who are committed to sustainability and ethical production.',
     actions: [
@@ -90,10 +93,8 @@ export const STORY_FRAGMENTS: StoryFragment[] = [
   },
   {
     title: 'Ingredients.',
-    subtitle:
-      'We use the best ingredients and the most sustainable practices to create the best soaps possible.',
-    content:
-      'We use the best ingredients and the most sustainable practices to create the best soaps possible.',
+    subtitle: 'We use the best ingredients and the most sustainable practices to create the best soaps possible.',
+    content: 'We use the best ingredients and the most sustainable practices to create the best soaps possible.',
     actions: [
       {
         label: 'Learn about our ingredients.',
@@ -104,8 +105,7 @@ export const STORY_FRAGMENTS: StoryFragment[] = [
   {
     title: "Don't miss new items.",
     subtitle: 'Sign up for our newsletter.',
-    content:
-      "We'll send you a newsletter with the latest news and updates about our products",
+    content: "We'll send you a newsletter with the latest news and updates about our products",
     actions: [
       {
         label: 'Sign up for our newsletter.',
@@ -116,8 +116,7 @@ export const STORY_FRAGMENTS: StoryFragment[] = [
   {
     title: 'Where can I buy Isla Suds Soaps?',
     subtitle: 'We have a few locations carrying our soap in the city ',
-    content:
-      'We have a few locations carrying our soap in the city of Los Angeles. ',
+    content: 'We have a few locations carrying our soap in the city of Los Angeles. ',
     actions: [
       {
         label: 'View our locations.',

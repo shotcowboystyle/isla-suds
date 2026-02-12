@@ -1,0 +1,127 @@
+.benefits-section {
+  z-index: 2;
+  background-color: #222123;
+  background-image: none;
+  flex-flow: column;
+  justify-content: flex-start; /* mobile first: start by default */
+  align-items: center;
+  width: auto;
+  height: auto;
+  display: flex;
+  position: static;
+  overflow: hidden;
+  /* remove redundant top, no effect in static position */
+}
+
+@media screen and (min-width: 768px) {
+  .benefits-section {
+    justify-content: center;
+    /* Optional: align-items remains center, so not overridden */
+  }
+}
+
+.paragraph-text-start {
+  color: var(--color-secondary);
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 120%;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 0;
+  position: static;
+  inset: 3vw 0% auto;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+@media screen and (min-width: 480px) {
+  .paragraph-text-start {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .paragraph-text-start {
+    font-size: 1.04vw;
+    margin-top: 5vw;
+    line-height: 115%;
+  }
+}
+
+.clipped-boxes-wrapper {
+  z-index: 3;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+@media screen and (min-width: 768px) {
+  .clipped-boxes-wrapper {
+    width: 65vw;
+  }
+}
+/*
+@media screen and (min-width: 992px) {
+  .clipped-boxes-wrapper {
+    width: auto;
+    margin-top: 80px;
+    margin-bottom: 32px;
+  }
+} */
+
+.wrapper-left {
+  order: 0;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+}
+
+.wrapper-right {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+}
+
+.paragraph-text-end {
+  text-align: center;
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  color: var(--color-secondary);
+  font-weight: 400;
+  z-index: 3;
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 50px;
+  font-size: 16px;
+  line-height: 120%;
+  inset: auto 0% 3vw;
+}
+
+/* Tablet and up */
+@media screen and (min-width: 768px) {
+  .paragraph-text-end {
+    font-size: 1.04vw;
+    line-height: 115%;
+    margin-top: 4vw;
+    margin-bottom: 5vw;
+  }
+}
+
+/* Desktop and up, you can add further overrides here if needed */
+/* Example - adjust for larger screens if requirements change
+@media screen and (min-width: 992px) {
+  .paragraph-text-end {
+    // custom styles for large screens if needed
+  }
+}
+*/

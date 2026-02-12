@@ -2,7 +2,7 @@ import {Link} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
 import {formatCurrency, getCurrencyLabel} from '~/utils/format-currency';
-import {formatOrderDate} from '~/utils/format-date';
+import {formatDate} from '~/utils/format-date';
 
 interface Order {
   id: string;
@@ -34,7 +34,7 @@ export function OrderHistoryItem({order}: OrderHistoryItemProps) {
       <div className={cn('flex-1')}>
         {/* Order date */}
         <p className={cn('text-sm text-text-muted mb-1')}>
-          {formatOrderDate(order.processedAt)}
+          {formatDate(order.processedAt)}
         </p>
 
         {/* Order number */}

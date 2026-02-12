@@ -4,16 +4,9 @@ import {Aside} from '~/components/Aside';
 import {CartMain} from '~/components/CartMain';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
-import {
-  SEARCH_ENDPOINT,
-  SearchFormPredictive,
-} from '~/components/SearchFormPredictive';
+import {SEARCH_ENDPOINT, SearchFormPredictive} from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
-import type {
-  CartApiQueryFragment,
-  FooterQuery,
-  HeaderQuery,
-} from 'storefrontapi.generated';
+import type {CartApiQueryFragment, FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -41,7 +34,7 @@ export function PageLayout({
       {/* Skip link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--accent-primary)] focus:text-white focus:rounded focus:outline-2 focus:outline-offset-2 focus:outline-[var(--accent-primary)]"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-(--accent-primary) focus:text-white focus:rounded focus:outline-2 focus:outline-offset-2 focus:outline-(--accent-primary)"
       >
         Skip to main content
       </a>
@@ -50,30 +43,17 @@ export function PageLayout({
         <CartAside cart={cart} />
       </div>
 
-      <SearchAside />
+      {/* <SearchAside /> */}
 
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      {/* <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} /> */}
 
-      {header && (
-        <Header
-          header={header}
-          cart={cart}
-          isLoggedIn={isLoggedIn}
-          publicStoreDomain={publicStoreDomain}
-        />
-      )}
+      {header && <Header header={header} cart={cart} isLoggedIn={isLoggedIn} publicStoreDomain={publicStoreDomain} />}
 
       {/* Story 2.2: scroll-snap-type is on html (app.css) for mobile—viewport is scroll container.
           Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
-      <main id="main-content">
-        {children}
-      </main>
+      <main id="main-content">{children}</main>
 
-      <Footer
-        footer={footer}
-        header={header}
-        publicStoreDomain={publicStoreDomain}
-      />
+      <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
     </Aside.Provider>
   );
 }
@@ -129,40 +109,18 @@ function SearchAside() {
 
             return (
               <>
-                <SearchResultsPredictive.Queries
-                  queries={queries}
-                  queriesDatalistId={queriesDatalistId}
-                />
+                <SearchResultsPredictive.Queries queries={queries} queriesDatalistId={queriesDatalistId} />
 
-                <SearchResultsPredictive.Products
-                  products={products}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
+                <SearchResultsPredictive.Products products={products} closeSearch={closeSearch} term={term} />
 
-                <SearchResultsPredictive.Collections
-                  collections={collections}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
+                <SearchResultsPredictive.Collections collections={collections} closeSearch={closeSearch} term={term} />
 
-                <SearchResultsPredictive.Pages
-                  pages={pages}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
+                <SearchResultsPredictive.Pages pages={pages} closeSearch={closeSearch} term={term} />
 
-                <SearchResultsPredictive.Articles
-                  articles={articles}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
+                <SearchResultsPredictive.Articles articles={articles} closeSearch={closeSearch} term={term} />
 
                 {term.current && total ? (
-                  <Link
-                    onClick={closeSearch}
-                    to={`${SEARCH_ENDPOINT}?q=${term.current}`}
-                  >
+                  <Link onClick={closeSearch} to={`${SEARCH_ENDPOINT}?q=${term.current}`}>
                     <p>
                       View all results for <q>{term.current}</q>
                       &nbsp; →
