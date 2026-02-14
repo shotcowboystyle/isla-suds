@@ -34,23 +34,10 @@ export const useIsMobile = (): UseIsMobileReturn => {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
     const handleChange = () => checkIsMobile();
 
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-    } else {
-      // Fallback for older browsers
-      mediaQuery.addListener(handleChange);
-    }
-
-    // Listen for window resize
-    window.addEventListener('resize', checkIsMobile);
+    mediaQuery.addEventListener('change', handleChange);
 
     return () => {
-      if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener('change', handleChange);
-      } else {
-        mediaQuery.removeListener(handleChange);
-      }
-      window.removeEventListener('resize', checkIsMobile);
+      mediaQuery.removeEventListener('change', handleChange);
     };
   }, []);
 

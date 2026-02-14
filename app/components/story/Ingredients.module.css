@@ -30,7 +30,9 @@
   display: flex;
   padding-left: 2vw;
   padding-right: 2vw; */
-  min-height: 100dvh;
+  /* min-height: 100dvh; */
+  min-height: 50dvh;
+  height: auto;
   position: relative;
   overflow: hidden;
 }
@@ -136,52 +138,47 @@
   }
 }
 
-.clipped-text-content {
-  z-index: 10;
-  outline-offset: 0;
+.clipped-box {
+  z-index: 4;
+  outline-color: var(--color-milk-yellow);
+  top: 0;
   background-color: var(--color-accent);
-  outline: 0.5vw solid var(--color-milk-yellow);
-  flex: none;
-  justify-content: flex-start;
+  outline-offset: 0px;
+  perspective-origin: 0%;
+  transform-origin: 0%;
+  border: 0 solid #000;
+  outline: 0.5vw solid var(--color-milk-yellow) !important;
+  justify-content: center;
   align-items: center;
-  margin-top: -1vw;
+  margin-top: calc(var(--spacing) * -24);
+  place-self: start;
+  margin-bottom: -3vw;
   padding: 0;
   display: flex;
   position: relative;
-  inset: 0 auto 0;
   overflow: hidden;
-  transform: rotate(-2deg);
+  transform: rotate(-3deg);
 }
-@media screen and (min-width: 992px) {
-  .clipped-text-content {
-    margin-bottom: 0;
+
+@media screen and (min-width: 768px) {
+  .clipped-box {
+    margin-top: calc(var(--spacing) * -20);
   }
 }
 
-.clipped-text {
+.clipped-heading-text {
   color: var(--color-secondary);
-  letter-spacing: -0.4vw;
+  font-size: 13vw;
+  letter-spacing: -0.35vw;
   flex: none;
-  padding: 0 0.85vw 1vw 0.8vw;
   font-family: Antonio, sans-serif;
-  font-weight: 700;
-  flex-flow: row;
-  justify-content: flex-start;
-  align-items: center;
-  display: flex;
-  width: auto;
-  opacity: 1;
-  position: relative;
-  text-align: left;
-  text-transform: uppercase;
-  font-size: 50px;
-  /* Default mobile value */
-  line-height: 110%;
+  padding: 0 1.5vw 1vw;
 }
 
 @media screen and (min-width: 480px) {
-  .clipped-text {
+  .clipped-heading-text {
     font-size: 7.8vw;
+    line-height: 9vw;
   }
 }
 
@@ -217,9 +214,9 @@
   font-family:
     Proxima Nova,
     sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 115%;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 125%;
   text-align: left;
 }
 

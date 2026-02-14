@@ -64,8 +64,8 @@ export function links() {
     {
       rel: 'preload',
       as: 'font',
-      href: '/fonts/Antonio-VariableFont_wght.ttf',
-      type: 'font/ttf',
+      href: '/fonts/Antonio-VariableFont_wght.woff2',
+      type: 'font/woff2',
       crossOrigin: 'anonymous' as const,
     },
     {

@@ -7,10 +7,11 @@ import type {ImageData} from '@responsive-image/core';
 interface VideoCardProps {
   cardData: {
     src: string;
+    poster: string;
     rotation: string;
     name: string;
     img: ImageData;
-    translation: string | null;
+    // translation: string | null;
   };
   index: number;
 }
@@ -23,7 +24,8 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
   const handlePause = () => videoRef.current?.pause();
 
   return (
-    <div className={cn(styles['video-card'], `animated-video-card ${cardData.translation} ${cardData.rotation}`)}>
+    // <div className={cn(styles['video-card'], `animated-video-card ${cardData.translation} ${cardData.rotation}`)}>
+    <div className={cn(styles['video-card'], styles[`card-${index + 1}`], `animated-video-card ${cardData.rotation}`)}>
       <div className={styles['media-cart-info-wrapper']}>
         <Picture src={cardData.img} loading="lazy" alt="" className={styles['avatar']} />
         <div>{cardData.name}</div>
@@ -36,6 +38,7 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
               <video
                 className={styles['video']}
                 src={cardData.src}
+                poster={cardData.poster}
                 ref={videoRef}
                 onMouseEnter={handlePlay}
                 onMouseLeave={handlePause}
@@ -45,16 +48,6 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
                 preload="none"
               />
             </div>
-          </div>
-
-          <div className={styles['background-video']}>
-            <video
-              src={cardData.src}
-              muted
-              playsInline
-              loop
-              preload="none"
-            />
           </div>
         </div>
       </button>

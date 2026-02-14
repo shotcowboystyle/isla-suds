@@ -18,7 +18,7 @@ export default defineConfig(({mode}) => ({
     tsconfigPaths(),
     setupPlugins({
       cache: true,
-      // lqip: {type: 'thumbhash'},
+      lqip: {type: 'thumbhash'},
       include: /^[^?]+\.(jpg|jpeg|png|webp)\?.*responsive.*$/,
       w: [320, 640, 768, 1024, 1280, 1920],
       format: ['original', 'avif', 'webp'],

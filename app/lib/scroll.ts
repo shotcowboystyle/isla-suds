@@ -1,4 +1,4 @@
-import Lenis from 'lenis';
+import type Lenis from 'lenis';
 
 // Keep track of the Lenis instance and RAF ID globally
 let lenisInstance: Lenis | null = null;
@@ -32,32 +32,31 @@ let rafId: number | null = null;
 /**
  * Initializes Lenis smooth scroll for desktop devices (≥1024px)
  * SSR-safe, respects prefers-reduced-motion, graceful fallback to native scroll
+ * Dynamically imports Lenis so mobile users don't pay the bundle cost.
  *
  * @returns Lenis instance if initialized successfully, null otherwise
  */
-export function initLenis(): Lenis | null {
+export async function initLenis(): Promise<Lenis | null> {
   // SSR safety check
   if (typeof window === 'undefined') {
     return null;
   }
 
   // Desktop-only check (≥1024px breakpoint)
-  const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-  if (!isDesktop) {
+  if (!window.matchMedia('(min-width: 1024px)').matches) {
     return null;
   }
 
   // Accessibility: respect prefers-reduced-motion
-  const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches;
-  if (prefersReducedMotion) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return null;
   }
 
   try {
     // Initialize Lenis if not already initialized
     if (!lenisInstance) {
+      const {default: Lenis} = await import('lenis');
+
       lenisInstance = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

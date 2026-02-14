@@ -111,20 +111,19 @@ export default function Homepage() {
   }, []);
 
   useEffect(() => {
-    if (isTouch) {
-      const lastWidth = window.innerWidth;
+    if (!isTouch) return;
 
-      const handleResize = () => {
-        const currentWidth = window.innerWidth;
-        if (currentWidth === lastWidth || currentWidth < lastWidth + 100) return;
+    let lastWidth = window.innerWidth;
 
-        ScrollTrigger.refresh();
-        window.location.reload();
-      };
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      if (Math.abs(currentWidth - lastWidth) < 100) return;
+      lastWidth = currentWidth;
+      ScrollTrigger.refresh();
+    };
 
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isTouch]);
 
   useGSAP(
@@ -150,13 +149,13 @@ export default function Homepage() {
 
   return (
     <div id="smooth-wrapper" className="home">
-      <div id="smooth-content" className="flex flex-col pb-[100vh] z-0">
+      <div id="smooth-content" className={cn("flex flex-col z-0", !isTouch && "pb-[100vh]")}>
         <div className="block bg-black overflow-hidden z-2">
           <HeroSection ref={heroRef} />
         </div>
 
         {/* <div className="overflow-scroll mb-[100vh] z-2"> */}
-        <div className="overflow-scroll z-2">
+        <div className="z-2">
           <MessageSection />
           <ProductsList />
           <IngredientsSection />

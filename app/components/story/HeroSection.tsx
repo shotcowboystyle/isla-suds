@@ -3,7 +3,7 @@ import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.png?responsive';
-import HeroVideoThumbnail from '~/assets/images/hero-video-thumbnail.png?responsive';
+import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.png';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
 import {Picture} from '~/components/Picture';
 import styles from '~/components/story/HeroSection.module.css';
@@ -16,7 +16,12 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function HeroSection({className}, ref) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const text1Ref = useRef<HTMLHeadingElement>(null);
+  const clippedBox1Ref = useRef<HTMLDivElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   // Ensure the video freezes at the final frame
   const handleVideoEnd = () => {
@@ -31,19 +36,23 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
 
   useGSAP(
     () => {
-      const titleSplit = SplitText.create('#hero-text-1', {type: 'chars'});
+      if (!containerRef.current || !text1Ref.current || !clippedBox1Ref.current) {
+        return;
+      }
+
+      const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
 
       const tl = gsap.timeline({
         delay: 2,
       });
 
-      tl.to('#hero-section', {
+      tl.to(containerRef.current, {
         opacity: 1,
         y: 0,
         ease: 'power1.inOut',
       })
         .from(
-          '#hero-clipped-box',
+          clippedBox1Ref.current,
           {
             opacity: 0,
             duration: 1,
@@ -62,7 +71,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           '-=0.5',
         )
         .from(
-          '#hero-paragraph',
+          paragraphRef.current,
           {
             y: 20,
             duration: 0.6,
@@ -71,7 +80,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           '-=0.3',
         )
         .from(
-          '#hero-button',
+          buttonRef.current,
           {
             opacity: 0,
             y: 20,
@@ -83,47 +92,48 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
 
       const heroTl = gsap.timeline({
         scrollTrigger: {
-          trigger: '#hero-section',
+          trigger: containerRef.current,
           start: 'top top',
           end: 'bottom top',
           scrub: true,
         },
       });
 
-      heroTl.to('#hero-section', {
+      heroTl.to(containerRef.current, {
         rotate: 7,
         scale: 0.9,
         yPercent: 30,
         ease: 'power1.inOut',
       });
     },
-    {dependencies: [], revertOnUpdate: true},
+    {dependencies: [containerRef, text1Ref, clippedBox1Ref, paragraphRef, buttonRef]},
   );
 
   return (
     <section
       ref={ref}
       data-testid="hero-section"
-      className={cn(styles['hero-section'], 'snap-start', className)}
+      // className={cn(styles['hero-section'], 'snap-start', className)}
+      className={cn(styles['hero-section'], className)}
       aria-label="Hero section"
     >
-      <div id="hero-section" className={styles['hero-section-container']}>
+      <div ref={containerRef} className={styles['hero-section-container']}>
         <div className={styles['hero-section-content']}>
           <div className={styles['letter-animation']}>
-            <h1 id="hero-text-1" className={styles['hero-text']}>
+            <h1 ref={text1Ref} className={styles['hero-text']}>
               {HERO_TAGLINE_START}
             </h1>
           </div>
 
-          <div id="hero-clipped-box" className={styles['clipped-box']}>
+          <div ref={clippedBox1Ref} className={styles['clipped-box']}>
             <h1 className={styles['heading-1']}>{HERO_TAGLINE_END}</h1>
           </div>
 
-          <p id="hero-paragraph" className={styles['paragraph']}>
+          <p ref={paragraphRef} className={styles['paragraph']}>
             {HERO_CONTENT}
           </p>
 
-          <LiquidButton id="hero-button" href="/products" text="Shop Now" />
+          <LiquidButton ref={buttonRef} href="/products" text="Shop Now" />
         </div>
 
         <Picture
@@ -131,7 +141,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           loading="eager"
           fetchpriority="high"
           alt=""
-          className={styles['hero-mobile']}
+          className={styles['hero-image-mobile']}
         />
 
         <div id="home-hero-video" className={styles['home-hero-video-wrapper']}>
@@ -141,9 +151,11 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
             playsInline={true}
             muted={true}
             autoPlay={true}
-            preload="auto"
+            preload="none"
             onEnded={handleVideoEnd}
-            poster={HeroVideoThumbnail as unknown as string}
+            poster={HeroVideoThumbnailUrl}
+            width={1920}
+            height={1080}
             className="size-full object-cover"
           />
         </div>

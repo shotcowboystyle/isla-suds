@@ -114,3 +114,27 @@
   }
 }
 
+.card-heading {
+  z-index: 5;
+  color: var(--color-secondary);
+  letter-spacing: -0.1vw;
+  text-transform: uppercase;
+  margin-left: 0;
+  font-family: Antonio, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 105%;
+  text-decoration: none;
+  position: absolute;
+  inset: auto auto 2.3vw 2vw;
+  bottom: 16px;
+  left: 16px;
+}
+
+@media screen and (min-width: 768px) {
+  .card-heading {
+    font-size: 3.1vw;
+    bottom: 50px;
+    left: 50px;
+  }
+}

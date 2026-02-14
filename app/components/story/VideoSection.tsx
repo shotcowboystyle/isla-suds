@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
@@ -6,40 +6,70 @@ import styles from './VideoSection.module.css';
 import LightboxButtonImage from '../../assets/images/play.svg';
 import PlayIcon from '../../assets/images/polygon-3.svg';
 import PinVideo from '../../assets/video/pin-video.mp4';
+import PinVideoPoster from '../../assets/images/pin-video-poster.webp';
 import {cn} from '../../utils/cn';
 
 export const VideoSection = () => {
   const {isMobile, isLoading} = useIsMobile();
-  const stickyCircleWrapper = useRef<HTMLDivElement | null>(null);
-  const stickyCircleElement = useRef<HTMLDivElement | null>(null);
-  const cursorElement = useRef<HTMLDivElement | null>(null);
+
+  const stickyCircleWrapper = useRef<HTMLDivElement>(null);
+  const stickyCircleElement = useRef<HTMLDivElement>(null);
+  const cursorElement = useRef<HTMLDivElement>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const videoEl = isMobile ? mobileVideoRef.current : desktopVideoRef.current;
+    if (!videoEl) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoEl.play();
+        } else {
+          videoEl.pause();
+        }
+      },
+      {threshold: 0.25},
+    );
+    observer.observe(videoEl);
+    return () => observer.disconnect();
+  }, [isMobile, isLoading]);
 
   useGSAP(
     () => {
-      if (!isLoading && !isMobile) {
-        const videoTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: stickyCircleWrapper.current,
-            start: 'top top',
-            end: '200% top',
-            scrub: 1,
-            // pin: stickyCircleElement.current,
-            pin: true,
-          },
-        });
-
-        videoTl.to(stickyCircleElement.current, {
-          duration: 0.5,
-          clipPath: 'circle(100% at 50% 50%)',
-        });
-        // .to(cursorElement.current, {
-        //   duration: 0.5,
-        //   width: '150vw',
-        //   height: '150vw',
-        // })
+      if (
+        isLoading ||
+        isMobile ||
+        !stickyCircleWrapper.current ||
+        !stickyCircleElement.current ||
+        !cursorElement.current
+      ) {
+        return;
       }
+
+      const videoTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stickyCircleWrapper.current,
+          start: 'top top',
+          end: '100% top',
+          scrub: 1,
+          // pin: stickyCircleElement.current,
+          pin: true,
+        },
+      });
+
+      videoTl.to(stickyCircleElement.current, {
+        duration: 0.5,
+        clipPath: 'circle(100% at 50% 50%)',
+      });
+      // .to(cursorElement.current, {
+      //   duration: 0.5,
+      //   width: '150vw',
+      //   height: '150vw',
+      // })
     },
-    {dependencies: [isLoading, isMobile], revertOnUpdate: true},
+    {dependencies: [stickyCircleWrapper, stickyCircleElement, cursorElement, isLoading, isMobile]},
   );
 
   return (
@@ -71,12 +101,15 @@ export const VideoSection = () => {
 
                   <div className={cn(styles['background-video-wrapper'], 'size-full')}>
                     <video
+                      ref={desktopVideoRef}
                       playsInline
                       muted
                       loop
-                      autoPlay
-                      preload="metadata"
+                      preload="none"
+                      poster={PinVideoPoster}
                       src={PinVideo}
+                      width={1920}
+                      height={1080}
                       data-object-fit="cover"
                       className="absolute object-cover size-full -inset-full"
                     />
@@ -102,13 +135,16 @@ export const VideoSection = () => {
 
           <div className={cn(styles['background-video-wrapper'], 'size-full')}>
             <video
-              autoPlay
+              ref={mobileVideoRef}
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="none"
+              poster={PinVideoPoster}
               data-object-fit="cover"
               src={PinVideo}
+              width={1920}
+              height={1080}
               className="absolute inset-0 object-cover size-full"
             />
           </div>

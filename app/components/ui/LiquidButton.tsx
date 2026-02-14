@@ -1,4 +1,4 @@
-import {useId} from 'react';
+import {forwardRef, useId} from 'react';
 import styles from './LiquidButton.module.css';
 
 interface LiquidButtonProps {
@@ -7,12 +7,12 @@ interface LiquidButtonProps {
   text: string;
 }
 
-function LiquidButton({id, href, text}: LiquidButtonProps) {
+const LiquidButton = forwardRef<HTMLDivElement, LiquidButtonProps>(({id, href, text, ...props}, ref) => {
   const liquidFilterId = useId();
 
   return (
-    <div id={id ?? liquidFilterId} className={styles['liquid-button-wrapper']}>
-      <button className={styles['liquid-button']}>
+    <div ref={ref} id={id ?? liquidFilterId} className={styles['liquid-button-wrapper']}>
+      <button className={styles['liquid-button']} {...props}>
         <div className={styles['liquid-button-bg']}>
           <span className={styles['button-text']}>{text}</span>
         </div>
@@ -39,6 +39,8 @@ function LiquidButton({id, href, text}: LiquidButtonProps) {
       </svg>
     </div>
   );
-}
+});
+
+LiquidButton.displayName = 'LiquidButton';
 
 export {LiquidButton};

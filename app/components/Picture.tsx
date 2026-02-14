@@ -3,16 +3,14 @@ import {ResponsiveImage} from '@responsive-image/react';
 import {cn} from '~/utils/cn';
 import type {ImageData} from '@responsive-image/core';
 
-interface PictureProps extends Omit<
-  ImgHTMLAttributes<HTMLImageElement>,
-  'src' | 'children' | 'width' | 'height'
-> {
+interface PictureProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'children' | 'width' | 'height'> {
   src: ImageData;
   alt: string;
   width?: number;
   height?: number;
   formats?: string[];
   fallbackFormat?: 'png' | 'jpg' | 'jpeg' | 'webp' | 'avif';
+  fetchpriority?: 'high' | 'low' | 'auto';
   widths?: number[];
   sizes?: string;
   pictureAttributes?: HTMLAttributes<HTMLPictureElement>;
