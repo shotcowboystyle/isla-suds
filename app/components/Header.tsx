@@ -146,6 +146,23 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   }, [open]);
 
   useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && open) {
+        toggleMenu();
+        // Or setOpen(false) if access to setOpen is preferred, but toggleMenu toggles.
+        // Since open is true, toggleMenu() will make it false.
+        // However, useMenuToggle only exposes toggleMenu.
+        // Let's verify useMenuToggle in Header.tsx
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, toggleMenu]);
+
+  useEffect(() => {
     if (!tlButton.current || !tlMenu.current) {
       return;
     }
@@ -254,6 +271,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
               viewport="desktop"
               primaryDomainUrl={header.shop.primaryDomain.url}
               publicStoreDomain={publicStoreDomain}
+              onClose={toggleMenu}
             />
           </Suspense>
         </div>
