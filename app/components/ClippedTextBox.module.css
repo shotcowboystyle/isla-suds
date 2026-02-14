@@ -1,16 +1,15 @@
 .heading {
   z-index: 3;
   outline-offset: 0px;
-  color: #faeade;
+  color: var(--color-secondary);
   text-transform: uppercase;
-  background-color: #c88e64;
+  background-color: var(--color-moka);
   border: 0 solid #000;
   outline: 0.5vw solid #3b393d;
   justify-content: center;
   align-items: center;
-  margin-top: 0;
-  margin-bottom: 2vw;
-  padding: 0 1.2vw 2vw;
+  margin-block: 0 1vw;
+  padding: 0 1.2vw 0.2vw;
   font-size: 7.8vw;
   font-weight: 500;
   line-height: 9vw;
@@ -37,7 +36,7 @@
   perspective-origin: 100%;
   transform-origin: 100%;
   color: #2e2d2f;
-  background-color: #faeade;
+  background-color: var(--color-secondary);
   justify-content: center;
   align-items: center;
   display: flex;
@@ -54,7 +53,7 @@
   perspective-origin: 0%;
   transform-origin: 0%;
   color: #2e2d2f;
-  background-color: #7f3b2d;
+  background-color: var(--color-reddish-brown);
   justify-content: center;
   align-items: center;
   display: flex;
@@ -70,7 +69,7 @@
   perspective-origin: 100%;
   transform-origin: 100%;
   color: #2e2d2f;
-  background-color: #fed775;
+  background-color: var(--color-accent-secondary);
   justify-content: center;
   align-items: center;
   display: flex;

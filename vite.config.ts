@@ -10,7 +10,7 @@ import {ViteImageOptimizer} from 'vite-plugin-image-optimizer';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig} from 'vitest/config';
 
-export default defineConfig(({mode}) => ({
+export default defineConfig(({mode, isSsrBuild}) => ({
   plugins: [
     tailwindcss(),
     hydrogen(),
@@ -49,7 +49,19 @@ export default defineConfig(({mode}) => ({
     sourcemap: false, // Disable sourcemaps for smaller bundles
     rollupOptions: {
       output: {
-        manualChunks: undefined, // Allow Vite to manage chunk splitting
+        manualChunks: isSsrBuild
+          ? undefined
+          : (id) => {
+              if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) {
+                return 'gsap';
+              }
+              if (id.includes('node_modules/@responsive-image')) {
+                return 'responsive-image';
+              }
+              if (id.includes('node_modules/tailwind-merge') || id.includes('node_modules/clsx')) {
+                return 'tw-utils';
+              }
+            },
       },
     },
     commonjsOptions: {transformMixedEsModules: true},

@@ -1,32 +1,34 @@
-import {Suspense, useEffect, useRef, useState, type RefObject} from 'react';
+import {lazy, Suspense, useEffect, useRef, useState, type RefObject} from 'react';
 import {Await, useLoaderData, Link, useOutletContext, useLocation} from 'react-router';
-import {useGSAP} from '@gsap/react';
 import {Image} from '@shopify/hydrogen';
-import GSAP from 'gsap';
-import {ScrollSmoother} from 'gsap/ScrollSmoother';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {ConstellationGrid} from '~/components/product';
-import {
-  BenefitsSection,
-  HeroSection,
-  // InfiniteMarquee,
-  IngredientsSection,
-  LocalStores,
-  MessageSection,
-  // Philosophy,
-  ProductsList,
-  // StickyPlaySection,
-  // StoryFragmentContainer,
-  TestimonialsSection,
-  VideoSection,
-} from '~/components/story';
+import {HeroSection} from '~/components/story/HeroSection';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {FeaturedCollectionFragment, RecommendedProductsQuery} from 'storefrontapi.generated';
+import type {ScrollSmoother as ScrollSmootherType} from 'gsap/ScrollSmoother';
 
-if (typeof document !== 'undefined') {
-  GSAP.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
-}
+const MessageSection = lazy(() =>
+  import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
+);
+const ProductsList = lazy(() =>
+  import('~/components/story/ProductsList').then((m) => ({default: m.ProductsList})),
+);
+const IngredientsSection = lazy(() =>
+  import('~/components/story/Ingredients').then((m) => ({default: m.IngredientsSection})),
+);
+const BenefitsSection = lazy(() =>
+  import('~/components/story/Benefits').then((m) => ({default: m.BenefitsSection})),
+);
+const VideoSection = lazy(() =>
+  import('~/components/story/VideoSection').then((m) => ({default: m.VideoSection})),
+);
+const TestimonialsSection = lazy(() =>
+  import('~/components/story/Testimonials').then((m) => ({default: m.TestimonialsSection})),
+);
+const LocalStores = lazy(() =>
+  import('~/components/story/LocalStores').then((m) => ({default: m.LocalStores})),
+);
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -90,16 +92,7 @@ export default function Homepage() {
   const [isTouch, setIsTouch] = useState(false);
 
   const location = useLocation();
-  const smootherRef = useRef<ScrollSmoother | null>(null);
-
-  // useEffect(() => {
-  //   const handleOnLoad = () => {
-  //     ScrollTrigger.refresh();
-  //   };
-
-  //   window.addEventListener('load', () => handleOnLoad);
-  //   return () => window.addEventListener('load', () => handleOnLoad);
-  // }, []);
+  const smootherRef = useRef<ScrollSmootherType | null>(null);
 
   useEffect(() => {
     const touchQuery = window.matchMedia('(hover: none) and (pointer: coarse)');
@@ -113,70 +106,92 @@ export default function Homepage() {
   useEffect(() => {
     if (!isTouch) return;
 
-    let lastWidth = window.innerWidth;
+    let cancelled = false;
 
-    const handleResize = () => {
-      const currentWidth = window.innerWidth;
-      if (Math.abs(currentWidth - lastWidth) < 100) return;
-      lastWidth = currentWidth;
-      ScrollTrigger.refresh();
+    import('gsap/ScrollTrigger').then(({ScrollTrigger}) => {
+      if (cancelled) return;
+
+      let lastWidth = window.innerWidth;
+
+      const handleResize = () => {
+        const currentWidth = window.innerWidth;
+        if (Math.abs(currentWidth - lastWidth) < 100) return;
+        lastWidth = currentWidth;
+        ScrollTrigger.refresh();
+      };
+
+      window.addEventListener('resize', handleResize);
+      // Store cleanup ref
+      cleanupResizeRef.current = () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    });
+
+    const cleanupResizeRef = {current: () => {}};
+
+    return () => {
+      cancelled = true;
+      cleanupResizeRef.current();
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, [isTouch]);
 
-  useGSAP(
-    () => {
-      if (!isTouch) {
-        // create the scrollSmoother before your scrollTriggers
-        smootherRef.current = ScrollSmoother.create({
-          smooth: 2, // how long (in seconds) it takes to "catch up" to the native scroll position
-          effects: false, // looks for data-speed and data-lag attributes on elements
-          wrapper: '#smooth-wrapper',
-          content: '#smooth-content',
-          normalizeScroll: true,
-          ignoreMobileResize: true,
-        });
-      }
-    },
-    {dependencies: [isTouch], revertOnUpdate: true},
-  );
+  useEffect(() => {
+    if (isTouch) return;
 
-  useGSAP(() => {
+    let cancelled = false;
+
+    Promise.all([
+      import('gsap'),
+      import('gsap/ScrollSmoother'),
+      import('gsap/ScrollTrigger'),
+      import('@gsap/react'),
+    ]).then(([{default: gsap}, {ScrollSmoother}, {ScrollTrigger}, {useGSAP}]) => {
+      if (cancelled) return;
+
+      gsap.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
+
+      smootherRef.current = ScrollSmoother.create({
+        smooth: 2,
+        effects: true,
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        normalizeScroll: true,
+        ignoreMobileResize: true,
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      if (smootherRef.current) {
+        smootherRef.current.kill();
+        smootherRef.current = null;
+      }
+    };
+  }, [isTouch]);
+
+  useEffect(() => {
     smootherRef.current?.scrollTo(0, false);
   }, [location.pathname]);
 
   return (
     <div id="smooth-wrapper" className="home">
-      <div id="smooth-content" className={cn("flex flex-col z-0", !isTouch && "pb-[100vh]")}>
+      <div id="smooth-content" className={cn('flex flex-col z-0', !isTouch && 'pb-[100vh]')}>
         <div className="block bg-black overflow-hidden z-2">
           <HeroSection ref={heroRef} />
         </div>
 
-        {/* <div className="overflow-scroll mb-[100vh] z-2"> */}
         <div className="z-2">
-          <MessageSection />
-          <ProductsList />
-          <IngredientsSection />
-          <div className="block bg-black relative">
-            <BenefitsSection />
-            <VideoSection />
-          </div>
-          <TestimonialsSection />
-
-          {/* Story 4.1: Story fragments interleaved organically (AC1) */}
-          {/* <StoryFragmentContainer fragmentIndices={[0, 1]} /> */}
-          {/* Story 2.2: Snap sections for mobile scroll-snap */}
-          {/* <FeaturedCollection collection={data.featuredCollection} className="snap-start" /> */}
-          {/* Story 4.1: Story fragments between sections */}
-          {/* <StoryFragmentContainer fragmentIndices={[2, 3]} /> */}
-          {/* Story 2.3: Constellation grid layout */}
-          {/* <ConstellationProducts products={data.recommendedProducts} className="snap-start" /> */}
-          {/* Story 4.1: Story fragments after product sections */}
-          {/* <StoryFragmentContainer fragmentIndices={[4, 5, 6, 7]} /> */}
-
-          <LocalStores />
+          <Suspense fallback={null}>
+            <MessageSection />
+            <ProductsList />
+            <IngredientsSection />
+            <div className="block bg-black relative">
+              <BenefitsSection />
+              <VideoSection />
+            </div>
+            <TestimonialsSection />
+            <LocalStores />
+          </Suspense>
         </div>
       </div>
     </div>

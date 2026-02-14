@@ -78,45 +78,34 @@ export function IngredientsSection() {
   );
 
   return (
-    <section ref={sectionRef} className={styles['ingredients-section-wrapper']}>
-      <Picture
-        src={ingredientsDripImage}
-        alt="ingredients drip bg"
-        className={cn(styles['ingredients-drip-image'], 'w-full object-cover z-1')}
-      />
-      <Picture
-        src={ingredientsImage}
-        alt="ingredients background"
-        className="w-full absolute h-auto bottom-0 left-0 object-bottom object-cover min-h-screen"
-      />
+    <section>
+      <div ref={sectionRef} className={styles['ingredients-section-wrapper']}>
+        <Picture
+          src={ingredientsDripImage}
+          alt="ingredients drip bg"
+          className={cn(styles['ingredients-drip-image'], 'w-full object-cover z-1')}
+        />
 
-      <div className="flex md:flex-row flex-col justify-between md:px-10 px-5 mt-14">
-        <div className="relative inline-block md:translate-y-96">
-          <div className="general-title relative flex flex-col justify-center items-center gap-24">
-            <div className="mb-4 place-self-start">
-              <h1 ref={title1Ref} className="xl:max-w-5xl md:py-0 py-3 md:pb-5 pb-0 lg:pb-0 md:text-center text-black">
-                Real Gentle
-              </h1>
-            </div>
+        <div className={styles['ingredients-section-headings']}>
+          <h2 ref={title1Ref} className={styles['section-heading']}>
+            Real Gentle
+          </h2>
 
-            <div ref={clippedBoxRef} className={styles['clipped-box']}>
-              <h2 className={styles['clipped-heading-text']}>Simple Soap</h2>
-            </div>
+          <div ref={clippedBoxRef} className={styles['clipped-box']}>
+            <h2 className={styles['clipped-heading-text']}>Simple Soap</h2>
           </div>
         </div>
 
-        <div className="flex md:justify-center items-center translate-y-12 md:translate-y-80">
-          <div className="md:max-w-xl max-w-md">
-            <p ref={paragraphRef} className={styles['paragraph-text']}>
-              Allergies and skin sensitivities have met their match. We skip the performance additives, dyes or scents,
-              and always 100% clean and natural.
-            </p>
-          </div>
+        <div className={styles['paragraph-text-wrapper']}>
+          <p ref={paragraphRef} className={styles['paragraph-text']}>
+            Allergies and skin sensitivities have met their match. We skip the performance additives, dyes or scents,
+            and always 100% clean and natural.
+          </p>
         </div>
 
-        <div ref={tableBoxRef} className="absolute left-1/2 -translate-x-1/2 md:bottom-16 bottom-5 w-full md:px-0 px-4">
-          <IngredientsTable className="my-10" />
-        </div>
+        <Picture src={ingredientsImage} alt="ingredients background" className={styles['ingredients-section-image']} />
+
+        <IngredientsTable className="my-10" />
       </div>
     </section>
   );

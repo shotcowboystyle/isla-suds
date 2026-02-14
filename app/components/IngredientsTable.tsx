@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
+import styles from './IngredientsTable.module.css';
 import {ingredientsListData} from '../content/ingredients';
 
 interface IngredientsTableProps {
   className?: string;
 }
-
-const paragraphClasses = 'text-[#865720]';
 
 export const IngredientsTable = ({className}: IngredientsTableProps) => {
   const {isMobile, isLoading} = useIsMobile();
@@ -21,28 +21,20 @@ export const IngredientsTable = ({className}: IngredientsTableProps) => {
   }, [isLoading, isMobile]);
 
   return (
-    <div
-      id="list-wrapper"
-      className={`bg-[#fdebd2] rounded-full border-[.5vw] border-[#e8ddca] mx-auto max-w-7xl md:py-8 py-5 md:px-0 px-5 flex justify-between items-center ${className}`}
-    >
-      {ingredientsList.map((item, index) => {
-        const key = `${index}-${item.name}`;
-        return [
-          <div key={`${index}-${item.name}`} className="relative flex-1 col-center">
-            <div>
-              <p className={`${paragraphClasses} md:text-lg font-paragraph`}>{item.caption}</p>
-              <p className={`${paragraphClasses} font-paragraph text-sm mt-2`}>up to</p>
-              <p className={`${paragraphClasses} text-2xl md:text-4xl tracking-tighter font-bold`}>{item.name}</p>
-            </div>
-          </div>,
-          index < ingredientsList.length - 1 && (
-            <div
-              key={`divider-${key}`}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 md:h-24 h-16 w-px bg-[#C89C6E]"
-            />
-          ),
-        ];
-      })}
+    <div id="list-wrapper" className={cn(styles['ingredients-table-wrapper'], className)}>
+      <div className={styles['grid']}>
+        {ingredientsList.map((item, index) => {
+          const key = `${index}-${item.name}`;
+          return [
+            <div key={`${index}-${item.name}`} className={styles[`item-${index + 1}`]}>
+              <p className={styles['ingredient']}>{item.caption}</p>
+              <p className={styles['caption']}>up to</p>
+              <p className={styles['amount']}>{item.name}</p>
+            </div>,
+            index < ingredientsList.length - 1 && <div key={`divider-${key}`} className={styles['divider']} />,
+          ];
+        })}
+      </div>
     </div>
 
     // <div

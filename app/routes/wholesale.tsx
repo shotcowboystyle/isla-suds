@@ -9,7 +9,18 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Wholesale Portal | Isla Suds'}];
 };
 
-export async function loader({context}: Route.LoaderArgs) {
+export async function loader({context, request}: Route.LoaderArgs) {
+  const url = new URL(request.url);
+
+  // Skip auth for login and callback routes to prevent redirect loops
+  // (these are child routes that share this layout loader)
+  if (
+    url.pathname === WHOLESALE_ROUTES.LOGIN ||
+    url.pathname === WHOLESALE_ROUTES.CALLBACK
+  ) {
+    return {customer: null};
+  }
+
   // Verify B2B customer is logged in
   const customerId = await context.session.get('customerId');
 
@@ -61,6 +72,11 @@ export async function loader({context}: Route.LoaderArgs) {
 
 export default function WholesaleLayout() {
   const {customer} = useLoaderData<typeof loader>();
+
+  // Login/callback routes render without the wholesale layout chrome
+  if (!customer) {
+    return <Outlet />;
+  }
 
   // Extract customer first name for header display
   const customerName = customer.displayName?.split(' ')[0] || 'Partner';

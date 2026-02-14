@@ -8,7 +8,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 vi.mock('react-router', () => ({
   useRouteLoaderData: vi.fn(),
   useFetcher: vi.fn(() => ({
-    submit: vi.fn(),
+    submit: vi.fn(() => Promise.resolve()),
     state: 'idle',
     data: null,
   })),
@@ -26,6 +26,13 @@ vi.mock('@shopify/hydrogen', () => ({
       LinesUpdate: 'LinesUpdate',
       LinesRemove: 'LinesRemove',
     },
+  },
+}));
+
+vi.mock('~/utils/format-money', () => ({
+  formatMoney: (amount: string, _currencyCode: string) => {
+    const num = parseFloat(amount);
+    return `$${num.toFixed(2)}`;
   },
 }));
 
@@ -52,7 +59,7 @@ describe('CartLineItems', () => {
     vi.clearAllMocks();
     // Reset fetcher mock to default state
     mockUseFetcher.mockReturnValue({
-      submit: vi.fn(),
+      submit: vi.fn(() => Promise.resolve()),
       state: 'idle',
       data: null,
     });
@@ -468,7 +475,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'idle',
@@ -516,7 +523,7 @@ describe('CartLineItems', () => {
 
       // Mock fetcher with error state
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Cart update failed'}],
@@ -536,7 +543,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Error'}],
@@ -558,7 +565,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Not enough inventory'}],
@@ -580,7 +587,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Error'}],
@@ -600,7 +607,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Error'}],
@@ -621,7 +628,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: null,
       });
@@ -808,7 +815,8 @@ describe('CartLineItems', () => {
       render(<CartLineItems />);
 
       const list = screen.getByRole('list');
-      expect(list).toHaveAttribute('role', 'list');
+      // ul elements have implicit list role per ARIA spec
+      expect(list.tagName).toBe('UL');
     });
   });
 
@@ -960,7 +968,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'idle',
@@ -1003,7 +1011,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'idle',
@@ -1065,7 +1073,7 @@ describe('CartLineItems', () => {
 
       // Simulate fetcher in submitting state
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'submitting',
         data: null,
       });
@@ -1091,7 +1099,7 @@ describe('CartLineItems', () => {
 
       // Simulate fetcher with error response
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [
@@ -1205,7 +1213,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'idle',
@@ -1231,7 +1239,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'submitting',
         data: null,
       });
@@ -1252,7 +1260,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Cart removal failed'}],
@@ -1272,7 +1280,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Error'}],
@@ -1292,7 +1300,7 @@ describe('CartLineItems', () => {
       mockUseOptimisticCart.mockReturnValue(cart);
 
       mockUseFetcher.mockReturnValue({
-        submit: vi.fn(),
+        submit: vi.fn(() => Promise.resolve()),
         state: 'idle',
         data: {
           errors: [{message: 'Error'}],
@@ -1343,7 +1351,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'idle',
@@ -1379,7 +1387,7 @@ describe('CartLineItems', () => {
       mockUseRouteLoaderData.mockReturnValue({cart});
       mockUseOptimisticCart.mockReturnValue(cart);
 
-      const mockSubmit = vi.fn();
+      const mockSubmit = vi.fn(() => Promise.resolve());
       mockUseFetcher.mockReturnValue({
         submit: mockSubmit,
         state: 'submitting',

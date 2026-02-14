@@ -1,7 +1,7 @@
 import {lazy, Suspense, useEffect, useRef, useState} from 'react';
 import {Await, NavLink, useAsyncValue, useLocation, useNavigate, useRouteLoaderData} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
-import gsap from 'gsap';
+import type gsap from 'gsap';
 import {ShoppingBag, User} from 'lucide-react';
 // import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
@@ -82,51 +82,38 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       return;
     }
 
-    gsap.set(line1Ref.current, {
-      y: -4,
-      rotate: 0,
-    });
+    let cancelled = false;
+    const btn = buttonRef.current;
+    const line1 = line1Ref.current;
+    const line2 = line2Ref.current;
 
-    gsap.set(line2Ref.current, {
-      y: 4,
-      rotate: 0,
-    });
+    import('gsap').then(({default: gsap}) => {
+      if (cancelled) return;
 
-    gsap.set(buttonRef.current, {
-      backgroundColor: '#fef3f0',
-      cursor: 'pointer',
-      borderRadius: '9999px',
-    });
-
-    tlButton.current = gsap.timeline({paused: true});
-
-    tlButton.current
-      .to(buttonRef.current, {
-        backgroundColor: '#ede7e6',
+      gsap.set(line1, {y: -4, rotate: 0});
+      gsap.set(line2, {y: 4, rotate: 0});
+      gsap.set(btn, {
+        backgroundColor: '#fef3f0',
+        cursor: 'pointer',
         borderRadius: '9999px',
-        duration: 0.35,
-        ease: 'power3.out',
-      })
-      .to(
-        line1Ref.current,
-        {
-          y: 0,
-          rotate: 45,
+      });
+
+      tlButton.current = gsap.timeline({paused: true});
+
+      tlButton.current
+        .to(btn, {
+          backgroundColor: '#ede7e6',
+          borderRadius: '9999px',
           duration: 0.35,
           ease: 'power3.out',
-        },
-        0,
-      )
-      .to(
-        line2Ref.current,
-        {
-          y: 0,
-          rotate: -45,
-          duration: 0.35,
-          ease: 'power3.out',
-        },
-        0,
-      );
+        })
+        .to(line1, {y: 0, rotate: 45, duration: 0.35, ease: 'power3.out'}, 0)
+        .to(line2, {y: 0, rotate: -45, duration: 0.35, ease: 'power3.out'}, 0);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -134,22 +121,30 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       return;
     }
 
-    gsap.set(menuRef.current, {
-      yPercent: -100,
-      autoAlpha: 0,
+    let cancelled = false;
+    const menu = menuRef.current;
+
+    import('gsap').then(({default: gsap}) => {
+      if (cancelled) return;
+
+      gsap.set(menu, {yPercent: -100, autoAlpha: 0});
+
+      tlMenu.current = gsap.timeline({paused: true});
+      tlMenu.current.to(menu, {
+        yPercent: 0,
+        autoAlpha: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+      });
+
+      if (open) {
+        tlMenu.current.play();
+      }
     });
 
-    tlMenu.current = gsap.timeline({paused: true});
-    tlMenu.current.to(menuRef.current, {
-      yPercent: 0,
-      autoAlpha: 1,
-      duration: 0.8,
-      ease: 'power3.out',
-    });
-
-    if (open) {
-      tlMenu.current.play();
-    }
+    return () => {
+      cancelled = true;
+    };
   }, [open]);
 
   useEffect(() => {
@@ -172,15 +167,30 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     }
 
     const button = buttonRef.current;
+    let gsapModule: typeof gsap | null = null;
+
+    // Pre-load gsap on first interaction
+    const loadGsap = () => {
+      if (!gsapModule) {
+        import('gsap').then(({default: gsap}) => {
+          gsapModule = gsap;
+        });
+      }
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (!gsapModule) {
+        loadGsap();
+        return;
+      }
+
       const rect = button.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
       const strength = 0.5;
       const rotateStrength = 10;
 
-      gsap.to(button, {
+      gsapModule.to(button, {
         x: x * strength,
         y: y * strength,
         rotationX: (-y / rect.height) * rotateStrength,
@@ -192,7 +202,9 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     };
 
     const handleMouseLeave = () => {
-      gsap.to(button, {
+      if (!gsapModule) return;
+
+      gsapModule.to(button, {
         x: 0,
         y: 0,
         rotationX: 0,
@@ -203,10 +215,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       });
     };
 
+    // Start loading gsap eagerly on mouseenter
+    button.addEventListener('mouseenter', loadGsap, {once: true});
     button.addEventListener('mousemove', handleMouseMove);
     button.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      button.removeEventListener('mouseenter', loadGsap);
       button.removeEventListener('mousemove', handleMouseMove);
       button.removeEventListener('mouseleave', handleMouseLeave);
     };
@@ -364,6 +379,7 @@ function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
         to="/account"
         style={activeLinkStyle}
         className={cn(styles['navbar-button'], styles['navbar-icon-button'])}
+        aria-label="Account"
       >
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">

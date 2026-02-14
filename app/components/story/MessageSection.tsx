@@ -99,10 +99,10 @@ export const MessageSection = () => {
 
   return (
     <section ref={sectionRef} className={styles['message-section-wrapper']}>
-      <div className={styles['text-wrapper']}>
+      <div className={styles['text-wrapper']} data-lag="0.5">
         <div className={styles['grid']}>
-          <div ref={text1Ref} className={styles['heading-text-wrapper']}>
-            <h1 className={styles['heading-text']}>Freshen up and feel great in your</h1>
+          <div className={styles['heading-text-wrapper']}>
+            <h1 ref={text1Ref} className={styles['heading-text']}>Freshen up and feel great in your</h1>
           </div>
 
           <div className={styles['clipped-text-wrapper']}>
