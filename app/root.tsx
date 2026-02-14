@@ -83,6 +83,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    {rel: 'preload', as: 'style', href: tailwindCss},
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }

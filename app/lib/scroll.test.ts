@@ -28,16 +28,16 @@ describe('initLenis', () => {
     window.matchMedia = originalMatchMedia;
   });
 
-  it('should return null during SSR (no window object)', () => {
+  it('should return null during SSR (no window object)', async () => {
     // @ts-expect-error - Simulating SSR environment
     global.window = undefined;
 
-    const result = initLenis();
+    const result = await initLenis();
 
     expect(result).toBeNull();
   });
 
-  it('should return null on mobile viewport (<1024px)', () => {
+  it('should return null on mobile viewport (<1024px)', async () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (query === '(min-width: 1024px)') {
         return {matches: false} as MediaQueryList;
@@ -48,12 +48,12 @@ describe('initLenis', () => {
       return {matches: false} as MediaQueryList;
     });
 
-    const result = initLenis();
+    const result = await initLenis();
 
     expect(result).toBeNull();
   });
 
-  it('should return null when prefers-reduced-motion is set', () => {
+  it('should return null when prefers-reduced-motion is set', async () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (query === '(min-width: 1024px)') {
         return {matches: true} as MediaQueryList;
@@ -64,12 +64,12 @@ describe('initLenis', () => {
       return {matches: false} as MediaQueryList;
     });
 
-    const result = initLenis();
+    const result = await initLenis();
 
     expect(result).toBeNull();
   });
 
-  it('should initialize Lenis on desktop viewport (≥1024px)', () => {
+  it('should initialize Lenis on desktop viewport (≥1024px)', async () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (query === '(min-width: 1024px)') {
         return {matches: true} as MediaQueryList;
@@ -87,13 +87,13 @@ describe('initLenis', () => {
         return 1;
       });
 
-    const result = initLenis();
+    const result = await initLenis();
 
     expect(result).not.toBeNull();
     expect(rafSpy).toHaveBeenCalled();
   });
 
-  it('should not re-initialize if Lenis instance already exists', () => {
+  it('should not re-initialize if Lenis instance already exists', async () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (query === '(min-width: 1024px)') {
         return {matches: true} as MediaQueryList;
@@ -110,8 +110,8 @@ describe('initLenis', () => {
         return 1;
       });
 
-    const firstCall = initLenis();
-    const secondCall = initLenis();
+    const firstCall = await initLenis();
+    const secondCall = await initLenis();
 
     // Should return same instance
     expect(firstCall).toBe(secondCall);
@@ -140,7 +140,7 @@ describe('initLenis', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {});
 
-    const result = initLenis();
+    const result = await initLenis();
 
     expect(result).toBeNull();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -162,7 +162,7 @@ describe('destroyLenis', () => {
     expect(() => destroyLenis()).not.toThrow();
   });
 
-  it('should cancel requestAnimationFrame and destroy instance', () => {
+  it('should cancel requestAnimationFrame and destroy instance', async () => {
     // Setup: Initialize Lenis first
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (query === '(min-width: 1024px)') {
@@ -184,7 +184,7 @@ describe('destroyLenis', () => {
         return 123; // Mock RAF ID
       });
 
-    initLenis();
+    await initLenis();
     destroyLenis();
 
     expect(cancelRafSpy).toHaveBeenCalled();
@@ -210,7 +210,7 @@ describe('destroyLenis', () => {
         return 1;
       });
 
-    const instance = initLenis();
+    const instance = await initLenis();
 
     // Mock destroy to throw an error
     if (instance) {

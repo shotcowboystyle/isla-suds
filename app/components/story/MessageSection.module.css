@@ -7,9 +7,7 @@
   height: auto;
   display: flex;
   position: relative;
-  /* Mobile first: overflow hidden by default, override at larger sizes */
   overflow: hidden;
-  /* Mobile first: height 100vh on small screens, unset at larger sizes */
   height: 100vh;
 }
 
@@ -42,8 +40,7 @@
 
 @media screen and (min-width: 480px) {
   .text-wrapper {
-    padding-top: 7vw;
-    padding-bottom: 8vw;
+    padding-block: 8vw;
   }
 }
 
@@ -66,7 +63,7 @@
 
 @media screen and (min-width: 992px) {
   .grid {
-    padding-inline: 24vw;
+    padding-inline: 13vw;
   }
 }
 
@@ -88,9 +85,7 @@
 
 @media screen and (min-width: 992px) {
   .heading-text {
-    font-size: 7.2vw;
-    /* text-align: left; */
-    line-height: normal;
+    font-size: 9.2vw;
   }
 }
 
@@ -124,8 +119,6 @@
   align-items: center;
   padding-block: 0;
   display: flex;
-  /* grid-area only explicitly set at large screens if really needed;
-     otherwise removed for mobile-first clarity */
 }
 
 .clipped-text-content-wrapper {
@@ -176,7 +169,6 @@
   text-align: left;
   text-transform: uppercase;
   font-size: 50px;
-  /* Default mobile value */
   line-height: 110%;
 }
 
@@ -188,7 +180,6 @@
 
 .paragraph-wrapper {
   margin-top: 3vw;
-  /* Mobile first: default no flex centering, add on larger screens */
 }
 
 @media screen and (min-width: 992px) {
@@ -216,14 +207,14 @@
 @media screen and (min-width: 768px) {
   .paragraph {
     font-size: 16px;
-    /* Optionally line-height unchanged (120%) */
   }
 }
 
 @media screen and (min-width: 992px) {
   .paragraph {
-    font-size: 1.04vw;
-    line-height: 115%;
+    font-size: 1.4vw;
+    line-height: 1.3;
     width: 26vw;
+    margin-block: 4vw 0;
   }
 }

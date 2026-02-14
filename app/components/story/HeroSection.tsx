@@ -1,7 +1,11 @@
 import {forwardRef, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
+if (typeof document !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.png?responsive';
 import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.png';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';

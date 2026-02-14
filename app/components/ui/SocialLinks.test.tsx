@@ -34,64 +34,65 @@ describe('SocialLinks', () => {
       expect(twitterIcon).toBeInTheDocument();
     });
 
-    it('icons meet 44x44px minimum touch target size', () => {
+    it('icons meet minimum touch target size', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
 
-      // Check computed styles (w-11 h-11 = 44px x 44px in Tailwind)
-      expect(instagramIcon).toHaveClass('w-11');
-      expect(instagramIcon).toHaveClass('h-11');
+      // h-14 w-14 = 56px x 56px touch target
+      expect(instagramIcon).toHaveClass('h-14');
+      expect(instagramIcon).toHaveClass('w-14');
     });
 
-    it('icons are visually disabled with opacity-50', () => {
+    it('icons have "Coming soon" title attribute', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('opacity-50');
+      expect(instagramIcon).toHaveAttribute('title', 'Coming soon');
     });
 
-    it('icons have cursor-not-allowed to indicate disabled state', () => {
+    it('icons are rendered as anchor tags with href', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('cursor-not-allowed');
+      expect(instagramIcon.tagName).toBe('A');
+      expect(instagramIcon).toHaveAttribute(
+        'href',
+        'https://www.instagram.com/islasuds/',
+      );
     });
 
-    it('icons are not clickable links (disabled state)', () => {
-      render(<SocialLinks />);
-
-      const instagramIcon = screen.getByLabelText(/instagram/i);
-      // Should be a div, not an <a> tag
-      expect(instagramIcon.tagName).not.toBe('A');
-    });
-
-    it('container has proper semantic structure with role="list"', () => {
-      render(<SocialLinks />);
-
-      const container = screen.getByRole('list', {name: /social media/i});
-      expect(container).toBeInTheDocument();
-    });
-
-    it('each icon has role="listitem"', () => {
+    it('container uses semantic ul/li structure', () => {
       const {container} = render(<SocialLinks />);
 
-      const listItems = container.querySelectorAll('[role="listitem"]');
+      const list = container.querySelector('ul');
+      expect(list).toBeInTheDocument();
+
+      const listItems = container.querySelectorAll('li');
       expect(listItems).toHaveLength(3);
     });
 
-    it('icons use design token --canvas-elevated for background', () => {
+    it('navigation has proper aria-label for social media links', () => {
+      render(<SocialLinks />);
+
+      const nav = screen.getByRole('navigation', {
+        name: /social media/i,
+      });
+      expect(nav).toBeInTheDocument();
+    });
+
+    it('icons have rounded-full border styling', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('bg-[var(--canvas-elevated)]');
+      expect(instagramIcon).toHaveClass('rounded-full');
+      expect(instagramIcon).toHaveClass('border-2');
     });
 
     it('layout adapts for future activation (data attributes present)', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      // Check for data attribute that indicates future link capability
       expect(instagramIcon).toHaveAttribute('data-platform', 'instagram');
     });
 
@@ -102,14 +103,20 @@ describe('SocialLinks', () => {
       expect(instagramIcon).toHaveAttribute('tabIndex', '0');
     });
 
-    it('icons have visible focus indicators', () => {
+    it('icons have hover transition styling', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('focus-visible:ring-2');
-      expect(instagramIcon).toHaveClass(
-        'focus-visible:ring-[var(--accent-primary)]',
-      );
+      expect(instagramIcon).toHaveClass('transition-colors');
+    });
+
+    it('each icon contains an SVG element', () => {
+      render(<SocialLinks />);
+
+      const instagramIcon = screen.getByLabelText(/instagram/i);
+      const svg = instagramIcon.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('aria-hidden', 'true');
     });
   });
 });

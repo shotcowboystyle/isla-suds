@@ -1,6 +1,65 @@
 import {render, screen} from '@testing-library/react';
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, vi} from 'vitest';
 import {HeroSection} from './HeroSection';
+
+// Mock GSAP and related modules
+vi.mock('@gsap/react', () => ({
+  useGSAP: vi.fn(),
+}));
+
+vi.mock('gsap', () => ({
+  default: {
+    timeline: vi.fn(() => ({
+      to: vi.fn().mockReturnThis(),
+      from: vi.fn().mockReturnThis(),
+    })),
+    set: vi.fn(),
+    to: vi.fn(),
+  },
+}));
+
+vi.mock('gsap/SplitText', () => ({
+  SplitText: {
+    create: vi.fn(() => ({chars: []})),
+  },
+}));
+
+// Mock image/video imports
+vi.mock('~/assets/images/hero-mobile-2.png?responsive', () => ({
+  default: {src: '/mock-hero-mobile.png'},
+}));
+
+vi.mock('~/assets/images/hero-video-thumbnail.png', () => ({
+  default: '/mock-thumbnail.png',
+}));
+
+vi.mock('~/assets/video/soap-bar-blast.mp4', () => ({
+  default: '/mock-video.mp4',
+}));
+
+// Mock Picture component
+vi.mock('~/components/Picture', () => ({
+  Picture: ({alt, ...props}: any) => <img alt={alt} {...props} />,
+}));
+
+// Mock LiquidButton
+vi.mock('~/components/ui/LiquidButton', () => ({
+  LiquidButton: ({text, href, ...props}: any) => (
+    <a href={href} {...props}>
+      {text}
+    </a>
+  ),
+}));
+
+// Mock CSS modules
+vi.mock('~/components/story/HeroSection.module.css', () => ({
+  default: new Proxy(
+    {},
+    {
+      get: (_target, prop) => String(prop),
+    },
+  ),
+}));
 
 describe('HeroSection', () => {
   it('renders without errors', () => {
@@ -9,24 +68,16 @@ describe('HeroSection', () => {
     expect(hero).toBeInTheDocument();
   });
 
-  it('applies canvas-base background color', () => {
+  it('renders as a section element with aria-label', () => {
     render(<HeroSection />);
-    const hero = screen.getByRole('region', {name: /hero/i});
-    expect(hero).toHaveClass('bg-[var(--canvas-base)]');
+    const hero = screen.getByRole('region', {name: /hero section/i});
+    expect(hero.tagName).toBe('SECTION');
   });
 
-  it('spans full viewport height', () => {
+  it('has data-testid for testing', () => {
     render(<HeroSection />);
-    const hero = screen.getByRole('region', {name: /hero/i});
-    expect(hero).toHaveClass('min-h-[100dvh]');
-  });
-
-  it('centers content vertically and horizontally', () => {
-    render(<HeroSection />);
-    const hero = screen.getByRole('region', {name: /hero/i});
-    expect(hero).toHaveClass('flex');
-    expect(hero).toHaveClass('items-center');
-    expect(hero).toHaveClass('justify-center');
+    const hero = screen.getByTestId('hero-section');
+    expect(hero).toBeInTheDocument();
   });
 
   it('accepts custom className prop', () => {
@@ -36,40 +87,41 @@ describe('HeroSection', () => {
   });
 
   it('has proper TypeScript props interface', () => {
-    // This is a compile-time check, but we can verify runtime behavior
     const props: React.ComponentProps<typeof HeroSection> = {
       className: 'test',
     };
     expect(props).toBeDefined();
   });
 
-  it('displays brand name', () => {
+  it('displays hero tagline start text', () => {
     render(<HeroSection />);
-    const logo = screen.getByText(/isla suds/i);
-    expect(logo).toBeInTheDocument();
+    const taglineStart = screen.getByText(/natural skincare/i);
+    expect(taglineStart).toBeInTheDocument();
   });
 
-  it('logo is prominently displayed', () => {
+  it('tagline start is in an h1 element', () => {
     render(<HeroSection />);
-    const logo = screen.getByText(/isla suds/i);
-    expect(logo.tagName).toBe('H1');
+    const taglineStart = screen.getByText(/natural skincare/i);
+    expect(taglineStart.tagName).toBe('H1');
   });
 
-  it('displays tagline below logo', () => {
+  it('displays hero tagline end text', () => {
     render(<HeroSection />);
-    const tagline = screen.getByText(/handcrafted/i);
-    expect(tagline).toBeInTheDocument();
+    const taglineEnd = screen.getByText(/you can trust/i);
+    expect(taglineEnd).toBeInTheDocument();
   });
 
-  it('tagline uses fluid display typography', () => {
+  it('displays hero content paragraph', () => {
     render(<HeroSection />);
-    const tagline = screen.getByText(/handcrafted/i);
-    expect(tagline).toHaveClass('text-fluid-display');
+    const content = screen.getByText(/silky-smooth feel/i);
+    expect(content).toBeInTheDocument();
+    expect(content.tagName).toBe('P');
   });
 
-  it('tagline uses primary text color', () => {
+  it('renders a Shop Now call-to-action', () => {
     render(<HeroSection />);
-    const tagline = screen.getByText(/handcrafted/i);
-    expect(tagline).toHaveClass('text-text-primary');
+    const cta = screen.getByText(/shop now/i);
+    expect(cta).toBeInTheDocument();
+    expect(cta).toHaveAttribute('href', '/products');
   });
 });

@@ -71,9 +71,9 @@ export function LocalStores() {
       <div className={styles['map-section-inner']}>
         <div className={styles['map-section-info']}>
           <div className={styles['heading-wrapper']}>
-            <h4 ref={heading1Ref} className={styles['heading-text']}>
+            <h2 ref={heading1Ref} className={styles['heading-text']}>
               Right Around
-            </h4>
+            </h2>
           </div>
 
           <div ref={clippedBoxRef} className={styles['clipped-text-box']}>

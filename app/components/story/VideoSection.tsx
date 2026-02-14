@@ -3,10 +3,10 @@ import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import styles from './VideoSection.module.css';
+import PinVideoPoster from '../../assets/images/pin-video-poster.webp';
 import LightboxButtonImage from '../../assets/images/play.svg';
 import PlayIcon from '../../assets/images/polygon-3.svg';
 import PinVideo from '../../assets/video/pin-video.mp4';
-import PinVideoPoster from '../../assets/images/pin-video-poster.webp';
 import {cn} from '../../utils/cn';
 
 export const VideoSection = () => {
@@ -75,7 +75,7 @@ export const VideoSection = () => {
   return (
     <div>
       {!isLoading && !isMobile && (
-        <div className={styles['effect-wrapper']}>
+        <div className={styles['effect-wrapper']} data-speed="auto">
           <div className={styles['effect-wrapper-inner']}>
             <div ref={stickyCircleWrapper} className={styles['cursor-wrapper']}>
               <div ref={cursorElement} className={styles['cursor']}>
