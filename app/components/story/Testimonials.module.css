@@ -144,7 +144,7 @@
   padding-bottom: 0;
   display: flex;
   position: absolute;
-  inset: 0 auto auto;
+  inset: 10% auto auto;
   overflow: hidden;
 }
 @media screen and (min-width: 480px) {

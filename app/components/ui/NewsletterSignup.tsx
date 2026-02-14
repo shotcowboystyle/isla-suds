@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {FaArrowRight} from 'react-icons/fa6';
+import styles from './NewsletterSignup.module.css';
 
 export const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
@@ -9,30 +10,41 @@ export const NewsletterSignup = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl">
-      <p className="mb-6 text-center text-gray-300">
-        Get Exclusive Early Access and Stay Informed About Product
-        <br />
-        Updates, Events, and More!
+    <div className={styles['newsletter-signup-wrapper']}>
+      <p className={styles['paragraph']}>
+        Get Exclusive Early Access and Stay Informed About Product Updates, Events, and More!
       </p>
 
-      <div className="relative">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onSubmit={handleSubmit}
-          placeholder="Enter your email"
-          className="w-full border-b-2 border-gray-600 bg-transparent px-2 py-4 text-lg text-gray-400 placeholder-gray-600 transition-colors focus:border-white focus:outline-none"
-        />
-
-        <button
-          onClick={handleSubmit}
-          className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center justify-center w-12 h-12 transition-transform hover:translate-x-1"
-          aria-label="Submit email"
+      <div className={styles['footer-form-wrapper']}>
+        <form
+          id="newsletter-form"
+          name="newsletter-form"
+          data-name="newsletter-form"
+          method="get"
+          className={styles['footer-form']}
+          aria-label="newsletter-form"
         >
-          <FaArrowRight />
-        </button>
+          <input
+            className={styles['text-field']}
+            maxLength={256}
+            name="email-2"
+            data-name="Email 2"
+            placeholder="Enter your email"
+            type="email"
+            id="email-2"
+            required={true}
+          />
+
+          <input type="submit" data-wait="Please wait..." className={styles['submit-button']} value="" />
+        </form>
+
+        <div className={styles['form-submit-success']} tabIndex={-1} role="region" aria-label="footer-form success">
+          <div>Thank you! Your submission has been received!</div>
+        </div>
+
+        <div className={styles['form-submit-failure']} tabIndex={-1} role="region" aria-label="footer-form failure">
+          <div>Oops! Something went wrong while submitting the form.</div>
+        </div>
       </div>
     </div>
   );
