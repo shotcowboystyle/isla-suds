@@ -164,6 +164,7 @@ function renderHeaderMenu(viewport: 'desktop' | 'mobile' = 'mobile') {
         viewport={viewport}
         primaryDomainUrl={mockHeader.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
+        onClose={mockClose}
       />
     </MemoryRouter>,
   );
@@ -208,17 +209,11 @@ describe('Header', () => {
     it('renders all expected menu items in mobile menu', () => {
       renderHeaderMenu('mobile');
       expect(screen.getByRole('link', {name: /^home$/i})).toBeInTheDocument();
-      expect(
-        screen.getByRole('link', {name: /collections/i}),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /collections/i})).toBeInTheDocument();
       expect(screen.getByRole('link', {name: /blog/i})).toBeInTheDocument();
-      expect(
-        screen.getByRole('link', {name: /policies/i}),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /policies/i})).toBeInTheDocument();
       expect(screen.getByRole('link', {name: /about/i})).toBeInTheDocument();
-      expect(
-        screen.getByRole('link', {name: /wholesale/i}),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /wholesale/i})).toBeInTheDocument();
     });
   });
 
@@ -319,6 +314,36 @@ describe('Header', () => {
       const links = nav.querySelectorAll('a');
       // Links are NavLink components which handle routing
       expect(links.length).toBeGreaterThan(0);
+    });
+
+    it('closing menu via ESC key', async () => {
+      const user = userEvent.setup();
+      renderHeader();
+
+      // Find toggle button and click it to open menu
+      const toggleButton = screen.getByLabelText('Toggle menu');
+      await user.click(toggleButton);
+
+      // Verify menu is open by checking aria-expanded
+      expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
+
+      // Press ESC
+      await user.keyboard('{Escape}');
+
+      // Verify menu is closed
+      expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('clicking a link calls onClose', async () => {
+      renderHeaderMenu('mobile');
+      const nav = screen.getByRole('navigation');
+      const links = nav.querySelectorAll('a');
+      const firstLink = links[0];
+
+      const user = userEvent.setup();
+      await user.click(firstLink);
+
+      expect(mockClose).toHaveBeenCalled();
     });
   });
 

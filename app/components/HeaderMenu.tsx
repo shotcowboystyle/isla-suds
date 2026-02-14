@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import {NavLink} from 'react-router';
-import {useAside} from '~/components/Aside';
 import {Picture} from '~/components/Picture';
 import AboutUsImage from '../assets/images/menu-about-us.webp?responsive';
 import CatalogImage from '../assets/images/menu-catalog.png?responsive';
@@ -8,19 +7,6 @@ import ContactImage from '../assets/images/menu-contact.jpeg?responsive';
 import HomeImage from '../assets/images/menu-home.png?responsive';
 import PoliciesImage from '../assets/images/menu-policies.webp?responsive';
 import type {HeaderQuery} from 'storefrontapi.generated';
-
-function useMenuToggle() {
-  const [open, setOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setOpen((prev) => !prev);
-  };
-
-  return {
-    open,
-    toggleMenu,
-  };
-}
 
 function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
   return {
@@ -102,12 +88,10 @@ interface HeaderMenuProps {
   primaryDomainUrl: string;
   viewport: Viewport;
   publicStoreDomain: string;
+  onClose: () => void;
 }
 
-export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStoreDomain}: HeaderMenuProps) {
-  const {close} = useAside();
-  const {open, toggleMenu} = useMenuToggle();
-
+export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStoreDomain, onClose}: HeaderMenuProps) {
   const [activeMenu, setActiveMenu] = useState<number>(0);
 
   return (
@@ -133,7 +117,7 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
                   className={`py-2 lg:py-0 px-4 text-2xl md:text-5xl lg:text-7xl uppercase font-extrabold tracking-tighter leading-none cursor-pointer transition-opacity duration-300 ${activeMenu === index ? 'opacity-100' : 'opacity-30'}`}
                   end
                   key={item.id}
-                  onClick={toggleMenu}
+                  onClick={onClose}
                   prefetch="intent"
                   onMouseEnter={() => setActiveMenu(index)}
                   style={activeLinkStyle}

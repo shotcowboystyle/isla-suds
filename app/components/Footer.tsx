@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useEffect, useRef, useState} from 'react';
 import {useNavigate, useLocation, Await, NavLink} from 'react-router';
 import {cn} from '~/utils/cn';
 // import {Picture} from './Picture';
@@ -17,70 +17,90 @@ interface FooterProps {
 export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    if (!footerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // use borderBoxSize if available for precise outer height (including padding/borders), fallback to contentRect
+        const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
+        setFooterHeight(height);
+      }
+    });
+    observer.observe(footerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <Suspense>
-      <Await resolve={footerPromise}>
-        {(footer) => (
-          <footer className={cn(styles['footer'], `${styles.footer}`)}>
-            {/* <Picture src={SliderDipImage} alt="Slider Dip" loading="lazy" /> */}
+    <>
+      <div style={{height: footerHeight}} />
+      <div ref={footerRef} className="fixed bottom-0 w-full z-1" style={{zIndex: 1}}>
+        <Suspense>
+          <Await resolve={footerPromise}>
+            {(footer) => (
+              <footer className={cn(styles['footer'], `${styles.footer}`)}>
+                {/* <Picture src={SliderDipImage} alt="Slider Dip" loading="lazy" /> */}
 
-            <div className={styles['footer-content-container']}>
-              <h2 className={styles['heading-teg-wrapper']}>
-                <div className={styles['header-tag']}>#SOAP_IS_DOPE</div>
-              </h2>
+                <div className={styles['footer-content-container']}>
+                  <h2 className={styles['heading-teg-wrapper']}>
+                    <div className={styles['header-tag']}>#SOAP_IS_DOPE</div>
+                  </h2>
 
-              <SocialLinks />
+                  <SocialLinks />
 
-              <div className={styles['footer-grid']}>
-                <div className={styles['grid-column']}>
-                  <a href="/products" className={styles['footer-link']}>
-                    Products
-                  </a>
+                  <div className={styles['footer-grid']}>
+                    <div className={styles['grid-column']}>
+                      <a href="/products" className={styles['footer-link']}>
+                        Products
+                      </a>
+                    </div>
+
+                    <div className={styles['grid-column']}>
+                      <a href="/stores" className={styles['footer-link']}>
+                        Stores
+                      </a>
+                      <a href="/wholesale" className={styles['footer-link']}>
+                        Wholesale
+                      </a>
+                    </div>
+
+                    <div className={styles['grid-column']}>
+                      <a href="/about-us" className={styles['footer-link']}>
+                        About Us
+                      </a>
+                      <a href="/contact-us" className={styles['footer-link']}>
+                        Contact
+                      </a>
+                    </div>
+
+                    <div className={styles['grid-spacer']}></div>
+
+                    <NewsletterSignup />
+
+                    <div className={styles['copyright-wrapper']}>
+                      <p className={styles['copyright-text']}>
+                        © {new Date().getFullYear()} Isla Suds - All Rights Reserved
+                      </p>
+                    </div>
+
+                    <div className={styles['policies-wrapper']}>
+                      <a href="/privacy-policy" className={styles['footer-link-muted']}>
+                        Privacy Policy
+                      </a>
+                      <a href="/terms-of-use" className={styles['footer-link-muted']}>
+                        Terms of Service
+                      </a>
+                    </div>
+                  </div>
                 </div>
-
-                <div className={styles['grid-column']}>
-                  <a href="/stores" className={styles['footer-link']}>
-                    Stores
-                  </a>
-                  <a href="/wholesale" className={styles['footer-link']}>
-                    Wholesale
-                  </a>
-                </div>
-
-                <div className={styles['grid-column']}>
-                  <a href="/about-us" className={styles['footer-link']}>
-                    About Us
-                  </a>
-                  <a href="/contact-us" className={styles['footer-link']}>
-                    Contact
-                  </a>
-                </div>
-
-                <div className={styles['grid-spacer']}></div>
-
-                <NewsletterSignup />
-
-                <div className={styles['copyright-wrapper']}>
-                  <p className={styles['copyright-text']}>
-                    © {new Date().getFullYear()} Isla Suds - All Rights Reserved
-                  </p>
-                </div>
-
-                <div className={styles['policies-wrapper']}>
-                  <a href="/privacy-policy" className={styles['footer-link-muted']}>
-                    Privacy Policy
-                  </a>
-                  <a href="/terms-of-use" className={styles['footer-link-muted']}>
-                    Terms of Service
-                  </a>
-                </div>
-              </div>
-            </div>
-          </footer>
-        )}
-      </Await>
-    </Suspense>
+              </footer>
+            )}
+          </Await>
+        </Suspense>
+      </div>
+    </>
   );
 }
 

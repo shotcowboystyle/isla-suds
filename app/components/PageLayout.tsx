@@ -51,7 +51,8 @@ export function PageLayout({
 
       {/* Story 2.2: scroll-snap-type is on html (app.css) for mobile—viewport is scroll container.
           Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
-      <main id="main-content" className="relative overflow-hidden">
+      {/* Footer reveal: main needs z-index > footer (0 or 1) and background color to cover footer. */}
+      <main id="main-content" className="relative overflow-hidden z-10 bg-[var(--canvas-base)]">
         {children}
       </main>
 
