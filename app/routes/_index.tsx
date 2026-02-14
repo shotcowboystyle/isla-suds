@@ -5,30 +5,22 @@ import {ConstellationGrid} from '~/components/product';
 import {HeroSection} from '~/components/story/HeroSection';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
-import type {FeaturedCollectionFragment, RecommendedProductsQuery} from 'storefrontapi.generated';
 import type {ScrollSmoother as ScrollSmootherType} from 'gsap/ScrollSmoother';
+import type {FeaturedCollectionFragment, RecommendedProductsQuery} from 'storefrontapi.generated';
 
 const MessageSection = lazy(() =>
   import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
 );
-const ProductsList = lazy(() =>
-  import('~/components/story/ProductsList').then((m) => ({default: m.ProductsList})),
-);
+const ProductsList = lazy(() => import('~/components/story/ProductsList').then((m) => ({default: m.ProductsList})));
 const IngredientsSection = lazy(() =>
   import('~/components/story/Ingredients').then((m) => ({default: m.IngredientsSection})),
 );
-const BenefitsSection = lazy(() =>
-  import('~/components/story/Benefits').then((m) => ({default: m.BenefitsSection})),
-);
-const VideoSection = lazy(() =>
-  import('~/components/story/VideoSection').then((m) => ({default: m.VideoSection})),
-);
+const BenefitsSection = lazy(() => import('~/components/story/Benefits').then((m) => ({default: m.BenefitsSection})));
+const VideoSection = lazy(() => import('~/components/story/VideoSection').then((m) => ({default: m.VideoSection})));
 const TestimonialsSection = lazy(() =>
   import('~/components/story/Testimonials').then((m) => ({default: m.TestimonialsSection})),
 );
-const LocalStores = lazy(() =>
-  import('~/components/story/LocalStores').then((m) => ({default: m.LocalStores})),
-);
+const LocalStores = lazy(() => import('~/components/story/LocalStores').then((m) => ({default: m.LocalStores})));
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -108,24 +100,28 @@ export default function Homepage() {
 
     let cancelled = false;
 
-    import('gsap/ScrollTrigger').then(({ScrollTrigger}) => {
-      if (cancelled) return;
+    import('gsap/ScrollTrigger')
+      .then(({ScrollTrigger}) => {
+        if (cancelled) return;
 
-      let lastWidth = window.innerWidth;
+        let lastWidth = window.innerWidth;
 
-      const handleResize = () => {
-        const currentWidth = window.innerWidth;
-        if (Math.abs(currentWidth - lastWidth) < 100) return;
-        lastWidth = currentWidth;
-        ScrollTrigger.refresh();
-      };
+        const handleResize = () => {
+          const currentWidth = window.innerWidth;
+          if (Math.abs(currentWidth - lastWidth) < 100) return;
+          lastWidth = currentWidth;
+          ScrollTrigger.refresh();
+        };
 
-      window.addEventListener('resize', handleResize);
-      // Store cleanup ref
-      cleanupResizeRef.current = () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    });
+        window.addEventListener('resize', handleResize);
+        // Store cleanup ref
+        cleanupResizeRef.current = () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      })
+      .catch((error: Error) => {
+        console.error(error);
+      });
 
     const cleanupResizeRef = {current: () => {}};
 
@@ -140,25 +136,24 @@ export default function Homepage() {
 
     let cancelled = false;
 
-    Promise.all([
-      import('gsap'),
-      import('gsap/ScrollSmoother'),
-      import('gsap/ScrollTrigger'),
-      import('@gsap/react'),
-    ]).then(([{default: gsap}, {ScrollSmoother}, {ScrollTrigger}, {useGSAP}]) => {
-      if (cancelled) return;
+    Promise.all([import('gsap'), import('gsap/ScrollSmoother'), import('gsap/ScrollTrigger'), import('@gsap/react')])
+      .then(([{default: gsap}, {ScrollSmoother}, {ScrollTrigger}, {useGSAP}]) => {
+        if (cancelled) return;
 
-      gsap.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
+        gsap.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
 
-      smootherRef.current = ScrollSmoother.create({
-        smooth: 2,
-        effects: true,
-        wrapper: '#smooth-wrapper',
-        content: '#smooth-content',
-        normalizeScroll: true,
-        ignoreMobileResize: true,
+        // smootherRef.current = ScrollSmoother.create({
+        //   smooth: 2,
+        //   effects: true,
+        //   wrapper: '#smooth-wrapper',
+        //   content: '#smooth-content',
+        //   normalizeScroll: true,
+        //   ignoreMobileResize: true,
+        // });
+      })
+      .catch((error: Error) => {
+        console.error(error);
       });
-    });
 
     return () => {
       cancelled = true;
@@ -175,12 +170,12 @@ export default function Homepage() {
 
   return (
     <div id="smooth-wrapper" className="home">
-      <div id="smooth-content" className={cn('flex flex-col z-0', !isTouch && 'pb-[100vh]')}>
-        <div className="block bg-black overflow-hidden z-2">
+      <div id="smooth-content" className={cn('flex flex-col bg-transparent')}>
+        <div className="block bg-black overflow-hidden">
           <HeroSection ref={heroRef} />
         </div>
 
-        <div className="z-2">
+        <div className="z-1">
           <Suspense fallback={null}>
             <MessageSection />
             <ProductsList />

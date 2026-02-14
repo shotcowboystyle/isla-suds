@@ -1,7 +1,6 @@
 import {lazy, Suspense, useEffect, useRef, useState} from 'react';
 import {Await, NavLink, useAsyncValue, useLocation, useNavigate, useRouteLoaderData} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
-import type gsap from 'gsap';
 import {ShoppingBag, User} from 'lucide-react';
 // import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
@@ -10,6 +9,7 @@ import {useIsMobile} from '~/hooks/use-is-mobile';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import styles from './Header.module.css';
+import type gsap from 'gsap';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 const LazyHeaderMenu = lazy(() => import('./HeaderMenu'));
@@ -87,13 +87,12 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     const line1 = line1Ref.current;
     const line2 = line2Ref.current;
 
-    import('gsap').then(({default: gsap}) => {
+    void import('gsap').then(({default: gsap}) => {
       if (cancelled) return;
 
       gsap.set(line1, {y: -4, rotate: 0});
       gsap.set(line2, {y: 4, rotate: 0});
       gsap.set(btn, {
-        backgroundColor: '#fef3f0',
         cursor: 'pointer',
         borderRadius: '9999px',
       });
@@ -102,7 +101,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
       tlButton.current
         .to(btn, {
-          backgroundColor: '#ede7e6',
           borderRadius: '9999px',
           duration: 0.35,
           ease: 'power3.out',
@@ -124,7 +122,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     let cancelled = false;
     const menu = menuRef.current;
 
-    import('gsap').then(({default: gsap}) => {
+    void import('gsap').then(({default: gsap}) => {
       if (cancelled) return;
 
       gsap.set(menu, {yPercent: -100, autoAlpha: 0});
@@ -172,7 +170,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     // Pre-load gsap on first interaction
     const loadGsap = () => {
       if (!gsapModule) {
-        import('gsap').then(({default: gsap}) => {
+        void import('gsap').then(({default: gsap}) => {
           gsapModule = gsap;
         });
       }
@@ -267,8 +265,8 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           <strong className="sr-only">{shop.name}</strong>
         </NavLink>
 
-        <div className={styles['menu-button-wrapper']}>
-          {!isMobile && (
+        {!isMobile && (
+          <div className={styles['menu-button-wrapper']}>
             <button
               ref={buttonRef}
               onClick={toggleMenu}
@@ -280,37 +278,39 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
               <div ref={line2Ref} className={cn(styles['menu-button-line'], styles['menu-button-line-2'])} />
               <span className="sr-only">Menu</span>
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* <div className="h-18 sm:h-24 px-[1.05rem] sm:px-6 flex items-center justify-end sm:justify-between relative gap-3"> */}
         <div className={styles['menu-cta-buttons-wrapper']}>
           <Logo className={cn(styles['navbar-logo'], styles['navbar-logo-transparency-off'])} />
 
-          <div className={styles['cta-buttons']}>
-            {isMobile && (
-              <button
-                ref={buttonRef}
-                onClick={toggleMenu}
-                className={cn(styles['menu-button-mobile'], styles['menu-button-abs'])}
-                aria-expanded={open}
-                aria-label="Toggle menu"
-              >
-                <div ref={line1Ref} className={cn(styles['menu-button-line'], styles['menu-button-line-mobile'])} />
-                <div
-                  ref={line2Ref}
-                  className={cn(
-                    styles['menu-button-line'],
-                    styles['menu-button-line-2'],
-                    styles['menu-button-line-mobile'],
-                    styles['menu-button-line-2-mobile'],
-                  )}
-                />
-              </button>
-            )}
+          {isMobile && (
+            <button
+              ref={buttonRef}
+              onClick={toggleMenu}
+              className={cn(styles['menu-button-mobile'], styles['menu-button-abs'])}
+              aria-expanded={open}
+              aria-label="Toggle menu"
+            >
+              <div ref={line1Ref} className={cn(styles['menu-button-line'], styles['menu-button-line-mobile'])} />
+              <div
+                ref={line2Ref}
+                className={cn(
+                  styles['menu-button-line'],
+                  styles['menu-button-line-2'],
+                  styles['menu-button-line-mobile'],
+                  styles['menu-button-line-2-mobile'],
+                )}
+              />
+            </button>
+          )}
 
+          <div className={styles['cta-buttons']}>
             <div className={cn(styles['menu-buttons-wrapper'], styles['menu-button-abs'])}>
-              <button className={styles['navbar-button']}>Find in stores</button>
+              <a href="/locations" className={styles['navbar-button']}>
+                Find in stores
+              </a>
 
               <HeaderCtas isLoggedIn={isLoggedIn} />
 

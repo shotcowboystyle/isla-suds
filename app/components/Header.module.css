@@ -11,7 +11,6 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  /* Mobile-first/default styles */
   height: 80px;
   margin-bottom: -80px;
   padding-block: 2vw;
@@ -112,18 +111,22 @@
 
 .menu-button {
   z-index: 9999;
-  background-color: var(--color-black);
-  /* mix-blend-mode: normal; */
+  background-color: var(--color-white);
   border-radius: 100vw;
   flex-flow: column;
   flex: none;
   justify-content: center;
   align-items: center;
+  text-decoration: none;
   width: 3.1vw;
   height: 3.1vw;
   display: flex;
   position: relative;
   padding: 1vw;
+}
+
+.menu-button:hover {
+  background-color: var(--color-coral-light);
 }
 
 .menu-button-line {
@@ -146,15 +149,13 @@
 }
 @media screen and (min-width: 480px) {
   .menu-button-line-mobile {
-    /* Only margin-bottom: 2px above 479px */
     margin-bottom: 2px;
   }
 }
-@media screen and (min-width: 992px) {
+/* @media screen and (min-width: 992px) {
   .menu-button-line-mobile {
-    /* keep as-is, enable override if needed */
   }
-}
+} */
 
 .menu-button-line-2-mobile {
   margin-top: 2px;
@@ -166,40 +167,38 @@
     margin-bottom: 0;
   }
 }
-@media screen and (min-width: 992px) {
+/* @media screen and (min-width: 992px) {
   .menu-button-line-2-mobile {
-    /* keep as-is, enable override if needed */
   }
-}
+} */
 
 .menu-cta-buttons-wrapper,
 .cta-buttons {
   z-index: 101;
-  /* justify-content: space-between; */
   gap: 0.5vw;
-  /* width: 100%; */
   padding-left: 0%;
-  display: flex;
+  display: none;
   position: relative;
+}
+.menu-cta-buttons-wrapper {
+  display: flex;
 }
 @media screen and (min-width: 480px) {
   .menu-cta-buttons-wrapper,
   .cta-buttons {
+    display: flex;
     z-index: 102;
-    /* Remove padding override, keep layout responsive */
   }
 }
 @media screen and (min-width: 768px) {
   .menu-cta-buttons-wrapper,
   .cta-buttons {
-    /* Only z-index bump and justify-content; others inherit */
-    /* justify-content: space-between; */
+    justify-content: space-between;
   }
 }
 @media screen and (min-width: 992px) {
   .menu-cta-buttons-wrapper,
   .cta-buttons {
-    /* Only z-index bump and justify-content; others inherit */
     justify-content: flex-end;
   }
 }
@@ -231,27 +230,32 @@
   align-items: center;
   width: 48px;
   height: 48px;
-  display: none;
+  display: flex;
   margin: 0;
+  background-color: var(--color-white);
 }
+
+.menu-button-mobile:hover {
+  background-color: var(--color-coral-light);
+}
+
 @media screen and (min-width: 480px) {
   .menu-button-mobile {
     width: 56px;
     height: 56px;
     margin-left: 8px;
     display: flex;
-    background-color: #fef4f1;
   }
 }
 /* @media screen and (min-width: 768px) {
   .menu-button-mobile {
   }
 } */
-@media screen and (min-width: 992px) {
+/* @media screen and (min-width: 992px) {
   .menu-button-mobile {
     display: none;
   }
-}
+} */
 
 .menu-buttons-wrapper {
   cursor: pointer;
@@ -284,18 +288,18 @@
   .menu-button-abs {
     margin-left: auto;
     margin-right: auto;
-    position: absolute;
-    inset: 0% 0% auto;
-    display: block;
+    /* position: absolute; */
+    /* inset: 0% 0% auto; */
+    /* display: block; */
   }
 }
 @media screen and (max-width: 479px) {
   .menu-button-abs {
     margin-left: auto;
     margin-right: auto;
-    position: absolute;
-    inset: 0% 0% auto 0;
-    display: block;
+    /* position: absolute; */
+    /* inset: 0% 0% auto 0; */
+    /* display: block; */
   }
 }
 
@@ -304,7 +308,7 @@
   color: var(--color-dark-brown);
   letter-spacing: -0.01vw;
   text-transform: uppercase;
-  background-color: #fef3f0;
+  background-color: var(--color-white);
   border-radius: 30vw;
   border: 0;
   justify-content: center;
@@ -319,6 +323,12 @@
   text-decoration: none;
   display: flex;
 }
+
+.navbar-button:hover {
+  background-color: var(--color-coral-light);
+  text-decoration: none;
+}
+
 @media screen and (min-width: 768px) {
   .navbar-button {
     height: 56px;

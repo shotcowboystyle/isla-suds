@@ -25,7 +25,7 @@ export const VideoSection = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          videoEl.play();
+          void videoEl.play();
         } else {
           videoEl.pause();
         }
@@ -63,11 +63,6 @@ export const VideoSection = () => {
         duration: 0.5,
         clipPath: 'circle(100% at 50% 50%)',
       });
-      // .to(cursorElement.current, {
-      //   duration: 0.5,
-      //   width: '150vw',
-      //   height: '150vw',
-      // })
     },
     {dependencies: [stickyCircleWrapper, stickyCircleElement, cursorElement, isLoading, isMobile]},
   );

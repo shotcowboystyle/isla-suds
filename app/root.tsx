@@ -143,7 +143,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
     storefront.query(HEADER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
-        headerMenuHandle: 'main-menu', // Adjust to your header menu handle
+        headerMenuHandle: 'header-menu', // Adjust to your header menu handle
       },
     }),
     // Add other queries here, so that they are loaded in parallel
@@ -241,7 +241,7 @@ export default function App() {
     }
 
     // Initialize Lenis after hydration (client-side only) for B2C routes
-    initLenis();
+    void initLenis();
 
     // Debounced resize handler to avoid excessive calls during window resize
     let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -254,7 +254,7 @@ export default function App() {
 
         if (isDesktop) {
           // On desktop, ensure Lenis is initialized
-          initLenis();
+          void initLenis();
         } else {
           // On mobile, ensure Lenis is destroyed
           destroyLenis();

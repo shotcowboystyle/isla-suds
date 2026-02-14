@@ -113,7 +113,7 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
   return (
     <div className="fixed top-0 left-0 w-full h-dvh bg-secondary z-1">
       <div className="flex items-center h-full">
-        <div className="flex flex-col justify-center items-center w-[43%] md:w-1/2 h-full">
+        <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-full">
           <nav className="flex flex-col items-center" role="navigation">
             {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => {
               if (!item.url) {
@@ -145,28 +145,28 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
             })}
           </nav>
 
-          <ul className="mt-5 hidden md:flex items-center gap-4">
+          <ul className="mt-5 flex items-center gap-4">
             <li className="font-paragraph">
-              <a href="https://www.youtube.com/@spyltmilk" target="_blank" rel="noreferrer">
+              <a href="https://www.youtube.com" target="_blank" rel="noreferrer">
                 YouTube
               </a>
             </li>
 
             <li className="font-paragraph">
-              <a href="https://www.instagram.com/spyltmilk/" target="_blank" rel="noreferrer">
+              <a href="https://www.instagram.com" target="_blank" rel="noreferrer">
                 Instagram
               </a>
             </li>
 
             <li className="font-paragraph">
-              <a href="https://www.tiktok.com/@spylt" target="_blank" rel="noreferrer">
+              <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">
                 TikTok
               </a>
             </li>
           </ul>
         </div>
 
-        <div className="flex w-[57%] md:w-1/2 h-full pointer-events-none">
+        <div className="hidden md:flex w-[57%] md:w-1/2 h-full pointer-events-none">
           <Picture
             loading="lazy"
             src={FALLBACK_HEADER_MENU.items[activeMenu].image}

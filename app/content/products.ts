@@ -185,7 +185,7 @@ export const productsList = [
   {
     name: 'Lavender Mint',
     color: 'green',
-    toUrl: '/product/lavender-mint',
+    toUrl: '/products/lavender-mint',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: LavenderMintBarImage,
     bgUrl: GreenBgImage,
@@ -194,7 +194,7 @@ export const productsList = [
   {
     name: 'Lemongrass',
     color: 'yellow',
-    toUrl: '/product/lemongrass',
+    toUrl: '/products/lemongrass',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: LemongrassBarImage,
     bgUrl: BrownBgImage,
@@ -203,7 +203,7 @@ export const productsList = [
   {
     name: 'Lavender',
     color: 'purple',
-    toUrl: '/product/lavender',
+    toUrl: '/products/lavender',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: LavenderBarImage,
     bgUrl: PurpleBgImage,
@@ -212,7 +212,7 @@ export const productsList = [
   {
     name: 'Rosemary Sea Salt',
     color: 'orange',
-    toUrl: '/product/rosemary-sea-salt',
+    toUrl: '/products/rosemary-sea-salt',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: RosemarySeaSaltBarImage,
     bgUrl: WhiteBgImage,

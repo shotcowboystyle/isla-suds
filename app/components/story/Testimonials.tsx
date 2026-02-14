@@ -87,7 +87,7 @@ export const TestimonialsSection = () => {
           `.animated-video-card:nth-child(${index + 1})`,
           {
             yPercent: testimonial.translation.y,
-            xPercent: testimonial.translation.x,
+            ...(!isMobile && {xPercent: testimonial.translation.x}),
             // stagger: 0.2,
             duration: cardDuration,
             ease: 'power4.inOut',

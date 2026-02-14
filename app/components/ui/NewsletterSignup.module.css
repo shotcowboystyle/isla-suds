@@ -1,0 +1,131 @@
+@media screen and (max-width: 991px) {
+  .newsletter-signup-wrapper {
+    grid-area: 2 / 1 / 3 / 4;
+  }
+}
+
+.paragraph {
+  color: var(--color-secondary);
+  font-weight: 400;
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 115%;
+}
+@media screen and (min-width: 768px) {
+  .paragraph {
+    font-size: 1.04vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .paragraph {
+    font-size: 1.04vw;
+  }
+}
+
+.footer-form-wrapper {
+  margin-top: 3vw;
+  position: relative;
+  margin: 0 0 15px;
+}
+
+.footer-form {
+  margin-top: 3vw;
+  position: relative;
+}
+
+.text-field {
+  color: var(--color-secondary);
+  letter-spacing: -0.1vw;
+  background-color: var(--color-black);
+  border: 0 solid var(--color-black);
+  border-bottom: 0.05vw solid var(--color-secondary);
+  height: 52px;
+  padding: 0 0 16px;
+  font-family: Antonio, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 115%;
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+}
+@media screen and (min-width: 480px) {
+  .text-field {
+    width: auto;
+  }
+}
+@media screen and (min-width: 992px) {
+  .text-field {
+    height: 4.5vw;
+    padding-bottom: 1vw;
+    font-size: 2.1vw;
+  }
+}
+
+.submit-button {
+  background-color: #3898ec00;
+  background-image: url(https://cdn.prod.website-files.com/669a8d6…/66a7a03…_FORM%20Icon.svg);
+  background-position: 50%;
+  background-size: cover;
+  width: 32px;
+  height: 32px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 0;
+  display: block;
+  overflow: hidden;
+  color: var(--color-secondary);
+  line-height: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0;
+  text-decoration: none;
+  appearance: button;
+  position: absolute;
+  inset: 25% 0% auto auto;
+  margin-right: 0;
+  padding: 0;
+}
+@media screen and (min-width: 480px) {
+  .submit-button {
+    margin-right: 0;
+    right: 24px;
+    padding-bottom: 40px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .submit-button {
+    right: 24px;
+    padding-bottom: 3rem;
+    bottom: 0;
+    margin-bottom: -15px;
+    top: -7%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .submit-button {
+    background-size: auto;
+    width: 2vw;
+    height: 2vw;
+    margin-bottom: -50px;
+    margin-right: 0;
+    padding: 0;
+  }
+}
+
+.form-submit-success {
+  text-align: center;
+  background-color: var(--color-secondary);
+  padding: 20px;
+  display: none;
+}
+
+.form-submit-failure {
+  background-color: var(--color-accent);
+  margin-top: 10px;
+  padding: 10px;
+  display: none;
+}

@@ -11,7 +11,6 @@ interface VideoCardProps {
     rotation: string;
     name: string;
     img: ImageData;
-    // translation: string | null;
   };
   index: number;
 }
@@ -40,7 +39,7 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
                 src={cardData.src}
                 poster={cardData.poster}
                 ref={videoRef}
-                onMouseEnter={handlePlay}
+                onMouseEnter={() => void handlePlay()}
                 onMouseLeave={handlePause}
                 muted
                 playsInline

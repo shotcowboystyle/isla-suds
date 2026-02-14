@@ -1,9 +1,11 @@
 import {Suspense} from 'react';
 import {useNavigate, useLocation, Await, NavLink} from 'react-router';
-import {Picture} from './Picture';
+import {cn} from '~/utils/cn';
+// import {Picture} from './Picture';
+import styles from './Footer.module.css';
 import {NewsletterSignup} from './ui/NewsletterSignup';
 import {SocialLinks} from './ui/SocialLinks';
-import SliderDipImage from '../assets/images/slider-dip.png?responsive';
+// import SliderDipImage from '../assets/images/slider-dip.png?responsive';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
 interface FooterProps {
@@ -20,63 +22,58 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
     <Suspense>
       <Await resolve={footerPromise}>
         {(footer) => (
-          <footer className="flex min-h-screen flex-col bg-canvas-base text-text-muted -z-1 fixed bottom-0">
-            <Picture src={SliderDipImage} alt="Slider Dip" loading="lazy" />
+          <footer className={cn(styles['footer'], `${styles.footer}`)}>
+            {/* <Picture src={SliderDipImage} alt="Slider Dip" loading="lazy" /> */}
 
-            <div className="flex flex-1 flex-col items-center justify-center px-6 py-20">
-              <h2 className="mb-16 text-center text-8xl font-black tracking-tight max-md:text-6xl max-sm:text-4xl">
-                #SOAP_IS_DOPE
+            <div className={styles['footer-content-container']}>
+              <h2 className={styles['heading-teg-wrapper']}>
+                <div className={styles['header-tag']}>#SOAP_IS_DOPE</div>
               </h2>
 
               <SocialLinks />
-              <NewsletterSignup />
 
-              <div className="border-t border-gray-800 px-6 py-8">
-                <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-                  {/* Left Side - Logo and Links */}
-                  <div className="flex flex-col gap-8 md:flex-row md:gap-16">
-                    <div>
-                      <h3 className="mb-4 text-2xl font-bold">Isla Suds</h3>
-                    </div>
-                  </div>
-
-                  {/* Right Side*/}
-                  <FooterMenu
-                    menu={footer?.menu || null}
-                    primaryDomainUrl={header.shop.primaryDomain?.url ?? ''}
-                    publicStoreDomain={publicStoreDomain}
-                  />
-
-                  <button
-                    onClick={() => {
-                      const currentPath = location.pathname;
-                      const newUrl = `${currentPath}?select-store=true`;
-                      void navigate(newUrl, {replace: true});
-                    }}
-                    className="text-left cursor-pointer inline-block uppercase text-xs text-black dark:text-white opacity-50 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 duration-300 transition"
-                  >
-                    SELECT STORE
-                  </button>
+              <div className={styles['footer-grid']}>
+                <div className={styles['grid-column']}>
+                  <a href="/products" className={styles['footer-link']}>
+                    Products
+                  </a>
                 </div>
 
-                <div className="mx-auto mt-8 max-w-7xl text-sm text-gray-500">
-                  © {new Date().getFullYear()} Isla Suds
+                <div className={styles['grid-column']}>
+                  <a href="/stores" className={styles['footer-link']}>
+                    Stores
+                  </a>
+                  <a href="/wholesale" className={styles['footer-link']}>
+                    Wholesale
+                  </a>
                 </div>
-              </div>
 
-              <div className="grid gap-2 sm:gap-2">
-                <button
-                  onClick={() => {
-                    const currentPath = location.pathname;
-                    const newUrl = `${currentPath}?select-store=true`;
-                    void navigate(newUrl, {replace: true});
-                  }}
-                  className="text-left cursor-pointer inline-block uppercase text-xs text-black dark:text-white opacity-50 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 duration-300 transition"
-                >
-                  SELECT STORE
-                </button>
-                <div className="inline-block uppercase text-xs" style={{color: 'var(--text-muted)'}}>
-                  © {new Date().getFullYear()} Isla Suds
+                <div className={styles['grid-column']}>
+                  <a href="/about-us" className={styles['footer-link']}>
+                    About Us
+                  </a>
+                  <a href="/contact-us" className={styles['footer-link']}>
+                    Contact
+                  </a>
+                </div>
+
+                <div className={styles['grid-spacer']}></div>
+
+                <NewsletterSignup />
+
+                <div className={styles['copyright-wrapper']}>
+                  <p className={styles['copyright-text']}>
+                    © {new Date().getFullYear()} Isla Suds - All Rights Reserved
+                  </p>
+                </div>
+
+                <div className={styles['policies-wrapper']}>
+                  <a href="/privacy-policy" className={styles['footer-link-muted']}>
+                    Privacy Policy
+                  </a>
+                  <a href="/terms-of-use" className={styles['footer-link-muted']}>
+                    Terms of Service
+                  </a>
                 </div>
               </div>
             </div>

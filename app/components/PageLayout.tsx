@@ -51,7 +51,7 @@ export function PageLayout({
 
       {/* Story 2.2: scroll-snap-type is on html (app.css) for mobile—viewport is scroll container.
           Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
-      <main id="main-content" className="mb-screen">
+      <main id="main-content" className="relative overflow-hidden">
         {children}
       </main>
 
