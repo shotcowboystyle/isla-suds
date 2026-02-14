@@ -25,9 +25,7 @@ export const ProductsListCard = ({
         <Picture loading="lazy" src={bgUrl} alt="background" className={styles['card-background']} />
         <Picture loading="lazy" src={productImageUrl} alt={productName} className={styles['card-soap-bar']} />
         <Picture loading="lazy" src={particlesUrl} alt="particles" className={styles['card-additional']} />
-        <div className="card-heading z-5 text-secondary ml-0 absolute inset-[auto_auto_2.3vw_2vw] max-lg:bottom-[16px] max-lg:left-[16px]">
-          {productName}
-        </div>
+        <div className={styles['card-heading']}>{productName}</div>
       </a>
     </div>
   );

@@ -2,23 +2,51 @@
   z-index: 2;
   background-color: #222123;
   background-image: none;
+  width: auto;
+  height: auto;
+  display: flex;
+  position: static;
   flex-flow: column;
-  justify-content: flex-start; /* mobile first: start by default */
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* min-width: 768px and up: adjust vertical alignment (was max-width: 767px, so now applies above that) */
+@media screen and (min-width: 768px) {
+  .benefits-section {
+    justify-content: center;
+  }
+}
+
+/* Remove previous max-width: 991px override; mobile-first default reflect flex-start, center.
+   If you want to change layout for larger screens, add here: */
+@media screen and (min-width: 992px) {
+  /* Optionally customize for larger screens */
+  /* .benefits-section {
+      // add desktop-specific changes here if needed
+  } */
+}
+
+/* .benefits-section {
+  z-index: 2;
+  background-color: #222123;
+  background-image: none;
+  flex-flow: column;
+  justify-content: flex-start;
   align-items: center;
   width: auto;
   height: auto;
   display: flex;
   position: static;
   overflow: hidden;
-  /* remove redundant top, no effect in static position */
 }
 
 @media screen and (min-width: 768px) {
   .benefits-section {
     justify-content: center;
-    /* Optional: align-items remains center, so not overridden */
   }
-}
+} */
 
 .paragraph-text-start {
   color: var(--color-secondary);
@@ -60,6 +88,8 @@
   width: 100%;
   display: flex;
   position: relative;
+  margin-top: 150px;
+  margin-bottom: 150px;
 }
 
 @media screen and (min-width: 768px) {
@@ -67,6 +97,27 @@
     width: 65vw;
   }
 }
+@media screen and (min-width: 992px) {
+  .clipped-boxes-wrapper {
+    width: auto;
+  }
+}
+
+/* .clipped-boxes-wrapper {
+  z-index: 3;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+@media screen and (min-width: 768px) {
+  .clipped-boxes-wrapper {
+    width: 65vw;
+  }
+} */
 /*
 @media screen and (min-width: 992px) {
   .clipped-boxes-wrapper {

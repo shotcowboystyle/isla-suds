@@ -8,7 +8,7 @@
   overflow: visible; */
 
   z-index: 3;
-  background-color: var(--color-black);
+  background-color: var(--color-milk);
   position: relative;
   width: 100%;
   height: 120dvh;
@@ -56,16 +56,28 @@
 } */
 
 .testimonials-section-wrapper {
-  background-color: var(--color-secondary);
+  /* background-color: var(--color-milk); */
   /* flex-flow: column; */
   /* justify-content: flex-start;
   align-items: center; */
-  width: auto;
+  /* width: auto; */
   /* height: 300vh; */
-  height: 100%;
+  /* height: 100%;
+  padding-top: 0;
+  padding-bottom: 0; */
+  /* display: flex; */
+  /* position: relative;
+  overflow: visible; */
+
+  background-color: var(--milk);
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: auto;
+  height: 110vh;
   padding-top: 0;
   padding-bottom: 0;
-  /* display: flex; */
+  display: flex;
   position: relative;
   overflow: visible;
 }
@@ -76,7 +88,7 @@
 }
 @media screen and (min-width: 768px) {
   .testimonials-section-wrapper {
-    background-color: var(--color-secondary);
+    background-color: var(--color-milk);
   }
 } */
 /* @media screen and (min-width: 992px) {
@@ -94,20 +106,32 @@
   top: 0;
   overflow: hidden; */
 
+  /* z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 90%;
   padding-inline-start: calc(var(--spacing) * 52);
   position: absolute;
-  bottom: 50vh;
+  bottom: 50vh; */
+
+  z-index: 4;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: 0;
+  display: block;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
 }
 
-@media (width >= 96rem /* 1536px */) {
+/* @media (width >= 96rem) {
   .social-sticky-wrapper {
+    padding-inline-start: calc(var(--spacing) * 52);
+    width: 75%;
     bottom: calc(var(--spacing) * 32);
   }
-}
+} */
 
 .social-text-wrapper {
   z-index: 3;
@@ -127,6 +151,7 @@
   .social-text-wrapper {
     width: auto;
     /* position: sticky; */
+    padding-top: 10vw;
     inset: 0% 0% auto;
   }
 }
@@ -137,7 +162,8 @@
 } */
 
 .social-heading-1,
-.social-heading-2 {
+.social-heading-2,
+.social-heading-3 {
   z-index: 3;
   color: var(--color-black);
   letter-spacing: -0.4vw;
@@ -150,6 +176,10 @@
   font-weight: 700;
   line-height: 105%;
   position: relative;
+}
+
+.social-heading-2 {
+  color: var(--color-light-brown);
 }
 
 .drip-background-image-wrapper {
@@ -167,6 +197,19 @@
     z-index: 99;
     overflow: hidden;
   }
+}
+
+.liquid-button-wrapper {
+  z-index: 3;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: relative;
+  bottom: 0;
+  margin: 0 auto;
+  background-color: var(--color-milk);
 }
 
 .drip-background-image {

@@ -39,7 +39,7 @@
   display: flex;
   position: relative;
   width: 100%;
-  padding-top: 20%; /* default for mobile first */
+  padding-top: 20%;
 }
 
 @media screen and (min-width: 480px) {
@@ -50,7 +50,6 @@
 
 @media screen and (min-width: 992px) {
   .hero-section-content {
-    /* on large screens, just center vertically and horizontally, remove top padding */
     padding-top: 0;
   }
 }
@@ -78,7 +77,6 @@
   font-family: Antonio, sans-serif;
   font-weight: 700;
   display: block;
-  /* Mobile first: */
   font-size: 13vw;
   line-height: 120%;
   overflow: hidden;
@@ -169,28 +167,24 @@
   }
 }
 
-[text-split] {
-  opacity: 0;
-}
-
-.hero-mobile {
-  width: 90%;
+.hero-image-mobile {
+  /* width: 90%; */
   margin-top: 40px;
   display: block;
   aspect-ratio: 1296 / 928;
 }
 
 @media screen and (min-width: 480px) {
-  .hero-mobile {
+  .hero-image-mobile {
     z-index: 2;
-    width: 80%;
+    /* width: 80%; */
     position: relative;
   }
 }
 
 @media screen and (min-width: 768px) {
-  .hero-mobile {
-    width: 60%;
+  .hero-image-mobile {
+    /* width: 60%; */
     max-width: none;
     margin-top: 70px;
     margin-bottom: 0;
@@ -198,7 +192,7 @@
 }
 
 @media screen and (min-width: 992px) {
-  .hero-mobile {
+  .hero-image-mobile {
     display: none;
   }
 }

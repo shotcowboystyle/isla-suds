@@ -2,7 +2,8 @@ import {describe, it, expect, vi, beforeEach} from 'vitest';
 import {render, screen, waitFor, act} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router';
-import {Header, HeaderMenu} from './Header';
+import {Header} from './Header';
+import HeaderMenu from './HeaderMenu';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 // Mock close function for testing mobile menu behavior

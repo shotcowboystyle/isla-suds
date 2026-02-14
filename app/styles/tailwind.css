@@ -11,7 +11,7 @@
 
 @font-face {
   font-family: 'Antonio';
-  src: url('/fonts/Antonio-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/Antonio-VariableFont_wght.woff2') format('woff2');
   font-weight: 100 700;
   font-style: normal;
   font-display: swap;
@@ -31,12 +31,13 @@
   --color-lighter-dark-brown: #865720;
 
   --color-primary: #55bcbc;
-  --color-primary-light: #90cfd3;
+  --color-primary-hover: #40999a;
   --color-secondary: #fcf4e1;
   --color-text: #000000;
   --color-accent: #ea5d5d;
-  --color-accent-dark: #c04c4c;
+  --color-accent-hover: #d4897a;
   --color-accent-secondary: #fcca75;
+  --color-accent-secondary-hover: #e8b85d;
 
   --color-teal-lighter: hsl(180 50% 97%); /* Very light - backgrounds */
   --color-teal-light: hsl(180 50% 90%); /* Light backgrounds */
@@ -68,8 +69,7 @@ body {
   box-sizing: border-box;
   color: var(--text-black);
   font-family: 'Antonio', sans-serif;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
+  /* overflow-x: hidden; */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
   --webkit-text-size-adjust: 100%;
