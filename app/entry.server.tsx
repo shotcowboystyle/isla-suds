@@ -1,8 +1,5 @@
 import {ServerRouter} from 'react-router';
-import {
-  createContentSecurityPolicy,
-  type HydrogenRouterContextProvider,
-} from '@shopify/hydrogen';
+import {createContentSecurityPolicy, type HydrogenRouterContextProvider} from '@shopify/hydrogen';
 import {isbot} from 'isbot';
 import {renderToReadableStream} from 'react-dom/server';
 import type {EntryContext} from 'react-router';
@@ -19,15 +16,12 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    imgSrc: ["'self'", 'https://cdn.shopify.com', 'https://*.tile.openstreetmap.org', 'data:'],
   });
 
   const body = await renderToReadableStream(
     <NonceProvider>
-      <ServerRouter
-        context={reactRouterContext}
-        url={request.url}
-        nonce={nonce}
-      />
+      <ServerRouter context={reactRouterContext} url={request.url} nonce={nonce} />
     </NonceProvider>,
     {
       nonce,
