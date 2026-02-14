@@ -2,11 +2,11 @@ import {useState} from 'react';
 import {NavLink} from 'react-router';
 import {useAside} from '~/components/Aside';
 import {Picture} from '~/components/Picture';
-import AboutUsImage from '../assets/images/menu-about-us.png?responsive';
+import AboutUsImage from '../assets/images/menu-about-us.webp?responsive';
 import CatalogImage from '../assets/images/menu-catalog.png?responsive';
 import ContactImage from '../assets/images/menu-contact.jpeg?responsive';
 import HomeImage from '../assets/images/menu-home.png?responsive';
-import TastyTalksImage from '../assets/images/menu-tasty-talks.png?responsive';
+import PoliciesImage from '../assets/images/menu-policies.webp?responsive';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
 function useMenuToggle() {
@@ -70,7 +70,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'HTTP',
       url: '/policies',
       items: [],
-      image: AboutUsImage,
+      image: PoliciesImage,
     },
     {
       id: 'gid://shopify/MenuItem/461609599032',
@@ -80,7 +80,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/about',
       items: [],
-      image: TastyTalksImage,
+      image: AboutUsImage,
     },
     {
       id: 'gid://shopify/MenuItem/wholesale-portal',

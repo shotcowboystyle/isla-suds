@@ -82,8 +82,11 @@ vi.mock('@shopify/hydrogen', () => ({
 }));
 
 // Mock image imports used by HeaderMenu
-vi.mock('../assets/images/menu-about-us.png?responsive', () => ({
-  default: {src: '/mock-about-us.png'},
+vi.mock('../assets/images/menu-about-us.webp?responsive', () => ({
+  default: {src: '/mock-about-us.webp'},
+}));
+vi.mock('../assets/images/menu-policies.webp?responsive', () => ({
+  default: {src: '/mock-policies.webp'},
 }));
 vi.mock('../assets/images/menu-catalog.png?responsive', () => ({
   default: {src: '/mock-catalog.png'},
