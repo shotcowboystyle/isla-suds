@@ -74,7 +74,7 @@
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   display: block;
   font-size: 13vw;
@@ -131,7 +131,7 @@
   justify-content: flex-start;
   align-items: center;
   padding: 0 1.2vw 1vw;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   display: flex;
   font-size: 13vw;
@@ -164,104 +164,5 @@
     font-size: 1.04vw;
     width: 28vw;
     line-height: 115%;
-  }
-}
-
-.hero-image-mobile {
-  /* width: 90%; */
-  margin-top: 40px;
-  display: block;
-  aspect-ratio: 1296 / 928;
-}
-
-@media screen and (min-width: 480px) {
-  .hero-image-mobile {
-    z-index: 2;
-    /* width: 80%; */
-    position: relative;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .hero-image-mobile {
-    /* width: 60%; */
-    max-width: none;
-    margin-top: 70px;
-    margin-bottom: 0;
-  }
-}
-
-@media screen and (min-width: 992px) {
-  .hero-image-mobile {
-    display: none;
-  }
-}
-
-.hero-image-start-frame {
-  z-index: 1;
-  display: block;
-  position: absolute;
-  transform: scale(1.8);
-}
-
-@media screen and (min-width: 480px) {
-  .hero-image-start-frame {
-    transform: scale(1.8);
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .hero-image-start-frame {
-    display: none;
-    position: static;
-    transform: none;
-  }
-}
-
-@media screen and (min-width: 992px) {
-  .hero-image-start-frame {
-    display: none;
-  }
-}
-
-.hero-image-plug {
-  z-index: 2;
-  object-fit: cover;
-  order: 1;
-  width: 100%;
-  height: 100%;
-  display: none;
-  position: absolute;
-  inset: 0%;
-}
-
-.home-hero-video-wrapper {
-  display: none;
-}
-
-@media screen and (min-width: 992px) {
-  .home-hero-video-wrapper {
-    display: block;
-    z-index: 2;
-    width: 100%;
-    height: 100vh;
-    display: block;
-    position: absolute;
-    inset: 0%;
-    color: #fff;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .home-hero-video-wrapper > video {
-    object-fit: cover;
-    z-index: -100;
-    background-position: 50%;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-    margin: auto;
-    position: absolute;
-    inset: -100%;
   }
 }

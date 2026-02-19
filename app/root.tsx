@@ -15,7 +15,9 @@ import {Analytics, getShopAnalytics, useNonce, type CartQueryDataReturn, type Sh
 import favicon from '~/assets/favicon.svg';
 import {CartDrawer} from '~/components/cart/CartDrawer';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
+import {Preloader} from '~/components/Preloader';
 import {HomeScrollProvider} from '~/contexts/home-scroll-context';
+import {PreloaderProvider, usePreloader} from '~/contexts/preloader-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {usePastHero} from '~/hooks/use-past-hero';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
@@ -68,13 +70,13 @@ export function links() {
       type: 'font/woff2',
       crossOrigin: 'anonymous' as const,
     },
-    {
-      rel: 'preload',
-      as: 'font',
-      href: '/fonts/HelveticaNeue.woff2',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous' as const,
-    },
+    // {
+    //   rel: 'preload',
+    //   as: 'font',
+    //   href: '/fonts/HelveticaNeue.woff2',
+    //   type: 'font/woff2',
+    //   crossOrigin: 'anonymous' as const,
+    // },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -199,6 +201,9 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={tailwindCss}></link>
         {/* <link rel="stylesheet" href={resetStyles}></link> */}
         {/* <link rel="stylesheet" href={appStyles}></link> */}
+        {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=DynaPuff&display=swap" rel="stylesheet" /> */}
         <Meta />
         <Links />
       </head>
@@ -234,8 +239,10 @@ export default function App() {
   useEffect(() => {
     // Check if current route is a B2B route - Lenis should not initialize for wholesale routes
     const isWholesaleRoute = location.pathname.startsWith('/wholesale');
-    if (isWholesaleRoute) {
-      // Ensure Lenis is destroyed for B2B routes
+    const isHome = location.pathname === '/';
+
+    if (isWholesaleRoute || isHome) {
+      // Ensure Lenis is destroyed for B2B routes and Home (which uses ScrollSmoother)
       destroyLenis();
       return;
     }
@@ -286,9 +293,32 @@ export default function App() {
 
   return (
     <Analytics.Provider cart={data.cart} shop={data.shop} consent={data.consent}>
+      <PreloaderProvider>
+        <AppContent isHome={isHome} heroRef={heroRef} isPastHero={isPastHero} layoutContent={layoutContent} />
+      </PreloaderProvider>
+    </Analytics.Provider>
+  );
+}
+
+function AppContent({
+  isHome,
+  heroRef,
+  isPastHero,
+  layoutContent,
+}: {
+  isHome: boolean;
+  heroRef: React.RefObject<HTMLElement>;
+  isPastHero: boolean;
+  layoutContent: React.ReactNode;
+}) {
+  const {setPreloaderComplete} = usePreloader();
+
+  return (
+    <>
+      <Preloader onComplete={() => setPreloaderComplete(true)} />
       {isHome ? <HomeScrollProvider isPastHero={isPastHero}>{layoutContent}</HomeScrollProvider> : layoutContent}
       <CartDrawer />
-    </Analytics.Provider>
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
-import {Suspense, useId} from 'react';
-import {Await, Link} from 'react-router';
+import {Suspense, useId, useState} from 'react';
+import {Await, Link, useLocation} from 'react-router';
 import {Aside} from '~/components/Aside';
 import {CartMain} from '~/components/CartMain';
 import {Footer} from '~/components/Footer';
@@ -29,6 +29,11 @@ export function PageLayout({
   theme,
   setTheme,
 }: PageLayoutProps) {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  // const isHome = false;
+  const [footerHeight, setFooterHeight] = useState(0);
+
   return (
     <Aside.Provider>
       {/* Skip link for accessibility */}
@@ -52,11 +57,33 @@ export function PageLayout({
       {/* Story 2.2: scroll-snap-type is on html (app.css) for mobile—viewport is scroll container.
           Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
       {/* Footer reveal: main needs z-index > footer (0 or 1) and background color to cover footer. */}
-      <main id="main-content" className="relative overflow-hidden z-10 bg-[var(--canvas-base)]">
-        {children}
-      </main>
 
-      <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
+      {isHome ? (
+        <>
+          <div id="smooth-wrapper" className="relative z-10">
+            <div id="smooth-content">
+              <main id="main-content" className="relative overflow-hidden z-10 bg-black">
+                {children}
+              </main>
+              <div style={{height: footerHeight}} />
+            </div>
+          </div>
+          <Footer
+            footer={footer}
+            header={header}
+            publicStoreDomain={publicStoreDomain}
+            disableSpacer
+            onHeightChange={setFooterHeight}
+          />
+        </>
+      ) : (
+        <>
+          <main id="main-content" className="relative overflow-hidden z-10 bg-black">
+            {children}
+          </main>
+          <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
+        </>
+      )}
     </Aside.Provider>
   );
 }

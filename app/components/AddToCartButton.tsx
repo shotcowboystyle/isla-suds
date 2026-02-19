@@ -1,10 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {type FetcherWithComponents} from 'react-router';
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
-import {
-  ADD_TO_CART_ERROR_MESSAGE,
-  ADD_TO_CART_BUTTON_STATES,
-} from '~/content/errors';
+import {ADD_TO_CART_ERROR_MESSAGE, ADD_TO_CART_BUTTON_STATES} from '~/content/errors';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 
@@ -24,9 +21,7 @@ function AddToCartFormContent({
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const setCartDrawerOpen = useExplorationStore(
-    (state) => state.setCartDrawerOpen,
-  );
+  const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
 
   const isLoading = fetcher.state === 'submitting';
   const isSuccess = showSuccess;
@@ -40,11 +35,7 @@ function AddToCartFormContent({
     }
 
     // Check for errors in fetcher data
-    if (
-      fetcher.data &&
-      !isLoading &&
-      (fetcher.data.errors || fetcher.data.error)
-    ) {
+    if (fetcher.data && !isLoading && (fetcher.data.errors || fetcher.data.error)) {
       // Error occurred (AC5) - log error type only, not sensitive data
       const errorType = fetcher.data.errors ? 'errors' : 'error';
       console.error('Add to cart failed:', errorType);
@@ -61,9 +52,7 @@ function AddToCartFormContent({
       setError(null);
 
       // Check prefers-reduced-motion before animating success state
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       setShowSuccess(true);
 
@@ -112,32 +101,24 @@ function AddToCartFormContent({
           if (error) {
             setError(null);
           }
+
           onClick?.();
         }}
         disabled={disabled ?? (fetcher.state !== 'idle' || isSuccess)}
         data-testid="add-to-cart-button"
-        className={cn('min-w-[auto]')}
+        className={cn('min-w-auto')}
       >
         {buttonText}
       </button>
 
       {/* Screen reader announcements (AC6) */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {ariaLabel}
       </div>
 
       {/* Error message display (AC5) */}
       {error && (
-        <div
-          role="alert"
-          data-testid="add-to-cart-error"
-          className="mt-2 text-sm text-red-600"
-        >
+        <div role="alert" data-testid="add-to-cart-error" className="mt-2 text-sm text-red-600">
           {error}
         </div>
       )}
@@ -159,18 +140,9 @@ export function AddToCartButton({
   onClick?: () => void;
 }) {
   return (
-    <CartForm
-      route="/cart"
-      inputs={{lines}}
-      action={CartForm.ACTIONS?.LinesAdd}
-    >
+    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS?.LinesAdd}>
       {(fetcher: FetcherWithComponents<any>) => (
-        <AddToCartFormContent
-          analytics={analytics}
-          disabled={disabled}
-          fetcher={fetcher}
-          onClick={onClick}
-        >
+        <AddToCartFormContent analytics={analytics} disabled={disabled} fetcher={fetcher} onClick={onClick}>
           {children}
         </AddToCartFormContent>
       )}

@@ -81,7 +81,7 @@ export function BundleCard({
     <Link
       className={cn(
         'product-card group block',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2',
         'transition-all duration-300',
         // Hover effect on desktop only (GPU-composited)
         'lg:hover:scale-[1.02] lg:hover:z-10',
@@ -102,9 +102,9 @@ export function BundleCard({
     >
       <div
         className={cn(
-          'relative aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]',
+          'relative aspect-square overflow-hidden rounded-lg bg-(--canvas-elevated)',
           // Bundle differentiation: subtle border with accent color (Story 3.6, AC1)
-          'ring-2 ring-[var(--accent-primary)]/20',
+          'ring-2 ring-(--accent-primary)/20',
         )}
       >
         {/* AC1: Single featuredImage; use a composite image in Shopify for "all 4" imagery */}
@@ -118,25 +118,19 @@ export function BundleCard({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div
-            className="size-full bg-[var(--canvas-elevated)]"
-            aria-hidden
-            title=""
-          />
+          <div className="size-full bg-(--canvas-elevated)" aria-hidden title="" />
         )}
 
         {/* Bundle badge overlay (Story 3.6, AC1) */}
-        <div className="absolute top-2 left-2 px-2 py-1 bg-[var(--accent-primary)] text-white text-xs font-medium rounded">
+        <div className="absolute top-2 left-2 px-2 py-1 bg-(--accent-primary) text-white text-xs font-medium rounded">
           Bundle
         </div>
       </div>
 
-      <div className="mt-[var(--space-sm)] px-[var(--space-sm)]">
-        <h3 className="text-fluid-small font-medium text-[var(--text-primary)]">
-          {product.title}
-        </h3>
+      <div className="mt-(--space-sm) px-(--space-sm)">
+        <h3 className="text-fluid-small font-medium text-(--text-primary)">{product.title}</h3>
         {/* Subtle indicator that this is all 4 soaps (Story 3.6, AC2) */}
-        <p className="text-xs text-[var(--text-muted)] mt-1">All 4 soaps</p>
+        <p className="text-xs text-(--text-muted) mt-1">All 4 soaps</p>
 
         {/* Add to Cart Button (Story 5.3) */}
         <div
@@ -158,18 +152,13 @@ export function BundleCard({
               }
               analytics={{
                 products: [product],
-                totalValue: parseFloat(
-                  product.priceRange.minVariantPrice.amount,
-                ),
+                totalValue: parseFloat(product.priceRange.minVariantPrice.amount),
               }}
             >
               Add to Cart
             </AddToCartButton>
           ) : (
-            <div
-              className="text-sm text-[var(--text-muted)] text-center"
-              role="alert"
-            >
+            <div className="text-sm text-(--text-muted) text-center" role="alert">
               Product unavailable
             </div>
           )}

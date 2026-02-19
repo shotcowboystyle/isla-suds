@@ -74,7 +74,7 @@
   justify-content: flex-start;
   align-items: center;
   width: auto;
-  height: 110vh;
+  height: 120vh;
   padding-top: 0;
   padding-bottom: 0;
   display: flex;
@@ -117,7 +117,7 @@
 
   z-index: 4;
   width: 100%;
-  height: 100vh;
+  height: 120vh;
   margin-bottom: 0;
   display: block;
   position: sticky;
@@ -171,7 +171,7 @@
   margin-left: 2vw;
   padding-top: 0;
   padding-bottom: 0;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-size: 20.5vw;
   font-weight: 700;
   line-height: 105%;
@@ -197,19 +197,6 @@
     z-index: 99;
     overflow: hidden;
   }
-}
-
-.liquid-button-wrapper {
-  z-index: 3;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  display: flex;
-  position: relative;
-  bottom: 0;
-  margin: 0 auto;
-  background-color: var(--color-milk);
 }
 
 .drip-background-image {

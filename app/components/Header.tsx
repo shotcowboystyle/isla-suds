@@ -338,48 +338,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
                   <CartIconButtonWrapper />
                 </Await>
               </Suspense>
-
-              {!isPathNotShowCloseButton && (
-                <button
-                  className="group relative shrink-0 cursor-pointer"
-                  onClick={() => {
-                    if (location.pathname.startsWith('/order-success')) {
-                      void navigate('/');
-                      return;
-                    }
-
-                    void navigate(-1);
-                    // if (location.pathname !== '/cart') {
-                    //   navigate('/');
-                    //   return;
-                    // }
-                    // document.referrer
-                    //   ? (window.location.href = document.referrer)
-                    //   : navigate('/');
-                  }}
-                >
-                  <div className="absolute z-10 size-2 top-1/2 left-0 transform -translate-x-[35%] -translate-y-1/2 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full"></div>
-                  <div className="size-8 sm:size-9 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full relative">
-                    <div className="size-3 scale-110 leading-none absolute top-1/2 left-1/2 -translate-x-[30%] -translate-y-[55%] rotate-45 text-black dark:text-secondary group-hover:text-secondary dark:group-hover:text-black transition duration-300 flex">
-                      +
-                      {/* <svg
-                    width="100%"
-                    height="100%"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7.94548 6.49768L13.4949 0.948308L15.2258 2.6793L9.67647 8.22868L15.2513 13.8035L13.5203 15.5345L7.94548 9.95968L2.3961 15.5091L0.665105 13.7781L6.21448 8.22868L0.639648 2.65385L2.37065 0.922852L7.94548 6.49768Z"
-                      fill="currentColor"
-                    />
-                  </svg> */}
-                    </div>
-                  </div>
-                  <div className="sm:hidden h-px sm:h-[2px] bg-neutral-300 w-3 absolute top-1/2 -translate-y-1/2 -left-3"></div>
-                  <div className="absolute z-10 size-2 top-1/2 right-0 transform translate-x-2/5 -translate-y-1/2 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white transition duration-300 border sm:border-2 border-neutral-300 rounded-full"></div>
-                </button>
-              )}
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
-import BrownBgImage from '../assets/images/brown-bg.png?responsive';
-import GreenBgImage from '../assets/images/green-bg.webp?responsive';
-import LavenderBarImage from '../assets/images/lavender-bar.webp?responsive';
-import LavenderElementsImage from '../assets/images/lavender-elements.webp?responsive';
-import LavenderMintBarImage from '../assets/images/lavender-mint-bar.webp?responsive';
-import LemongrassBarImage from '../assets/images/lemongrass-bar.webp?responsive';
-import LemongrassElementsImage from '../assets/images/lemongrass-elements.webp?responsive';
-import MintElementsImage from '../assets/images/mint-elements.webp?responsive';
-import PurpleBgImage from '../assets/images/purple-bg.webp?responsive';
-import RosemarySeaSaltBarImage from '../assets/images/rosemary-sea-salt-bar.webp?responsive';
-import WhiteBgImage from '../assets/images/white-bg.png?responsive';
+import BrownBgImage from '~/assets/images/brown-bg.png?responsive';
+import GreenBgImage from '~/assets/images/green-bg.webp?responsive';
+import LavenderBarImage from '~/assets/images/lavender-bar.webp?responsive';
+import LavenderElementsImage from '~/assets/images/lavender-elements.webp?responsive';
+import LavenderMintBarImage from '~/assets/images/lavender-mint-bar.webp?responsive';
+import LemongrassBarImage from '~/assets/images/lemongrass-bar.webp?responsive';
+import LemongrassElementsImage from '~/assets/images/lemongrass-elements.webp?responsive';
+import MintElementsImage from '~/assets/images/mint-elements.webp?responsive';
+import PurpleBgImage from '~/assets/images/purple-bg.webp?responsive';
+import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-bar.webp?responsive';
+import WhiteBgImage from '~/assets/images/white-bg.png?responsive';
 
 /**
  * Product Content Layer - Centralized content management with Shopify metafield fallbacks
@@ -219,3 +219,5 @@ export const productsList = [
     particlesUrl: MintElementsImage,
   },
 ];
+
+export const productsListHandles = productsList.map((product) => product.toUrl.split('/').pop());

@@ -199,9 +199,7 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       // Check for skeleton loading elements
-      const skeletons = screen
-        .getByRole('dialog')
-        .querySelectorAll('.animate-pulse');
+      const skeletons = screen.getByRole('dialog').querySelectorAll('.animate-pulse');
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
@@ -215,14 +213,10 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       // Verify EmptyCart message displays
-      expect(
-        screen.getByText(/Your cart is empty. Let's find something you'll love./i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Your cart is empty. Let's find something you'll love./i)).toBeInTheDocument();
 
       // Verify "Explore the Collection" button displays
-      expect(
-        screen.getByRole('link', {name: /Explore the Collection/i}),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /Explore the Collection/i})).toBeInTheDocument();
     });
 
     it('hides subtotal and checkout button when cart is empty (AC7)', () => {
@@ -238,14 +232,10 @@ describe('CartDrawer', () => {
       expect(screen.queryByText('Subtotal')).not.toBeInTheDocument();
 
       // Verify checkout button is hidden
-      expect(
-        screen.queryByRole('button', {name: /Proceed to checkout/i}),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', {name: /Proceed to checkout/i})).not.toBeInTheDocument();
 
       // Verify continue shopping is hidden (only in footer)
-      expect(
-        screen.queryByRole('button', {name: /Continue Shopping/i}),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', {name: /Continue Shopping/i})).not.toBeInTheDocument();
     });
 
     it('uses aria-labelledby for proper dialog labeling (AC5)', () => {
@@ -291,9 +281,7 @@ describe('CartDrawer', () => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
 
       // Verify EmptyCart component is displayed
-      expect(
-        screen.getByText(/Your cart is empty. Let's find something you'll love./i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Your cart is empty. Let's find something you'll love./i)).toBeInTheDocument();
 
       // Verify setCartDrawerOpen was NOT called (drawer stays open)
       expect(mockSetCartDrawerOpen).not.toHaveBeenCalledWith(false);
@@ -460,9 +448,7 @@ describe('CartDrawer', () => {
 
       render(<CartDrawer />);
 
-      expect(
-        screen.getByRole('button', {name: /checkout.*proceed to payment/i}),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: /checkout.*proceed to payment/i})).toBeInTheDocument();
     });
   });
 
@@ -654,9 +640,7 @@ describe('CartDrawer', () => {
       await user.click(checkoutButton);
 
       // Error message should appear
-      expect(
-        screen.getByText(/couldn't start checkout/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/couldn't start checkout/i)).toBeInTheDocument();
     });
 
     it('auto-dismisses error message after 3 seconds (AC6)', async () => {
@@ -695,16 +679,12 @@ describe('CartDrawer', () => {
       await user.click(checkoutButton);
 
       // Error should be visible
-      expect(
-        screen.getByText(/couldn't start checkout/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/couldn't start checkout/i)).toBeInTheDocument();
 
       // Wait for error to auto-dismiss (using real timers with increased timeout)
       await waitFor(
         () => {
-          expect(
-            screen.queryByText(/couldn't start checkout/i),
-          ).not.toBeInTheDocument();
+          expect(screen.queryByText(/couldn't start checkout/i)).not.toBeInTheDocument();
         },
         {timeout: 4000},
       );
@@ -828,9 +808,7 @@ describe('CartDrawer', () => {
       });
 
       // Button should have h-12 (48px) or h-14 (56px) class
-      const hasAdequateHeight =
-        checkoutButton.classList.contains('h-12') ||
-        checkoutButton.classList.contains('h-14');
+      const hasAdequateHeight = checkoutButton.classList.contains('h-12') || checkoutButton.classList.contains('h-14');
       expect(hasAdequateHeight).toBe(true);
     });
 

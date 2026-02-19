@@ -1,14 +1,13 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
+import DripImage from '~/assets/images/slider-dip.png?responsive';
+import {Picture} from '~/components/Picture';
+import {VideoCard} from '~/components/VideoCard';
+import {testimonialsData} from '~/content/testimonials';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
 import styles from './Testimonials.module.css';
-import DripImage from '../../assets/images/slider-dip.png?responsive';
-import {testimonialsData} from '../../content/testimonials';
-import {cn} from '../../utils/cn';
-import {Picture} from '../Picture';
-import {LiquidButton} from '../ui/LiquidButton';
-import {VideoCard} from '../VideoCard';
 
 export const TestimonialsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -132,10 +131,6 @@ export const TestimonialsSection = () => {
             Saying
           </h1>
         </div>
-      </div>
-
-      <div className={styles['liquid-button-wrapper']}>
-        <LiquidButton text="Explore All" href="/collections/all" />
       </div>
 
       <div className={styles['drip-background-image-wrapper']}>

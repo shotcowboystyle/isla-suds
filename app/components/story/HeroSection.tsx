@@ -13,6 +13,7 @@ import {Picture} from '~/components/Picture';
 import styles from '~/components/story/HeroSection.module.css';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {HERO_CONTENT, HERO_TAGLINE_START, HERO_TAGLINE_END} from '~/content/story';
+import {usePreloader} from '~/contexts/preloader-context';
 import {cn} from '~/utils/cn';
 
 interface HeroSectionProps {
@@ -26,6 +27,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
   const clippedBox1Ref = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const {preloaderComplete} = usePreloader();
 
   // Ensure the video freezes at the final frame
   const handleVideoEnd = () => {
@@ -40,7 +42,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
 
   useGSAP(
     () => {
-      if (!containerRef.current || !text1Ref.current || !clippedBox1Ref.current) {
+      if (!containerRef.current || !text1Ref.current || !clippedBox1Ref.current || !preloaderComplete) {
         return;
       }
 
@@ -110,7 +112,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
         ease: 'power1.inOut',
       });
     },
-    {dependencies: [containerRef, text1Ref, clippedBox1Ref, paragraphRef, buttonRef]},
+    {dependencies: [containerRef, text1Ref, clippedBox1Ref, paragraphRef, buttonRef, preloaderComplete]},
   );
 
   return (
@@ -145,10 +147,10 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           loading="eager"
           fetchpriority="high"
           alt=""
-          className={styles['hero-image-mobile']}
+          className="hero-image-mobile"
         />
 
-        <div id="home-hero-video" className={styles['home-hero-video-wrapper']}>
+        <div id="home-hero-video" className="hero-video-wrapper">
           <video
             ref={videoRef}
             src={HeroVideo}

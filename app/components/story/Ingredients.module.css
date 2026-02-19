@@ -123,15 +123,10 @@
 }
 
 .section-heading {
-  text-transform: uppercase;
-  font-size: 13vw;
-}
-
-.section-heading {
   letter-spacing: -0.4vw;
   margin-top: -1.4vw;
   padding-inline: 0;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-size: 12vw;
   font-weight: 700;
   text-align: center;
@@ -180,7 +175,7 @@
   font-size: 13vw;
   letter-spacing: -0.35vw;
   flex: none;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   padding: 0 1.5vw 1vw;
   text-transform: uppercase;
 }

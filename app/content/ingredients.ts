@@ -5,3 +5,13 @@ export const ingredientsListData = [
   {caption: 'Essential', name: 'Oils'},
   {caption: 'Natural', name: 'Saponified'},
 ];
+
+export const INGREDIENTS = [
+  {name: 'Coconut Oil', description: ' '},
+  {name: 'Palm Oil', description: ' '},
+  {name: 'Castor Oil', description: ' '},
+  {name: 'Olive Oil', description: ' '},
+  {name: 'Shea Butter', description: ' '},
+  {name: 'Goats Milk', description: ' '},
+  {name: 'Pure Essential Oils', description: ' '},
+];

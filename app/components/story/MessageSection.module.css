@@ -76,7 +76,7 @@
   letter-spacing: -0.4vw;
   margin-top: -1.4vw;
   padding-inline: 0;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-size: 12vw;
   font-weight: 700;
   text-align: center;
@@ -158,7 +158,7 @@
   letter-spacing: -0.4vw;
   flex: none;
   padding: 0 0.85vw 1vw 0.8vw;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   flex-flow: row;
   justify-content: flex-start;
@@ -193,9 +193,9 @@
 
 .paragraph {
   color: var(--color-secondary);
-  font-family:
+  /* font-family:
     Proxima Nova,
-    sans-serif;
+    sans-serif; */
   font-size: 16px;
   font-weight: 400;
   line-height: 120%;

@@ -1,5 +1,6 @@
 import {Suspense, useEffect, useRef, useState} from 'react';
 import {useNavigate, useLocation, Await, NavLink} from 'react-router';
+import {AnimatedBubbles} from '~/components/AnimatedBubbles';
 import {cn} from '~/utils/cn';
 // import {Picture} from './Picture';
 import styles from './Footer.module.css';
@@ -14,28 +15,39 @@ interface FooterProps {
   publicStoreDomain: string;
 }
 
-export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
+export function Footer({
+  footer: footerPromise,
+  header,
+  publicStoreDomain,
+  disableSpacer = false,
+  onHeightChange,
+}: FooterProps & {disableSpacer?: boolean; onHeightChange?: (height: number) => void}) {
   const navigate = useNavigate();
   const location = useLocation();
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
-    if (!footerRef.current) return;
+    if (!footerRef.current) {
+      return;
+    }
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         // use borderBoxSize if available for precise outer height (including padding/borders), fallback to contentRect
         const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
         setFooterHeight(height);
+        onHeightChange?.(height);
       }
     });
+
     observer.observe(footerRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [onHeightChange]);
 
   return (
     <>
-      <div style={{height: footerHeight}} />
+      {!disableSpacer && <div style={{height: footerHeight}} />}
       <div ref={footerRef} className="fixed bottom-0 w-full z-1" style={{zIndex: 1}}>
         <Suspense>
           <Await resolve={footerPromise}>
@@ -51,31 +63,15 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                   <SocialLinks />
 
                   <div className={styles['footer-grid']}>
-                    <div className={styles['grid-column']}>
-                      <a href="/products" className={styles['footer-link']}>
-                        Products
-                      </a>
+                    <div className={styles['links-grid']}>
+                      <FooterMenu
+                        menu={footer?.menu}
+                        primaryDomainUrl={header.shop.primaryDomain.url}
+                        publicStoreDomain={publicStoreDomain}
+                      />
                     </div>
 
-                    <div className={styles['grid-column']}>
-                      <a href="/stores" className={styles['footer-link']}>
-                        Stores
-                      </a>
-                      <a href="/wholesale" className={styles['footer-link']}>
-                        Wholesale
-                      </a>
-                    </div>
-
-                    <div className={styles['grid-column']}>
-                      <a href="/about-us" className={styles['footer-link']}>
-                        About Us
-                      </a>
-                      <a href="/contact-us" className={styles['footer-link']}>
-                        Contact
-                      </a>
-                    </div>
-
-                    <div className={styles['grid-spacer']}></div>
+                    {/* <div className={styles['grid-spacer']}></div> */}
 
                     <NewsletterSignup />
 
@@ -86,15 +82,16 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
                     </div>
 
                     <div className={styles['policies-wrapper']}>
-                      <a href="/privacy-policy" className={styles['footer-link-muted']}>
-                        Privacy Policy
-                      </a>
-                      <a href="/terms-of-use" className={styles['footer-link-muted']}>
-                        Terms of Service
-                      </a>
+                      {FALLBACK_FOOTER_POLICIES.items.map((item) => (
+                        <a href={item.url} className={styles['footer-link-muted']} key={item.id}>
+                          {item.title}
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </div>
+
+                <AnimatedBubbles />
               </footer>
             )}
           </Await>
@@ -115,10 +112,15 @@ function FooterMenu({
 }) {
   const classes =
     'transition-colors inline-block uppercase text-xs text-[var(--text-primary)] opacity-50 hover:text-[var(--accent-primary)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 transition duration-300';
+
   return (
     <nav className="flex gap-6 text-sm text-gray-400" role="navigation" aria-label="Footer navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
+      {/* {(menu || FALLBACK_FOOTER_MENU).items.map((item) => { */}
+      {FALLBACK_FOOTER_MENU.items.map((item) => {
+        if (!item.url) {
+          return null;
+        }
+
         // if the url is internal, we strip the domain (only when we have a base URL)
         const hasAbsoluteUrl =
           item.url.includes('myshopify.com') ||
@@ -127,11 +129,24 @@ function FooterMenu({
         const url = hasAbsoluteUrl ? new URL(item.url, primaryDomainUrl || 'https://localhost').pathname : item.url;
         const isExternal = !url.startsWith('/');
         return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank" className={classes}>
+          <a
+            href={url}
+            key={item.id}
+            rel="noopener noreferrer"
+            target="_blank"
+            className={cn(styles['footer-link'], classes)}
+          >
             {item.title}
           </a>
         ) : (
-          <NavLink className={classes} end key={item.id} prefetch="intent" style={activeLinkStyle} to={url}>
+          <NavLink
+            className={cn(styles['footer-link'], classes)}
+            end
+            key={item.id}
+            prefetch="intent"
+            style={activeLinkStyle}
+            to={url}
+          >
             {item.title}
           </NavLink>
         );
@@ -154,6 +169,33 @@ const FALLBACK_FOOTER_MENU = {
       items: [],
     },
     {
+      id: 'footer-shop',
+      resourceId: null,
+      tags: [],
+      title: 'Shop',
+      type: 'PAGE',
+      url: '/collections/frontpage',
+      items: [],
+    },
+    {
+      id: 'footer-stores',
+      resourceId: null,
+      tags: [],
+      title: 'Stores',
+      type: 'PAGE',
+      url: '/locations',
+      items: [],
+    },
+    {
+      id: 'footer-wholesale',
+      resourceId: null,
+      tags: [],
+      title: 'Wholesale',
+      type: 'PAGE',
+      url: '/wholesale',
+      items: [],
+    },
+    {
       id: 'footer-about',
       resourceId: null,
       tags: [],
@@ -171,16 +213,11 @@ const FALLBACK_FOOTER_MENU = {
       url: '/contact',
       items: [],
     },
-    {
-      id: 'footer-wholesale',
-      resourceId: null,
-      tags: [],
-      title: 'Wholesale',
-      type: 'PAGE',
-      url: '/wholesale/login',
-      items: [],
-    },
-    // Legal links
+  ],
+};
+const FALLBACK_FOOTER_POLICIES = {
+  id: 'footer-policies',
+  items: [
     {
       id: 'gid://shopify/MenuItem/461633060920',
       resourceId: 'gid://shopify/ShopPolicy/23358046264',

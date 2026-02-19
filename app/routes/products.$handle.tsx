@@ -7,6 +7,10 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
+import {Hero} from '~/components/product/spylt/Hero';
+import {Marquee} from '~/components/product/spylt/Marquee';
+import {Nutrition} from '~/components/product/spylt/Nutrition';
+import {ProductDetails} from '~/components/product/spylt/ProductDetails';
 import {ProductForm} from '~/components/ProductForm';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductPrice} from '~/components/ProductPrice';
@@ -76,6 +80,8 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
   return {};
 }
 
+// import {StickyAddToCart} from '~/components/product/spylt/StickyAddToCart';
+
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
 
@@ -98,28 +104,18 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
-      </div>
+    <div className="product-spylt-layout bg-[#f5f5f0] min-h-screen">
+      <Hero product={product} />
+      <Marquee text="GENTLE & SOOTHING • MOISTURIZING • FRAGRANCE-FREE • " />
+      <ProductDetails product={product} />
+      <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-[#8B0000]" />
+      <Nutrition product={product} />
+      {/* <StickyAddToCart
+        product={product}
+        selectedVariant={selectedVariant}
+        productOptions={productOptions}
+      /> */}
+
       <Analytics.ProductView
         data={{
           products: [
@@ -184,6 +180,7 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     descriptionHtml
     description
+    tags
     encodedVariantExistence
     encodedVariantAvailability
     options {

@@ -12,16 +12,34 @@ export const meta: Route.MetaFunction = () => {
 export async function loader({context, request}: Route.LoaderArgs) {
   const url = new URL(request.url);
 
-  // Skip auth for login and callback routes to prevent redirect loops
+  // Skip auth for login, callback, AND index routes to allow landing page
   // (these are child routes that share this layout loader)
   if (
     url.pathname === WHOLESALE_ROUTES.LOGIN ||
-    url.pathname === WHOLESALE_ROUTES.CALLBACK
+    url.pathname === WHOLESALE_ROUTES.CALLBACK ||
+    url.pathname === WHOLESALE_ROUTES.DASHBOARD ||
+    url.pathname === WHOLESALE_ROUTES.DASHBOARD + '/'
   ) {
+    // We still try to get the customer if they are logged in, for the header
+    const customerId = await context.session.get('customerId');
+    if (customerId) {
+      try {
+        const customer = await context.customerAccount.query(WHOLESALE_LAYOUT_CUSTOMER_QUERY);
+        if (customer?.data?.customer) {
+          const company = customer.data.customer.companyContacts?.edges?.[0]?.node?.company;
+          if (company) {
+            return {customer: customer.data.customer};
+          }
+        }
+      } catch (e) {
+        // If fetching customer fails, just return null, don't force logout/redirect here
+        // let the child routes handle strict auth requirements
+      }
+    }
     return {customer: null};
   }
 
-  // Verify B2B customer is logged in
+  // Verify B2B customer is logged in for all other protected routes
   const customerId = await context.session.get('customerId');
 
   if (!customerId) {
@@ -73,7 +91,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 export default function WholesaleLayout() {
   const {customer} = useLoaderData<typeof loader>();
 
-  // Login/callback routes render without the wholesale layout chrome
+  // Login/callback routes or unauthenticated landing page render without the wholesale dashboard chrome
   if (!customer) {
     return <Outlet />;
   }
