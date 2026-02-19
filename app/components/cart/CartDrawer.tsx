@@ -6,6 +6,7 @@ import {CHECKOUT_ERROR_MESSAGE} from '~/content/errors';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
+import styles from './CartDrawer.module.css';
 import {CartLineItems} from './CartLineItems';
 import {EmptyCart} from './EmptyCart';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
@@ -92,10 +93,7 @@ export function CartDrawer() {
   };
 
   return (
-    <DialogPrimitive.Root
-      open={cartDrawerOpen}
-      onOpenChange={setCartDrawerOpen}
-    >
+    <DialogPrimitive.Root open={cartDrawerOpen} onOpenChange={setCartDrawerOpen}>
       <DialogPrimitive.Portal>
         {/* Backdrop */}
         <DialogPrimitive.Overlay
@@ -112,9 +110,9 @@ export function CartDrawer() {
           aria-labelledby="cart-title"
           aria-describedby={itemCount === 0 ? 'cart-empty-description' : 'cart-description'}
           className={cn(
-            'fixed right-0 top-0 z-50 h-full',
+            'fixed right-0 top-0 z-999999 h-full',
             'w-full sm:w-[90%] md:max-w-[480px]',
-            'bg-[var(--canvas-base)] shadow-xl',
+            'bg-white shadow-xl',
             'flex flex-col',
             'transform transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
             'data-[state=open]:translate-x-0',
@@ -125,10 +123,7 @@ export function CartDrawer() {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-neutral-200 p-4">
             <div>
-              <DialogPrimitive.Title
-                id="cart-title"
-                className="text-lg font-semibold text-[var(--text-primary)]"
-              >
+              <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
                 Your Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
               </DialogPrimitive.Title>
             </div>
@@ -137,10 +132,10 @@ export function CartDrawer() {
             <DialogPrimitive.Close
               aria-label="Close cart"
               className={cn(
-                'h-11 w-11 rounded-full',
+                'h-11 w-11 rounded-full text-neutral-700',
                 'flex items-center justify-center',
-                'hover:bg-neutral-100 transition-colors',
-                'focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]',
+                'hover:bg-neutral-800 hover:text-neutral-100 cursor-pointer transition-colors',
+                'focus:outline-none focus:ring-2 focus:ring-accent',
               )}
             >
               <svg
@@ -181,19 +176,13 @@ export function CartDrawer() {
             <div className="border-t border-neutral-200 p-4 space-y-4">
               {/* Subtotal (AC5) */}
               <div className="flex justify-between items-center">
-                <span className="text-[var(--text-muted)]">Subtotal</span>
-                <span className="font-medium text-[var(--text-primary)]">
-                  {formatSubtotal()}
-                </span>
+                <span className="text-(--text-muted)">Subtotal</span>
+                <span className="font-medium text-(--text-primary)">{formatSubtotal()}</span>
               </div>
 
               {/* Error message (AC6) */}
               {checkoutError && (
-                <div
-                  role="alert"
-                  aria-live="assertive"
-                  className="text-sm text-red-600"
-                >
+                <div role="alert" aria-live="assertive" className="text-sm text-red-600">
                   {checkoutError}
                 </div>
               )}
@@ -205,14 +194,14 @@ export function CartDrawer() {
                 disabled={isCheckingOut}
                 className={cn(
                   'w-full h-14 rounded', // AC7: 56px height for touch targets
-                  'bg-[var(--accent-primary)] text-white', // AC9: Design tokens
+                  'bg-accent text-white', // AC9: Design tokens
                   'font-medium text-base',
                   'hover:opacity-90', // AC9: Hover state
                   'active:scale-[0.98] active:opacity-80', // AC9: Active state with subtle press effect
                   'disabled:opacity-50 disabled:cursor-not-allowed', // AC3, AC10: Disabled during loading
                   'transition-all duration-150',
                   'flex items-center justify-center gap-2',
-                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent',
                 )}
                 aria-label="Checkout button, proceed to payment" // AC8: Screen reader label with "button"
               >
@@ -230,7 +219,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={() => setCartDrawerOpen(false)}
-                className="w-full text-center text-[var(--accent-primary)] underline hover:no-underline"
+                className="w-full text-center text-accent underline hover:no-underline"
               >
                 Continue Shopping
               </button>
@@ -238,12 +227,7 @@ export function CartDrawer() {
           )}
 
           {/* ARIA live region for cart state announcements */}
-          <div
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-            className="sr-only"
-          >
+          <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
             {liveMessage}
           </div>
 
@@ -276,14 +260,7 @@ function Spinner() {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-75"
         fill="currentColor"

@@ -68,7 +68,7 @@
 
 .heading-text {
   letter-spacing: -0.35vw;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 13vw;
 }
@@ -120,7 +120,7 @@
   background-clip: border-box;
   flex: none;
   padding: 0 1.2vw 1vw;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 13vw;
 }

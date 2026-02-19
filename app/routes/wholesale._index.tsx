@@ -1,4 +1,5 @@
 import {redirect, useLoaderData} from 'react-router';
+import {WholesaleLandingPage} from '~/components/wholesale/landing/WholesaleLandingPage';
 import {LastOrder} from '~/components/wholesale/LastOrder';
 import {PartnerAcknowledgment} from '~/components/wholesale/PartnerAcknowledgment';
 import {wholesaleContent} from '~/content/wholesale';
@@ -17,18 +18,24 @@ interface ReorderActionResponse {
 export async function loader({context}: Route.LoaderArgs) {
   const customerId = await context.session.get('customerId');
 
+  // If not logged in, return public state to render landing page
   if (!customerId) {
-    return redirect(WHOLESALE_ROUTES.LOGIN);
+    return {
+      isPublic: true,
+      partnerName: null,
+      storeCount: null,
+      lastOrder: null,
+    };
   }
 
   // Fetch B2B customer data including firstName
   try {
-    const customer = await context.customerAccount.query(
-      WHOLESALE_DASHBOARD_CUSTOMER_QUERY,
-    );
+    const customer = await context.customerAccount.query(WHOLESALE_DASHBOARD_CUSTOMER_QUERY);
 
     // Validate response structure
     if (!customer?.data?.customer) {
+      // Invalid customer data, force login if they tried to access dashboard, or just show landing?
+      // Redirecting to login seems safer if they have a session but it's invalid
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
 
@@ -37,14 +44,14 @@ export async function loader({context}: Route.LoaderArgs) {
     // Validate B2B status
     const company = companyContacts?.edges?.[0]?.node?.company;
     if (!company) {
+      // Not a B2B customer
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
 
     // Fetch last order
     let lastOrder = null;
     try {
-      const ordersData =
-        await context.customerAccount.query(GET_LAST_ORDER_QUERY);
+      const ordersData = await context.customerAccount.query(GET_LAST_ORDER_QUERY);
       lastOrder = ordersData?.data?.customer?.orders?.edges[0]?.node || null;
     } catch (orderError) {
       // Safe to continue: order history is optional, dashboard still functional
@@ -52,6 +59,7 @@ export async function loader({context}: Route.LoaderArgs) {
     }
 
     return {
+      isPublic: false,
       partnerName: firstName || 'Partner',
       storeCount: wholesaleContent.dashboard.storeCount,
       lastOrder,
@@ -62,10 +70,7 @@ export async function loader({context}: Route.LoaderArgs) {
   }
 }
 
-export async function action({
-  request,
-  context,
-}: Route.ActionArgs): Promise<ReorderActionResponse> {
+export async function action({request, context}: Route.ActionArgs): Promise<ReorderActionResponse> {
   const customerId = await context.session.get('customerId');
 
   if (!customerId) {
@@ -86,12 +91,8 @@ export async function action({
 
     try {
       // Verify B2B customer status before allowing reorder
-      const customerData = await context.customerAccount.query(
-        WHOLESALE_DASHBOARD_CUSTOMER_QUERY,
-      );
-      const company =
-        customerData?.data?.customer?.companyContacts?.edges?.[0]?.node
-          ?.company;
+      const customerData = await context.customerAccount.query(WHOLESALE_DASHBOARD_CUSTOMER_QUERY);
+      const company = customerData?.data?.customer?.companyContacts?.edges?.[0]?.node?.company;
       if (!company) {
         return {
           success: false,
@@ -100,10 +101,9 @@ export async function action({
       }
 
       // Fetch order details to get line items with variant IDs
-      const orderData = await context.customerAccount.query(
-        GET_ORDER_FOR_REORDER_QUERY,
-        {variables: {query: `id:${orderId}`}},
-      );
+      const orderData = await context.customerAccount.query(GET_ORDER_FOR_REORDER_QUERY, {
+        variables: {query: `id:${orderId}`},
+      });
 
       const order = orderData?.data?.customer?.orders?.edges?.[0]?.node;
 
@@ -135,9 +135,7 @@ export async function action({
       }
 
       // Create new cart with B2B customer identity for wholesale pricing
-      const customerAccessToken = await context.session.get(
-        'customerAccessToken',
-      );
+      const customerAccessToken = await context.session.get('customerAccessToken');
       const result = await context.cart.create({
         lines: lineItems,
         buyerIdentity: customerAccessToken
@@ -155,8 +153,7 @@ export async function action({
         if (errorCode === 'MERCHANDISE_NOT_FOUND') {
           return {
             success: false,
-            error:
-              'Some items are out of stock. Please contact us for substitutions.',
+            error: 'Some items are out of stock. Please contact us for substitutions.',
           };
         }
 
@@ -199,14 +196,21 @@ export async function action({
 }
 
 export default function WholesaleDashboard() {
-  const {partnerName, storeCount, lastOrder} = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+
+  if ('isPublic' in data && data.isPublic) {
+    return <WholesaleLandingPage />;
+  }
+
+  const {partnerName, storeCount, lastOrder} = data as {
+    partnerName: string;
+    storeCount: number;
+    lastOrder: any;
+  };
 
   return (
     <div>
-      <PartnerAcknowledgment
-        partnerName={partnerName}
-        storeCount={storeCount}
-      />
+      <PartnerAcknowledgment partnerName={partnerName} storeCount={storeCount} />
       <LastOrder order={lastOrder} />
     </div>
   );

@@ -1,0 +1,13 @@
+.location-map-wrapper {
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  padding: 5vw 2vw;
+  display: flex;
+}
+
+@media screen and (min-width: 992px) {
+  .location-map-wrapper {
+    height: auto;
+  }
+}

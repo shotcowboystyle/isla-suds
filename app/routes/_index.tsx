@@ -3,10 +3,11 @@ import {Await, useLoaderData, Link, useOutletContext, useLocation} from 'react-r
 import {Image} from '@shopify/hydrogen';
 import {ConstellationGrid} from '~/components/product';
 import {HeroSection} from '~/components/story/HeroSection';
+import {productsListHandles} from '~/content/products';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {ScrollSmoother as ScrollSmootherType} from 'gsap/ScrollSmoother';
-import type {FeaturedCollectionFragment, RecommendedProductsQuery} from 'storefrontapi.generated';
+import type {FeaturedCollectionFragment, RecommendedProductsQuery, ProductsListQuery} from 'storefrontapi.generated';
 
 const MessageSection = lazy(() =>
   import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
@@ -33,6 +34,44 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
+const PRODUCTS_LIST_QUERY = `#graphql
+  query ProductsList(
+    $country: CountryCode
+    $language: LanguageCode
+    $query: String
+  ) @inContext(country: $country, language: $language) {
+    products(first: 10, query: $query) {
+      nodes {
+        id
+        title
+        handle
+        availableForSale
+        variants(first: 1) {
+          nodes {
+            id
+            title
+            availableForSale
+            image {
+              url
+              altText
+              width
+              height
+            }
+            price {
+              amount
+              currencyCode
+            }
+            product {
+              title
+              handle
+            }
+          }
+        }
+      }
+    }
+  }
+` as const;
+
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
@@ -48,13 +87,20 @@ export async function loader(args: Route.LoaderArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}] = await Promise.all([
+  const [{collections}, {products}] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
+    context.storefront.query(PRODUCTS_LIST_QUERY, {
+      variables: {
+        query: productsListHandles.map((handle) => `(handle:${handle})`).join(' OR '),
+        country: context.storefront.i18n.country,
+        language: context.storefront.i18n.language,
+      },
+    }),
   ]);
 
   return {
     featuredCollection: collections.nodes[0],
+    productsList: products.nodes,
   };
 }
 
@@ -81,75 +127,31 @@ export default function Homepage() {
   const outletContext = useOutletContext() as {heroRef?: RefObject<HTMLElement>} | undefined;
   const heroRef = outletContext?.heroRef ?? localHeroRef;
 
-  const [isTouch, setIsTouch] = useState(false);
-
   const location = useLocation();
   const smootherRef = useRef<ScrollSmootherType | null>(null);
 
   useEffect(() => {
-    const touchQuery = window.matchMedia('(hover: none) and (pointer: coarse)');
-    setIsTouch(touchQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => setIsTouch(e.matches);
-    touchQuery.addEventListener('change', handleChange);
-    return () => touchQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  useEffect(() => {
-    if (!isTouch) return;
-
-    let cancelled = false;
-
-    import('gsap/ScrollTrigger')
-      .then(({ScrollTrigger}) => {
-        if (cancelled) return;
-
-        let lastWidth = window.innerWidth;
-
-        const handleResize = () => {
-          const currentWidth = window.innerWidth;
-          if (Math.abs(currentWidth - lastWidth) < 100) return;
-          lastWidth = currentWidth;
-          ScrollTrigger.refresh();
-        };
-
-        window.addEventListener('resize', handleResize);
-        // Store cleanup ref
-        cleanupResizeRef.current = () => {
-          window.removeEventListener('resize', handleResize);
-        };
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
-
-    const cleanupResizeRef = {current: () => {}};
-
-    return () => {
-      cancelled = true;
-      cleanupResizeRef.current();
-    };
-  }, [isTouch]);
-
-  useEffect(() => {
-    if (isTouch) return;
-
     let cancelled = false;
 
     Promise.all([import('gsap'), import('gsap/ScrollSmoother'), import('gsap/ScrollTrigger'), import('@gsap/react')])
       .then(([{default: gsap}, {ScrollSmoother}, {ScrollTrigger}, {useGSAP}]) => {
-        if (cancelled) return;
+        if (cancelled) {
+          return;
+        }
 
         gsap.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
 
-        // smootherRef.current = ScrollSmoother.create({
-        //   smooth: 2,
-        //   effects: true,
-        //   wrapper: '#smooth-wrapper',
-        //   content: '#smooth-content',
-        //   normalizeScroll: true,
-        //   ignoreMobileResize: true,
-        // });
+        // Refresh ScrollTrigger to ensure start/end positions are correct
+        ScrollTrigger.refresh();
+
+        smootherRef.current = ScrollSmoother.create({
+          smooth: 3, // Smoothness duration in seconds
+          effects: true, // Enable data-speed and data-lag effects
+          wrapper: '#smooth-wrapper',
+          content: '#smooth-content',
+          normalizeScroll: true, // Normalizes touch/wheel events for smoother scrolling
+          ignoreMobileResize: true, // Prevents resizing issues on mobile
+        });
       })
       .catch((error: Error) => {
         console.error(error);
@@ -162,15 +164,15 @@ export default function Homepage() {
         smootherRef.current = null;
       }
     };
-  }, [isTouch]);
+  }, []);
 
   useEffect(() => {
     smootherRef.current?.scrollTo(0, false);
   }, [location.pathname]);
 
   return (
-    <div id="smooth-wrapper" className="home">
-      <div id="smooth-content" className={cn('flex flex-col bg-transparent')}>
+    <div className="home">
+      <div className={cn('flex flex-col bg-transparent')}>
         <div className="block bg-black overflow-hidden">
           <HeroSection ref={heroRef} />
         </div>
@@ -178,7 +180,7 @@ export default function Homepage() {
         <div className="z-1">
           <Suspense fallback={null}>
             <MessageSection />
-            <ProductsList />
+            <ProductsList products={data.productsList} />
             <IngredientsSection />
             <div className="block bg-black relative">
               <BenefitsSection />
@@ -204,7 +206,7 @@ function FeaturedCollection({collection, className}: {collection: FeaturedCollec
         </div>
       )}
 
-      <h2>{collection.title}</h2>
+      <h2 className="text-black">{collection.title}</h2>
     </Link>
   );
 }
@@ -222,7 +224,7 @@ function ConstellationProducts({
         <div className={cn('min-h-[400px] px-4 py-12', className)} aria-hidden aria-label="Loading products">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 lg:max-w-6xl lg:mx-auto">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-square bg-[var(--canvas-elevated)] rounded-lg animate-pulse" />
+              <div key={i} className="aspect-square bg-(--canvas-elevated) rounded-lg animate-pulse" />
             ))}
           </div>
         </div>

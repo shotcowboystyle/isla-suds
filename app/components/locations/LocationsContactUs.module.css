@@ -1,0 +1,83 @@
+.find-us-wrapper {
+  height: auto;
+  margin-top: 3vw;
+  position: relative;
+}
+
+.content-wrapper {
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  position: absolute;
+  inset: 0%;
+}
+
+.heading-wrapper {
+  z-index: 5;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  margin-bottom: 200px;
+  display: flex;
+  position: static;
+  top: 0;
+}
+@media screen and (min-width: 768px) {
+  .heading-wrapper {
+    margin-bottom: 0;
+  }
+}
+
+.heading-text {
+  margin-bottom: 0;
+  text-align: center;
+  z-index: 2;
+  color: var(--milk);
+  position: relative;
+  letter-spacing: -0.3vw;
+  text-transform: uppercase;
+  font-family: Antonio, sans-serif;
+  font-weight: 700;
+  font-size: 13vw;
+}
+@media screen and (min-width: 480px) {
+  .heading-text {
+    font-size: 11vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .heading-text {
+    font-size: 12vw;
+    line-height: 110%;
+  }
+}
+
+.paragraph-wrapper {
+  grid-column-gap: 3vw;
+  grid-row-gap: 3vw;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1vw;
+  display: flex;
+}
+
+.paragraph-text {
+  text-align: center;
+  width: 50vw;
+  color: var(--color-milk);
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 115%;
+}
+@media screen and (min-width: 992px) {
+  .paragraph-text {
+    font-size: 1.04vw;
+    width: 25vw;
+  }
+}

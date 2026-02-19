@@ -63,7 +63,7 @@
 .amount {
   color: #6b4518;
   letter-spacing: -0.05vw;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-size: 1.9vw;
   font-weight: 700;
   line-height: 105%;

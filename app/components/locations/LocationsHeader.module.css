@@ -1,0 +1,106 @@
+.heading-wrapper {
+  margin-bottom: 2vw;
+}
+@media screen and (min-width: 992px) {
+  .heading-wrapper {
+    margin-bottom: 1vw;
+  }
+}
+
+.heading-text-wrapper {
+  z-index: 3;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0;
+  padding-top: 30%;
+  display: flex;
+  position: relative;
+}
+@media screen and (min-width: 480px) {
+  .heading-text-wrapper {
+    padding-top: 20%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .heading-text-wrapper {
+    width: 100%;
+    padding-top: 10vw;
+  }
+}
+
+.heading-text {
+  direction: ltr;
+  letter-spacing: -0.35vw;
+  text-indent: 0;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: Antonio, sans-serif;
+  font-weight: 700;
+  line-height: 120%;
+  display: block;
+  font-size: 13vw;
+}
+@media screen and (min-width: 992px) {
+  .heading-text {
+    line-height: 9vw;
+  }
+}
+
+.clipped-box-wrapper {
+  background-color: var(--middle-brown);
+  outline-offset: 0px;
+  perspective: none;
+  perspective-origin: 0%;
+  transform-origin: 0%;
+  color: var(--milk);
+  border: 0 solid #000;
+  outline: 0.5vw solid #faeade;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding: 0;
+  display: flex;
+  position: relative;
+  top: auto;
+  overflow: hidden;
+  transform: rotate(-3deg);
+}
+@media screen and (min-width: 480px) {
+  .clipped-box-wrapper {
+    margin-bottom: 2vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .clipped-box-wrapper {
+    transform: rotate(-2deg);
+  }
+}
+
+.clipped-headding {
+  color: #fce1cd;
+  letter-spacing: -0.35vw;
+  flex-flow: row;
+  flex: none;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 1.2vw 1vw;
+  font-family: Antonio, sans-serif;
+  font-weight: 700;
+  line-height: 120%;
+  display: flex;
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 13vw;
+}
+@media screen and (min-width: 992px) {
+  .clipped-headding {
+    line-height: 9vw;
+  }
+}

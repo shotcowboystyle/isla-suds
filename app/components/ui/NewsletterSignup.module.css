@@ -32,7 +32,7 @@
 }
 
 .footer-form {
-  margin-top: 3vw;
+  margin-top: 0.5vw;
   position: relative;
 }
 
@@ -44,7 +44,7 @@
   border-bottom: 0.05vw solid var(--color-secondary);
   height: 52px;
   padding: 0 0 16px;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-size: 24px;
   font-weight: 700;
   line-height: 115%;

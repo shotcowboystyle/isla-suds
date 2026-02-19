@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import {NavLink} from 'react-router';
+import AboutUsImage from '~/assets/images/menu-about-us.webp?responsive';
+import CatalogImage from '~/assets/images/menu-catalog.png?responsive';
+import ContactImage from '~/assets/images/menu-contact.jpeg?responsive';
+import HomeImage from '~/assets/images/menu-home.png?responsive';
+import PoliciesImage from '~/assets/images/menu-policies.webp?responsive';
 import {Picture} from '~/components/Picture';
-import AboutUsImage from '../assets/images/menu-about-us.webp?responsive';
-import CatalogImage from '../assets/images/menu-catalog.png?responsive';
-import ContactImage from '../assets/images/menu-contact.jpeg?responsive';
-import HomeImage from '../assets/images/menu-home.png?responsive';
-import PoliciesImage from '../assets/images/menu-policies.webp?responsive';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
 function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
@@ -23,7 +23,7 @@ const FALLBACK_HEADER_MENU = {
       resourceId: null,
       tags: [],
       title: 'Home',
-      type: 'HTTP',
+      type: 'FRONTPAGE',
       url: '/',
       items: [],
       image: HomeImage,
@@ -32,8 +32,8 @@ const FALLBACK_HEADER_MENU = {
       id: 'gid://shopify/MenuItem/461609500728',
       resourceId: null,
       tags: [],
-      title: 'Collections',
-      type: 'HTTP',
+      title: 'Shop',
+      type: 'PAGE',
       url: '/collections',
       items: [],
       image: CatalogImage,
@@ -42,21 +42,21 @@ const FALLBACK_HEADER_MENU = {
       id: 'gid://shopify/MenuItem/461609533496',
       resourceId: null,
       tags: [],
-      title: 'Blog',
-      type: 'HTTP',
-      url: '/blogs/journal',
+      title: 'Stores',
+      type: 'PAGE',
+      url: '/locations',
       items: [],
       image: ContactImage,
     },
     {
-      id: 'gid://shopify/MenuItem/461609566264',
+      id: 'gid://shopify/MenuItem/wholesale-portal',
       resourceId: null,
       tags: [],
-      title: 'Policies',
-      type: 'HTTP',
-      url: '/policies',
+      title: 'Wholesale',
+      type: 'PAGE',
+      url: '/wholesale',
       items: [],
-      image: PoliciesImage,
+      image: ContactImage,
     },
     {
       id: 'gid://shopify/MenuItem/461609599032',
@@ -69,14 +69,14 @@ const FALLBACK_HEADER_MENU = {
       image: AboutUsImage,
     },
     {
-      id: 'gid://shopify/MenuItem/wholesale-portal',
+      id: 'gid://shopify/MenuItem/461609566264',
       resourceId: null,
       tags: [],
-      title: 'Wholesale',
+      title: 'Contact',
       type: 'HTTP',
-      url: '/wholesale/login',
+      url: '/contact',
       items: [],
-      image: ContactImage,
+      image: PoliciesImage,
     },
   ],
 };
@@ -99,7 +99,8 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
       <div className="flex items-center h-full">
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-full">
           <nav className="flex flex-col items-center" role="navigation">
-            {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => {
+            {/* {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => { */}
+            {FALLBACK_HEADER_MENU.items.map((item, index) => {
               if (!item.url) {
                 return null;
               }
@@ -123,27 +124,42 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
                   style={activeLinkStyle}
                   to={url}
                 >
-                  {item.title}
+                  <span className="text-[12.5vw] md:text-[12.5vh] leading-[105%] size-auto">{item.title}</span>
                 </NavLink>
               );
             })}
           </nav>
 
           <ul className="mt-5 flex items-center gap-4">
-            <li className="font-paragraph">
-              <a href="https://www.youtube.com" target="_blank" rel="noreferrer">
+            <li className="font-paragraph text-black text-center mx-[1vw]">
+              <a
+                href="https://www.youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+              >
                 YouTube
               </a>
             </li>
 
-            <li className="font-paragraph">
-              <a href="https://www.instagram.com" target="_blank" rel="noreferrer">
+            <li className="font-paragraph text-black text-center mx-[1vw]">
+              <a
+                href="https://www.instagram.com/islasuds/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+              >
                 Instagram
               </a>
             </li>
 
-            <li className="font-paragraph">
-              <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">
+            <li className="font-paragraph text-black text-center mx-[1vw]">
+              <a
+                href="https://www.tiktok.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+              >
                 TikTok
               </a>
             </li>

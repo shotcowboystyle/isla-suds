@@ -2,14 +2,15 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
+import {ProductsListCard} from '~/components/product/ProductsListCard';
+import {LiquidButton} from '~/components/ui/LiquidButton';
+import {productsList} from '~/content/products';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
 import styles from './ProductsList.module.css';
-import {productsList} from '../../content/products';
-import {cn} from '../../utils/cn';
-import {ProductsListCard} from '../product/ProductsListCard';
-import {LiquidButton} from '../ui/LiquidButton';
+import type {ProductsListQuery} from 'storefrontapi.generated';
 
-export const ProductsList = () => {
+export const ProductsList = ({products}: {products: ProductsListQuery['products']['nodes']}) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
   const text1Ref = useRef<HTMLHeadingElement>(null);
@@ -86,7 +87,7 @@ export const ProductsList = () => {
       const horizontalScrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 2%',
+          start: 'top top',
           end: `+=${scrollAmount}px `,
           scrub: 1.5,
           pin: true,
@@ -104,7 +105,7 @@ export const ProductsList = () => {
 
   return (
     <section>
-      <div ref={sectionRef} className={cn(styles['track'], 'relative', 'overflow-hidden')}>
+      <div ref={sectionRef} className={cn(styles['track'], 'relative', 'md:overflow-hidden')}>
         <div className={styles['camera']}>
           <div ref={sliderRef} className={styles['frame']}>
             <div className={styles['item']}>
@@ -126,17 +127,21 @@ export const ProductsList = () => {
 
               <div className={styles['collection-list-wrapper']}>
                 <div role="list" className={styles['collection-list']}>
-                  {productsList.map((product) => (
-                    <ProductsListCard
-                      key={product.name}
-                      bgUrl={product.bgUrl}
-                      toUrl={product.toUrl}
-                      productName={product.name}
-                      particlesUrl={product.particlesUrl}
-                      productImageUrl={product.productImageUrl}
-                      rotation={product.rotation}
-                    />
-                  ))}
+                  {productsList.map((product) => {
+                    const shopifyProduct = products?.find((p) => p.handle === product.toUrl.split('/').pop());
+                    return (
+                      <ProductsListCard
+                        key={product.name}
+                        bgUrl={product.bgUrl}
+                        toUrl={product.toUrl}
+                        productName={product.name}
+                        particlesUrl={product.particlesUrl}
+                        productImageUrl={product.productImageUrl}
+                        rotation={product.rotation}
+                        product={shopifyProduct}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>

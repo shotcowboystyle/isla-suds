@@ -97,7 +97,7 @@ export function ProductCard({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
-      <div className="aspect-square overflow-hidden rounded-lg bg-[var(--canvas-elevated)]">
+      <div className="aspect-square overflow-hidden rounded-lg bg-(--canvas-elevated)">
         {image ? (
           <Image
             alt={image.altText || ''}
@@ -108,25 +108,15 @@ export function ProductCard({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div
-            className="size-full bg-[var(--canvas-elevated)]"
-            aria-hidden
-            title=""
-          />
+          <div className="size-full bg-(--canvas-elevated)" aria-hidden title="" />
         )}
       </div>
 
-      <div className="mt-[var(--space-sm)] px-[var(--space-sm)]">
-        <h3
-          data-testid="product-name"
-          className="text-fluid-small font-medium text-[var(--text-primary)]"
-        >
+      <div className="mt-(--space-sm) px-(--space-sm)">
+        <h3 data-testid="product-name" className="text-fluid-small font-medium text-(--text-primary)">
           {product.title}
         </h3>
-        <p
-          data-testid="product-price"
-          className="text-fluid-small text-[var(--text-muted)] mt-[var(--space-xs)]"
-        >
+        <p data-testid="product-price" className="text-fluid-small text-(--text-muted) mt-(--space-xs)">
           ${product.priceRange.minVariantPrice.amount}
         </p>
       </div>

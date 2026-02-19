@@ -3,6 +3,7 @@ import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
 
 export const MessageSection = () => {
@@ -102,27 +103,29 @@ export const MessageSection = () => {
       <div className={styles['text-wrapper']} data-lag="0.5">
         <div className={styles['grid']}>
           <div className={styles['heading-text-wrapper']}>
-            <h1 ref={text1Ref} className={styles['heading-text']}>Freshen up and feel great in your</h1>
+            <h1 ref={text1Ref} className={cn(styles['heading-text'])}>
+              Freshen up and feel great in your
+            </h1>
           </div>
 
           <div className={styles['clipped-text-wrapper']}>
             <div className={styles['clipped-text-inner']}>
               <div className={styles['clipped-text-content-wrapper']}>
                 <div ref={clippedBox1Ref} className={styles['clipped-text-content']}>
-                  <h1 className={styles['clipped-text']}>own skin</h1>
+                  <h1 className={cn(styles['clipped-text'])}>own skin</h1>
                 </div>
               </div>
             </div>
           </div>
 
           <div className={styles['heading-text-wrapper']}>
-            <h1 ref={text2Ref} className={styles['heading-text']}>
+            <h1 ref={text2Ref} className={cn(styles['heading-text'])}>
               and glow with every cleanse from Isla Suds
             </h1>
           </div>
         </div>
 
-        <p ref={paragraphRef} className={styles['paragraph']}>
+        <p ref={paragraphRef} className={cn(styles['paragraph'])}>
           Unscented goat milk soap is a gentle, nourishing bar, thoughtfully crafted for your sensitive, reactive, and
           fragrance-intolerant skin.
         </p>

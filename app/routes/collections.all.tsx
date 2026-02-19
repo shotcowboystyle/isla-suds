@@ -53,16 +53,10 @@ export default function Collection() {
   return (
     <div className="collection">
       <h1>Products</h1>
-      <PaginatedResourceSection<CollectionItemFragment>
-        connection={products}
-        resourcesClassName="products-grid"
-      >
+
+      <PaginatedResourceSection<CollectionItemFragment> connection={products} resourcesClassName="products-grid">
         {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
+          <ProductItem key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
         )}
       </PaginatedResourceSection>
     </div>

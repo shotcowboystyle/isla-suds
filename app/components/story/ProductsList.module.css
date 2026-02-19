@@ -142,7 +142,7 @@
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   display: block;
   font-size: 13vw;
@@ -154,6 +154,12 @@
   .heading-text {
     font-size: 7.8vw;
     line-height: 9vw;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .heading-text {
+    font-size: 7vw;
   }
 }
 
@@ -184,7 +190,7 @@
   font-size: 13vw;
   letter-spacing: -0.35vw;
   flex: none;
-  font-family: Antonio, sans-serif;
+  font-family: var(--font-sans);
   padding: 0 1.5vw 1vw;
 }
 
@@ -192,6 +198,12 @@
   .clipped-heading-text {
     font-size: 7.8vw;
     line-height: 9vw;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .clipped-heading-text {
+    font-size: 7vw;
   }
 }
 
@@ -244,18 +256,20 @@
 .actions-wrapper {
   justify-content: center;
   align-items: flex-end;
-  padding-bottom: 2vw;
   display: flex;
   position: sticky;
-  inset: 0% 0% 0;
+  top: auto;
+  bottom: 0;
+  left: 0;
   width: 100%;
 }
 
 @media screen and (min-width: 480px) {
   .actions-wrapper {
-    padding-bottom: 2vw;
     position: sticky;
-    inset: 0% 0% 0;
+    top: auto;
+    bottom: 0;
+    left: 0;
     width: 100%;
   }
 }
@@ -265,7 +279,6 @@
     position: absolute;
     inset: auto 0% 0%;
     width: auto;
-    padding-bottom: 2vw;
     z-index: auto;
     background-color: var(--color-milk);
     justify-content: center;
