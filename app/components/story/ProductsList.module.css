@@ -10,12 +10,6 @@
   }
 }
 
-/* @media screen and (min-width: 992px) {
-  .track {
-    height: 400vh;
-  }
-} */
-
 .camera {
   width: auto;
   height: auto;
@@ -26,7 +20,7 @@
   background-color: var(--color-milk);
   flex-flow: column;
   margin-bottom: 0;
-  padding-bottom: 150px;
+  padding-bottom: 24vw;
 }
 
 @media screen and (min-width: 480px) {
@@ -226,7 +220,6 @@
   .collection-list-wrapper {
     justify-content: center;
     align-items: flex-start;
-    /* overflow: clip; */
   }
 }
 
@@ -235,6 +228,7 @@
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
+  gap: 2rem;
 }
 
 @media screen and (min-width: 768px) {
@@ -242,6 +236,7 @@
     flex-flow: column;
     justify-content: flex-start;
     align-items: center;
+    gap: 0;
   }
 }
 
@@ -288,19 +283,6 @@
   }
 }
 
-/* @media screen and (min-width: 992px) {
-  .actions-wrapper {
-    z-index: auto;
-    background-color: #faeade00;
-    justify-content: center;
-    align-items: flex-start;
-    width: auto;
-    height: auto;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-} */
-
 .actions-container {
   display: flex;
   padding-top: 16px;
@@ -315,16 +297,13 @@
 
 @media screen and (min-width: 768px) {
   .actions-container {
-    /* Remove extra paddings above 768px, keep centralized styles if desired */
     padding-top: 16px;
     padding-bottom: 24px;
-    /* Optionally override align/justify/width/background if needed */
   }
 }
 
 @media screen and (min-width: 992px) {
   .actions-container {
-    /* Desktop and up: override mobile/tablet styles */
     z-index: auto;
     background-color: transparent;
     width: auto;

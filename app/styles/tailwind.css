@@ -359,3 +359,19 @@
     inset: -100%;
   }
 }
+
+.card-bg-lavender {
+  background-color: var(--color-lavender);
+}
+
+.card-bg-lemongrass {
+  background-color: var(--color-lemongrass);
+}
+
+.card-bg-sea-salt {
+  background-color: var(--color-sea-salt);
+}
+
+.card-bg-eucalyptus {
+  background-color: var(--color-eucalyptus);
+}

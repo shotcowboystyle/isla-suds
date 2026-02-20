@@ -1,13 +1,12 @@
 import BrownBgImage from '~/assets/images/brown-bg.png?responsive';
+import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp?responsive';
 import GreenBgImage from '~/assets/images/green-bg.webp?responsive';
-import LavenderBarImage from '~/assets/images/lavender-bar.webp?responsive';
 import LavenderElementsImage from '~/assets/images/lavender-elements.webp?responsive';
-import LavenderMintBarImage from '~/assets/images/lavender-mint-bar.webp?responsive';
-import LemongrassBarImage from '~/assets/images/lemongrass-bar.webp?responsive';
-import LemongrassElementsImage from '~/assets/images/lemongrass-elements.webp?responsive';
+import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp?responsive';
+import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp?responsive';
 import MintElementsImage from '~/assets/images/mint-elements.webp?responsive';
 import PurpleBgImage from '~/assets/images/purple-bg.webp?responsive';
-import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-bar.webp?responsive';
+import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp?responsive';
 import WhiteBgImage from '~/assets/images/white-bg.png?responsive';
 
 /**
@@ -183,26 +182,26 @@ export type ProductContent = {
 
 export const productsList = [
   {
-    name: 'Lavender Mint',
-    color: 'green',
-    toUrl: '/products/lavender-mint',
+    name: 'Eucalyptus',
+    color: 'eucalyptus',
+    toUrl: '/products/eucalyptus',
     rotation: 'md:rotate-[-8deg] rotate-0',
-    productImageUrl: LavenderMintBarImage,
+    productImageUrl: EucalyptusBarImage,
     bgUrl: GreenBgImage,
     particlesUrl: MintElementsImage,
   },
   {
     name: 'Lemongrass',
-    color: 'yellow',
+    color: 'lemongrass',
     toUrl: '/products/lemongrass',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: LemongrassBarImage,
     bgUrl: BrownBgImage,
-    particlesUrl: LemongrassElementsImage,
+    particlesUrl: MintElementsImage,
   },
   {
     name: 'Lavender',
-    color: 'purple',
+    color: 'lavender',
     toUrl: '/products/lavender',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: LavenderBarImage,
@@ -211,7 +210,7 @@ export const productsList = [
   },
   {
     name: 'Rosemary Sea Salt',
-    color: 'orange',
+    color: 'sea-salt',
     toUrl: '/products/rosemary-sea-salt',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: RosemarySeaSaltBarImage,

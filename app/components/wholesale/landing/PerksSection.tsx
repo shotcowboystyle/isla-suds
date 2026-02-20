@@ -1,4 +1,15 @@
+import {forwardRef, useRef} from 'react';
+import {useGSAP} from '@gsap/react';
+import gsap from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {SplitText} from 'gsap/SplitText';
 import {LiquidButton} from '~/components/ui/LiquidButton';
+import {cn} from '~/utils/cn';
+import styles from './PerksSection.module.css';
+
+if (typeof document !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 
 export function PerksSection() {
   const perks = [
@@ -22,30 +33,61 @@ export function PerksSection() {
     },
   ];
 
-  return (
-    <section className="bg-[#3D2B1F] pb-24 pt-12 text-[#F2E9E1]">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {perks.map((perk, index) => (
-            <div
-              key={index}
-              className="flex flex-col bg-[#F2E9E1] p-8 text-[#3D2B1F] transform transition-transform hover:-translate-y-2 md:rotate-[-2deg] md:hover:rotate-0"
-            >
-              <span className="mb-4 text-sm font-bold opacity-50">{perk.number}</span>
-              <h3 className="mb-4 font-display text-3xl font-black uppercase leading-none">{perk.title}</h3>
-              <p className="font-medium leading-relaxed">{perk.description}</p>
-            </div>
-          ))}
-        </div>
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
-        <div className="mt-20 flex justify-center">
-          <LiquidButton
-            href="/dairy-dealers-application-form"
-            text="APPLY TODAY"
-            className="bg-[#D99E5C] text-black hover:bg-[#c68945]"
-            backgroundColor="#D99E5C"
-          />
-        </div>
+  useGSAP(
+    () => {
+      if (!containerRef.current || !titleRef.current) {
+        return;
+      }
+
+      const titleSplit = SplitText.create(titleRef.current, {type: 'chars'});
+
+      const tl = gsap.timeline({
+        delay: 2,
+      });
+
+      tl.to(containerRef.current, {
+        opacity: 1,
+        y: 0,
+        ease: 'power1.inOut',
+      }).from(
+        titleSplit.chars,
+        {
+          yPercent: 200,
+          stagger: 0.02,
+          ease: 'power2.out',
+        },
+        '-=0.5',
+      );
+    },
+    {dependencies: [containerRef, titleRef]},
+  );
+
+  return (
+    <section ref={containerRef} className={cn(styles['statement-section'])}>
+      <div className={cn(styles['heading-text-wrapper'])}>
+        <h2 ref={titleRef} className={cn(styles['heading-text'])}>
+          Suds Slinger Perks
+        </h2>
+        {/* Decorative images flanking the text would go here, absolute positioned */}
+      </div>
+
+      <div className={styles['brand-core-cards']}>
+        {perks.map((perk, index) => (
+          <div key={index} className={cn(styles['brand-core-card'], styles[`card-${index + 1}`])}>
+            <div className={styles['title-wrapper']}>
+              <div className={styles['title-number']}>{perk.number}</div>
+              <h3 className={styles['title-text']}>{perk.title}</h3>
+            </div>
+            <p className={styles['paragraph']}>{perk.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className={styles['button-wrapper']}>
+        <LiquidButton href="/wholesale/register" text="APPLY TODAY" className="mt-16" backgroundColor="#D99E5C" />
       </div>
     </section>
   );

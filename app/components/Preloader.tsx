@@ -191,6 +191,13 @@ export function Preloader({initialDelay = 0, minDisplayTime = 2500, onComplete}:
             </div>
             <div className={cn(styles.foam, styles.f3)}></div>
             <div className={cn(styles.foam, styles.f4)}></div>
+            <div className={cn(styles['bathtub-body-s'])}></div>
+            <div className={cn(styles['bathtub-foot'])}></div>
+            <div className={cn(styles['bathtub-foot-right'])}></div>
+            <div className={cn(styles['bathtub-shadow'])}></div>
+            <div className={cn(styles['bathtub-shadow-small'])}></div>
+            <div className={cn(styles['bathtub-shadow-foot'])}></div>
+            <div className={cn(styles['bathtub-shadow-foot-right'])}></div>
           </div>
           {/* Bubbles - Using class 'bubble' for targeting */}
           <div className={cn(styles.bubble, styles['bubble-left'], styles.bubble1, 'bubble')}></div>

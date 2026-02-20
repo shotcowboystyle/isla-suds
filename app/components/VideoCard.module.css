@@ -66,16 +66,18 @@
   right: 40vw;
 }
 
-@media screen and (max-width: 479px) {
+@media screen and (max-width: 991px) {
   .card-1,
   .card-2,
   .card-3,
   .card-4,
   .card-5,
-  .card-6 {
-    display: block;
-    bottom: -150vw;
-    right: 15vw;
+  .card-6,
+  .card-7 {
+    border-width: 5px;
+    border-radius: 16px;
+    bottom: -120vw;
+    right: 25vw;
   }
 }
 @media screen and (max-width: 767px) {
@@ -90,18 +92,20 @@
     right: 15vw;
   }
 }
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 479px) {
   .card-1,
   .card-2,
   .card-3,
   .card-4,
   .card-5,
-  .card-6,
+  .card-6 {
+    display: block;
+    bottom: -150vw;
+    right: 15vw;
+  }
+
   .card-7 {
-    border-width: 5px;
-    border-radius: 16px;
-    bottom: -120vw;
-    right: 25vw;
+    right: 15vw;
   }
 }
 
