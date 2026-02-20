@@ -1,0 +1,130 @@
+.logo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  fill: rgba(255, 255, 255, 1);
+  stroke: rgba(255, 255, 255, 1);
+  width: 110%;
+  filter: drop-shadow(1px 2px 0px #c1dade); /* Mimic foam shadow */
+}
+
+.logoFoam {
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  z-index: 2; /* On top of text */
+  box-shadow:
+    inset -2px -2px 1px 0px #c7eff7,
+    1px 2px 0px 0px #c1dade;
+}
+
+.lf1 {
+  width: 15px;
+  height: 15px;
+  top: 30px;
+  left: 45px;
+}
+
+.lf2 {
+  width: 25px;
+  height: 25px;
+  top: 15px;
+  left: 25px;
+}
+
+.lf3 {
+  width: 10px;
+  height: 10px;
+  top: 45px;
+  left: 35px;
+}
+
+.foam {
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  z-index: 5;
+  box-shadow:
+    inset -2px -2px 1px 0px #c7eff7,
+    1px 2px 0px 0px #c1dade;
+}
+
+.f1 {
+  width: 20px;
+  height: 20px;
+  top: -10px;
+  left: 10px; /* Adjusted */
+}
+
+.f2 {
+  width: 30px;
+  height: 30px;
+  top: -20px;
+  left: 22px; /* Adjusted */
+}
+
+.f3 {
+  width: 20px;
+  height: 20px;
+  top: -54px;
+  left: 156px;
+  z-index: 3;
+}
+
+.f4 {
+  width: 20px;
+  height: 20px;
+  top: -24px;
+  left: 171px;
+  z-index: 3;
+}
+
+.f5 {
+  width: 20px;
+  height: 20px;
+  top: -3px;
+  right: 80px; /* Adjusted to right */
+  left: auto;
+}
+
+.f6 {
+  width: 40px;
+  height: 40px;
+  top: -27px;
+  right: 40px; /* Adjusted */
+  left: auto;
+  z-index: 4;
+}
+
+.f7 {
+  width: 40px;
+  height: 40px;
+  top: -20px;
+  right: 10px; /* Adjusted */
+  left: auto;
+}
+
+.f8 {
+  width: 40px;
+  height: 40px;
+  top: -40px;
+  right: 0px; /* Adjusted */
+  left: auto;
+}
+
+.f9 {
+  width: 40px;
+  height: 40px;
+  top: -18px;
+  right: -20px; /* Adjusted */
+  left: auto;
+}
+
+.f10 {
+  width: 20px;
+  height: 20px;
+  top: -17px;
+  right: 20px; /* Adjusted */
+  left: auto;
+}

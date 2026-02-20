@@ -6,6 +6,11 @@
   display: flex;
   position: relative;
 }
+@media screen and (min-width: 768px) {
+  .social-links-wrapper {
+    margin-top: 1.1vw;
+  }
+}
 
 .social-links-list {
   flex-flow: row;
@@ -14,6 +19,12 @@
   display: flex;
   position: relative;
   gap: 2vw;
+  margin-block: 3vw;
+}
+@media screen and (min-width: 768px) {
+  .social-links-list {
+    margin-block: 1.1vw;
+  }
 }
 
 .link-block-item {
@@ -43,7 +54,14 @@
 }
 
 .link-block-icon {
-  width: 2.1vw;
-  height: 2.1vw;
+  width: 5.2vw;
+  height: 5.2vw;
   color: var(--color-secondary);
+}
+
+@media screen and (min-width: 768px) {
+  .link-block-icon {
+    width: 2.1vw;
+    height: 2.1vw;
+  }
 }

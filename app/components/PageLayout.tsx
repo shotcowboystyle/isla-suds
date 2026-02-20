@@ -1,4 +1,4 @@
-import {Suspense, useId, useState} from 'react';
+import {Suspense, useEffect, useId, useState} from 'react';
 import {Await, Link, useLocation} from 'react-router';
 import {Aside} from '~/components/Aside';
 import {CartMain} from '~/components/CartMain';
@@ -34,6 +34,17 @@ export function PageLayout({
   // const isHome = false;
   const [footerHeight, setFooterHeight] = useState(0);
 
+  // useEffect(() => {
+  //   if (isHome && footerHeight > 0) {
+  //     document.body.style.marginBottom = `${footerHeight}px`;
+  //   } else {
+  //     document.body.style.marginBottom = '';
+  //   }
+  //   return () => {
+  //     document.body.style.marginBottom = '';
+  //   };
+  // }, [footerHeight, isHome]);
+
   return (
     <Aside.Provider>
       {/* Skip link for accessibility */}
@@ -61,20 +72,19 @@ export function PageLayout({
       {isHome ? (
         <>
           <div id="smooth-wrapper" className="relative z-10">
-            <div id="smooth-content">
+            <div id="smooth-content" className="relative">
               <main id="main-content" className="relative overflow-hidden z-10 bg-black">
                 {children}
               </main>
-              <div style={{height: footerHeight}} />
+              <Footer
+                footer={footer}
+                header={header}
+                publicStoreDomain={publicStoreDomain}
+                // disableSpacer
+                onHeightChange={setFooterHeight}
+              />
             </div>
           </div>
-          <Footer
-            footer={footer}
-            header={header}
-            publicStoreDomain={publicStoreDomain}
-            disableSpacer
-            onHeightChange={setFooterHeight}
-          />
         </>
       ) : (
         <>
