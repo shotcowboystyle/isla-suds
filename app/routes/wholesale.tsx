@@ -12,11 +12,12 @@ export const meta: Route.MetaFunction = () => {
 export async function loader({context, request}: Route.LoaderArgs) {
   const url = new URL(request.url);
 
-  // Skip auth for login, callback, AND index routes to allow landing page
+  // Skip auth for login, callback, register, AND index routes to allow public access
   // (these are child routes that share this layout loader)
   if (
     url.pathname === WHOLESALE_ROUTES.LOGIN ||
     url.pathname === WHOLESALE_ROUTES.CALLBACK ||
+    url.pathname === WHOLESALE_ROUTES.REGISTER ||
     url.pathname === WHOLESALE_ROUTES.DASHBOARD ||
     url.pathname === WHOLESALE_ROUTES.DASHBOARD + '/'
   ) {

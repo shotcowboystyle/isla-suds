@@ -2,6 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
 import {AddToCartButton} from '../AddToCartButton';
 import {Picture} from '../Picture';
 import styles from './ProductsListCard.module.css';
@@ -16,6 +17,7 @@ interface ProductsListCardProps {
   particlesUrl: ImageData;
   rotation: string;
   product?: ProductsListQuery['products']['nodes'][0];
+  color?: string;
 }
 
 export const ProductsListCard = ({
@@ -26,6 +28,7 @@ export const ProductsListCard = ({
   rotation,
   productName,
   product,
+  color,
 }: ProductsListCardProps) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const backgroundRef = useRef<HTMLImageElement>(null);
@@ -74,14 +77,14 @@ export const ProductsListCard = ({
 
   return (
     <div role="listitem" className={styles['collection-item']}>
-      <a ref={cardRef} href={toUrl} className={styles['card']}>
-        <Picture
+      <a ref={cardRef} href={toUrl} className={cn(styles['card'], `card-bg-${color}`)}>
+        {/* <Picture
           ref={backgroundRef}
           loading="lazy"
           src={bgUrl}
           alt="background"
           className={styles['card-background']}
-        />
+        /> */}
 
         <Picture
           ref={subjectRef}
@@ -99,10 +102,12 @@ export const ProductsListCard = ({
           className={styles['card-additional']}
         />
 
-        <div className={styles['card-content']}>
-          <h1 className={styles['card-heading']}>{productName}</h1>
+        <div className="w-full flex items-center justify-between">
+          <h1 className={cn(styles['card-heading'], color === 'sea-salt' ? 'text-black!' : 'text-secondary')}>
+            {productName}
+          </h1>
           {product && (
-            <div className="mt-4 pointer-events-auto relative z-20" onClick={(e) => e.stopPropagation()}>
+            <div className={styles['add-to-cart-wrapper']} onClick={(e) => e.stopPropagation()}>
               <AddToCartButton
                 disabled={!product.availableForSale}
                 lines={

@@ -159,15 +159,10 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
           onClick={handleOverlayClick}
         >
           <div className="bg-canvas-elevated rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <h2
-              id="logout-dialog-title"
-              className="text-lg font-semibold text-[--text-primary] mb-2"
-            >
+            <h2 id="logout-dialog-title" className="text-lg font-semibold text-[--text-primary] mb-2">
               {wholesaleContent.logout.confirmTitle}
             </h2>
-            <p className="text-sm text-[--text-muted] mb-6">
-              {wholesaleContent.logout.confirmMessage}
-            </p>
+            <p className="text-sm text-[--text-muted] mb-6">{wholesaleContent.logout.confirmMessage}</p>
             <div className="flex gap-3 justify-end">
               <button
                 type="button"

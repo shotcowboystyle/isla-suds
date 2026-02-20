@@ -105,7 +105,7 @@ export function IngredientsSection() {
 
         <Picture src={ingredientsImage} alt="ingredients background" className={styles['ingredients-section-image']} />
 
-        <IngredientsTable className="my-10" />
+        <IngredientsTable className="mt-10" />
       </div>
     </section>
   );

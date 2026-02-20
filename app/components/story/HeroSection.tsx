@@ -80,6 +80,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           paragraphRef.current,
           {
             y: 20,
+            opacity: 0,
             duration: 0.6,
             ease: 'power2.out',
           },
@@ -139,7 +140,9 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
             {HERO_CONTENT}
           </p>
 
-          <LiquidButton ref={buttonRef} href="/products" text="Shop Now" />
+          <div className="flex items-center justify-center mt-12">
+            <LiquidButton ref={buttonRef} href="/collections/frontpage" text="Shop Now" />
+          </div>
         </div>
 
         <Picture

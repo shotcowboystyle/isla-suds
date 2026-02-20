@@ -151,12 +151,134 @@
 .bathtub-body {
   position: relative;
   width: 300px;
-  height: 25px; /* Reduced height for just the hand/rim */
+  height: 125px; /* Reduced height for just the hand/rim */
   font-size: 0;
-  /* Removed pseudo-elements for body */
+
+  &::before,
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+    background-color: #c7eff7;
+    border-radius: 0 0 70% 0;
+  }
+  &::before {
+    border-radius: 0 0 0 70%;
+  }
+  &::after {
+    box-shadow: inset -20px 4px 14px 3px #98c0c7;
+  }
 }
 
-/* Removed bathtub-body-s */
+.bathtub-body-s {
+  width: 85%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bathtub-body-s::before,
+.bathtub-body-s::after {
+  content: '';
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 0 0 80% 0;
+}
+
+.bathtub-body-s::before {
+  border-radius: 0 0 0 80%;
+}
+
+.bathtub-foot {
+  width: 25px;
+  height: 25px;
+  background-color: #c7eff7;
+  position: absolute;
+  bottom: -10px;
+  left: 70px;
+  z-index: 1;
+  transform: rotate(15deg);
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: inherit;
+    transform: translate(0, 15px);
+  }
+}
+.bathtub-shadow {
+  width: 300px;
+  height: 150px;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #eceff3;
+  transform: rotateX(65deg);
+  bottom: -98px;
+  left: 0;
+  z-index: -1;
+}
+
+.bathtub-shadow-foot {
+  position: absolute;
+  border-radius: 50%;
+  transform: rotateX(65deg);
+  z-index: -1;
+  background-color: #c8ccd4;
+  width: 40px;
+  height: 30px;
+  bottom: -37px;
+  left: 58px;
+}
+.bathtub-shadow-foot-right {
+  position: absolute;
+  border-radius: 50%;
+  transform: rotateX(65deg);
+  z-index: -1;
+
+  background-color: #c8ccd4;
+  width: 40px;
+  height: 30px;
+  bottom: -37px;
+  left: 198px;
+}
+
+.bathtub-shadow-small {
+  position: absolute;
+  border-radius: 50%;
+  transform: rotateX(65deg);
+  z-index: -1;
+  width: 250px;
+  height: 100px;
+  background-color: #d9dde6;
+  bottom: -73px;
+  left: 25px;
+}
+
+.bathtub-foot-right {
+  background-color: #bee6ee;
+  transform: rotate(-15deg);
+  left: 200px;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  bottom: -10px;
+  z-index: 1;
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: inherit;
+    transform: translate(0, 15px);
+  }
+}
 
 .foam {
   border-radius: 50%;
@@ -249,12 +371,12 @@
 
 .bathtub-hand {
   width: 100%; /* Fit container */
-  height: 25px;
+  height: 20px;
   background-color: #fff;
   position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 12px; /* Rounded pill shape */
+  top: -15px;
+  left: -14px;
+  border-radius: 10px; /* Rounded pill shape */
   box-shadow:
     inset 0px -3px 5px 1px #c7eff7,
     0px 2px 1px 1px #c1dade;

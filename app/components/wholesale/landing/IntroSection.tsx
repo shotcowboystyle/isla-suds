@@ -1,30 +1,42 @@
+import {cn} from '~/utils/cn';
+import styles from './IntroSection.module.css';
+
 export function IntroSection() {
   return (
-    <section className="bg-[#F2E9E1] py-20 text-[#3D2B1F]">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="mb-12 font-display text-5xl font-black uppercase leading-none tracking-tight md:text-7xl">
-          ADD SOME SUDS <br /> TO YOUR SHELVES
-        </h2>
+    <section className={cn(styles['section-wrapper'])}>
+      <img
+        src="https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d5d8229bf6480d266_Image-1.webp"
+        loading="eager"
+        width="531"
+        sizes="(max-width: 767px) 100vw, 531px"
+        alt=""
+        srcSet="https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d5d8229bf6480d266_Image-1-p-500.webp 500w, https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d5d8229bf6480d266_Image-1-p-800.webp 800w, https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d5d8229bf6480d266_Image-1.webp 1062w"
+        className={styles['background-image-1']}
+      />
+      <img
+        src="https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d9d8e9af0306accdf_Image-2.webp"
+        loading="eager"
+        width="517"
+        sizes="(max-width: 767px) 100vw, 517px"
+        alt=""
+        srcSet="https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d9d8e9af0306accdf_Image-2-p-500.webp 500w, https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d9d8e9af0306accdf_Image-2-p-800.webp 800w, https://cdn.prod.website-files.com/669a8d6498ba88c08dfd2cd2/66f1347d9d8e9af0306accdf_Image-2.webp 1034w"
+        className={styles['background-image-2']}
+      />
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {/* Placeholder for product images */}
-          <div className="aspect-[3/4] w-full bg-gray-200">
-            {/* <img src="..." alt="Product 1" className="h-full w-full object-cover" /> */}
-          </div>
-          <div className="aspect-[3/4] w-full bg-gray-200">
-            {/* <img src="..." alt="Product 2" className="h-full w-full object-cover" /> */}
-          </div>
-          <div className="aspect-[3/4] w-full bg-gray-200">
-            {/* <img src="..." alt="Product 3" className="h-full w-full object-cover" /> */}
-          </div>
-        </div>
+      <div className={cn(styles['section-start-wrapper'])}>
+        <h2 className={styles['heading-caption']}>ADD SOME SUDS TO YOUR SHELVES</h2>
 
-        <div className="mt-12 max-w-3xl mx-auto text-lg font-medium leading-relaxed">
-          <p>
-            Searching for a soap that stands out? Look no further. Isla Suds brings the finest ingredients and freshest
-            scents to your customers. It's time to upgrade your inventory with a brand that people truly love.
-          </p>
-        </div>
+        <p className={cn(styles['content-title'])}>
+          Become a retailer/wholesaler and clean up on this lucrative market, offering a product that stands out for
+          freshness and functionality.
+        </p>
+      </div>
+
+      <div className={cn(styles['section-end-wrapper'])}>
+        <p className={cn(styles['section-end-text'])}>
+          Searching for a soap that stands out? Look no further. Isla Suds brings the finest ingredients and freshest
+          scents to your customers. It&apos;s time to upgrade your inventory with a brand that people truly love.
+        </p>
       </div>
     </section>
   );

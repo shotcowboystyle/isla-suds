@@ -132,6 +132,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
                     return (
                       <ProductsListCard
                         key={product.name}
+                        color={product.color}
                         bgUrl={product.bgUrl}
                         toUrl={product.toUrl}
                         productName={product.name}
@@ -151,7 +152,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
         <div className={cn(styles['actions-wrapper'])}>
           <div className={styles['actions-container']}>
             <div className={styles['actions-content']}>
-              <LiquidButton href="/shop" text="GET IT NOW" />
+              <LiquidButton href="/collections/frontpage" text="GET IT NOW" />
             </div>
           </div>
         </div>

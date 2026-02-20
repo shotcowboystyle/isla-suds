@@ -1,6 +1,7 @@
+import {LocalStores} from '~/components/story/LocalStores';
+import {TestimonialsSection} from '~/components/story/Testimonials';
 import {Hero} from './Hero';
 import {IntroSection} from './IntroSection';
-import {StatementSection} from './StatementSection';
 import {PerksSection} from './PerksSection';
 
 export function WholesaleLandingPage() {
@@ -8,8 +9,9 @@ export function WholesaleLandingPage() {
     <main className="w-full">
       <Hero />
       <IntroSection />
-      <StatementSection />
       <PerksSection />
+      <TestimonialsSection />
+      <LocalStores />
     </main>
   );
 }

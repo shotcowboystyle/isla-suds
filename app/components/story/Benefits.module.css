@@ -3,11 +3,11 @@
   background-color: #222123;
   background-image: none;
   width: auto;
-  height: auto;
+  height: 70vh;
   display: flex;
   position: static;
   flex-flow: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   overflow: hidden;
 }
@@ -53,16 +53,15 @@
   font-family:
     Proxima Nova,
     sans-serif;
-  font-size: 16px;
+  font-size: 5vw;
   font-weight: 400;
   line-height: 120%;
   text-align: center;
-  margin-top: 50px;
+  margin-top: 0;
   margin-bottom: 0;
   position: static;
   inset: 3vw 0% auto;
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-inline: 16px;
 }
 
 @media screen and (min-width: 480px) {
@@ -88,8 +87,7 @@
   width: 100%;
   display: flex;
   position: relative;
-  margin-top: 150px;
-  margin-bottom: 150px;
+  margin-block: 50px;
 }
 
 @media screen and (min-width: 768px) {
@@ -153,7 +151,7 @@
   position: relative;
   margin-top: 0;
   margin-bottom: 50px;
-  font-size: 16px;
+  font-size: 5vw;
   line-height: 120%;
   inset: auto 0% 3vw;
 }
