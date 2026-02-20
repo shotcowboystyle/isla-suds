@@ -152,6 +152,13 @@ export default function Homepage() {
           normalizeScroll: true, // Normalizes touch/wheel events for smoother scrolling
           ignoreMobileResize: true, // Prevents resizing issues on mobile
         });
+
+        ScrollTrigger.create({
+          trigger: '#footer-wrapper',
+          pin: true,
+          start: 'bottom bottom',
+          end: '+=100%',
+        });
       })
       .catch((error: Error) => {
         console.error(error);

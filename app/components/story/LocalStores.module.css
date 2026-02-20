@@ -43,7 +43,7 @@
   }
 }
 
-.heading-wrapper {
+.heading-text-wrapper {
   z-index: 3;
   outline-offset: 0px;
   color: #faeade;
@@ -89,7 +89,7 @@
 .clipped-text-box {
   transform-origin: 50%;
   color: var(--color-dark-brown);
-  background-color: #e9aa56;
+  background-color: var(--color-accent-secondary);
   justify-content: flex-start;
   align-items: center;
   margin-top: -2vw;
@@ -132,9 +132,9 @@
 }
 
 .paragraph-text-wrapper {
-  margin-top: 2vw;
-  padding-left: 0;
-  padding-right: 0;
+  z-index: 2;
+  margin-block: 7vw;
+  padding-inline: 0;
 }
 @media screen and (min-width: 480px) {
   .paragraph-text-wrapper {
@@ -147,7 +147,7 @@
   font-family:
     Proxima Nova,
     sans-serif;
-  font-size: 16px;
+  font-size: 5vw;
   font-weight: 400;
   line-height: 115%;
   width: 100%;

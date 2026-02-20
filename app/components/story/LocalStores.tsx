@@ -12,26 +12,31 @@ export function LocalStores() {
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
 
   const {isMobile, isLoading} = useIsMobile();
 
   useGSAP(
     () => {
-      if (isLoading || !sectionRef.current || !heading1Ref.current || !clippedBoxRef.current || !paragraphRef.current) {
+      if (
+        isLoading ||
+        !sectionRef.current ||
+        !heading1Ref.current ||
+        !clippedBoxRef.current ||
+        !paragraphRef.current ||
+        !buttonWrapperRef.current
+      ) {
         return;
       }
 
       const heading1Split = SplitText.create(heading1Ref.current, {type: 'chars'});
-      const paragraphSplit = SplitText.create(paragraphRef.current, {
-        type: 'words, lines',
-        linesClass: 'paragraph-line',
-        aria: 'none',
-      });
+      const paragraphSplit = SplitText.create(paragraphRef.current, {type: 'words'});
 
       const contentTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 70%' : 'top center',
+          end: isMobile ? 'top 50%' : 'top center',
         },
       });
 
@@ -61,30 +66,42 @@ export function LocalStores() {
             stagger: 0.01,
           },
           '-=0.5',
+        )
+        .from(
+          buttonWrapperRef.current,
+          {
+            opacity: 0,
+            duration: 0.5,
+            width: 0,
+            ease: 'circ.out',
+          },
+          '-=0.5',
         );
     },
-    {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, isLoading, isMobile]},
+    {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, buttonWrapperRef, isLoading, isMobile]},
   );
 
   return (
     <section ref={sectionRef} className={styles['map-section-wrapper']}>
       <div className={styles['map-section-inner']}>
         <div className={styles['map-section-info']}>
-          <div className={styles['heading-wrapper']}>
+          <div className={styles['heading-text-wrapper']}>
             <h2 ref={heading1Ref} className={styles['heading-text']}>
               Right Around
             </h2>
           </div>
 
           <div ref={clippedBoxRef} className={styles['clipped-text-box']}>
-            <div className={styles['clipped-text']}>the corner</div>
+            <h1 className={styles['clipped-text']}>the corner</h1>
           </div>
 
           <div className={styles['paragraph-text-wrapper']}>
             <p ref={paragraphRef} className={styles['paragraph-text']}>
-              Buy our drinks at your local store or get them delivered (to your door).
+              Buy our soaps at your local store or get them delivered (to your door).
             </p>
+          </div>
 
+          <div className="mt-6">
             <LiquidButton href="/locations" text="Find a Store" />
           </div>
         </div>

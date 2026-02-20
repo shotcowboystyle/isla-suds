@@ -132,8 +132,8 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
             </h1>
           </div>
 
-          <div ref={clippedBox1Ref} className={styles['clipped-box']}>
-            <h1 className={styles['heading-1']}>{HERO_TAGLINE_END}</h1>
+          <div ref={clippedBox1Ref} className={styles['clipped-text-box']}>
+            <h1 className={styles['clipped-text']}>{HERO_TAGLINE_END}</h1>
           </div>
 
           <p ref={paragraphRef} className={styles['paragraph']}>

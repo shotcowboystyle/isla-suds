@@ -4,6 +4,7 @@ import {AnimatedBubbles} from '~/components/AnimatedBubbles';
 import {cn} from '~/utils/cn';
 // import {Picture} from './Picture';
 import styles from './Footer.module.css';
+import {FooterLogo} from './FooterLogo';
 import {NewsletterSignup} from './ui/NewsletterSignup';
 import {SocialLinks} from './ui/SocialLinks';
 // import SliderDipImage from '../assets/images/slider-dip.png?responsive';
@@ -47,8 +48,14 @@ export function Footer({
 
   return (
     <>
-      {!disableSpacer && <div style={{height: footerHeight}} />}
-      <div ref={footerRef} className="fixed bottom-0 w-full z-1" style={{zIndex: 1}}>
+      {/* {!disableSpacer && <div style={{height: footerHeight, zIndex: -9999}} />} */}
+      {/* <div ref={footerRef} className="fixed bottom-0 w-full z-1" style={{zIndex: 1}}> */}
+      <div
+        id="footer-wrapper"
+        ref={footerRef}
+        className="relative w-full z-1 h-[70vh]"
+        style={{zIndex: 1, marginTop: -footerHeight, height: footerHeight}}
+      >
         <Suspense>
           <Await resolve={footerPromise}>
             {(footer) => (
@@ -91,7 +98,10 @@ export function Footer({
                   </div>
                 </div>
 
-                <AnimatedBubbles />
+                <div className="footer-logo-wrapper">
+                  <FooterLogo />
+                  <AnimatedBubbles />
+                </div>
               </footer>
             )}
           </Await>
@@ -111,7 +121,7 @@ function FooterMenu({
   publicStoreDomain: string;
 }) {
   const classes =
-    'transition-colors inline-block uppercase text-xs text-[var(--text-primary)] opacity-50 hover:text-[var(--accent-primary)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 transition duration-300';
+    'transition-colors inline-block text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-secondary)] focus-visible:ring-offset-2 transition duration-300';
 
   return (
     <nav className="flex gap-6 text-sm text-gray-400" role="navigation" aria-label="Footer navigation">
@@ -242,6 +252,6 @@ const FALLBACK_FOOTER_POLICIES = {
 function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
   return {
     fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'var(--text-muted)' : 'var(--text-primary)',
+    color: isPending ? 'var(--color-neutral-400)' : 'var(--color-secondary)',
   };
 }
