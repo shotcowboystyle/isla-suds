@@ -68,8 +68,6 @@ export function Hero({product}: HeroProps) {
     {scope: containerRef},
   );
 
-  console.log(product);
-
   // Get the product options array
   const productOptions = getProductOptions({
     ...product,

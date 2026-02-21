@@ -23,13 +23,6 @@ export async function loader({request, context}: Route.LoaderArgs) {
 
       // Validate response structure before accessing
       if (!customer?.data?.customer) {
-        console.error(
-          'Customer Account API returned invalid response structure',
-          {
-            hasData: !!customer?.data,
-            hasCustomer: !!customer?.data?.customer,
-          },
-        );
         // Clear invalid session and restart auth
         context.session.unset('customerId');
         return context.customerAccount.login({
@@ -53,9 +46,8 @@ export async function loader({request, context}: Route.LoaderArgs) {
           },
         };
       }
-    } catch (error) {
-      // Session invalid or customer fetch failed - log and clear session
-      console.error('Session verification failed during login check:', error);
+    } catch (_error) {
+      // Safe to continue: session invalid or customer fetch failed, clear and re-auth
       context.session.unset('customerId');
       // Fall through to initiate new OAuth flow
     }

@@ -22,14 +22,10 @@ import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {usePastHero} from '~/hooks/use-past-hero';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import {initLenis, destroyLenis} from '~/lib/scroll';
-// import appStyles from '~/styles/app.css?url';
-// import resetStyles from '~/styles/reset.css?url';
 import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
-import {cn} from './utils/cn';
 import type {Route} from './+types/root';
 import type {CartApiQueryFragment, FooterQuery, HeaderQuery} from 'storefrontapi.generated';
-// import {localizationCookie, themeCookie} from './cookie.server';
 
 export type RootLoader = typeof loader;
 
@@ -70,13 +66,6 @@ export function links() {
       type: 'font/woff2',
       crossOrigin: 'anonymous' as const,
     },
-    // {
-    //   rel: 'preload',
-    //   as: 'font',
-    //   href: '/fonts/HelveticaNeue.woff2',
-    //   type: 'font/woff2',
-    //   crossOrigin: 'anonymous' as const,
-    // },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -89,8 +78,6 @@ export function links() {
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
-
-// const theme = await themeCookie.parse(cookieHeader);
 
 export async function loader(args: Route.LoaderArgs): Promise<{
   cart: any | null;
@@ -170,9 +157,8 @@ function loadDeferredData({context}: Route.LoaderArgs) {
         footerMenuHandle: 'footer', // Adjust to your footer menu handle
       },
     })
-    .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
-      console.error(error);
+    .catch((_error: Error) => {
+      // Safe to continue: footer is non-critical below-fold content
       return null;
     });
   return {
@@ -186,24 +172,11 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
 
   return (
-    <html
-      lang="en"
-      // className={cn('text-base sm:text-[1.12vw] hide-scrollbar', theme)}
-      // className={cn('text-base sm:text-[1.12vw] hide-scrollbar')}
-    >
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        {/* <meta
-          name="theme-color"
-          content={theme === 'dark' ? '#000000' : '#ffffff'}
-        /> */}
         <link rel="stylesheet" href={tailwindCss}></link>
-        {/* <link rel="stylesheet" href={resetStyles}></link> */}
-        {/* <link rel="stylesheet" href={appStyles}></link> */}
-        {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=DynaPuff&display=swap" rel="stylesheet" /> */}
         <Meta />
         <Links />
       </head>
@@ -211,13 +184,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
-        {/* <script>
-          document.addEventListener("DOMContentLoaded", function() {
-            window.addEventListener("load", function() {
-              gsap
-            });
-          });
-        </script> */}
       </body>
     </html>
   );

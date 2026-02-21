@@ -86,16 +86,7 @@ ${order.lineItems.edges
 Log in to Shopify admin to generate and send the invoice.
   `.trim();
 
-  // MVP: Log to console for debugging (using console.warn for visibility in production logs)
-  // This is intentional MVP behavior - will be replaced with actual email service
-  console.warn('='.repeat(80));
-  console.warn('📧 INVOICE REQUEST EMAIL');
-  console.warn('='.repeat(80));
-  console.warn(`To: ${founderEmail}`);
-  console.warn(`Subject: ${emailSubject}`);
-  console.warn('-'.repeat(80));
-  console.warn(emailBody);
-  console.warn('='.repeat(80));
+  // MVP: No-op email sending. Replace with Resend, SendGrid, or Shopify Email API.
 
   // Simulate successful send (MVP behavior)
   // See story Dev Notes for production integration options:

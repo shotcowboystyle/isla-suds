@@ -110,9 +110,8 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront.query(RECOMMENDED_PRODUCTS_QUERY).catch((error: Error) => {
-    // Log query errors, but don't throw them so the page can still render
-    console.error(error);
+  const recommendedProducts = context.storefront.query(RECOMMENDED_PRODUCTS_QUERY).catch((_error: Error) => {
+    // Safe to continue: recommended products are non-critical below-fold content
     return null;
   });
 
@@ -160,8 +159,8 @@ export default function Homepage() {
           end: '+=100%',
         });
       })
-      .catch((error: Error) => {
-        console.error(error);
+      .catch((_error: Error) => {
+        // Safe to continue: GSAP is a progressive enhancement, page works without it
       });
 
     return () => {

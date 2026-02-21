@@ -110,12 +110,6 @@ export default function Product() {
       <ProductDetails product={product} />
       <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-[#8B0000]" />
       <Nutrition product={product} />
-      {/* <StickyAddToCart
-        product={product}
-        selectedVariant={selectedVariant}
-        productOptions={productOptions}
-      /> */}
-
       <Analytics.ProductView
         data={{
           products: [

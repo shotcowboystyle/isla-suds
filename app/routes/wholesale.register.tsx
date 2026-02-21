@@ -54,9 +54,8 @@ export async function action({request}: Route.ActionArgs) {
     };
   }
 
-  // TODO: Send email or create customer record
-  // For now, mock success
-  console.warn('Wholesale application submitted:', Object.fromEntries(formData));
+  // MVP: Validation passes. Email/customer creation not yet integrated.
+  // Future: Integrate with email service or Shopify customer API.
 
   return {success: true};
 }

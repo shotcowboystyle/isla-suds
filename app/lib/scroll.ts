@@ -76,9 +76,7 @@ export async function initLenis(): Promise<Lenis | null> {
 
     return lenisInstance;
   } catch (error) {
-    // Graceful fallback - log warning but don't break user experience
-    // Using console.warn per AC5: "no console.error that breaks flow"
-    console.warn('Failed to initialize Lenis smooth scroll:', error);
+    // Safe to continue: Lenis is a progressive enhancement, native scroll works as fallback
     return null;
   }
 }
@@ -99,10 +97,8 @@ export function destroyLenis(): void {
     try {
       lenisInstance.destroy();
       lenisInstance = null;
-    } catch (error) {
-      // Graceful error handling - ensure cleanup happens
-      // Using console.warn per AC5: "no console.error that breaks flow"
-      console.warn('Failed to destroy Lenis instance:', error);
+    } catch (_error) {
+      // Safe to continue: ensure cleanup finishes regardless
       lenisInstance = null;
     }
   }
