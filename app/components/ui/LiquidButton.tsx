@@ -2,8 +2,8 @@ import {forwardRef, useId} from 'react';
 import {useNavigate} from 'react-router';
 import styles from './LiquidButton.module.css';
 
-interface LiquidButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  href: string;
+export interface LiquidButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  href?: string;
   text: string;
   backgroundColor?: string;
 }
@@ -20,7 +20,7 @@ const LiquidButton = forwardRef<HTMLDivElement, LiquidButtonProps>(
         className={`${styles['liquid-button-wrapper']} ${className || ''}`}
         style={backgroundColor ? ({'--button-bg': backgroundColor} as React.CSSProperties) : undefined}
       >
-        <button className={styles['liquid-button']} onClick={() => void navigate(href)} {...props}>
+        <button className={styles['liquid-button']} onClick={href ? () => void navigate(href) : undefined} {...props}>
           <div className={styles['liquid-button-bg']}>
             <span className={styles['button-text']}>{text}</span>
           </div>
