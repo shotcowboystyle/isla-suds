@@ -9,6 +9,10 @@ import {GET_ORDER_FOR_REORDER_QUERY} from '~/graphql/customer-account/GetOrderFo
 import {WHOLESALE_DASHBOARD_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleDashboardCustomer';
 import type {Route} from './+types/wholesale._index';
 
+export const meta: Route.MetaFunction = () => {
+  return [{title: 'Wholesale Dashboard | Isla Suds'}];
+};
+
 interface ReorderActionResponse {
   success: boolean;
   checkoutUrl?: string;

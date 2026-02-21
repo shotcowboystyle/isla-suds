@@ -2,6 +2,13 @@ import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/policies._index';
 import type {PoliciesQuery, PolicyItemFragment} from 'storefrontapi.generated';
 
+export const meta: Route.MetaFunction = () => {
+  return [
+    {title: 'Policies | Isla Suds'},
+    {name: 'description', content: 'Read our store policies including privacy, shipping, returns, and terms of service.'},
+  ];
+};
+
 export async function loader({context}: Route.LoaderArgs) {
   const data: PoliciesQuery = await context.storefront.query(POLICIES_QUERY);
 

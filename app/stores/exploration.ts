@@ -56,7 +56,6 @@ export const useExplorationStore = create<ExplorationState>((set) => ({
   addProductExplored: (productId: string) => {
     // Validate input
     if (!productId || typeof productId !== 'string' || productId.trim() === '') {
-      console.warn('addProductExplored: Invalid productId', productId);
       return;
     }
     set((state) => ({

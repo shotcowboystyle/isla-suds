@@ -76,7 +76,6 @@ export function CollectionPrompt({
   // Handle cart mutation (Story 4.3, AC1, Task 3)
   const handleAddToCart = () => {
     if (!variantId) {
-      console.warn('[CollectionPrompt] Variety pack variant ID not found');
       return;
     }
 

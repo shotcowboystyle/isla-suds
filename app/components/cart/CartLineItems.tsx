@@ -138,9 +138,6 @@ function CartLineItem({
 
         setErrorMessage(message);
 
-        // Log error for debugging
-        console.error('Cart operation error:', errors[0]);
-
         // Auto-dismiss after 3 seconds
         const timer = setTimeout(() => {
           setErrorMessage(null);
@@ -197,7 +194,9 @@ function CartLineItem({
           action: '/cart',
         },
       )
-      .catch(console.error);
+      .catch(() => {
+        // Safe to continue: error state handled via fetcher.data
+      });
   };
 
   // Story 5.6 Task 3: Decrement quantity handler (AC3)
@@ -225,7 +224,9 @@ function CartLineItem({
           action: '/cart',
         },
       )
-      .catch(console.error);
+      .catch(() => {
+        // Safe to continue: error state handled via fetcher.data
+      });
   };
 
   // Story 5.7 Task 2: Remove item handler (AC2)
@@ -243,7 +244,9 @@ function CartLineItem({
           action: '/cart',
         },
       )
-      .catch(console.error);
+      .catch(() => {
+        // Safe to continue: error state handled via fetcher.data
+      });
   };
 
   // Calculate prices

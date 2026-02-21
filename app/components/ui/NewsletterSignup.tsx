@@ -6,7 +6,7 @@ export const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
 
   const handleSubmit = () => {
-    console.log('Email submitted:', email);
+    // MVP: Newsletter integration not yet wired up
   };
 
   return (

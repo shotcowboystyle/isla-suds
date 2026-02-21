@@ -36,9 +36,6 @@ function AddToCartFormContent({
 
     // Check for errors in fetcher data
     if (fetcher.data && !isLoading && (fetcher.data.errors || fetcher.data.error)) {
-      // Error occurred (AC5) - log error type only, not sensitive data
-      const errorType = fetcher.data.errors ? 'errors' : 'error';
-      console.error('Add to cart failed:', errorType);
       setError(ADD_TO_CART_ERROR_MESSAGE);
       return;
     }

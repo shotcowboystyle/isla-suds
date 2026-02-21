@@ -4,6 +4,10 @@ import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_ORDER_HISTORY_QUERY} from '~/graphql/customer-account/GetOrderHistory';
 import type {Route} from './+types/wholesale.orders';
 
+export const meta: Route.MetaFunction = () => {
+  return [{title: 'Order History | Wholesale | Isla Suds'}];
+};
+
 // TypeScript interfaces for Customer Account API response
 interface MoneyV2 {
   amount: string;
@@ -68,9 +72,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
       orders: ordersData.data.customer.orders.edges.map((edge) => edge.node),
       pageInfo: ordersData.data.customer.orders.pageInfo,
     };
-  } catch (error) {
-    // Log error for debugging but gracefully degrade (order history is optional)
-    console.error('Failed to fetch order history:', error);
+  } catch (_error) {
     // Safe to continue: order history is optional, graceful degradation
     return {
       orders: [],

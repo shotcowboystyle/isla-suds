@@ -11,6 +11,10 @@ import {formatCurrency, getCurrencyLabel} from '~/utils/format-currency';
 import {formatDate} from '~/utils/format-date';
 import type {Route} from './+types/wholesale.orders.$orderId';
 
+export const meta: Route.MetaFunction = () => {
+  return [{title: 'Order Details | Wholesale | Isla Suds'}];
+};
+
 // TypeScript interfaces for Customer Account API response
 interface MoneyV2 {
   amount: string;
@@ -86,9 +90,7 @@ export async function loader({params, context}: Route.LoaderArgs) {
     }
 
     return {order: orderData.data.order};
-  } catch (error) {
-    // Log error for debugging
-    console.error('Failed to fetch order details:', error);
+  } catch (_error) {
     throw new Response('Order not found', {status: 404});
   }
 }
@@ -144,7 +146,7 @@ export async function action({request, params, context}: Route.ActionArgs) {
     if (!founderEmail) {
       // Safe to return error to user: configuration issue prevents invoice requests
       // User should contact support if this occurs
-      console.error('FOUNDER_EMAIL not configured in environment');
+      // Safe to return error: configuration issue prevents invoice requests
       return {
         success: false,
         error: wholesaleContent.invoice.errorMessage,
@@ -167,11 +169,9 @@ export async function action({request, params, context}: Route.ActionArgs) {
       success: true,
       message: wholesaleContent.invoice.confirmationMessage,
     };
-  } catch (error) {
-    // Safe to continue with error response: email sending is a graceful failure
+  } catch (_error) {
+    // Safe to continue: email sending is a graceful failure
     // User sees friendly error message, can retry or contact support directly
-    // Logging the error ensures we can debug the issue without exposing internals
-    console.error('Invoice request failed:', error);
     return {
       success: false,
       error: wholesaleContent.invoice.errorMessage,
@@ -209,9 +209,8 @@ export default function OrderDetailsPage() {
         // Check if this order was previously requested
         setInvoiceRequested(invoiceRequests[order.id] === true);
       }
-    } catch (error) {
+    } catch (_error) {
       // Safe to continue: session storage is optional enhancement, core flow works without it
-      console.error('Failed to access session storage:', error);
     }
   }, [fetcher.data, order.id]);
 

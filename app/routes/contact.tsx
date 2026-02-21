@@ -27,14 +27,8 @@ export async function action({request}: Route.ActionArgs) {
     return data({fieldErrors: {email: 'Please enter a valid email address'}}, {status: 400});
   }
 
-  // TODO: Send email via Shopify Forms or external service
-  console.log('Contact form submission:', {
-    name,
-    email,
-    subject,
-    orderNumber,
-    message,
-  });
+  // MVP: Form validation passes. Email sending not yet integrated.
+  // Future: Integrate with Shopify Forms or external email service.
 
   return data({success: true});
 }

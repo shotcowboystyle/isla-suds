@@ -21,10 +21,6 @@ export async function loader({request, context}: Route.LoaderArgs) {
 
     // Validate response structure
     if (!customer?.data?.customer) {
-      console.error('Customer Account API returned invalid response structure', {
-        hasData: !!customer?.data,
-        hasCustomer: !!customer?.data?.customer,
-      });
       return redirect('/wholesale/login');
     }
 
@@ -55,9 +51,8 @@ export async function loader({request, context}: Route.LoaderArgs) {
         },
       );
     }
-  } catch (error) {
-    // OAuth failed or customer query failed
-    console.error('OAuth callback failed:', error);
+  } catch (_error) {
+    // Safe to continue: OAuth failed, redirect to login with error
     return redirect('/wholesale/login?error=auth_failed');
   }
 }
