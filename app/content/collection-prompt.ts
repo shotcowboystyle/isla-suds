@@ -21,6 +21,12 @@ export const COLLECTION_PROMPT_COPY: CollectionPromptContent = {
   dismissLabel: 'Close',
 };
 
+import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp?responsive';
+import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp?responsive';
+import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp?responsive';
+import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp?responsive';
+import type {ImageData} from '@responsive-image/core';
+
 /**
  * Variety pack product information
  * Used to display product grid in collection prompt
@@ -28,6 +34,7 @@ export const COLLECTION_PROMPT_COPY: CollectionPromptContent = {
 export interface VarietyPackProduct {
   handle: string;
   name: string;
+  image: ImageData;
 }
 
 /**
@@ -35,8 +42,8 @@ export interface VarietyPackProduct {
  * Displayed as 2x2 grid (mobile) or 4-column row (tablet+)
  */
 export const VARIETY_PACK_PRODUCTS: VarietyPackProduct[] = [
-  {handle: 'lavender-soap', name: 'Lavender'},
-  {handle: 'lemongrass-soap', name: 'Lemongrass'},
-  {handle: 'eucalyptus-soap', name: 'Eucalyptus'},
-  {handle: 'mint-soap', name: 'Mint'},
+  {handle: 'lavender', name: 'Lavender', image: LavenderBarImage},
+  {handle: 'lemongrass', name: 'Lemongrass', image: LemongrassBarImage},
+  {handle: 'eucalyptus', name: 'Eucalyptus', image: EucalyptusBarImage},
+  {handle: 'rosemary-sea-salt', name: 'Rosemary Sea Salt', image: RosemarySeaSaltBarImage},
 ];

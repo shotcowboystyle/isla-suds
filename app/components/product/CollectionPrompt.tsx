@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogClose,
 } from '~/components/ui/Dialog';
+import {Picture} from '~/components/Picture';
 import {
   COLLECTION_PROMPT_COPY,
   VARIETY_PACK_PRODUCTS,
@@ -153,12 +154,13 @@ export function CollectionPrompt({
           <div className={cn('grid grid-cols-2 gap-4 mb-6', 'sm:grid-cols-4')}>
             {VARIETY_PACK_PRODUCTS.map((product) => (
               <div key={product.handle} className="text-center">
-                {/* Product image placeholder - will be replaced with actual Shopify images */}
-                <div className="aspect-square bg-[var(--canvas-base)] rounded-lg mb-2">
-                  {/* TODO: Replace with actual product image from Shopify */}
-                  <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)] text-sm">
-                    {product.name}
-                  </div>
+                <div className="aspect-square bg-[var(--canvas-base)] rounded-lg mb-2 overflow-hidden">
+                  <Picture
+                    src={product.image}
+                    alt={product.name}
+                    loading="lazy"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <p className="text-sm text-[var(--text-primary)]">
                   {product.name}
