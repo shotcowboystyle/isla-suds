@@ -6,6 +6,13 @@ import {
   CollectionPromptWithAnimation,
 } from './CollectionPrompt';
 
+// Mock Picture component (renders as simple img for testing)
+vi.mock('~/components/Picture', () => ({
+  Picture: ({src, alt, className}: {src: unknown; alt: string; className?: string}) => (
+    <img data-testid={`picture-${alt}`} alt={alt} className={className} />
+  ),
+}));
+
 // Mock React Router useFetcher (Story 4.3)
 // Mutable state that tests can modify to simulate different fetcher states
 const mockSubmit = vi.fn();
@@ -106,12 +113,12 @@ describe('CollectionPrompt', () => {
       const lavender = screen.getAllByText('Lavender');
       const lemongrass = screen.getAllByText('Lemongrass');
       const eucalyptus = screen.getAllByText('Eucalyptus');
-      const mint = screen.getAllByText('Mint');
+      const rosemarySeaSalt = screen.getAllByText('Rosemary Sea Salt');
 
       expect(lavender.length).toBeGreaterThanOrEqual(1);
       expect(lemongrass.length).toBeGreaterThanOrEqual(1);
       expect(eucalyptus.length).toBeGreaterThanOrEqual(1);
-      expect(mint.length).toBeGreaterThanOrEqual(1);
+      expect(rosemarySeaSalt.length).toBeGreaterThanOrEqual(1);
     });
 
     it('uses fluid typography classes', () => {

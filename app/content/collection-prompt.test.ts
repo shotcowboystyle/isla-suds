@@ -77,12 +77,18 @@ describe('collection-prompt content', () => {
       });
     });
 
+    it('each product has an image property', () => {
+      VARIETY_PACK_PRODUCTS.forEach((product) => {
+        expect(product.image).toBeDefined();
+      });
+    });
+
     it('contains expected soap varieties', () => {
       const handles = VARIETY_PACK_PRODUCTS.map((p) => p.handle);
-      expect(handles).toContain('lavender-soap');
-      expect(handles).toContain('lemongrass-soap');
-      expect(handles).toContain('eucalyptus-soap');
-      expect(handles).toContain('mint-soap');
+      expect(handles).toContain('lavender');
+      expect(handles).toContain('lemongrass');
+      expect(handles).toContain('eucalyptus');
+      expect(handles).toContain('rosemary-sea-salt');
     });
   });
 });
