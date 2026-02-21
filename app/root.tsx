@@ -11,7 +11,7 @@ import {
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
-import {Analytics, getShopAnalytics, useNonce, type CartQueryDataReturn, type ShopAnalytics} from '@shopify/hydrogen';
+import {Analytics, getShopAnalytics, useNonce, type ShopAnalytics} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
 import {CartDrawer} from '~/components/cart/CartDrawer';
 import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
@@ -25,7 +25,6 @@ import {initLenis, destroyLenis} from '~/lib/scroll';
 import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
 import type {Route} from './+types/root';
-import type {CartApiQueryFragment, FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
 export type RootLoader = typeof loader;
 
@@ -79,21 +78,7 @@ export function links() {
   ];
 }
 
-export async function loader(args: Route.LoaderArgs): Promise<{
-  cart: any | null;
-  isLoggedIn: Promise<boolean>;
-  footer: any | null;
-  header: any | null;
-  publicStoreDomain: string;
-  shop: Promise<ShopAnalytics | null>;
-  consent: {
-    checkoutDomain: string;
-    storefrontAccessToken: string;
-    withPrivacyBanner: boolean;
-    country: any;
-    language: any;
-  };
-}> {
+export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
 

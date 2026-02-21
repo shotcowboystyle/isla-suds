@@ -1,7 +1,7 @@
 import {useFetcher} from 'react-router';
 import {cn} from '~/utils/cn';
 
-export function ThemeSwitcher({theme, setTheme}: {theme: any; setTheme: any}) {
+export function ThemeSwitcher({theme, setTheme}: {theme: string; setTheme: (value: string | ((prev: string) => string)) => void}) {
   const fetcher = useFetcher();
   return (
     <fetcher.Form method="post" action="/theme" className="flex">
@@ -9,7 +9,7 @@ export function ThemeSwitcher({theme, setTheme}: {theme: any; setTheme: any}) {
         type="submit"
         className="group relative z-10 cursor-pointer dark:rotate-180 transition duration-300"
         onClick={() =>
-          setTheme((prev: any) => (prev === 'dark' ? 'light' : 'dark'))
+          setTheme((prev: string) => (prev === 'dark' ? 'light' : 'dark'))
         }
       >
         <div className="absolute z-10 size-2 top-1/2 left-0 transform -translate-x-2/5 -translate-y-1/2 bg-white dark:bg-black group-hover:bg-black dark:group-hover:bg-white border sm:border-2 border-neutral-300 rounded-full transition duration-300"></div>
