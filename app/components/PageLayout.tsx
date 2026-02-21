@@ -13,8 +13,8 @@ interface PageLayoutProps {
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
   children?: React.ReactNode;
-  theme: any;
-  setTheme: any;
+  theme: string;
+  setTheme: (value: string | ((prev: string) => string)) => void;
 }
 
 export function PageLayout({
