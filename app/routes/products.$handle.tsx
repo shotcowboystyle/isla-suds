@@ -80,8 +80,6 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
   return {};
 }
 
-// import {StickyAddToCart} from '~/components/product/spylt/StickyAddToCart';
-
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
 
