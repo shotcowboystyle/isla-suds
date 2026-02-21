@@ -5,6 +5,15 @@ import {ADD_TO_CART_ERROR_MESSAGE, ADD_TO_CART_BUTTON_STATES} from '~/content/er
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 
+/** Shape of data returned by the cart route action (/cart) via CartForm fetcher */
+interface CartActionData {
+  cart?: unknown;
+  errors?: unknown;
+  error?: unknown;
+  warnings?: unknown;
+  analytics?: {cartId?: string};
+}
+
 function AddToCartFormContent({
   analytics,
   children,
@@ -15,7 +24,7 @@ function AddToCartFormContent({
   analytics?: unknown;
   children: React.ReactNode;
   disabled?: boolean;
-  fetcher: FetcherWithComponents<any>;
+  fetcher: FetcherWithComponents<CartActionData>;
   onClick?: () => void;
 }) {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -138,7 +147,7 @@ export function AddToCartButton({
 }) {
   return (
     <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS?.LinesAdd}>
-      {(fetcher: FetcherWithComponents<any>) => (
+      {(fetcher: FetcherWithComponents<CartActionData>) => (
         <AddToCartFormContent analytics={analytics} disabled={disabled} fetcher={fetcher} onClick={onClick}>
           {children}
         </AddToCartFormContent>
