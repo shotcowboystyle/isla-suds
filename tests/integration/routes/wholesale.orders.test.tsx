@@ -95,10 +95,13 @@ describe('Order History Route', () => {
         params: {},
       };
 
-      const result = await loader(loaderArgs as any);
-
-      expect(result).toHaveProperty('status', 302);
-      expect(result.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+      try {
+        await loader(loaderArgs as any);
+        expect.fail('Expected loader to throw a redirect');
+      } catch (response: any) {
+        expect(response).toHaveProperty('status', 302);
+        expect(response.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+      }
     });
 
     it('fetches paginated orders with bounded query (first: 10)', async () => {

@@ -2,6 +2,7 @@ import {useFetcher, useActionData, data} from 'react-router';
 import {ContactForm} from '~/components/contact/ContactForm';
 import {ContactHeader} from '~/components/contact/ContactHeader';
 import {CONTACT_PAGE} from '~/content/contact';
+import {isValidEmail} from '~/utils/validation';
 import type {Route} from './+types/contact';
 
 export const meta: Route.MetaFunction = () => {
@@ -22,8 +23,7 @@ export async function action({request}: Route.ActionArgs) {
   }
 
   // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
+  if (!isValidEmail(email)) {
     return data({fieldErrors: {email: 'Please enter a valid email address'}}, {status: 400});
   }
 

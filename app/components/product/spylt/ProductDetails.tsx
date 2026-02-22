@@ -12,16 +12,15 @@ export function ProductDetails({product}: ProductDetailsProps) {
           <h2 className="text-[8vw] md:text-[5vw] leading-[0.9] font-black uppercase tracking-tighter text-[#8B0000]">
             MEANWHILE...
             <br />
-            FREAKING
+            SO FRESH
             <br />
-            DELICIOUS
+            SO CLEAN CLEAN
           </h2>
         </div>
         <div className="text-xl md:text-2xl font-medium leading-relaxed opacity-80">
           <p>
-            Well hellooo, creamy dreamy strawberry milk. This nostalgic drink is like your favorite childhood sweet
-            treat... without loads of sugar. But now it&apos;s caffeinated, filled with nutrients, and packed with
-            protein.
+            Isla Suds is a natural goat milk soap made with simple, high-quality ingredients. It is free of harsh
+            chemicals, fragrances, and dyes, making it gentle enough for even the most sensitive skin.
           </p>
         </div>
       </div>

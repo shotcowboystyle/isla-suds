@@ -676,77 +676,15 @@ export type GetOrderHistoryQuery = {
   };
 };
 
-export type WholesaleCallbackCustomerQueryVariables = CustomerAccountAPI.Exact<{
+export type WholesaleCustomerQueryVariables = CustomerAccountAPI.Exact<{
   [key: string]: never;
 }>;
 
-export type WholesaleCallbackCustomerQuery = {
-  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
-    emailAddress?: CustomerAccountAPI.Maybe<
-      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
-    >;
-    companyContacts: {
-      edges: Array<{
-        node: {
-          company?: CustomerAccountAPI.Maybe<
-            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
-          >;
-        };
-      }>;
-    };
-  };
-};
-
-export type WholesaleDashboardCustomerQueryVariables =
-  CustomerAccountAPI.Exact<{[key: string]: never}>;
-
-export type WholesaleDashboardCustomerQuery = {
+export type WholesaleCustomerQuery = {
   customer: Pick<
     CustomerAccountAPI.Customer,
-    'id' | 'firstName' | 'lastName'
+    'id' | 'firstName' | 'lastName' | 'displayName'
   > & {
-    emailAddress?: CustomerAccountAPI.Maybe<
-      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
-    >;
-    companyContacts: {
-      edges: Array<{
-        node: {
-          company?: CustomerAccountAPI.Maybe<
-            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
-          >;
-        };
-      }>;
-    };
-  };
-};
-
-export type WholesaleLayoutCustomerQueryVariables = CustomerAccountAPI.Exact<{
-  [key: string]: never;
-}>;
-
-export type WholesaleLayoutCustomerQuery = {
-  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
-    emailAddress?: CustomerAccountAPI.Maybe<
-      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
-    >;
-    companyContacts: {
-      edges: Array<{
-        node: {
-          company?: CustomerAccountAPI.Maybe<
-            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
-          >;
-        };
-      }>;
-    };
-  };
-};
-
-export type WholesaleLoginCustomerQueryVariables = CustomerAccountAPI.Exact<{
-  [key: string]: never;
-}>;
-
-export type WholesaleLoginCustomerQuery = {
-  customer: Pick<CustomerAccountAPI.Customer, 'id' | 'displayName'> & {
     emailAddress?: CustomerAccountAPI.Maybe<
       Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
     >;
@@ -795,21 +733,9 @@ interface GeneratedQueryTypes {
     return: GetOrderHistoryQuery;
     variables: GetOrderHistoryQueryVariables;
   };
-  '#graphql\n  query WholesaleCallbackCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: WholesaleCallbackCustomerQuery;
-    variables: WholesaleCallbackCustomerQueryVariables;
-  };
-  '#graphql\n  query WholesaleDashboardCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: WholesaleDashboardCustomerQuery;
-    variables: WholesaleDashboardCustomerQueryVariables;
-  };
-  '#graphql\n  query WholesaleLayoutCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: WholesaleLayoutCustomerQuery;
-    variables: WholesaleLayoutCustomerQueryVariables;
-  };
-  '#graphql\n  query WholesaleLoginCustomer {\n    customer {\n      id\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: WholesaleLoginCustomerQuery;
-    variables: WholesaleLoginCustomerQueryVariables;
+  '#graphql\n  query WholesaleCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: WholesaleCustomerQuery;
+    variables: WholesaleCustomerQueryVariables;
   };
 }
 

@@ -7,6 +7,7 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import {TestimonialsSection} from '~/components/story';
+import {MONEY_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';
 import type {ProductItemFragment} from 'storefrontapi.generated';
@@ -155,10 +156,7 @@ export default function Collection() {
 }
 
 const PRODUCT_ITEM_FRAGMENT = `#graphql
-  fragment MoneyProductItem on MoneyV2 {
-    amount
-    currencyCode
-  }
+  ${MONEY_FRAGMENT}
   fragment ProductItem on Product {
     id
     handle
@@ -172,10 +170,10 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     }
     priceRange {
       minVariantPrice {
-        ...MoneyProductItem
+        ...Money
       }
       maxVariantPrice {
-        ...MoneyProductItem
+        ...Money
       }
     }
   }

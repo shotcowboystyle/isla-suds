@@ -5,48 +5,13 @@
  * MVP: Logs to console, ready for external service integration.
  */
 
-import {formatCurrency} from '~/utils/format-currency';
 import {formatDate} from '~/utils/format-date';
-
-interface MoneyV2 {
-  amount: string;
-  currencyCode: string;
-}
-
-interface LineItem {
-  id: string;
-  title: string;
-  quantity: number;
-  variant: {
-    id: string;
-    title: string;
-  } | null;
-}
-
-interface Order {
-  id: string;
-  name: string;
-  orderNumber: string;
-  processedAt: string;
-  fulfillmentStatus: string;
-  currentTotalPrice: MoneyV2;
-  lineItems: {
-    edges: Array<{node: LineItem}>;
-  };
-}
-
-interface Customer {
-  firstName: string | null;
-  lastName: string | null;
-  email: string;
-  company?: {
-    name: string;
-  } | null;
-}
+import {formatMoney} from '~/utils/format-money';
+import type {EmailOrder, EmailCustomer} from '~/types/wholesale';
 
 interface InvoiceRequestParams {
-  order: Order;
-  customer: Customer;
+  order: EmailOrder;
+  customer: EmailCustomer;
   founderEmail: string;
 }
 
@@ -75,7 +40,7 @@ Email: ${customer.email}
 Order Details:
 - Order Number: ${order.orderNumber}
 - Order Date: ${formatDate(order.processedAt)}
-- Total: ${formatCurrency(order.currentTotalPrice)}
+- Total: ${formatMoney(order.currentTotalPrice)}
 - Status: ${order.fulfillmentStatus}
 
 Items:
@@ -123,7 +88,7 @@ export async function sendInvoiceRequestEmail({
       <h3>Order Details</h3>
       <p><strong>Order #:</strong> ${order.orderNumber}</p>
       <p><strong>Date:</strong> ${formatDate(order.processedAt)}</p>
-      <p><strong>Total:</strong> ${formatCurrency(order.currentTotalPrice)}</p>
+      <p><strong>Total:</strong> ${formatMoney(order.currentTotalPrice)}</p>
       <p><strong>Status:</strong> ${order.fulfillmentStatus}</p>
 
       <h3>Items</h3>

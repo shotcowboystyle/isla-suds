@@ -3,6 +3,8 @@ import {useFetcher} from 'react-router';
 import {Button} from '~/components/ui/Button';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
+import {formatDate} from '~/utils/format-date';
+import {formatMoney} from '~/utils/format-money';
 import {OrderLineItem} from './OrderLineItem';
 import {OrderStatusBadge} from './OrderStatusBadge';
 
@@ -28,39 +30,6 @@ interface LastOrderProps {
       }>;
     };
   } | null;
-}
-
-function formatDate(dateString: string): string {
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return 'Recent order';
-    }
-    return new Intl.DateTimeFormat(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }).format(date);
-  } catch (error) {
-    // Safe to continue: fallback to generic message on date parsing failure
-    return 'Recent order';
-  }
-}
-
-function formatCurrency(price: {amount: string; currencyCode: string}): string {
-  try {
-    const amount = parseFloat(price.amount);
-    if (isNaN(amount)) {
-      return 'See order details';
-    }
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: price.currencyCode,
-    }).format(amount);
-  } catch (error) {
-    // Safe to continue: fallback to generic message on currency formatting failure
-    return 'See order details';
-  }
 }
 
 export function LastOrder({order}: LastOrderProps) {
@@ -141,7 +110,7 @@ export function LastOrder({order}: LastOrderProps) {
         <div>
           <dt className={cn('sr-only')}>Total</dt>
           <dd className={cn('text-lg font-semibold')} data-testid="order-total">
-            {formatCurrency(order.totalPrice)}
+            {formatMoney(order.totalPrice)}
           </dd>
         </div>
 

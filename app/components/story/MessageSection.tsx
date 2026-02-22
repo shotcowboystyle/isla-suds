@@ -99,7 +99,7 @@ export const MessageSection = () => {
   );
 
   return (
-    <section ref={sectionRef} className={styles['message-section-wrapper']}>
+    <section ref={sectionRef} className={styles['message-section-wrapper']} data-speed="0.5" data-lag="0.5">
       <div className={styles['text-wrapper']} data-lag="0.5">
         <div className={styles['grid']}>
           <div className={styles['heading-text-wrapper']}>

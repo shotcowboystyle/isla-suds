@@ -61,7 +61,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           clippedBox1Ref.current,
           {
             opacity: 0,
-            duration: 1,
+            duration: 0.5,
             width: 0,
             ease: 'circ.out',
           },

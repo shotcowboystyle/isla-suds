@@ -2,6 +2,7 @@ import {useLoaderData} from 'react-router';
 import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
+import {MONEY_FRAGMENT} from '~/lib/fragments';
 import type {Route} from './+types/collections.all';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
 
@@ -64,10 +65,7 @@ export default function Collection() {
 }
 
 const COLLECTION_ITEM_FRAGMENT = `#graphql
-  fragment MoneyCollectionItem on MoneyV2 {
-    amount
-    currencyCode
-  }
+  ${MONEY_FRAGMENT}
   fragment CollectionItem on Product {
     id
     handle
@@ -81,10 +79,10 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     }
     priceRange {
       minVariantPrice {
-        ...MoneyCollectionItem
+        ...Money
       }
       maxVariantPrice {
-        ...MoneyCollectionItem
+        ...Money
       }
     }
   }
