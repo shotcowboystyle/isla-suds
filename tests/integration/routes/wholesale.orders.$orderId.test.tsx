@@ -140,10 +140,13 @@ describe('Order Details Route', () => {
         params: {orderId: TEST_ORDER_ID},
       };
 
-      const result = await loader(loaderArgs as any);
-
-      expect(result).toHaveProperty('status', 302);
-      expect(result.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+      try {
+        await loader(loaderArgs as any);
+        expect.fail('Expected loader to throw a redirect');
+      } catch (response: any) {
+        expect(response).toHaveProperty('status', 302);
+        expect(response.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+      }
     });
 
     it('fetches order details by ID', async () => {
@@ -329,10 +332,13 @@ describe('Order Details Route', () => {
           params: {orderId: 'order-1'},
         };
 
-        const result = await action(actionArgs as any);
-
-        expect(result).toHaveProperty('status', 302);
-        expect(result.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+        try {
+          await action(actionArgs as any);
+          expect.fail('Expected action to throw a redirect');
+        } catch (response: any) {
+          expect(response).toHaveProperty('status', 302);
+          expect(response.headers?.get('Location')).toBe(WHOLESALE_ROUTES.LOGIN);
+        }
       });
 
       it('handles requestInvoice intent successfully', async () => {

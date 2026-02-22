@@ -1,81 +1,23 @@
 import {useEffect, useState} from 'react';
-import {redirect, useFetcher, useLoaderData} from 'react-router';
+import {useFetcher, useLoaderData} from 'react-router';
 import {Button} from '~/components/ui/Button';
 import {wholesaleContent} from '~/content/wholesale';
-import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_CUSTOMER_QUERY} from '~/graphql/customer-account/GetCustomer';
 import {GET_ORDER_DETAILS_QUERY} from '~/graphql/customer-account/GetOrderDetails';
 import {sendInvoiceRequestEmail} from '~/lib/email.server';
+import {requireWholesaleSession} from '~/lib/wholesale';
 import {cn} from '~/utils/cn';
-import {formatCurrency, getCurrencyLabel} from '~/utils/format-currency';
 import {formatDate} from '~/utils/format-date';
+import {formatMoney, getCurrencyLabel} from '~/utils/format-money';
 import type {Route} from './+types/wholesale.orders.$orderId';
+import type {OrderDetailsResponse} from '~/types/wholesale';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Order Details | Wholesale | Isla Suds'}];
 };
 
-// TypeScript interfaces for Customer Account API response
-interface MoneyV2 {
-  amount: string;
-  currencyCode: string;
-}
-
-interface ProductVariant {
-  id: string;
-  title: string;
-  image: {
-    url: string;
-    altText: string | null;
-  } | null;
-}
-
-interface LineItem {
-  id: string;
-  title: string;
-  quantity: number;
-  variant: ProductVariant | null;
-  originalTotalPrice: MoneyV2;
-  discountedTotalPrice: MoneyV2;
-}
-
-interface LineItemEdge {
-  node: LineItem;
-}
-
-interface ShippingAddress {
-  formatted: string[];
-}
-
-interface Order {
-  id: string;
-  name: string;
-  orderNumber: string;
-  processedAt: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  currentTotalPrice: MoneyV2;
-  subtotalPrice: MoneyV2;
-  totalTax: MoneyV2;
-  shippingCost: MoneyV2;
-  lineItems: {
-    edges: LineItemEdge[];
-  };
-  shippingAddress: ShippingAddress | null;
-}
-
-interface OrderDetailsResponse {
-  data: {
-    order: Order | null;
-  };
-}
-
 export async function loader({params, context}: Route.LoaderArgs) {
-  const customerId = await context.session.get('customerId');
-
-  if (!customerId) {
-    return redirect(WHOLESALE_ROUTES.LOGIN);
-  }
+  await requireWholesaleSession(context);
 
   const {orderId} = params;
 
@@ -96,11 +38,7 @@ export async function loader({params, context}: Route.LoaderArgs) {
 }
 
 export async function action({request, params, context}: Route.ActionArgs) {
-  const customerId = await context.session.get('customerId');
-
-  if (!customerId) {
-    return redirect(WHOLESALE_ROUTES.LOGIN);
-  }
+  await requireWholesaleSession(context);
 
   const formData = await request.formData();
   const intent = formData.get('intent');
@@ -281,7 +219,7 @@ export default function OrderDetailsPage() {
                   className={cn('font-semibold text-text-primary')}
                   aria-label={getCurrencyLabel(node.discountedTotalPrice)}
                 >
-                  {formatCurrency(node.discountedTotalPrice)}
+                  {formatMoney(node.discountedTotalPrice)}
                 </p>
                 {node.originalTotalPrice.amount !==
                   node.discountedTotalPrice.amount && (
@@ -289,7 +227,7 @@ export default function OrderDetailsPage() {
                     className={cn('text-sm text-text-muted line-through')}
                     aria-label={`Original price: ${getCurrencyLabel(node.originalTotalPrice)}`}
                   >
-                    {formatCurrency(node.originalTotalPrice)}
+                    {formatMoney(node.originalTotalPrice)}
                   </p>
                 )}
               </div>
@@ -305,19 +243,19 @@ export default function OrderDetailsPage() {
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Subtotal</span>
             <span aria-label={getCurrencyLabel(order.subtotalPrice)}>
-              {formatCurrency(order.subtotalPrice)}
+              {formatMoney(order.subtotalPrice)}
             </span>
           </div>
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Shipping</span>
             <span aria-label={getCurrencyLabel(order.shippingCost)}>
-              {formatCurrency(order.shippingCost)}
+              {formatMoney(order.shippingCost)}
             </span>
           </div>
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Tax</span>
             <span aria-label={getCurrencyLabel(order.totalTax)}>
-              {formatCurrency(order.totalTax)}
+              {formatMoney(order.totalTax)}
             </span>
           </div>
           <div
@@ -327,7 +265,7 @@ export default function OrderDetailsPage() {
           >
             <span>Total</span>
             <span aria-label={getCurrencyLabel(order.currentTotalPrice)}>
-              {formatCurrency(order.currentTotalPrice)}
+              {formatMoney(order.currentTotalPrice)}
             </span>
           </div>
         </div>

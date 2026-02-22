@@ -1,14 +1,14 @@
 /**
- * GraphQL Query: Wholesale Dashboard Customer
+ * GraphQL Query: Wholesale Customer
  *
- * Fetches customer details for dashboard:
- * - Name (first, last)
+ * Unified query for all wholesale routes. Fetches:
+ * - Customer identity (id, firstName, lastName, displayName)
  * - Email
  * - Company association (B2B validation)
  */
 
-export const WHOLESALE_DASHBOARD_CUSTOMER_QUERY = `#graphql
-  query WholesaleDashboardCustomer {
+export const WHOLESALE_CUSTOMER_QUERY = `#graphql
+  query WholesaleCustomer {
     customer {
       id
       firstName
@@ -16,6 +16,7 @@ export const WHOLESALE_DASHBOARD_CUSTOMER_QUERY = `#graphql
       emailAddress {
         emailAddress
       }
+      displayName
       companyContacts(first: 1) {
         edges {
           node {

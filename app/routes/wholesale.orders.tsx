@@ -1,56 +1,16 @@
-import {redirect, useLoaderData} from 'react-router';
+import {useLoaderData} from 'react-router';
 import {OrderHistoryList} from '~/components/wholesale/OrderHistoryList';
-import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_ORDER_HISTORY_QUERY} from '~/graphql/customer-account/GetOrderHistory';
+import {requireWholesaleSession} from '~/lib/wholesale';
 import type {Route} from './+types/wholesale.orders';
+import type {OrdersResponse} from '~/types/wholesale';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Order History | Wholesale | Isla Suds'}];
 };
 
-// TypeScript interfaces for Customer Account API response
-interface MoneyV2 {
-  amount: string;
-  currencyCode: string;
-}
-
-interface Order {
-  id: string;
-  name: string;
-  orderNumber: string;
-  processedAt: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  currentTotalPrice: MoneyV2;
-}
-
-interface OrderEdge {
-  cursor: string;
-  node: Order;
-}
-
-interface PageInfo {
-  hasNextPage: boolean;
-  endCursor: string | null;
-}
-
-interface OrdersResponse {
-  data: {
-    customer: {
-      orders: {
-        edges: OrderEdge[];
-        pageInfo: PageInfo;
-      };
-    };
-  };
-}
-
 export async function loader({request, context}: Route.LoaderArgs) {
-  const customerId = await context.session.get('customerId');
-
-  if (!customerId) {
-    return redirect(WHOLESALE_ROUTES.LOGIN);
-  }
+  await requireWholesaleSession(context);
 
   // Get cursor from URL for pagination
   const url = new URL(request.url);

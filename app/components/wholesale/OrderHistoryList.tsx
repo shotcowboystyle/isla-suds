@@ -2,27 +2,10 @@ import {useNavigate} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
 import {OrderHistoryItem} from './OrderHistoryItem';
-
-interface Order {
-  id: string;
-  name: string;
-  orderNumber: string;
-  processedAt: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  currentTotalPrice: {
-    amount: string;
-    currencyCode: string;
-  };
-}
-
-interface PageInfo {
-  hasNextPage: boolean;
-  endCursor: string | null;
-}
+import type {WholesaleOrder, PageInfo} from '~/types/wholesale';
 
 interface OrderHistoryListProps {
-  orders: Order[];
+  orders: WholesaleOrder[];
   pageInfo: PageInfo;
 }
 

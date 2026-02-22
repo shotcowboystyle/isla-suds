@@ -1,19 +1,32 @@
+import type {MoneyV2} from '~/types/wholesale';
+
 /**
- * Format money amount with currency using Intl.NumberFormat
+ * Format money for display with proper internationalization.
  *
- * Uses the runtime's locale (or provided override) and Shopify MoneyV2 data
- * to produce a properly localized currency string.
- *
- * @param amount - The numeric amount as a string
- * @param currencyCode - ISO 4217 currency code (USD, EUR, GBP, etc.)
- * @param locale - Optional BCP 47 locale tag (falls back to runtime default)
- * @returns Formatted price string with currency symbol (e.g., "$12.00", "€10.50")
+ * Overloaded:
+ *  - formatMoney(money: MoneyV2): string
+ *  - formatMoney(amount: string, currencyCode: string, locale?: string): string
  */
+export function formatMoney(money: MoneyV2): string;
 export function formatMoney(
   amount: string,
   currencyCode: string,
   locale?: string,
+): string;
+export function formatMoney(
+  amountOrMoney: string | MoneyV2,
+  currencyCode?: string,
+  locale?: string,
 ): string {
+  const amount =
+    typeof amountOrMoney === 'string'
+      ? amountOrMoney
+      : amountOrMoney.amount;
+  const currency =
+    typeof amountOrMoney === 'string'
+      ? currencyCode!
+      : amountOrMoney.currencyCode;
+
   const numericAmount = Number(amount);
 
   if (!Number.isFinite(numericAmount)) {
@@ -21,12 +34,25 @@ export function formatMoney(
   }
 
   try {
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat(locale ?? 'en-US', {
       style: 'currency',
-      currency: currencyCode,
+      currency,
     }).format(numericAmount);
   } catch {
     // Fallback to simple formatting if Intl throws (e.g., invalid currency code)
-    return `${amount} ${currencyCode}`;
+    return `${amount} ${currency}`;
   }
+}
+
+/**
+ * Get full currency label for accessibility (screen readers).
+ * Example: {amount: "150.00", currencyCode: "USD"} -> "150.00 US dollars"
+ */
+export function getCurrencyLabel(money: MoneyV2): string {
+  const amount = parseFloat(money.amount);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: money.currencyCode,
+    currencyDisplay: 'name',
+  }).format(amount);
 }

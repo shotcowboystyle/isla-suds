@@ -88,7 +88,7 @@
   }
 }
 
-.clipped-box {
+.clipped-text-box {
   background-color: var(--color-accent-secondary);
   outline-offset: 0px;
   perspective: none;
@@ -107,23 +107,22 @@
   display: flex;
   position: relative;
   top: auto;
-  overflow: hidden;
   transform: rotate(-2deg);
 }
 
 @media screen and (min-width: 480px) {
-  .clipped-box {
+  .clipped-text-box {
     margin-bottom: 2vw;
   }
 }
 
 @media screen and (min-width: 992px) {
-  .clipped-box {
+  .clipped-text-box {
     transform: rotate(-3deg);
   }
 }
 
-.heading-1 {
+.clipped-text {
   letter-spacing: -0.35vw;
   flex-flow: row;
   flex: none;
@@ -138,7 +137,7 @@
 }
 
 @media screen and (min-width: 992px) {
-  .heading-1 {
+  .clipped-text {
     font-size: 7.8vw;
     line-height: 9vw;
   }

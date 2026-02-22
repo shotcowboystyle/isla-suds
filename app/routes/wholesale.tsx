@@ -1,7 +1,8 @@
 import {Outlet, redirect, useLoaderData} from 'react-router';
 import {WholesaleHeader} from '~/components/wholesale/WholesaleHeader';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
-import {WHOLESALE_LAYOUT_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleLayoutCustomer';
+import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
+import {getB2BCompany} from '~/lib/wholesale';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/wholesale';
 
@@ -25,10 +26,9 @@ export async function loader({context, request}: Route.LoaderArgs) {
     const customerId = await context.session.get('customerId');
     if (customerId) {
       try {
-        const customer = await context.customerAccount.query(WHOLESALE_LAYOUT_CUSTOMER_QUERY);
+        const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
         if (customer?.data?.customer) {
-          const company = customer.data.customer.companyContacts?.edges?.[0]?.node?.company;
-          if (company) {
+          if (getB2BCompany(customer.data.customer)) {
             return {customer: customer.data.customer};
           }
         }
@@ -50,7 +50,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 
   // Verify customer still has B2B status
   try {
-    const customer = await context.customerAccount.query(WHOLESALE_LAYOUT_CUSTOMER_QUERY);
+    const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
 
     // Validate response structure before accessing
     if (!customer?.data?.customer) {
@@ -63,8 +63,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
       });
     }
 
-    const company = customer.data.customer.companyContacts?.edges?.[0]?.node?.company;
-    if (!company) {
+    if (!getB2BCompany(customer.data.customer)) {
       // No longer B2B - clear session and redirect
       context.session.unset('customerId');
       return redirect(WHOLESALE_ROUTES.LOGIN, {

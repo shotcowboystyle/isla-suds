@@ -1,24 +1,13 @@
 import {Link} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
-import {formatCurrency, getCurrencyLabel} from '~/utils/format-currency';
 import {formatDate} from '~/utils/format-date';
-
-interface Order {
-  id: string;
-  name: string;
-  orderNumber: string;
-  processedAt: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  currentTotalPrice: {
-    amount: string;
-    currencyCode: string;
-  };
-}
+import {formatMoney, getCurrencyLabel} from '~/utils/format-money';
+import {OrderStatusBadge} from './OrderStatusBadge';
+import type {WholesaleOrder} from '~/types/wholesale';
 
 interface OrderHistoryItemProps {
-  order: Order;
+  order: WholesaleOrder;
 }
 
 export function OrderHistoryItem({order}: OrderHistoryItemProps) {
@@ -47,22 +36,13 @@ export function OrderHistoryItem({order}: OrderHistoryItemProps) {
           className={cn('text-sm text-text-muted mt-1')}
           aria-label={getCurrencyLabel(order.currentTotalPrice)}
         >
-          {formatCurrency(order.currentTotalPrice)}
+          {formatMoney(order.currentTotalPrice)}
         </p>
       </div>
 
       {/* Status badge */}
       <div className={cn('mx-4')}>
-        <span
-          className={cn(
-            'inline-block px-3 py-1 rounded-full text-sm',
-            order.fulfillmentStatus === 'FULFILLED'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-yellow-100 text-yellow-800',
-          )}
-        >
-          {order.fulfillmentStatus}
-        </span>
+        <OrderStatusBadge status={order.fulfillmentStatus} />
       </div>
 
       {/* View details link */}

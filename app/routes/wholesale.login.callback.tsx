@@ -1,6 +1,6 @@
 import {redirect} from 'react-router';
-import {wholesaleContent} from '~/content/wholesale';
-import {WHOLESALE_CALLBACK_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCallbackCustomer';
+import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
+import {getB2BCompany} from '~/lib/wholesale';
 import type {Route} from './+types/wholesale.login.callback';
 
 /**
@@ -17,7 +17,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
   try {
     // Query customer after OAuth completion
     // Hydrogen's customerAccount context handles the OAuth token exchange
-    const customer = await context.customerAccount.query(WHOLESALE_CALLBACK_CUSTOMER_QUERY);
+    const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
 
     // Validate response structure
     if (!customer?.data?.customer) {
@@ -27,8 +27,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
     const customerData = customer.data.customer;
 
     // Verify B2B status (company association required)
-    const company = customerData.companyContacts?.edges?.[0]?.node?.company;
-    if (company) {
+    if (getB2BCompany(customerData)) {
       // B2B customer - set session and redirect to dashboard
       context.session.set('customerId', customerData.id);
 

@@ -6,7 +6,8 @@ import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_LAST_ORDER_QUERY} from '~/graphql/customer-account/GetLastOrder';
 import {GET_ORDER_FOR_REORDER_QUERY} from '~/graphql/customer-account/GetOrderForReorder';
-import {WHOLESALE_DASHBOARD_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleDashboardCustomer';
+import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
+import {getB2BCompany} from '~/lib/wholesale';
 import type {Route} from './+types/wholesale._index';
 
 export const meta: Route.MetaFunction = () => {
@@ -34,7 +35,7 @@ export async function loader({context}: Route.LoaderArgs) {
 
   // Fetch B2B customer data including firstName
   try {
-    const customer = await context.customerAccount.query(WHOLESALE_DASHBOARD_CUSTOMER_QUERY);
+    const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
 
     // Validate response structure
     if (!customer?.data?.customer) {
@@ -43,11 +44,10 @@ export async function loader({context}: Route.LoaderArgs) {
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
 
-    const {firstName, companyContacts} = customer.data.customer;
+    const {firstName} = customer.data.customer;
 
     // Validate B2B status
-    const company = companyContacts?.edges?.[0]?.node?.company;
-    if (!company) {
+    if (!getB2BCompany(customer.data.customer)) {
       // Not a B2B customer
       return redirect(WHOLESALE_ROUTES.LOGIN);
     }
@@ -95,9 +95,8 @@ export async function action({request, context}: Route.ActionArgs): Promise<Reor
 
     try {
       // Verify B2B customer status before allowing reorder
-      const customerData = await context.customerAccount.query(WHOLESALE_DASHBOARD_CUSTOMER_QUERY);
-      const company = customerData?.data?.customer?.companyContacts?.edges?.[0]?.node?.company;
-      if (!company) {
+      const customerData = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
+      if (!customerData?.data?.customer || !getB2BCompany(customerData.data.customer)) {
         return {
           success: false,
           error: wholesaleContent.auth.notWholesaleCustomer,
