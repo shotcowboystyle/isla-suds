@@ -88,6 +88,7 @@ export const wholesaleContent = {
       emptyState: 'No items added yet.',
       subtotalLabel: 'Subtotal',
       checkoutButton: 'Proceed to Checkout',
+      checkoutButtonLoading: 'Processing...',
     },
   },
 
