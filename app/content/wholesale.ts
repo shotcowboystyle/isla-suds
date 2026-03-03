@@ -75,4 +75,23 @@ export const wholesaleContent = {
     errorMessage:
       "Couldn't send your request. Please try again or email us directly.",
   },
+
+  // Order Page (Epic 1-2)
+  order: {
+    pageTitle: 'Place New Order',
+    pageSubtitle: "Select quantities for the products you'd like to order.",
+    productUnavailable: 'Currently unavailable',
+    pricePerUnit: 'per unit',
+  },
+
+  // Wholesale product catalog — Shopify product handles
+  // Update these to match the actual handles in your Shopify store
+  catalog: {
+    productHandles: [
+      'isla-suds-lavender-bar-soap',
+      'isla-suds-citrus-bar-soap',
+      'isla-suds-eucalyptus-bar-soap',
+      'isla-suds-unscented-bar-soap',
+    ] as const,
+  },
 } as const;

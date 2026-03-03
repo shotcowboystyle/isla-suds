@@ -4,7 +4,7 @@
  * Unified query for all wholesale routes. Fetches:
  * - Customer identity (id, firstName, lastName, displayName)
  * - Email
- * - Company association (B2B validation)
+ * - Tags (used to identify wholesale partners via the "wholesale" tag)
  */
 
 export const WHOLESALE_CUSTOMER_QUERY = `#graphql
@@ -17,16 +17,7 @@ export const WHOLESALE_CUSTOMER_QUERY = `#graphql
         emailAddress
       }
       displayName
-      companyContacts(first: 1) {
-        edges {
-          node {
-            company {
-              id
-              name
-            }
-          }
-        }
-      }
+      tags
     }
   }
 `;

@@ -683,20 +683,11 @@ export type WholesaleCustomerQueryVariables = CustomerAccountAPI.Exact<{
 export type WholesaleCustomerQuery = {
   customer: Pick<
     CustomerAccountAPI.Customer,
-    'id' | 'firstName' | 'lastName' | 'displayName'
+    'id' | 'firstName' | 'lastName' | 'displayName' | 'tags'
   > & {
     emailAddress?: CustomerAccountAPI.Maybe<
       Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
     >;
-    companyContacts: {
-      edges: Array<{
-        node: {
-          company?: CustomerAccountAPI.Maybe<
-            Pick<CustomerAccountAPI.Company, 'id' | 'name'>
-          >;
-        };
-      }>;
-    };
   };
 };
 
@@ -733,7 +724,7 @@ interface GeneratedQueryTypes {
     return: GetOrderHistoryQuery;
     variables: GetOrderHistoryQueryVariables;
   };
-  '#graphql\n  query WholesaleCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      companyContacts(first: 1) {\n        edges {\n          node {\n            company {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query WholesaleCustomer {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      displayName\n      tags\n    }\n  }\n': {
     return: WholesaleCustomerQuery;
     variables: WholesaleCustomerQueryVariables;
   };

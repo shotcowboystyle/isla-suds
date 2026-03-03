@@ -10,9 +10,9 @@ export const meta: Route.MetaFunction = () => {
   return [{title: LOCATIONS_PAGE.meta.title}, {name: 'description', content: LOCATIONS_PAGE.meta.description}];
 };
 
-const COLLECTION_ITEM_FRAGMENT = `#graphql
+const LOCATION_PRODUCT_FRAGMENT = `#graphql
   ${MONEY_FRAGMENT}
-  fragment CollectionItem on Product {
+  fragment LocationProduct on Product {
     id
     handle
     title
@@ -45,14 +45,14 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
 ` as const;
 
 const CATALOG_QUERY = `#graphql
-  query Catalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
+  query LocationsCatalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
     products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
       nodes {
-        ...CollectionItem
+        ...LocationProduct
       }
     }
   }
-  ${COLLECTION_ITEM_FRAGMENT}
+  ${LOCATION_PRODUCT_FRAGMENT}
 ` as const;
 
 export async function loader({context, request}: Route.LoaderArgs) {

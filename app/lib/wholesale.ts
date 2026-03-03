@@ -1,20 +1,21 @@
 import {redirect} from 'react-router';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 
+const WHOLESALE_TAG = 'wholesale';
+
 /**
- * Extract the B2B company from a customer's companyContacts edge.
- * Returns null if the customer has no company association.
+ * Check whether a customer has the "wholesale" tag, granting portal access.
+ * Tag is set manually in Shopify Admin → Customers → [customer] → Tags.
  */
-export function getB2BCompany(customer: {
-  companyContacts?: {
-    edges?: Array<{
-      node?: {
-        company?: {id: string; name: string} | null;
-      } | null;
-    }> | null;
-  } | null;
-}) {
-  return customer.companyContacts?.edges?.[0]?.node?.company ?? null;
+export function isWholesaleCustomer(customer: {tags?: Array<string> | null}) {
+  return customer.tags?.includes(WHOLESALE_TAG) ?? false;
+}
+
+/**
+ * @deprecated Use isWholesaleCustomer() — kept temporarily to surface call sites at compile time.
+ */
+export function getB2BCompany(customer: {tags?: Array<string> | null}) {
+  return isWholesaleCustomer(customer) ? {id: 'tag-based', name: WHOLESALE_TAG} : null;
 }
 
 /**

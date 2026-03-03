@@ -66,8 +66,9 @@ The Wholesale Order Page adds a dedicated order builder to the existing Isla Sud
 |--------|--------|
 | **Page load** | <2.5s LCP (consistent with site-wide CWV targets) |
 | **Checkout redirect** | Cart creation + redirect in <3s |
-| **Price accuracy** | Wholesale prices always match Shopify B2B price list (no stale data) |
-| **Auth security** | B2B verification on every request (consistent with existing wholesale guards) |
+| **Price accuracy** | Wholesale prices displayed from variant metafields (`wholesale.price`) set in Shopify Admin — source of truth lives in Shopify, not in code |
+| **Auth security** | Wholesale tag verification on every request (customer must have `wholesale` tag in Shopify Admin) |
+| **Discount accuracy** | 20% automatic discount applied at checkout via Shopify Functions when `wholesale` customer tag is detected |
 
 ### Measurable Outcomes
 
@@ -239,14 +240,17 @@ _Performance, accessibility, and integration requirements are defined in the Non
 | Asset | Owner | Status |
 |-------|-------|--------|
 | Product images in Shopify | Founder | Already exists |
-| Wholesale pricing in Shopify B2B | Founder | Already configured |
 | 4 products in Shopify catalog | Founder | Already exists |
+| `wholesale.price` metafield on each variant | Founder | **Needs setup** — add via Shopify Admin → Products → [product] → Variants → Metafields |
+| `wholesale` customer tag on approved partners | Founder | **Ongoing** — set via Shopify Admin → Customers → [customer] → Tags |
+| Shopify Functions discount app (`isla-suds-wholesale-discount`) | Developer | **Needs deploy** — `shopify app deploy` then create automatic discount via GraphQL |
 
 ### Risk Mitigation Strategy
 
 | Risk | Likelihood | Mitigation |
 |------|-----------|-----------|
-| **Storefront API doesn't return wholesale prices with buyerIdentity** | Low — reorder flow already uses this pattern | Test with existing B2B customer token before building UI |
+| **`wholesale.price` metafield not set on a variant** | Medium — manual Admin setup required | Display "Price on request" fallback; disable quantity selector until metafield is populated |
+| **Shopify Functions app not deployed or automatic discount not active** | Low — one-time setup | Partners see retail price at checkout instead of discounted price. See `docs/wholesale-discount-update-guide.md` for setup steps |
 | **Product temporarily out of stock** | Medium | Show product but disable quantity selector with "Currently unavailable" message |
 | **Partner enters non-numeric or negative quantities** | Low | HTML input type="number" with min=0, client + server validation |
 
@@ -257,7 +261,7 @@ _Performance, accessibility, and integration requirements are defined in the Non
 - **FR1:** Wholesale partners can view all 4 soap products on a single order page
 - **FR2:** Wholesale partners can see the product image for each soap
 - **FR3:** Wholesale partners can see the product name for each soap
-- **FR4:** Wholesale partners can see their wholesale unit price for each soap
+- **FR4:** Wholesale partners can see their wholesale unit price for each soap, sourced from the variant's `wholesale.price` metafield configured in Shopify Admin
 
 ### Order Building
 
@@ -281,7 +285,7 @@ _Performance, accessibility, and integration requirements are defined in the Non
 - **FR16:** Wholesale partners can submit their order via a "Proceed to Checkout" action
 - **FR17:** System creates a Shopify cart with the selected line items and the partner's buyer identity
 - **FR18:** System redirects the partner to Shopify checkout after successful cart creation
-- **FR19:** Wholesale partners receive their B2B wholesale pricing at checkout (applied via buyer identity)
+- **FR19:** Wholesale partners receive an automatic 20% discount at checkout, applied by the Shopify Functions discount app when the partner's `wholesale` customer tag is detected via buyer identity
 
 ### Navigation & Access
 
@@ -315,9 +319,9 @@ _Performance, accessibility, and integration requirements are defined in the Non
 
 | Requirement | Target | Rationale |
 |------------|--------|-----------|
-| **NFR5:** B2B authentication | Every request to the order page must verify wholesale partner status | Prevents unauthorized access to wholesale pricing |
+| **NFR5:** B2B authentication | Every request to the order page must verify the customer has the `wholesale` tag in Shopify Admin | Prevents unauthorized access to wholesale pricing |
 | **NFR6:** Server-side validation | All quantities validated server-side before cart creation | Client-side validation alone is bypassable |
-| **NFR7:** Price integrity | Wholesale prices applied exclusively via Shopify B2B buyer identity — no client-side price logic | Prevents price manipulation |
+| **NFR7:** Price integrity | Wholesale unit prices sourced from variant metafields (`wholesale.price`) — no client-side price calculation. Checkout discount applied exclusively via Shopify Functions | Prevents price manipulation; single source of truth in Shopify Admin |
 
 ### Accessibility
 
@@ -333,7 +337,7 @@ _Performance, accessibility, and integration requirements are defined in the Non
 
 | Requirement | Target | Rationale |
 |------------|--------|-----------|
-| **NFR13:** Storefront API product fetch | Products fetched with buyer identity context to display wholesale pricing | Core pricing mechanism |
+| **NFR13:** Storefront API product fetch | Products fetched with `wholesale.price` variant metafield for price display; customer access token passed as buyer identity so Shopify Functions can detect the `wholesale` tag at checkout | Metafield = display price; buyer identity = checkout discount trigger |
 | **NFR14:** Cart API compatibility | Cart creation uses same `context.cart.create()` pattern as existing reorder flow | Consistency and proven reliability |
 | **NFR15:** Checkout redirect | Shopify-hosted checkout URL returned and navigated to seamlessly | No custom checkout — Shopify handles payments |
 
