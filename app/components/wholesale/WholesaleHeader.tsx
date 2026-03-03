@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import {Link, useFetcher} from 'react-router';
+import {Link, useFetcher, useLocation} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {useClickOutside} from '~/hooks/use-click-outside';
@@ -12,6 +12,8 @@ export interface WholesaleHeaderProps {
 export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const fetcher = useFetcher();
+  const location = useLocation();
+  const isOrderPage = location.pathname === WHOLESALE_ROUTES.ORDER;
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -96,6 +98,19 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
               )}
             >
               Dashboard
+            </Link>
+            <Link
+              to={WHOLESALE_ROUTES.ORDER}
+              aria-current={isOrderPage ? 'page' : undefined}
+              className={cn(
+                'text-sm font-medium text-[--text-primary]',
+                'hover:text-[--text-muted] transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--text-primary]',
+                'rounded-sm',
+                isOrderPage && 'underline decoration-[--text-primary]',
+              )}
+            >
+              {wholesaleContent.header.newOrderLink}
             </Link>
             <Link
               to={WHOLESALE_ROUTES.ORDERS}
