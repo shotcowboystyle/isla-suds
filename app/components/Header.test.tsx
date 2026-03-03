@@ -97,8 +97,8 @@ vi.mock('../assets/images/menu-contact.jpeg?responsive', () => ({
 vi.mock('../assets/images/menu-home.png?responsive', () => ({
   default: {src: '/mock-home.png'},
 }));
-vi.mock('../assets/images/menu-tasty-talks.png?responsive', () => ({
-  default: {src: '/mock-tasty-talks.png'},
+vi.mock('../assets/images/menu-wholesale.webp?responsive', () => ({
+  default: {src: '/mock-wholesale.webp'},
 }));
 
 // Mock lucide-react icons
@@ -178,11 +178,11 @@ describe('Header', () => {
   });
 
   describe('FALLBACK_HEADER_MENU - Wholesale Link (AC1, AC2)', () => {
-    it('renders wholesale link in mobile menu pointing to /wholesale/login', () => {
+    it('renders wholesale link in mobile menu pointing to /wholesale', () => {
       renderHeaderMenu('mobile');
       const wholesaleLink = screen.getByRole('link', {name: /wholesale/i});
       expect(wholesaleLink).toBeInTheDocument();
-      expect(wholesaleLink).toHaveAttribute('href', '/wholesale/login');
+      expect(wholesaleLink).toHaveAttribute('href', '/wholesale');
     });
 
     it('wholesale link has correct title text', () => {
@@ -191,13 +191,13 @@ describe('Header', () => {
       expect(wholesaleLink).toHaveTextContent('Wholesale');
     });
 
-    it('wholesale link appears after About link in menu order', () => {
+    it('wholesale link appears before About link in menu order', () => {
       renderHeaderMenu('mobile');
       const links = screen.getAllByRole('link');
       const linkTexts = links.map((link) => link.textContent);
       const aboutIndex = linkTexts.indexOf('About');
       const wholesaleIndex = linkTexts.indexOf('Wholesale');
-      expect(wholesaleIndex).toBeGreaterThan(aboutIndex);
+      expect(wholesaleIndex).toBeLessThan(aboutIndex);
     });
 
     it('mobile menu includes Home link when viewport is mobile', () => {
@@ -210,38 +210,36 @@ describe('Header', () => {
     it('renders all expected menu items in mobile menu', () => {
       renderHeaderMenu('mobile');
       expect(screen.getByRole('link', {name: /^home$/i})).toBeInTheDocument();
-      expect(screen.getByRole('link', {name: /collections/i})).toBeInTheDocument();
-      expect(screen.getByRole('link', {name: /blog/i})).toBeInTheDocument();
-      expect(screen.getByRole('link', {name: /policies/i})).toBeInTheDocument();
-      expect(screen.getByRole('link', {name: /about/i})).toBeInTheDocument();
-      expect(screen.getByRole('link', {name: /wholesale/i})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /^shop$/i})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /^stores$/i})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /^wholesale$/i})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /^about$/i})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: /^contact$/i})).toBeInTheDocument();
     });
   });
 
   describe('Navigation Links (AC1, AC4)', () => {
-    it('Collections link points to /collections', () => {
+    it('Shop link points to /collections', () => {
       renderHeaderMenu('mobile');
-      const collectionsLink = screen.getByRole('link', {
-        name: /collections/i,
-      });
-      expect(collectionsLink).toHaveAttribute('href', '/collections');
+      const shopLink = screen.getByRole('link', {name: /^shop$/i});
+      expect(shopLink).toHaveAttribute('href', '/collections');
     });
 
-    it('Blog link points to /blogs/journal', () => {
+    it('Stores link points to /locations', () => {
       renderHeaderMenu('mobile');
-      const blogLink = screen.getByRole('link', {name: /blog/i});
-      expect(blogLink).toHaveAttribute('href', '/blogs/journal');
+      const storesLink = screen.getByRole('link', {name: /^stores$/i});
+      expect(storesLink).toHaveAttribute('href', '/locations');
     });
 
-    it('Policies link points to /policies', () => {
+    it('Contact link points to /contact', () => {
       renderHeaderMenu('mobile');
-      const policiesLink = screen.getByRole('link', {name: /policies/i});
-      expect(policiesLink).toHaveAttribute('href', '/policies');
+      const contactLink = screen.getByRole('link', {name: /^contact$/i});
+      expect(contactLink).toHaveAttribute('href', '/contact');
     });
 
     it('About link points to /about', () => {
       renderHeaderMenu('mobile');
-      const aboutLink = screen.getByRole('link', {name: /about/i});
+      const aboutLink = screen.getByRole('link', {name: /^about$/i});
       expect(aboutLink).toHaveAttribute('href', '/about');
     });
   });
@@ -359,12 +357,12 @@ describe('Header', () => {
       expect(aboutLink).toHaveClass('tracking-tighter');
     });
 
-    it('wholesale link appears at end of navigation list', () => {
+    it('contact link appears at end of navigation list', () => {
       renderHeaderMenu('mobile');
       const nav = screen.getByRole('navigation');
       const navLinks = nav.querySelectorAll('a');
       const lastNavLink = navLinks[navLinks.length - 1];
-      expect(lastNavLink).toHaveTextContent('Wholesale');
+      expect(lastNavLink).toHaveTextContent('Contact');
     });
   });
 

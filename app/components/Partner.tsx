@@ -33,7 +33,7 @@ export function Partner() {
         </div>
       </div>
 
-      <div className={styles['partner-content-grid']}>
+      {/* <div className={styles['partner-content-grid']}>
         <div className={styles['partner-heading-wrapper']}>
           <div className={styles['partner-heading-text-wrapper']}>
             <div className={styles['partner-heading-text-content']}>
@@ -67,7 +67,7 @@ export function Partner() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className={styles['partner-sticker-text-wrapper']}>
         <div

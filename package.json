@@ -30,7 +30,8 @@
     "test:perf": "playwright test tests/performance",
     "test:perf:wholesale": "playwright test tests/performance/wholesale-reorder.perf.spec.ts",
     "test:component": "vitest run tests/component",
-    "test:wholesale": "playwright test tests/**/*wholesale*.spec.ts"
+    "test:wholesale": "playwright test tests/**/*wholesale*.spec.ts",
+    "test:unit:all": "vitest run"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

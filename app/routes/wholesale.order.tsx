@@ -70,18 +70,15 @@ export async function loader({context}: Route.LoaderArgs) {
   const customerAccessToken = await context.session.get('customerAccessToken');
   const [handle1, handle2, handle3, handle4] = wholesaleContent.catalog.productHandles;
 
-  const {soap1, soap2, soap3, soap4} = await context.storefront.query(
-    WHOLESALE_PRODUCTS_QUERY,
-    {
-      variables: {
-        buyer: customerAccessToken ? {customerAccessToken} : undefined,
-        handle1,
-        handle2,
-        handle3,
-        handle4,
-      },
+  const {soap1, soap2, soap3, soap4} = await context.storefront.query(WHOLESALE_PRODUCTS_QUERY, {
+    variables: {
+      buyer: customerAccessToken ? {customerAccessToken} : undefined,
+      handle1,
+      handle2,
+      handle3,
+      handle4,
     },
-  );
+  });
 
   const products = [soap1, soap2, soap3, soap4]
     .filter((p): p is NonNullable<typeof p> => Boolean(p))
@@ -162,8 +159,7 @@ export default function WholesaleOrderPage() {
   const fetcher = useFetcher<CheckoutActionResponse>();
 
   const isLoading = fetcher.state === 'submitting';
-  const checkoutError =
-    fetcher.data?.success === false ? fetcher.data.error : undefined;
+  const checkoutError = fetcher.data?.success === false ? fetcher.data.error : undefined;
 
   useEffect(() => {
     if (fetcher.data?.success && fetcher.data.checkoutUrl) {
@@ -176,21 +172,17 @@ export default function WholesaleOrderPage() {
   };
 
   const handleCheckout = () => {
-    fetcher.submit(
-      {quantities: JSON.stringify(quantities)},
-      {method: 'POST'},
-    );
+    fetcher.submit({quantities: JSON.stringify(quantities)}, {method: 'POST'}).catch(() => {
+      // Safe to catch: cart creation failure returns error response, no re-throw needed
+      return {success: false, error: wholesaleContent.auth.genericError};
+    });
   };
 
   return (
     <div>
       <div className={cn('mb-8')}>
-        <h1 className={cn('text-2xl font-semibold text-[--text-primary]')}>
-          {wholesaleContent.order.pageTitle}
-        </h1>
-        <p className={cn('mt-1 text-sm text-[--text-muted]')}>
-          {wholesaleContent.order.pageSubtitle}
-        </p>
+        <h1 className={cn('text-2xl font-semibold text-[--text-primary]')}>{wholesaleContent.order.pageTitle}</h1>
+        <p className={cn('mt-1 text-sm text-[--text-muted]')}>{wholesaleContent.order.pageSubtitle}</p>
       </div>
 
       <div className={cn('flex flex-col gap-6', 'sm:flex-row sm:items-start')}>

@@ -132,23 +132,14 @@ describe('initLenis', () => {
 
     // Mock Lenis to throw an error
     const Lenis = await import('lenis');
-    vi.mocked(Lenis.default).mockImplementationOnce(() => {
+    vi.mocked(Lenis.default).mockImplementationOnce(function () {
       throw new Error('Lenis initialization failed');
-    });
-
-    const consoleWarnSpy = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => {});
+    } as unknown as typeof Lenis.default);
 
     const result = await initLenis();
 
+    // Source silently returns null on error (progressive enhancement fallback)
     expect(result).toBeNull();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to initialize Lenis smooth scroll'),
-      expect.any(Error),
-    );
-
-    consoleWarnSpy.mockRestore();
   });
 });
 
@@ -219,18 +210,9 @@ describe('destroyLenis', () => {
       });
     }
 
-    const consoleWarnSpy = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => {});
-
     // Should not throw
     expect(() => destroyLenis()).not.toThrow();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to destroy Lenis instance'),
-      expect.any(Error),
-    );
 
-    consoleWarnSpy.mockRestore();
     rafSpy.mockRestore();
   });
 

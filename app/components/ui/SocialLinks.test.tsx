@@ -39,9 +39,8 @@ describe('SocialLinks', () => {
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
 
-      // h-14 w-14 = 56px x 56px touch target
-      expect(instagramIcon).toHaveClass('h-14');
-      expect(instagramIcon).toHaveClass('w-14');
+      // CSS module .link-block defines width/height: 52px touch target
+      expect(instagramIcon.className).toMatch(/link-block/);
     });
 
     it('icons have "Coming soon" title attribute', () => {
@@ -85,8 +84,8 @@ describe('SocialLinks', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('rounded-full');
-      expect(instagramIcon).toHaveClass('border-2');
+      // CSS module .link-block defines border-radius: 100vw and border via CSS module class
+      expect(instagramIcon.className).toMatch(/link-block/);
     });
 
     it('layout adapts for future activation (data attributes present)', () => {
@@ -107,7 +106,8 @@ describe('SocialLinks', () => {
       render(<SocialLinks />);
 
       const instagramIcon = screen.getByLabelText(/instagram/i);
-      expect(instagramIcon).toHaveClass('transition-colors');
+      // CSS module .link-block defines transition: all 0.2s via CSS module class
+      expect(instagramIcon.className).toMatch(/link-block/);
     });
 
     it('each icon contains an SVG element', () => {

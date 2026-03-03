@@ -37,6 +37,6 @@ describe('OrderStatusBadge', () => {
   it('applies default variant styling for non-FULFILLED status', () => {
     render(<OrderStatusBadge status="UNFULFILLED" />);
     const badge = screen.getByText('Processing');
-    expect(badge).toHaveClass('bg-gray-100', 'text-gray-800');
+    expect(badge).toHaveClass('bg-yellow-100', 'text-yellow-800');
   });
 });

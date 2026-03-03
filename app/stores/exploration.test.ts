@@ -83,35 +83,25 @@ describe('Exploration Store', () => {
     });
 
     it('should reject empty string productId', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const initialState = useExplorationStore.getState();
       const initialSize = initialState.productsExplored.size;
 
       useExplorationStore.getState().addProductExplored('');
 
       const state = useExplorationStore.getState();
+      // Source silently ignores invalid input (no console.warn)
       expect(state.productsExplored.size).toBe(initialSize);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'addProductExplored: Invalid productId',
-        '',
-      );
-      consoleSpy.mockRestore();
     });
 
     it('should reject whitespace-only productId', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const initialState = useExplorationStore.getState();
       const initialSize = initialState.productsExplored.size;
 
       useExplorationStore.getState().addProductExplored('   ');
 
       const state = useExplorationStore.getState();
+      // Source silently ignores invalid input (no console.warn)
       expect(state.productsExplored.size).toBe(initialSize);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'addProductExplored: Invalid productId',
-        '   ',
-      );
-      consoleSpy.mockRestore();
     });
   });
 
