@@ -28,6 +28,7 @@ export const wholesaleContent = {
   // Header
   header: {
     welcomePrefix: 'Welcome',
+    newOrderLink: 'New Order',
   },
 
   // Logout Confirmation
