@@ -14,9 +14,10 @@ export interface OrderSummaryProps {
   quantities: Record<string, number>;
   onCheckout: () => void;
   isLoading?: boolean;
+  error?: string;
 }
 
-export function OrderSummary({products, quantities, onCheckout, isLoading = false}: OrderSummaryProps) {
+export function OrderSummary({products, quantities, onCheckout, isLoading = false, error}: OrderSummaryProps) {
   const {summary} = wholesaleContent.order;
 
   const selectedItems = products
@@ -101,6 +102,15 @@ export function OrderSummary({products, quantities, onCheckout, isLoading = fals
             <Money data={subtotalMoney} />
           </span>
         </div>
+      )}
+
+      {error && (
+        <p
+          role="alert"
+          className={cn('text-sm text-[--text-muted]')}
+        >
+          {error}
+        </p>
       )}
 
       <button

@@ -162,6 +162,8 @@ export default function WholesaleOrderPage() {
   const fetcher = useFetcher<CheckoutActionResponse>();
 
   const isLoading = fetcher.state === 'submitting';
+  const checkoutError =
+    fetcher.data?.success === false ? fetcher.data.error : undefined;
 
   useEffect(() => {
     if (fetcher.data?.success && fetcher.data.checkoutUrl) {
@@ -209,6 +211,7 @@ export default function WholesaleOrderPage() {
             quantities={quantities}
             onCheckout={handleCheckout}
             isLoading={isLoading}
+            error={checkoutError}
           />
         </div>
       </div>
