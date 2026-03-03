@@ -12,9 +12,11 @@ type SummaryProduct = Omit<WholesaleProductFieldsFragment, 'variants'> & {
 export interface OrderSummaryProps {
   products: SummaryProduct[];
   quantities: Record<string, number>;
+  onCheckout: () => void;
+  isLoading?: boolean;
 }
 
-export function OrderSummary({products, quantities}: OrderSummaryProps) {
+export function OrderSummary({products, quantities, onCheckout, isLoading = false}: OrderSummaryProps) {
   const {summary} = wholesaleContent.order;
 
   const selectedItems = products
@@ -103,14 +105,15 @@ export function OrderSummary({products, quantities}: OrderSummaryProps) {
 
       <button
         type="button"
-        disabled={checkoutDisabled}
+        disabled={checkoutDisabled || isLoading}
+        onClick={onCheckout}
         className={cn(
           'mt-2 w-full rounded-md px-4 py-3',
           'bg-[--text-primary] text-sm font-medium text-[--canvas-base]',
-          checkoutDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
+          checkoutDisabled || isLoading ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
         )}
       >
-        {summary.checkoutButton}
+        {isLoading ? summary.checkoutButtonLoading : summary.checkoutButton}
       </button>
     </aside>
   );

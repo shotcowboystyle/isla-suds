@@ -1,4 +1,5 @@
 import {render, screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {describe, expect, it, vi} from 'vitest';
 import {OrderSummary} from './OrderSummary';
 
@@ -35,10 +36,12 @@ const mockProducts = [
   },
 ];
 
+const noop = () => {};
+
 describe('OrderSummary', () => {
   describe('empty state', () => {
     it('shows empty state when quantities map is empty', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.getByText(/no items added yet/i)).toBeInTheDocument();
     });
 
@@ -50,13 +53,14 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 0,
             'gid://shopify/ProductVariant/2': 0,
           }}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText(/no items added yet/i)).toBeInTheDocument();
     });
 
     it('does not show subtotal in empty state', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.queryByText(/subtotal/i)).not.toBeInTheDocument();
     });
   });
@@ -67,6 +71,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText('Lavender Bar Soap')).toBeInTheDocument();
@@ -77,6 +82,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText(/× 6/)).toBeInTheDocument();
@@ -87,6 +93,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       // 6 × $6.00 = $36.00 — appears in both line item and subtotal for single product
@@ -101,6 +108,7 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 6,
             'gid://shopify/ProductVariant/2': 0,
           }}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText('Lavender Bar Soap')).toBeInTheDocument();
@@ -115,6 +123,7 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 6,
             'gid://shopify/ProductVariant/2': 12,
           }}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText('Lavender Bar Soap')).toBeInTheDocument();
@@ -128,6 +137,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByText(/subtotal/i)).toBeInTheDocument();
@@ -141,6 +151,7 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 6,
             'gid://shopify/ProductVariant/2': 12,
           }}
+          onCheckout={noop}
         />,
       );
       // 6×6.00 = 36.00, 12×7.00 = 84.00, subtotal = 120.00
@@ -152,6 +163,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       // Both line total and subtotal show USD 36.00
@@ -162,24 +174,24 @@ describe('OrderSummary', () => {
 
   describe('heading and structure', () => {
     it('renders the Order Summary heading', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.getByRole('heading', {name: /order summary/i})).toBeInTheDocument();
     });
 
     it('renders as an aside with accessible label', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.getByRole('complementary', {name: /order summary/i})).toBeInTheDocument();
     });
   });
 
   describe('checkout button', () => {
     it('renders the Proceed to Checkout button', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeInTheDocument();
     });
 
     it('checkout button is disabled when no items are selected', () => {
-      render(<OrderSummary products={mockProducts} quantities={{}} />);
+      render(<OrderSummary products={mockProducts} quantities={{}} onCheckout={noop} />);
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
     });
 
@@ -188,6 +200,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).not.toBeDisabled();
@@ -201,6 +214,7 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 6,
             'gid://shopify/ProductVariant/2': 12,
           }}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).not.toBeDisabled();
@@ -211,6 +225,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 1}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
@@ -221,6 +236,7 @@ describe('OrderSummary', () => {
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 5}}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
@@ -234,9 +250,72 @@ describe('OrderSummary', () => {
             'gid://shopify/ProductVariant/1': 6,
             'gid://shopify/ProductVariant/2': 3,
           }}
+          onCheckout={noop}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
+    });
+
+    it('calls onCheckout when button is clicked and enabled', async () => {
+      const onCheckout = vi.fn();
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={onCheckout}
+        />,
+      );
+      await userEvent.click(screen.getByRole('button', {name: /proceed to checkout/i}));
+      expect(onCheckout).toHaveBeenCalledOnce();
+    });
+
+    it('does not call onCheckout when button is disabled', async () => {
+      const onCheckout = vi.fn();
+      render(
+        <OrderSummary products={mockProducts} quantities={{}} onCheckout={onCheckout} />,
+      );
+      await userEvent.click(screen.getByRole('button', {name: /proceed to checkout/i}));
+      expect(onCheckout).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('loading state', () => {
+    it('shows loading text when isLoading is true', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+          isLoading
+        />,
+      );
+      expect(screen.getByRole('button', {name: /processing/i})).toBeInTheDocument();
+    });
+
+    it('disables button when isLoading is true', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+          isLoading
+        />,
+      );
+      expect(screen.getByRole('button', {name: /processing/i})).toBeDisabled();
+    });
+
+    it('does not call onCheckout when isLoading is true', async () => {
+      const onCheckout = vi.fn();
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={onCheckout}
+          isLoading
+        />,
+      );
+      await userEvent.click(screen.getByRole('button', {name: /processing/i}));
+      expect(onCheckout).not.toHaveBeenCalled();
     });
   });
 });
