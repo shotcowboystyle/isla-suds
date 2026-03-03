@@ -183,11 +183,57 @@ describe('OrderSummary', () => {
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
     });
 
-    it('checkout button is disabled even when items are selected (Epic 2 will enable)', () => {
+    it('checkout button is enabled when at least one item has valid quantity (>= 6)', () => {
       render(
         <OrderSummary
           products={mockProducts}
           quantities={{'gid://shopify/ProductVariant/1': 6}}
+        />,
+      );
+      expect(screen.getByRole('button', {name: /proceed to checkout/i})).not.toBeDisabled();
+    });
+
+    it('checkout button is enabled when multiple items have valid quantities', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{
+            'gid://shopify/ProductVariant/1': 6,
+            'gid://shopify/ProductVariant/2': 12,
+          }}
+        />,
+      );
+      expect(screen.getByRole('button', {name: /proceed to checkout/i})).not.toBeDisabled();
+    });
+
+    it('checkout button is disabled when a product has quantity 1 (below MOQ)', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 1}}
+        />,
+      );
+      expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
+    });
+
+    it('checkout button is disabled when a product has quantity 5 (below MOQ)', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 5}}
+        />,
+      );
+      expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();
+    });
+
+    it('checkout button is disabled when one valid and one invalid quantity exist', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{
+            'gid://shopify/ProductVariant/1': 6,
+            'gid://shopify/ProductVariant/2': 3,
+          }}
         />,
       );
       expect(screen.getByRole('button', {name: /proceed to checkout/i})).toBeDisabled();

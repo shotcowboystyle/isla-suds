@@ -82,6 +82,7 @@ export const wholesaleContent = {
     pageSubtitle: "Select quantities for the products you'd like to order.",
     productUnavailable: 'Currently unavailable',
     pricePerUnit: 'per unit',
+    moqError: 'Minimum order is 6 units',
     summary: {
       title: 'Order Summary',
       emptyState: 'No items added yet.',
