@@ -2,6 +2,7 @@ import {redirect, useLoaderData} from 'react-router';
 import {WholesaleLandingPage} from '~/components/wholesale/landing/WholesaleLandingPage';
 import {LastOrder} from '~/components/wholesale/LastOrder';
 import {PartnerAcknowledgment} from '~/components/wholesale/PartnerAcknowledgment';
+import {PlaceNewOrderCTA} from '~/components/wholesale/PlaceNewOrderCTA';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {GET_LAST_ORDER_QUERY} from '~/graphql/customer-account/GetLastOrder';
@@ -214,6 +215,7 @@ export default function WholesaleDashboard() {
   return (
     <div>
       <PartnerAcknowledgment partnerName={partnerName} storeCount={storeCount} />
+      <PlaceNewOrderCTA />
       <LastOrder order={lastOrder} />
     </div>
   );

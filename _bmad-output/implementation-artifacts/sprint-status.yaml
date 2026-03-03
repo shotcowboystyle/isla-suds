@@ -166,19 +166,19 @@ development_status:
   # ============================================================================
 
   # Epic WO-1: Product Display & Order Building (4 stories)
-  epic-wo-1: in-progress
+  epic-wo-1: done
   wo-1-1-display-wholesale-products-on-order-page: done
   wo-1-2-set-product-quantities: done
   wo-1-3-live-order-summary: done
   wo-1-4-product-availability-states: done
 
   # Epic WO-2: Checkout Integration (3 stories)
-  epic-wo-2: in-progress
+  epic-wo-2: done
   wo-2-1-validate-and-submit-order: done
   wo-2-2-handle-cart-creation-errors: done
-  wo-2-3-server-side-quantity-validation: backlog
+  wo-2-3-server-side-quantity-validation: done
 
   # Epic WO-3: Access Points Integration (2 stories)
-  epic-wo-3: backlog
-  wo-3-1-add-place-new-order-cta-on-dashboard: backlog
+  epic-wo-3: in-progress
+  wo-3-1-add-place-new-order-cta-on-dashboard: done
   wo-3-2-add-new-order-link-in-wholesale-header: backlog
