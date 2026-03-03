@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {useLoaderData} from 'react-router';
 import {OrderProductCard} from '~/components/wholesale/OrderProductCard';
+import {OrderSummary} from '~/components/wholesale/OrderSummary';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/wholesale.order';
@@ -105,20 +106,21 @@ export default function WholesaleOrderPage() {
         </p>
       </div>
 
-      <div
-        className={cn(
-          'grid grid-cols-1 gap-6',
-          'sm:grid-cols-2',
-        )}
-      >
-        {products.map((product) => (
-          <OrderProductCard
-            key={product.id}
-            product={product}
-            quantity={quantities[product.variant.id] ?? 0}
-            onQuantityChange={handleQuantityChange}
-          />
-        ))}
+      <div className={cn('flex flex-col gap-6', 'sm:flex-row sm:items-start')}>
+        <div className={cn('flex-1 grid grid-cols-1 gap-6', 'sm:grid-cols-2')}>
+          {products.map((product) => (
+            <OrderProductCard
+              key={product.id}
+              product={product}
+              quantity={quantities[product.variant.id] ?? 0}
+              onQuantityChange={handleQuantityChange}
+            />
+          ))}
+        </div>
+
+        <div className={cn('sm:w-72 sm:shrink-0', 'lg:w-80')}>
+          <OrderSummary products={products} quantities={quantities} />
+        </div>
       </div>
     </div>
   );

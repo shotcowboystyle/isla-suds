@@ -82,6 +82,12 @@ export const wholesaleContent = {
     pageSubtitle: "Select quantities for the products you'd like to order.",
     productUnavailable: 'Currently unavailable',
     pricePerUnit: 'per unit',
+    summary: {
+      title: 'Order Summary',
+      emptyState: 'No items added yet.',
+      subtotalLabel: 'Subtotal',
+      checkoutButton: 'Proceed to Checkout',
+    },
   },
 
   // Wholesale product catalog — Shopify product handles
