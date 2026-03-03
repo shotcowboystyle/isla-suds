@@ -175,7 +175,7 @@ development_status:
   # Epic WO-2: Checkout Integration (3 stories)
   epic-wo-2: in-progress
   wo-2-1-validate-and-submit-order: done
-  wo-2-2-handle-cart-creation-errors: backlog
+  wo-2-2-handle-cart-creation-errors: done
   wo-2-3-server-side-quantity-validation: backlog
 
   # Epic WO-3: Access Points Integration (2 stories)

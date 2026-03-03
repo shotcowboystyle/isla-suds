@@ -279,6 +279,71 @@ describe('OrderSummary', () => {
     });
   });
 
+  describe('error state', () => {
+    it('shows error message when error prop is provided', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+          error="Something went wrong. Your order is safe — let's try again."
+        />,
+      );
+      expect(
+        screen.getByText(/something went wrong\. your order is safe/i),
+      ).toBeInTheDocument();
+    });
+
+    it('does not show error message when error prop is undefined', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+        />,
+      );
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('error message is rendered as an alert role for accessibility', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+          error="Something went wrong. Your order is safe — let's try again."
+        />,
+      );
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    it('checkout button remains enabled after error when quantities are valid', () => {
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={noop}
+          error="Something went wrong. Your order is safe — let's try again."
+        />,
+      );
+      expect(screen.getByRole('button', {name: /proceed to checkout/i})).not.toBeDisabled();
+    });
+
+    it('partner can retry after error — onCheckout is callable', async () => {
+      const onCheckout = vi.fn();
+      render(
+        <OrderSummary
+          products={mockProducts}
+          quantities={{'gid://shopify/ProductVariant/1': 6}}
+          onCheckout={onCheckout}
+          error="Something went wrong. Your order is safe — let's try again."
+        />,
+      );
+      await userEvent.click(screen.getByRole('button', {name: /proceed to checkout/i}));
+      expect(onCheckout).toHaveBeenCalledOnce();
+    });
+  });
+
   describe('loading state', () => {
     it('shows loading text when isLoading is true', () => {
       render(

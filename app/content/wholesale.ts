@@ -89,6 +89,7 @@ export const wholesaleContent = {
       subtotalLabel: 'Subtotal',
       checkoutButton: 'Proceed to Checkout',
       checkoutButtonLoading: 'Processing...',
+      cartError: "Something went wrong. Your order is safe — let's try again.",
     },
   },
 
