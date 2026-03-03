@@ -1,8 +1,8 @@
 import {Image, Money} from '@shopify/hydrogen';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
-import type {WholesaleProductFieldsFragment} from 'storefrontapi.generated';
 import {QuantitySelector} from './QuantitySelector';
+import type {WholesaleProductFieldsFragment} from 'storefrontapi.generated';
 
 type WholesaleVariant = WholesaleProductFieldsFragment['variants']['nodes'][0];
 
@@ -48,11 +48,7 @@ export function OrderProductCard({product, quantity, onQuantityChange}: OrderPro
         </p>
       </div>
 
-      {isDisabled && (
-        <p className={cn('text-sm text-[--text-muted]')}>
-          {wholesaleContent.order.productUnavailable}
-        </p>
-      )}
+      {isDisabled && <p className={cn('text-sm text-[--text-muted]')}>{wholesaleContent.order.productUnavailable}</p>}
 
       <QuantitySelector
         value={quantity}

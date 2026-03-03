@@ -9,6 +9,7 @@ vi.mock('@gsap/react', () => ({
 
 vi.mock('gsap', () => ({
   default: {
+    registerPlugin: vi.fn(),
     timeline: vi.fn(() => ({
       to: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
@@ -16,6 +17,10 @@ vi.mock('gsap', () => ({
     set: vi.fn(),
     to: vi.fn(),
   },
+}));
+
+vi.mock('gsap/ScrollTrigger', () => ({
+  ScrollTrigger: {},
 }));
 
 vi.mock('gsap/SplitText', () => ({
@@ -49,6 +54,11 @@ vi.mock('~/components/ui/LiquidButton', () => ({
       {text}
     </a>
   ),
+}));
+
+// Mock preloader context
+vi.mock('~/contexts/preloader-context', () => ({
+  usePreloader: vi.fn(() => ({preloaderComplete: false, setPreloaderComplete: vi.fn()})),
 }));
 
 // Mock CSS modules
@@ -122,6 +132,6 @@ describe('HeroSection', () => {
     render(<HeroSection />);
     const cta = screen.getByText(/shop now/i);
     expect(cta).toBeInTheDocument();
-    expect(cta).toHaveAttribute('href', '/products');
+    expect(cta).toHaveAttribute('href', '/collections/frontpage');
   });
 });

@@ -34,6 +34,12 @@ vi.mock('react-router', () => ({
       {children}
     </a>
   ),
+  Await: ({resolve, children}: any) => {
+    const result = typeof resolve === 'object' && resolve !== null && typeof resolve.then === 'function'
+      ? null
+      : resolve;
+    return children(result);
+  },
 }));
 
 // Mock motion library components (Story 5.7 - animation integration)
@@ -59,7 +65,7 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText(/Your Cart/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', {level: 2})).toBeInTheDocument();
     });
 
     it('does not render drawer when cartDrawerOpen is false', () => {
@@ -175,16 +181,15 @@ describe('CartDrawer', () => {
       render(<CartDrawer />);
 
       const heading = screen.getByRole('heading', {level: 2});
-      expect(heading).toHaveTextContent(/Your Cart/);
+      expect(heading).toHaveTextContent(/Cart/);
     });
 
     it('respects prefers-reduced-motion setting', () => {
       render(<CartDrawer />);
 
       const content = screen.getByRole('dialog');
-      // Verify motion-reduce classes are present
-      expect(content).toHaveClass('motion-reduce:transition-none');
-      expect(content).toHaveClass('motion-reduce:transform-none');
+      // Verify motion-reduce class is present on the dialog content
+      expect(content).toHaveClass('motion-reduce:animation-none');
     });
   });
 

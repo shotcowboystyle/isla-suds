@@ -7,33 +7,24 @@ import type {
   RecommendedProductFragment,
 } from 'storefrontapi.generated';
 
-// Mock CartForm from Shopify Hydrogen (Story 5.3)
-let mockFetcherState = 'idle';
-let mockFetcherData: any = null;
-vi.mock('@shopify/hydrogen', async () => {
-  const actual = await vi.importActual('@shopify/hydrogen');
-  return {
-    ...actual,
-    CartForm: ({children, route, inputs, action}: any) => {
-      const mockFetcher = {
-        state: mockFetcherState,
-        data: mockFetcherData,
-        Form: 'form',
-      };
-      return <div data-testid="cart-form-mock">{children(mockFetcher)}</div>;
-    },
-  };
-});
-
-// Mock Zustand exploration store (Story 5.3)
-const mockSetCartDrawerOpen = vi.fn();
-vi.mock('~/stores/exploration', () => ({
-  useExplorationStore: vi.fn((selector) => {
-    const mockState = {
-      setCartDrawerOpen: mockSetCartDrawerOpen,
-    };
-    return selector ? selector(mockState) : mockState;
-  }),
+// Mock AddToCartButton to avoid useFetcher dependency on a data router.
+// AddToCartButton calls useFetcher (react-router) internally; without a data router
+// context the render throws. The mock surfaces the same data-testid the tests assert against.
+vi.mock('~/components/cart/AddToCartButton', () => ({
+  AddToCartButton: ({children, analytics, lines, onClick, ...props}: any) => (
+    <button
+      type="button"
+      data-testid="add-to-cart-button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick?.(e);
+      }}
+      {...props}
+    >
+      {children}
+    </button>
+  ),
 }));
 
 describe('ProductRevealInfo', () => {
