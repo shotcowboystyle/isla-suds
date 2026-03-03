@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {useLoaderData} from 'react-router';
 import {OrderProductCard} from '~/components/wholesale/OrderProductCard';
 import {wholesaleContent} from '~/content/wholesale';
@@ -87,6 +88,11 @@ export async function loader({context}: Route.LoaderArgs) {
 
 export default function WholesaleOrderPage() {
   const {products} = useLoaderData<typeof loader>();
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+
+  const handleQuantityChange = (variantId: string, quantity: number) => {
+    setQuantities((prev) => ({...prev, [variantId]: quantity}));
+  };
 
   return (
     <div>
@@ -106,7 +112,12 @@ export default function WholesaleOrderPage() {
         )}
       >
         {products.map((product) => (
-          <OrderProductCard key={product.id} product={product} />
+          <OrderProductCard
+            key={product.id}
+            product={product}
+            quantity={quantities[product.variant.id] ?? 0}
+            onQuantityChange={handleQuantityChange}
+          />
         ))}
       </div>
     </div>

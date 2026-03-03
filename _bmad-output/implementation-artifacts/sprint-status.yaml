@@ -159,3 +159,26 @@ development_status:
   9-5-touch-target-size-verification: ready-for-dev
   9-6-automated-accessibility-ci-validation: ready-for-dev
   epic-9-retrospective: optional
+
+  # ============================================================================
+  # Wholesale Order Page Feature Epics (3 epics, 9 stories)
+  # PRD: prd-wholesale-order.md | Architecture: architecture-wholesale-order.md
+  # ============================================================================
+
+  # Epic WO-1: Product Display & Order Building (4 stories)
+  epic-wo-1: in-progress
+  wo-1-1-display-wholesale-products-on-order-page: done
+  wo-1-2-set-product-quantities: done
+  wo-1-3-live-order-summary: backlog
+  wo-1-4-product-availability-states: backlog
+
+  # Epic WO-2: Checkout Integration (3 stories)
+  epic-wo-2: backlog
+  wo-2-1-validate-and-submit-order: backlog
+  wo-2-2-handle-cart-creation-errors: backlog
+  wo-2-3-server-side-quantity-validation: backlog
+
+  # Epic WO-3: Access Points Integration (2 stories)
+  epic-wo-3: backlog
+  wo-3-1-add-place-new-order-cta-on-dashboard: backlog
+  wo-3-2-add-new-order-link-in-wholesale-header: backlog
