@@ -2,6 +2,7 @@ import {Image, Money} from '@shopify/hydrogen';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
 import type {WholesaleProductFieldsFragment} from 'storefrontapi.generated';
+import {QuantitySelector} from './QuantitySelector';
 
 type WholesaleVariant = WholesaleProductFieldsFragment['variants']['nodes'][0];
 
@@ -9,10 +10,13 @@ export interface OrderProductCardProps {
   product: Omit<WholesaleProductFieldsFragment, 'variants'> & {
     variant: WholesaleVariant;
   };
+  quantity: number;
+  onQuantityChange: (variantId: string, quantity: number) => void;
 }
 
-export function OrderProductCard({product}: OrderProductCardProps) {
+export function OrderProductCard({product, quantity, onQuantityChange}: OrderProductCardProps) {
   const {title, featuredImage, variant} = product;
+  const isDisabled = !variant.availableForSale;
 
   return (
     <article
@@ -42,6 +46,13 @@ export function OrderProductCard({product}: OrderProductCardProps) {
           <Money data={variant.price} /> {wholesaleContent.order.pricePerUnit}
         </p>
       </div>
+
+      <QuantitySelector
+        value={quantity}
+        onChange={(qty) => onQuantityChange(variant.id, qty)}
+        productName={title}
+        disabled={isDisabled}
+      />
     </article>
   );
 }
