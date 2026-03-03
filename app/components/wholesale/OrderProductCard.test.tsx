@@ -138,4 +138,38 @@ describe('OrderProductCard', () => {
     expect(screen.getByRole('button', {name: /increase quantity/i})).toBeDisabled();
     expect(screen.getByRole('button', {name: /decrease quantity/i})).toBeDisabled();
   });
+
+  it('shows "Currently unavailable" message when product is unavailable', () => {
+    const unavailableProduct = {
+      ...mockProduct,
+      variant: {...mockProduct.variant, availableForSale: false},
+    };
+    render(<OrderProductCard {...defaultProps} product={unavailableProduct} />);
+
+    expect(screen.getByText('Currently unavailable')).toBeInTheDocument();
+  });
+
+  it('does not show unavailability message when product is available', () => {
+    render(<OrderProductCard {...defaultProps} />);
+
+    expect(screen.queryByText('Currently unavailable')).not.toBeInTheDocument();
+  });
+
+  it('applies reduced opacity class to article when product is unavailable', () => {
+    const unavailableProduct = {
+      ...mockProduct,
+      variant: {...mockProduct.variant, availableForSale: false},
+    };
+    render(<OrderProductCard {...defaultProps} product={unavailableProduct} />);
+
+    const article = screen.getByRole('article', {name: 'Lavender Bar Soap'});
+    expect(article).toHaveClass('opacity-60');
+  });
+
+  it('does not apply reduced opacity when product is available', () => {
+    render(<OrderProductCard {...defaultProps} />);
+
+    const article = screen.getByRole('article', {name: 'Lavender Bar Soap'});
+    expect(article).not.toHaveClass('opacity-60');
+  });
 });

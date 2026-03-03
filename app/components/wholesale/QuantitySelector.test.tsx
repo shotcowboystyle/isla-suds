@@ -95,4 +95,18 @@ describe('QuantitySelector', () => {
     render(<QuantitySelector value={0} onChange={vi.fn()} productName="Test Soap" />);
     expect(screen.getByRole('spinbutton')).toHaveAttribute('min', '0');
   });
+
+  it('group has aria-disabled="true" when disabled prop is true', () => {
+    render(<QuantitySelector value={3} onChange={vi.fn()} productName="Test Soap" disabled />);
+    expect(
+      screen.getByRole('group', {name: /quantity for test soap/i}),
+    ).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('group does not have aria-disabled when disabled prop is false', () => {
+    render(<QuantitySelector value={3} onChange={vi.fn()} productName="Test Soap" />);
+    expect(
+      screen.getByRole('group', {name: /quantity for test soap/i}),
+    ).not.toHaveAttribute('aria-disabled', 'true');
+  });
 });

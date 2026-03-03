@@ -49,6 +49,7 @@ export function QuantitySelector({
     <div
       role="group"
       aria-label={`Quantity for ${productName}`}
+      aria-disabled={disabled}
       className={cn('flex items-center gap-2')}
     >
       <button

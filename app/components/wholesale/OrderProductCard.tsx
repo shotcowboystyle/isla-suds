@@ -24,6 +24,7 @@ export function OrderProductCard({product, quantity, onQuantityChange}: OrderPro
         'flex flex-col gap-4',
         'rounded-lg border border-[--text-muted]/20',
         'bg-canvas-elevated p-4',
+        isDisabled && 'opacity-60',
       )}
       aria-label={title}
     >
@@ -46,6 +47,12 @@ export function OrderProductCard({product, quantity, onQuantityChange}: OrderPro
           <Money data={variant.price} /> {wholesaleContent.order.pricePerUnit}
         </p>
       </div>
+
+      {isDisabled && (
+        <p className={cn('text-sm text-[--text-muted]')}>
+          {wholesaleContent.order.productUnavailable}
+        </p>
+      )}
 
       <QuantitySelector
         value={quantity}
