@@ -43,6 +43,18 @@ export function OrderSummary({products, quantities}: OrderSummaryProps) {
         }
       : null;
 
+  const hasInvalidQuantity = products.some((p) => {
+    const qty = quantities[p.variant.id] ?? 0;
+    return qty > 0 && qty < 6;
+  });
+
+  const hasAtLeastOneValidQuantity = products.some((p) => {
+    const qty = quantities[p.variant.id] ?? 0;
+    return qty >= 6;
+  });
+
+  const checkoutDisabled = hasInvalidQuantity || !hasAtLeastOneValidQuantity;
+
   return (
     <aside
       aria-label={summary.title}
@@ -91,11 +103,11 @@ export function OrderSummary({products, quantities}: OrderSummaryProps) {
 
       <button
         type="button"
-        disabled
+        disabled={checkoutDisabled}
         className={cn(
           'mt-2 w-full rounded-md px-4 py-3',
           'bg-[--text-primary] text-sm font-medium text-[--canvas-base]',
-          'cursor-not-allowed opacity-40',
+          checkoutDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
         )}
       >
         {summary.checkoutButton}
