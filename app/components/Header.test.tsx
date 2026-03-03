@@ -165,6 +165,7 @@ function renderHeaderMenu(viewport: 'desktop' | 'mobile' = 'mobile') {
         primaryDomainUrl={mockHeader.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
         onClose={mockClose}
+        open={true}
       />
     </MemoryRouter>,
   );

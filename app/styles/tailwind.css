@@ -82,12 +82,14 @@
 
   --font-sans: 'Antonio', sans-serif;
   /* --font-sans: 'DynaPuff', sans-serif; */
-  --font-paragraph: 'ProximaNova, sans-serif';
+  /* --font-paragraph: 'ProximaNova, sans-serif'; */
+  --font-paragraph: 'HelveticaNeue', sans-serif;
   /* --font-paragraph: 'DynaPuff', sans-serif; */
 
   /* Text colors (brown tones) - high contrast, readable */
   --text-primary: #2c2416; /* Body text */
-  --text-muted: #8c8578; /* Secondary text */
+  --color-muted: #999999; /* Secondary text */
+  --text-muted: #ffffff11; /* Secondary text */
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -140,9 +142,7 @@
     padding: 0;
     box-sizing: border-box;
     background-color: var(--color-black);
-    color: var(--color-secondary);
-    font-family: var(--font-sans);
-    /* overflow-x: hidden; */
+    font-family: var(--font-paragraph);
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE 10+ */
     --webkit-text-size-adjust: 100%;
@@ -167,22 +167,22 @@
     }
   }
 
+  body {
+    background-color: transparent;
+    background-image: linear-gradient(180deg, #90cfd3 64%, #fcf4e1 100%);
+  }
+
   body::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
   }
 
   p {
-    /* color: var(--color-black); */
     margin-top: 0;
     margin-bottom: 0;
-    /* font-family:
-    Proxima Nova,
-    sans-serif; */
-    font-family: 'Antonio', sans-serif;
+    font-family: var(--font-paragraph);
     font-weight: 400;
     font-style: normal;
     font-size: 16px;
-    /* font-weight: 400; */
     line-height: 115%;
   }
 
@@ -360,18 +360,22 @@
   }
 }
 
-.card-bg-lavender {
+.card-bg-lavender,
+.card-bg-color-lavender {
   background-color: var(--color-lavender);
 }
 
-.card-bg-lemongrass {
+.card-bg-lemongrass,
+.card-bg-color-lemongrass {
   background-color: var(--color-lemongrass);
 }
 
-.card-bg-sea-salt {
+.card-bg-sea-salt,
+.card-bg-color-sea-salt {
   background-color: var(--color-sea-salt);
 }
 
-.card-bg-eucalyptus {
+.card-bg-eucalyptus,
+.card-bg-color-eucalyptus {
   background-color: var(--color-eucalyptus);
 }

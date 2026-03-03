@@ -1,19 +1,8 @@
-/**
- * Wholesale Portal Header
- *
- * Minimal header for B2B wholesale portal featuring:
- * - Logo link to dashboard
- * - Partner name display
- * - Logout button with confirmation dialog
- * - Full keyboard accessibility (Escape to close, focus management)
- *
- * Story: 7.2
- */
-
 import {useState, useEffect, useRef} from 'react';
 import {Link, useFetcher} from 'react-router';
 import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+import {useClickOutside} from '~/hooks/use-click-outside';
 import {cn} from '~/utils/cn';
 
 export interface WholesaleHeaderProps {
@@ -26,26 +15,28 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
+  const ref = useRef<HTMLButtonElement>(null);
+  useClickOutside(ref, () => {
+    setShowLogoutConfirm(false);
+  });
+
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
   };
 
   const handleConfirmLogout = () => {
-    fetcher.submit(null, {
-      method: 'POST',
-      action: WHOLESALE_ROUTES.LOGOUT,
-    });
+    fetcher
+      .submit(null, {
+        method: 'POST',
+        action: WHOLESALE_ROUTES.LOGOUT,
+      })
+      .catch(() => {
+        setShowLogoutConfirm(false);
+      });
   };
 
   const handleCancelLogout = () => {
     setShowLogoutConfirm(false);
-  };
-
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Close dialog when clicking overlay (not dialog content)
-    if (e.target === e.currentTarget) {
-      setShowLogoutConfirm(false);
-    }
   };
 
   // Keyboard accessibility: Escape to close, focus management
@@ -81,7 +72,6 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
           'bg-canvas-elevated',
         )}
       >
-        {/* Logo & Navigation */}
         <div className="flex items-center gap-6">
           <Link
             to={WHOLESALE_ROUTES.DASHBOARD}
@@ -95,7 +85,6 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
             Isla Suds
           </Link>
 
-          {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-4">
             <Link
               to={WHOLESALE_ROUTES.DASHBOARD}
@@ -122,14 +111,11 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
           </nav>
         </div>
 
-        {/* Partner Info & Actions */}
         <div className="flex items-center gap-4 sm:gap-6">
-          {/* Partner Name */}
           <span className="text-sm text-[--text-muted] hidden sm:inline">
             {wholesaleContent.header.welcomePrefix}, {customerName}
           </span>
 
-          {/* Logout Button */}
           <button
             ref={logoutButtonRef}
             type="button"
@@ -149,14 +135,13 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
         </div>
       </header>
 
-      {/* Logout Confirmation Dialog */}
       {showLogoutConfirm && (
         <div
+          ref={ref}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           role="dialog"
           aria-modal="true"
           aria-labelledby="logout-dialog-title"
-          onClick={handleOverlayClick}
         >
           <div className="bg-canvas-elevated rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
             <h2 id="logout-dialog-title" className="text-lg font-semibold text-[--text-primary] mb-2">
@@ -176,6 +161,7 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
               >
                 {wholesaleContent.logout.cancelButton}
               </button>
+
               <button
                 ref={confirmButtonRef}
                 type="button"

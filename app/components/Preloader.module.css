@@ -10,7 +10,7 @@
 
 .outerContainer {
   position: absolute;
-  bottom: 0;
+  bottom: 25%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -21,18 +21,18 @@
 
 .container {
   position: relative;
-  padding: 60px 30px 0; /* Remove bottom padding */
+  padding: 60px 30px 0;
   transform-origin: bottom center;
 }
 
 .logoWrapper {
   position: absolute;
-  bottom: -35px; /* Sit deeper in the hand */
+  bottom: 70%;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px; /* approximates width of logic */
+  width: 300px;
   height: 100px;
-  z-index: 1; /* Behind hand (z-index 4) */
+  z-index: 3;
 }
 
 .logo {
@@ -43,14 +43,14 @@
   fill: rgba(255, 255, 255, 1);
   stroke: rgba(255, 255, 255, 1);
   width: 110%;
-  filter: drop-shadow(1px 2px 0px #c1dade); /* Mimic foam shadow */
+  filter: drop-shadow(1px 2px 0px #c1dade);
 }
 
 .logoFoam {
   border-radius: 50%;
   background-color: #fff;
   position: absolute;
-  z-index: 2; /* On top of text */
+  z-index: 2;
   box-shadow:
     inset -2px -2px 1px 0px #c7eff7,
     1px 2px 0px 0px #c1dade;
@@ -151,24 +151,23 @@
 .bathtub-body {
   position: relative;
   width: 300px;
-  height: 125px; /* Reduced height for just the hand/rim */
+  height: 125px;
   font-size: 0;
-
-  &::before,
-  &::after {
-    content: '';
-    display: inline-block;
-    width: 50%;
-    height: 100%;
-    background-color: #c7eff7;
-    border-radius: 0 0 70% 0;
-  }
-  &::before {
-    border-radius: 0 0 0 70%;
-  }
-  &::after {
-    box-shadow: inset -20px 4px 14px 3px #98c0c7;
-  }
+}
+.bathtub-body::before,
+.bathtub-body::after {
+  content: '';
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+  background-color: #c7eff7;
+  border-radius: 0 0 70% 0;
+}
+.bathtub-body::before {
+  border-radius: 0 0 0 70%;
+}
+.bathtub-body::after {
+  box-shadow: inset -20px 4px 14px 3px #98c0c7;
 }
 
 .bathtub-body-s {
@@ -294,14 +293,14 @@
   width: 20px;
   height: 20px;
   top: -10px;
-  left: 10px; /* Adjusted */
+  left: 130px;
 }
 
 .f2 {
   width: 30px;
   height: 30px;
   top: -20px;
-  left: 22px; /* Adjusted */
+  left: 142px;
 }
 
 .f3 {
@@ -323,17 +322,15 @@
 .f5 {
   width: 20px;
   height: 20px;
-  top: -3px;
-  right: 80px; /* Adjusted to right */
-  left: auto;
+  top: -13px;
+  left: 203px;
 }
 
 .f6 {
   width: 40px;
   height: 40px;
   top: -27px;
-  right: 40px; /* Adjusted */
-  left: auto;
+  left: 215px;
   z-index: 4;
 }
 
@@ -341,49 +338,164 @@
   width: 40px;
   height: 40px;
   top: -20px;
-  right: 10px; /* Adjusted */
-  left: auto;
+  left: 248px;
 }
 
 .f8 {
   width: 40px;
   height: 40px;
   top: -40px;
-  right: 0px; /* Adjusted */
-  left: auto;
+  left: 263px;
 }
 
 .f9 {
   width: 40px;
   height: 40px;
   top: -18px;
-  right: -20px; /* Adjusted */
-  left: auto;
+  left: 279px;
 }
 
 .f10 {
   width: 20px;
   height: 20px;
   top: -17px;
-  right: 20px; /* Adjusted */
+  left: 265px;
+}
+
+.f11 {
+  width: 20px;
+  height: 20px;
+  top: -17px;
+  right: 265px;
   left: auto;
 }
 
+.f12 {
+  width: 40px;
+  height: 40px;
+  top: -18px;
+  right: 279px;
+  left: auto;
+}
+
+.f13 {
+  width: 40px;
+  height: 40px;
+  top: -40px;
+  right: 263px;
+  left: auto;
+}
+
+.f14 {
+  width: 40px;
+  height: 40px;
+  top: -20px;
+  left: auto;
+  right: 248px;
+}
+
+.f15 {
+  width: 40px;
+  height: 40px;
+  top: -27px;
+  left: auto;
+  right: 215px;
+  z-index: 4;
+}
+
+.f16 {
+  width: 20px;
+  height: 20px;
+  top: -13px;
+  left: auto;
+  right: 203px;
+}
+
 .bathtub-hand {
-  width: 100%; /* Fit container */
+  width: 108%;
   height: 20px;
   background-color: #fff;
   position: absolute;
   top: -15px;
   left: -14px;
-  border-radius: 10px; /* Rounded pill shape */
+  border-radius: 10px;
   box-shadow:
     inset 0px -3px 5px 1px #c7eff7,
     0px 2px 1px 1px #c1dade;
   z-index: 4;
 }
 
-/* Removed feet and shadows classes */
+.bathtub-foot {
+  width: 25px;
+  height: 25px;
+  background-color: #c7eff7;
+  position: absolute;
+  bottom: -10px;
+  left: 70px;
+  z-index: 1;
+  transform: rotate(15deg);
+}
+.bathtub-foot::before {
+  content: '';
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: inherit;
+  transform: translate(0, 15px);
+}
+.bathtub-foot-right {
+  background-color: #bee6ee;
+  transform: rotate(-15deg);
+  left: 200px;
+}
+.bathtub-shadow {
+  width: 300px;
+  height: 150px;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #eceff3;
+  transform: rotateX(65deg);
+  bottom: -98px;
+  left: 0;
+  z-index: -1;
+}
+.bathtub-shadow-small {
+  width: 250px;
+  height: 100px;
+  background-color: #d9dde6;
+  bottom: -73px;
+  left: 25px;
+}
+.bathtub-shadow-foot {
+  background-color: #c8ccd4;
+  width: 40px;
+  height: 30px;
+  bottom: -37px;
+  left: 58px;
+}
+.bathtub-shadow-foot-right {
+  left: 198px;
+}
+
+.floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 26%;
+  background-color: #fff;
+}
+.floor::before {
+  content: '';
+  display: inline-block;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(#292934, #fff);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 .bubble {
   width: 20px;

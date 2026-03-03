@@ -53,8 +53,8 @@ export function Footer({
       <div
         id="footer-wrapper"
         ref={footerRef}
-        className="relative w-full z-1 h-[70vh]"
-        style={{zIndex: 1, marginTop: -footerHeight, height: footerHeight}}
+        className="relative w-full z-1"
+        style={{marginTop: -footerHeight, height: footerHeight}}
       >
         <Suspense>
           <Await resolve={footerPromise}>
@@ -70,7 +70,7 @@ export function Footer({
                   <SocialLinks />
 
                   <div className={styles['footer-grid']}>
-                    <div className={styles['links-grid']}>
+                    <div className="w-full">
                       <FooterMenu
                         menu={footer?.menu}
                         primaryDomainUrl={header.shop.primaryDomain.url}
@@ -80,13 +80,7 @@ export function Footer({
 
                     {/* <div className={styles['grid-spacer']}></div> */}
 
-                    <NewsletterSignup />
-
-                    <div className={styles['copyright-wrapper']}>
-                      <p className={styles['copyright-text']}>
-                        © {new Date().getFullYear()} Isla Suds - All Rights Reserved
-                      </p>
-                    </div>
+                    {/* <NewsletterSignup /> */}
 
                     <div className={styles['policies-wrapper']}>
                       {FALLBACK_FOOTER_POLICIES.items.map((item) => (
@@ -95,13 +89,19 @@ export function Footer({
                         </a>
                       ))}
                     </div>
+
+                    <div className={styles['copyright-wrapper']}>
+                      <p className={styles['copyright-text']}>
+                        © {new Date().getFullYear()} Isla Suds - All Rights Reserved
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="footer-logo-wrapper">
+                {/* <div className="footer-logo-wrapper">
                   <FooterLogo />
                   <AnimatedBubbles />
-                </div>
+                </div> */}
               </footer>
             )}
           </Await>
@@ -124,7 +124,7 @@ function FooterMenu({
     'transition-colors inline-block text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-secondary)] focus-visible:ring-offset-2 transition duration-300';
 
   return (
-    <nav className="flex gap-6 text-sm text-gray-400" role="navigation" aria-label="Footer navigation">
+    <nav className={styles['links-grid']} role="navigation" aria-label="Footer navigation">
       {/* {(menu || FALLBACK_FOOTER_MENU).items.map((item) => { */}
       {FALLBACK_FOOTER_MENU.items.map((item) => {
         if (!item.url) {

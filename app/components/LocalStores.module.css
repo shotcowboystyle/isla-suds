@@ -46,7 +46,7 @@
 .heading-text-wrapper {
   z-index: 3;
   outline-offset: 0px;
-  color: #faeade;
+  color: var(--color-secondary);
   text-align: center;
   text-transform: uppercase;
   background-color: #c88e6400;

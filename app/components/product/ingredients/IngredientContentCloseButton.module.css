@@ -1,0 +1,51 @@
+.close-button-wrapper {
+  z-index: 10;
+  border: 2px solid var(--color-black);
+  background-color: var(--color-white);
+  cursor: pointer;
+  border-radius: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  /* display: flex; */
+  display: none;
+  position: absolute;
+  bottom: 50vw;
+}
+@media screen and (min-width: 480px) {
+  .close-button-wrapper {
+    width: 48px;
+    height: 48px;
+    bottom: 240px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .close-button-wrapper {
+    width: 7vw;
+    height: 7vw;
+    bottom: 34vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .close-button-wrapper {
+    width: 5vw;
+    height: 5vw;
+    bottom: 24.5vw;
+  }
+}
+
+.close-button-line {
+  background-color: var(--color-black);
+  width: 2px;
+  height: 50%;
+  position: absolute;
+}
+
+.is-cl-1 {
+  transform: rotate(45deg);
+}
+
+.is-cl-2 {
+  transform: rotate(-45deg);
+}

@@ -810,6 +810,65 @@ if (prefersReducedMotion) {
 
 ---
 
+## Wholesale Order Page (`/wholesale/order`)
+
+_Reference: `_bmad-output/planning-artifacts/architecture-wholesale-order.md` for full architecture._
+
+### Route Pattern
+
+- Child of `wholesale.tsx` layout — **inherits B2B auth automatically**
+- Do NOT re-verify auth in the order route loader
+- Action DOES verify `customerAccessToken` exists (session can expire between page load and submit)
+
+### Data Flow
+
+- **Loader:** Storefront API query for 4 products by handle with buyer identity → wholesale pricing
+- **Client state:** `useState<Record<string, number>>({})` keyed by variant ID — NOT Zustand
+- **Action:** Validate quantities → `context.cart.create({ lines, buyerIdentity })` → return `{ success, checkoutUrl, error }`
+- **Redirect:** `window.location.href` — NOT `navigate()` (Shopify checkout is external)
+
+### Quantity Validation Rules
+
+```typescript
+// Valid: quantity === 0 (skip product) OR quantity >= 6 (MOQ met)
+// Invalid: quantity > 0 && quantity < 6
+// Validate on: blur + on change when already invalid (recovery)
+// step={1} on input — MOQ is a threshold, not an increment
+```
+
+### Action Response Shape (Must Match Reorder)
+
+```typescript
+interface OrderActionResponse {
+  success: boolean;
+  checkoutUrl?: string;
+  error?: string;
+}
+```
+
+### Component Boundaries
+
+| Component | Owns | Does NOT Own |
+|-----------|------|-------------|
+| Route (`wholesale.order.tsx`) | Quantities state, loader/action | Component rendering logic |
+| `OrderProductCard` | Nothing — presentational | State, API calls |
+| `QuantitySelector` | Nothing — presentational | Validation logic |
+| `OrderSummary` | Checkout disabled logic | Quantities state |
+
+### Critical Anti-Patterns
+
+- **NEVER** compute or store prices client-side — Shopify B2B buyer identity is the sole price source
+- **NEVER** use `useNavigate()` for checkout redirect — external URL requires `window.location.href`
+- **NEVER** use Zustand for quantity state — page-local, doesn't cross component boundaries
+- **NEVER** use Framer Motion or CSS modules — B2B portal is minimal, Tailwind via `cn()` only
+- **NEVER** hide unavailable products — show disabled with "Currently unavailable" message
+
+### Implementation Risk Gate
+
+The Storefront API buyer identity mechanism for wholesale pricing has not been exercised in this codebase yet (reorder uses Customer Account API). **Verify wholesale prices return correctly before building UI.**
+
+---
+
 ## Usage Guidelines
 
 **For AI Agents:**
@@ -817,7 +876,8 @@ if (prefersReducedMotion) {
 - Read this file before implementing any code
 - Follow ALL rules exactly as documented
 - When in doubt, prefer the more restrictive option
-- Reference `architecture.md` for detailed architectural decisions
+- Reference `architecture.md` for site-wide architectural decisions
+- Reference `architecture-wholesale-order.md` for wholesale order page decisions
 
 **For Humans:**
 
@@ -828,4 +888,4 @@ if (prefersReducedMotion) {
 
 ---
 
-_Last Updated: 2026-01-24_
+_Last Updated: 2026-03-03_

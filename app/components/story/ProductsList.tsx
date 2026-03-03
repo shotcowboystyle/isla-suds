@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-import {ProductsListCard} from '~/components/product/ProductsListCard';
+import {ProductCard} from '~/components/ProductCard';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {productsList} from '~/content/products';
 import {useIsMobile} from '~/hooks/use-is-mobile';
@@ -129,19 +129,8 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
                 <div role="list" className={styles['collection-list']}>
                   {productsList.map((product) => {
                     const shopifyProduct = products?.find((p) => p.handle === product.toUrl.split('/').pop());
-                    return (
-                      <ProductsListCard
-                        key={product.name}
-                        color={product.color}
-                        bgUrl={product.bgUrl}
-                        toUrl={product.toUrl}
-                        productName={product.name}
-                        particlesUrl={product.particlesUrl}
-                        productImageUrl={product.productImageUrl}
-                        rotation={product.rotation}
-                        product={shopifyProduct}
-                      />
-                    );
+                    if (!shopifyProduct) return null;
+                    return <ProductCard key={product.name} product={shopifyProduct} isHomePage={true} />;
                   })}
                 </div>
               </div>

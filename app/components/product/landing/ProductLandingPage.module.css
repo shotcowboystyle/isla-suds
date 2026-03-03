@@ -1,0 +1,41 @@
+.section-wrapper {
+  background-color: var(--color-primary);
+  min-height: 100vh;
+}
+
+.section-container {
+  height: 100vh;
+  width: 100%;
+  color: var(--color-secondary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+.image-wrapper {
+  position: relative;
+  max-width: 2xl;
+  display: flex;
+  height: 40vh;
+  place-self: center;
+  margin-top: 14vh;
+}
+@media (min-width: 480px) {
+  .image-wrapper {
+    position: fixed;
+    inset: 0;
+    margin-top: 0;
+  }
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+
+  --tw-drop-shadow-size: drop-shadow(0 25px 25px var(--tw-drop-shadow-color, rgb(0 0 0 / 0.15)));
+  --tw-drop-shadow: drop-shadow(var(--drop-shadow-2xl) /* 0 25px 25px rgb(0 0 0 / 0.15) */);
+  filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,)
+    var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+}

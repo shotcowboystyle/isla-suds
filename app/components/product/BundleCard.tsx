@@ -1,6 +1,6 @@
 import {Link} from 'react-router';
 import {Image, type OptimisticCartLineInput} from '@shopify/hydrogen';
-import {AddToCartButton} from '~/components/AddToCartButton';
+import {AddToCartButton} from '~/components/cart/AddToCartButton';
 import {useVariantUrl} from '~/lib/variant-url';
 import {cn} from '~/utils/cn';
 import type {RecommendedProductFragment} from 'storefrontapi.generated';
@@ -132,14 +132,7 @@ export function BundleCard({
         {/* Subtle indicator that this is all 4 soaps (Story 3.6, AC2) */}
         <p className="text-xs text-(--text-muted) mt-1">All 4 soaps</p>
 
-        {/* Add to Cart Button (Story 5.3) */}
-        <div
-          className="mt-[var(--space-sm)]"
-          onClick={(e) => {
-            // Stop propagation to prevent link navigation when clicking button
-            e.stopPropagation();
-          }}
-        >
+        <div className="mt-[var(--space-sm)]">
           {variantId ? (
             <AddToCartButton
               lines={

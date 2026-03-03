@@ -2,10 +2,10 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
+import StoreMap from '~/assets/images/store-map.svg';
+import {LiquidButton} from '~/components/ui/LiquidButton';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import styles from './LocalStores.module.css';
-import StoreMap from '../../assets/images/store-map.svg';
-import {LiquidButton} from '../ui/LiquidButton';
 
 export function LocalStores() {
   const sectionRef = useRef<HTMLDivElement>(null);

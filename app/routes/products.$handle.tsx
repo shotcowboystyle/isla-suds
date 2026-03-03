@@ -7,13 +7,8 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
-import {Hero} from '~/components/product/spylt/Hero';
-import {Marquee} from '~/components/product/spylt/Marquee';
-import {Nutrition} from '~/components/product/spylt/Nutrition';
-import {ProductDetails} from '~/components/product/spylt/ProductDetails';
-import {ProductForm} from '~/components/ProductForm';
-import {ProductImage} from '~/components/ProductImage';
-import {ProductPrice} from '~/components/ProductPrice';
+import {ProductLandingPage} from '~/components/product/landing/ProductLandingPage';
+import {PRODUCT_QUERY} from '~/graphql/product/ProductDetail';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/products.$handle';
 
@@ -102,12 +97,8 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product-spylt-layout bg-[#f5f5f0] min-h-screen">
-      <Hero product={product} />
-      <Marquee text="GENTLE & SOOTHING • MOISTURIZING • FRAGRANCE-FREE • " />
-      <ProductDetails product={product} />
-      <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-[#8B0000]" />
-      <Nutrition product={product} />
+    <>
+      <ProductLandingPage product={product} />
       <Analytics.ProductView
         data={{
           products: [
@@ -123,99 +114,6 @@ export default function Product() {
           ],
         }}
       />
-    </div>
+    </>
   );
 }
-
-const PRODUCT_VARIANT_FRAGMENT = `#graphql
-  fragment ProductVariant on ProductVariant {
-    availableForSale
-    compareAtPrice {
-      amount
-      currencyCode
-    }
-    id
-    image {
-      __typename
-      id
-      url
-      altText
-      width
-      height
-    }
-    price {
-      amount
-      currencyCode
-    }
-    product {
-      title
-      handle
-    }
-    selectedOptions {
-      name
-      value
-    }
-    sku
-    title
-    unitPrice {
-      amount
-      currencyCode
-    }
-  }
-` as const;
-
-const PRODUCT_FRAGMENT = `#graphql
-  fragment Product on Product {
-    id
-    title
-    vendor
-    handle
-    descriptionHtml
-    description
-    tags
-    encodedVariantExistence
-    encodedVariantAvailability
-    options {
-      name
-      optionValues {
-        name
-        firstSelectableVariant {
-          ...ProductVariant
-        }
-        swatch {
-          color
-          image {
-            previewImage {
-              url
-            }
-          }
-        }
-      }
-    }
-    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
-      ...ProductVariant
-    }
-    adjacentVariants (selectedOptions: $selectedOptions) {
-      ...ProductVariant
-    }
-    seo {
-      description
-      title
-    }
-  }
-  ${PRODUCT_VARIANT_FRAGMENT}
-` as const;
-
-const PRODUCT_QUERY = `#graphql
-  query Product(
-    $country: CountryCode
-    $handle: String!
-    $language: LanguageCode
-    $selectedOptions: [SelectedOptionInput!]!
-  ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      ...Product
-    }
-  }
-  ${PRODUCT_FRAGMENT}
-` as const;

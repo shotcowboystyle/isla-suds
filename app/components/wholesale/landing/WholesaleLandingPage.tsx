@@ -1,5 +1,5 @@
-import {LocalStores} from '~/components/story/LocalStores';
-import {TestimonialsSection} from '~/components/story/Testimonials';
+import {LocalStores} from '~/components/LocalStores';
+import {TestimonialsSection} from '~/components/Testimonials';
 import {Hero} from './Hero';
 import {IntroSection} from './IntroSection';
 import {PerksSection} from './PerksSection';

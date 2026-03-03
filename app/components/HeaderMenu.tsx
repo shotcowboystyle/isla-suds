@@ -1,10 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {NavLink} from 'react-router';
+import gsap from 'gsap';
+import {SplitText} from 'gsap/SplitText';
 import AboutUsImage from '~/assets/images/menu-about-us.webp?responsive';
-import CatalogImage from '~/assets/images/menu-catalog.png?responsive';
-import ContactImage from '~/assets/images/menu-contact.jpeg?responsive';
+import ContactImage from '~/assets/images/menu-catalog.png?responsive';
+import CatalogImage from '~/assets/images/menu-contact.jpeg?responsive';
 import HomeImage from '~/assets/images/menu-home.png?responsive';
 import PoliciesImage from '~/assets/images/menu-policies.webp?responsive';
+import WholesaleImage from '~/assets/images/menu-wholesale.webp?responsive';
 import {Picture} from '~/components/Picture';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
@@ -46,7 +49,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/locations',
       items: [],
-      image: ContactImage,
+      image: PoliciesImage,
     },
     {
       id: 'gid://shopify/MenuItem/wholesale-portal',
@@ -56,7 +59,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/wholesale',
       items: [],
-      image: ContactImage,
+      image: WholesaleImage,
     },
     {
       id: 'gid://shopify/MenuItem/461609599032',
@@ -76,7 +79,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'HTTP',
       url: '/contact',
       items: [],
-      image: PoliciesImage,
+      image: ContactImage,
     },
   ],
 };
@@ -89,13 +92,80 @@ interface HeaderMenuProps {
   viewport: Viewport;
   publicStoreDomain: string;
   onClose: () => void;
+  open: boolean;
 }
 
-export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStoreDomain, onClose}: HeaderMenuProps) {
+export default function HeaderMenu({
+  menu,
+  primaryDomainUrl,
+  viewport,
+  publicStoreDomain,
+  onClose,
+  open,
+}: HeaderMenuProps) {
   const [activeMenu, setActiveMenu] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Create SPLIT TEXT
+      const splits = gsap.utils.toArray<HTMLElement>('.menu-item-text').map((el) => {
+        return new SplitText(el, {type: 'chars'});
+      });
+
+      // Set initial state for all characters
+      gsap.set(
+        splits.flatMap((s) => s.chars),
+        {yPercent: 100},
+      );
+
+      // Set initial state for the container itself
+      gsap.set(containerRef.current, {yPercent: -100});
+
+      tlRef.current = gsap.timeline({paused: true});
+
+      // Animate the container first
+      tlRef.current.to(
+        containerRef.current,
+        {
+          yPercent: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        },
+        0,
+      );
+
+      splits.forEach((split, index) => {
+        tlRef.current!.to(
+          split.chars,
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.02,
+            ease: 'power3.out',
+          },
+          0.5 + index * 0.1, // Added more delay here to wait for slide down
+        );
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    if (tlRef.current) {
+      if (open) {
+        tlRef.current.play();
+      } else {
+        tlRef.current.reverse();
+      }
+    }
+  }, [open]);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-dvh bg-secondary z-1">
+    <div ref={containerRef} className="fixed inset-0 w-full h-dvh bg-secondary z-200">
       <div className="flex items-center h-full">
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-full">
           <nav className="flex flex-col items-center" role="navigation">
@@ -124,7 +194,9 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
                   style={activeLinkStyle}
                   to={url}
                 >
-                  <span className="text-[12.5vw] md:text-[12.5vh] leading-[105%] size-auto">{item.title}</span>
+                  <span className="text-[12.5vw] md:text-[9vh] leading-[105%] size-auto block overflow-hidden">
+                    <span className="menu-item-text inline-block">{item.title}</span>
+                  </span>
                 </NavLink>
               );
             })}
@@ -171,7 +243,7 @@ export default function HeaderMenu({menu, primaryDomainUrl, viewport, publicStor
             loading="lazy"
             src={FALLBACK_HEADER_MENU.items[activeMenu].image}
             alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
-            className="w-full h-full object-cover transition-opacity duration-500"
+            className="w-full h-screen! object-cover transition-opacity duration-500"
           />
         </div>
       </div>

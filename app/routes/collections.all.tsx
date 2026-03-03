@@ -1,7 +1,7 @@
 import {useLoaderData} from 'react-router';
 import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {ProductItem} from '~/components/ProductItem';
+import {ProductCard} from '~/components/ProductCard';
 import {MONEY_FRAGMENT} from '~/lib/fragments';
 import type {Route} from './+types/collections.all';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
@@ -57,7 +57,7 @@ export default function Collection() {
 
       <PaginatedResourceSection<CollectionItemFragment> connection={products} resourcesClassName="products-grid">
         {({node: product, index}) => (
-          <ProductItem key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
+          <ProductCard key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
         )}
       </PaginatedResourceSection>
     </div>

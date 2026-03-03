@@ -1,36 +1,5 @@
 .ingredients-section-wrapper {
   background: hsla(178, 20%, 74%, 1);
-
-  background: radial-gradient(
-    circle,
-    hsla(178, 20%, 74%, 1) 02%,
-    hsla(180, 18%, 68%, 1) 55%,
-    hsla(180, 14%, 62%, 1) 83%
-  );
-
-  background: -moz-radial-gradient(
-    circle,
-    hsla(178, 20%, 74%, 1) 02%,
-    hsla(180, 18%, 68%, 1) 55%,
-    hsla(180, 14%, 62%, 1) 83%
-  );
-
-  background: -webkit-radial-gradient(
-    circle,
-    hsla(178, 20%, 74%, 1) 02%,
-    hsla(180, 18%, 68%, 1) 55%,
-    hsla(180, 14%, 62%, 1) 83%
-  );
-
-  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#B0CAC9", endColorstr="#B0CAC9", GradientType=1 );
-  /* flex-flow: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: auto;
-  display: flex;
-  padding-left: 2vw;
-  padding-right: 2vw; */
-  /* min-height: 100dvh; */
   min-height: 80dvh;
   height: auto;
   position: relative;
@@ -38,31 +7,16 @@
   padding-top: 24vw;
   padding-inline: 5vw;
 }
-
-/* .ingredients-section-wrapper::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 55%;
-  background: linear-gradient(to bottom, #c3ddd8 0%, transparent 20%);
-  pointer-events: none;
-  z-index: 1;
-} */
-
 @media screen and (min-width: 480px) {
   .ingredients-section-wrapper {
     min-height: 50dvh;
   }
 }
-
 @media screen and (min-width: 768px) {
   .ingredients-section-wrapper {
     padding-inline: 5%;
   }
 }
-
 @media screen and (min-width: 992px) {
   .ingredients-section-wrapper {
     justify-content: flex-end;
@@ -76,22 +30,12 @@
   }
 }
 
-/* @media (width >= 80rem) {
-  .ingredients-section-wrapper {
-    justify-content: flex-end;
-    align-items: center;
-    width: auto;
-    height: 120vh;
-    display: flex;
-    flex-flow: column;
-  }
-} */
-
 .ingredients-drip-image {
   width: 100%;
   display: block;
   position: absolute;
   inset: 0% 0% auto;
+  z-index: 2;
 }
 
 .ingredients-section-headings {

@@ -4,8 +4,9 @@ import {useGSAP} from '@gsap/react';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {LocalStores} from '~/components/LocalStores';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {ProductItem} from '~/components/ProductItem';
+import {ProductCard} from '~/components/ProductCard';
 import {TestimonialsSection} from '~/components/story';
 import {MONEY_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
@@ -135,12 +136,13 @@ export default function Collection() {
             resourcesClassName="products-grid grid gap-4 auto-cols-[1fr] grid-cols-[1fr] sm:grid-cols-[1fr_1fr] md:grid-cols-[1fr_1fr_1fr] grid-rows-[auto_auto]"
           >
             {({node: product, index}) => (
-              <ProductItem key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
+              <ProductCard key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
             )}
           </PaginatedResourceSection>
         </div>
 
         <TestimonialsSection />
+        <LocalStores />
 
         <Analytics.CollectionView
           data={{
