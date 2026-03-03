@@ -20,12 +20,12 @@
   background-color: var(--color-milk);
   flex-flow: column;
   margin-bottom: 0;
-  padding-bottom: 24vw;
+  padding-bottom: 3vw;
 }
 
 @media screen and (min-width: 480px) {
   .camera {
-    padding-bottom: 3vw;
+    padding-bottom: 24vw;
     height: auto;
   }
 }
@@ -87,7 +87,7 @@
 
 @media screen and (min-width: 992px) {
   .item {
-    width: 320vw;
+    width: 260vw;
     height: 100vh;
     position: static;
   }
@@ -105,7 +105,7 @@
   display: flex;
   position: static;
   inset: auto 0% 0;
-  margin-block-start: 80px;
+  margin-block: 80px;
   overflow: hidden;
 }
 

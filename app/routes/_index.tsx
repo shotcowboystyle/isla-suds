@@ -1,13 +1,15 @@
-import {lazy, Suspense, useEffect, useRef, useState, type RefObject} from 'react';
+import {lazy, Suspense, useEffect, useRef, type RefObject} from 'react';
 import {Await, useLoaderData, Link, useOutletContext, useLocation} from 'react-router';
-import {Image} from '@shopify/hydrogen';
-import {ConstellationGrid} from '~/components/product';
 import {HeroSection} from '~/components/story/HeroSection';
 import {productsListHandles} from '~/content/products';
+import {
+  PRODUCTS_LIST_QUERY,
+  FEATURED_COLLECTION_QUERY,
+  RECOMMENDED_PRODUCTS_QUERY,
+} from '~/graphql/product/ProductList';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
 import type {ScrollSmoother as ScrollSmootherType} from 'gsap/ScrollSmoother';
-import type {FeaturedCollectionFragment, RecommendedProductsQuery, ProductsListQuery} from 'storefrontapi.generated';
 
 const MessageSection = lazy(() =>
   import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
@@ -19,9 +21,9 @@ const IngredientsSection = lazy(() =>
 const BenefitsSection = lazy(() => import('~/components/story/Benefits').then((m) => ({default: m.BenefitsSection})));
 const VideoSection = lazy(() => import('~/components/story/VideoSection').then((m) => ({default: m.VideoSection})));
 const TestimonialsSection = lazy(() =>
-  import('~/components/story/Testimonials').then((m) => ({default: m.TestimonialsSection})),
+  import('~/components/Testimonials').then((m) => ({default: m.TestimonialsSection})),
 );
-const LocalStores = lazy(() => import('~/components/story/LocalStores').then((m) => ({default: m.LocalStores})));
+const LocalStores = lazy(() => import('~/components/LocalStores').then((m) => ({default: m.LocalStores})));
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -33,44 +35,6 @@ export const meta: Route.MetaFunction = () => {
     },
   ];
 };
-
-const PRODUCTS_LIST_QUERY = `#graphql
-  query ProductsList(
-    $country: CountryCode
-    $language: LanguageCode
-    $query: String
-  ) @inContext(country: $country, language: $language) {
-    products(first: 10, query: $query) {
-      nodes {
-        id
-        title
-        handle
-        availableForSale
-        variants(first: 1) {
-          nodes {
-            id
-            title
-            availableForSale
-            image {
-              url
-              altText
-              width
-              height
-            }
-            price {
-              amount
-              currencyCode
-            }
-            product {
-              title
-              handle
-            }
-          }
-        }
-      }
-    }
-  }
-` as const;
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -152,12 +116,12 @@ export default function Homepage() {
           ignoreMobileResize: true, // Prevents resizing issues on mobile
         });
 
-        ScrollTrigger.create({
-          trigger: '#footer-wrapper',
-          pin: true,
-          start: 'bottom bottom',
-          end: '+=100%',
-        });
+        // ScrollTrigger.create({
+        //   trigger: '#footer-wrapper',
+        //   pin: true,
+        //   start: 'bottom bottom',
+        //   end: '+=100%',
+        // });
       })
       .catch((_error: Error) => {
         // Safe to continue: GSAP is a progressive enhancement, page works without it
@@ -200,111 +164,3 @@ export default function Homepage() {
     </div>
   );
 }
-
-function FeaturedCollection({collection, className}: {collection: FeaturedCollectionFragment; className?: string}) {
-  if (!collection) return null;
-  const image = collection?.image;
-  return (
-    <Link className={cn('featured-collection', className)} to={`/collections/${collection.handle}`}>
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
-        </div>
-      )}
-
-      <h2 className="text-black">{collection.title}</h2>
-    </Link>
-  );
-}
-
-function ConstellationProducts({
-  products,
-  className,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-  className?: string;
-}) {
-  return (
-    <Suspense
-      fallback={
-        <div className={cn('min-h-[400px] px-4 py-12', className)} aria-hidden aria-label="Loading products">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 lg:max-w-6xl lg:mx-auto">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-square bg-(--canvas-elevated) rounded-lg animate-pulse" />
-            ))}
-          </div>
-        </div>
-      }
-    >
-      <Await resolve={products}>
-        {(response: RecommendedProductsQuery | null) => (
-          <ConstellationGrid products={response?.products.nodes || null} className={className} />
-        )}
-      </Await>
-    </Suspense>
-  );
-}
-
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
-    }
-  }
-` as const;
-
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
-    id
-    title
-    handle
-    description
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
-    }
-    variants(first: 1) {
-      nodes {
-        id
-      }
-    }
-    scentNarrative: metafield(namespace: "custom", key: "scent_narrative") {
-      value
-    }
-    bundleValueProposition: metafield(namespace: "custom", key: "bundle_value_proposition") {
-      value
-    }
-  }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    products(first: 5, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
-    }
-  }
-` as const;

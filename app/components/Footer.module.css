@@ -26,11 +26,6 @@
   position: static;
   overflow: hidden;
 }
-/* @media screen and (min-width: 480px) {
-  .footer-content-container {
-    padding-top: 10vw;
-  }
-} */
 
 .heading-teg-wrapper {
   z-index: 3;
@@ -60,23 +55,25 @@
 .footer-grid {
   display: grid;
   z-index: 5;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr;
+  grid-auto-columns: 1fr;
+  grid-template-rows: auto auto auto;
   grid-column-gap: 3.5vw;
   grid-row-gap: 10vw;
-  margin-top: 2vw;
+  margin-top: 15vw;
   padding-bottom: 2vw;
   padding-inline: 16px;
   position: relative;
 }
 @media screen and (min-width: 480px) {
   .footer-grid {
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto auto;
     padding-inline: 2vw;
   }
 }
 @media screen and (min-width: 768px) {
   .footer-grid {
-    /* grid-template-columns: 1fr 1fr; */
     grid-column-gap: 40vw;
   }
 }
@@ -87,34 +84,26 @@
   z-index: 5;
   grid-column-gap: 3.5vw;
   grid-row-gap: 0;
-  /* grid-template-rows: auto auto auto auto auto; */
-  grid-template-columns: auto auto auto 1fr 1fr;
+  grid-template-columns: auto auto auto;
   padding-bottom: 2vw;
   position: relative;
+  text-align: center;
 }
 @media screen and (min-width: 480px) {
   .links-grid {
     grid-template-rows: auto auto auto auto;
+    text-align: left;
   }
 }
 @media screen and (min-width: 768px) {
   .links-grid {
     grid-template-columns: auto auto auto;
-    /* grid-template-rows: unset; */
   }
 }
-/* @media screen and (min-width: 992px) {
-  .links-grid {
-    grid-template-rows: unset;
-  }
-} */
 
 .footer-link {
   color: var(--color-secondary);
   margin-bottom: 12px;
-  font-family:
-    Proxima Nova,
-    sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 115%;
@@ -145,9 +134,6 @@
 .copyright-text {
   opacity: 0.5;
   color: var(--color-secondary);
-  font-family:
-    Proxima Nova,
-    sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 115%;
@@ -164,7 +150,6 @@
 }
 
 .policies-wrapper {
-  /* order: -9999; */
   justify-self: center;
   grid-column-gap: 16px;
   grid-row-gap: 16px;
@@ -181,9 +166,6 @@
 .footer-link-muted {
   color: var(--color-secondary);
   margin-bottom: 12px;
-  font-family:
-    Proxima Nova,
-    sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 115%;

@@ -1,13 +1,9 @@
-import BrownBgImage from '~/assets/images/brown-bg.png?responsive';
 import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp?responsive';
-import GreenBgImage from '~/assets/images/green-bg.webp?responsive';
 import LavenderElementsImage from '~/assets/images/lavender-elements.webp?responsive';
 import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp?responsive';
 import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp?responsive';
 import MintElementsImage from '~/assets/images/mint-elements.webp?responsive';
-import PurpleBgImage from '~/assets/images/purple-bg.webp?responsive';
 import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp?responsive';
-import WhiteBgImage from '~/assets/images/white-bg.png?responsive';
 
 /**
  * Product Content Layer - Centralized content management with Shopify metafield fallbacks
@@ -187,7 +183,6 @@ export const productsList = [
     toUrl: '/products/eucalyptus',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: EucalyptusBarImage,
-    bgUrl: GreenBgImage,
     particlesUrl: MintElementsImage,
   },
   {
@@ -196,7 +191,6 @@ export const productsList = [
     toUrl: '/products/lemongrass',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: LemongrassBarImage,
-    bgUrl: BrownBgImage,
     particlesUrl: MintElementsImage,
   },
   {
@@ -205,7 +199,6 @@ export const productsList = [
     toUrl: '/products/lavender',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: LavenderBarImage,
-    bgUrl: PurpleBgImage,
     particlesUrl: LavenderElementsImage,
   },
   {
@@ -214,9 +207,27 @@ export const productsList = [
     toUrl: '/products/rosemary-sea-salt',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: RosemarySeaSaltBarImage,
-    bgUrl: WhiteBgImage,
     particlesUrl: MintElementsImage,
   },
 ];
 
 export const productsListHandles = productsList.map((product) => product.toUrl.split('/').pop());
+
+export const PRODUCT_USE = [
+  {
+    id: 1,
+    title: 'Your Daily Shower',
+    description: 'Showering with unscented goat milk soap is the perfect treatment for dry, flaky skin.',
+  },
+  {
+    id: 2,
+    title: 'Daily Hand Washing',
+    description: 'Dry, cracked hands will benefit from a bar of nourishing, unscented pure goat milk soap',
+  },
+  {
+    id: 3,
+    title: 'During Your Nightly Chores',
+    description:
+      'After finishing the nightly dishes, your hands may be left feeling parched, especially if you used degreasers. Wash your hands with this sensitive skin-friendly bar to prevent over-drying.',
+  },
+];

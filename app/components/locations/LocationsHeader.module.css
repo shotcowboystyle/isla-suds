@@ -1,5 +1,11 @@
 .heading-wrapper {
   margin-bottom: 2vw;
+  display: flex;
+  position: relative;
+  width: 100%;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }
 @media screen and (min-width: 992px) {
   .heading-wrapper {
@@ -39,38 +45,41 @@
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
-  font-family: Antonio, sans-serif;
   font-weight: 700;
   line-height: 120%;
   display: block;
   font-size: 13vw;
+  color: var(--color-black);
+  overflow: hidden;
 }
 @media screen and (min-width: 992px) {
   .heading-text {
+    font-size: 7.8vw;
     line-height: 9vw;
   }
 }
 
 .clipped-box-wrapper {
-  background-color: var(--middle-brown);
+  background-color: var(--color-accent);
   outline-offset: 0px;
   perspective: none;
   perspective-origin: 0%;
   transform-origin: 0%;
-  color: var(--milk);
-  border: 0 solid #000;
-  outline: 0.5vw solid #faeade;
+  color: var(--color-secondary);
+  border: 0 solid var(--color-black);
+  outline: 0.5vw solid var(--color-primary);
   justify-content: center;
   align-items: center;
   width: auto;
   margin-top: 0;
   margin-bottom: 24px;
+  opacity: 1;
   padding: 0;
   display: flex;
   position: relative;
   top: auto;
-  overflow: hidden;
   transform: rotate(-3deg);
+  overflow: hidden;
 }
 @media screen and (min-width: 480px) {
   .clipped-box-wrapper {
@@ -83,24 +92,22 @@
   }
 }
 
-.clipped-headding {
-  color: #fce1cd;
-  letter-spacing: -0.35vw;
+.clipped-heading {
+  color: var(--color-secondary);
   flex-flow: row;
   flex: none;
   justify-content: flex-start;
   align-items: center;
-  padding: 0 1.2vw 1vw;
-  font-family: Antonio, sans-serif;
+  padding: 0 1.2vw 2vw;
   font-weight: 700;
-  line-height: 120%;
-  display: flex;
-  text-align: left;
-  text-transform: uppercase;
   font-size: 13vw;
+  line-height: 120%;
+  width: auto;
+  text-wrap: nowrap;
 }
 @media screen and (min-width: 992px) {
-  .clipped-headding {
+  .clipped-heading {
+    font-size: 7.8vw;
     line-height: 9vw;
   }
 }

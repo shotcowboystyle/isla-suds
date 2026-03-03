@@ -1,7 +1,7 @@
-import * as React from 'react';
 import {Suspense, useEffect} from 'react';
 import {useFetcher} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
+import {Picture} from '~/components/Picture';
 import {
   Dialog,
   DialogContent,
@@ -11,11 +11,7 @@ import {
   DialogTitle,
   DialogClose,
 } from '~/components/ui/Dialog';
-import {Picture} from '~/components/Picture';
-import {
-  COLLECTION_PROMPT_COPY,
-  VARIETY_PACK_PRODUCTS,
-} from '~/content/collection-prompt';
+import {COLLECTION_PROMPT_COPY, VARIETY_PACK_PRODUCTS} from '~/content/collection-prompt';
 import {COLLECTION_PROMPT_ADD_ERROR_MESSAGE} from '~/content/errors';
 import {MotionDiv, prefersReducedMotion} from '~/lib/motion';
 import {useExplorationStore} from '~/stores/exploration';
@@ -49,29 +45,17 @@ export interface CollectionPromptProps {
  * - Auto-close after 1s on success
  * - Zustand state update on success
  */
-export function CollectionPrompt({
-  open,
-  onClose,
-  variantId,
-}: CollectionPromptProps) {
+export function CollectionPrompt({open, onClose, variantId}: CollectionPromptProps) {
   const fetcher = useFetcher<{
     cart?: {id: string};
     errors?: Array<{message: string}>;
   }>();
-  const setStoryMomentShown = useExplorationStore(
-    (state) => state.setStoryMomentShown,
-  );
-  const setCartDrawerOpen = useExplorationStore(
-    (state) => state.setCartDrawerOpen,
-  );
+  const setStoryMomentShown = useExplorationStore((state) => state.setStoryMomentShown);
+  const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
 
   // Button state derived from fetcher (Story 4.3, AC2, AC3, AC7)
-  const isLoading =
-    fetcher.state === 'submitting' || fetcher.state === 'loading';
-  const isSuccess =
-    fetcher.state === 'idle' &&
-    fetcher.data?.cart &&
-    !fetcher.data?.errors?.length;
+  const isLoading = fetcher.state === 'submitting' || fetcher.state === 'loading';
+  const isSuccess = fetcher.state === 'idle' && fetcher.data?.cart && !fetcher.data?.errors?.length;
   const isError = Boolean(fetcher.data?.errors?.length);
 
   // Handle cart mutation (Story 4.3, AC1, Task 3)
@@ -101,8 +85,7 @@ export function CollectionPrompt({
   // Auto-close after 1 second on success (Story 4.3, AC4, Task 5)
   useEffect(() => {
     if (isSuccess) {
-      const shouldReduceMotion =
-        typeof window !== 'undefined' && prefersReducedMotion();
+      const shouldReduceMotion = typeof window !== 'undefined' && prefersReducedMotion();
       const delay = shouldReduceMotion ? 0 : 1000;
 
       const timer = setTimeout(() => {
@@ -134,19 +117,13 @@ export function CollectionPrompt({
         <DialogOverlay className="bg-black/60" />
         <DialogContent
           data-testid="collection-prompt"
-          className={cn(
-            'max-w-2xl w-[calc(100vw-2rem)] p-8',
-            'bg-[var(--canvas-elevated)] border-[var(--text-muted)]',
-            'sm:w-full',
-          )}
+          className={cn('max-w-2xl w-[calc(100vw-2rem)] p-8', 'bg-(--canvas-elevated) border-muted', 'sm:w-full')}
         >
           {/* Dialog Title (required for accessibility) */}
-          <DialogTitle className="fluid-heading text-[var(--text-primary)] mb-2">
-            {COLLECTION_PROMPT_COPY.headline}
-          </DialogTitle>
+          <DialogTitle className="fluid-heading text-primary mb-2">{COLLECTION_PROMPT_COPY.headline}</DialogTitle>
 
           {/* Dialog Description (required for accessibility) */}
-          <DialogDescription className="fluid-body text-[var(--text-muted)] mb-6">
+          <DialogDescription className="fluid-body text-muted mb-6">
             {COLLECTION_PROMPT_COPY.description}
           </DialogDescription>
 
@@ -154,7 +131,7 @@ export function CollectionPrompt({
           <div className={cn('grid grid-cols-2 gap-4 mb-6', 'sm:grid-cols-4')}>
             {VARIETY_PACK_PRODUCTS.map((product) => (
               <div key={product.handle} className="text-center">
-                <div className="aspect-square bg-[var(--canvas-base)] rounded-lg mb-2 overflow-hidden">
+                <div className="aspect-square bg-(--canvas-base) rounded-lg mb-2 overflow-hidden">
                   <Picture
                     src={product.image}
                     alt={product.name}
@@ -162,9 +139,7 @@ export function CollectionPrompt({
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <p className="text-sm text-[var(--text-primary)]">
-                  {product.name}
-                </p>
+                <p className="text-sm text-primary">{product.name}</p>
               </div>
             ))}
           </div>
@@ -179,12 +154,11 @@ export function CollectionPrompt({
               'rounded-lg',
               'font-semibold',
               'transition-opacity',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2',
+              'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2',
               // Touch target minimum (44x44px)
               'min-h-[44px] min-w-[44px]',
               // Disabled state (Story 4.3, AC2)
-              (isLoading || isSuccess || !variantId) &&
-                'opacity-60 cursor-not-allowed',
+              (isLoading || isSuccess || !variantId) && 'opacity-60 cursor-not-allowed',
               // Hover only when enabled
               !(isLoading || isSuccess || !variantId) && 'hover:opacity-90',
             )}
@@ -195,23 +169,14 @@ export function CollectionPrompt({
 
           {/* Success announcement for screen readers (Story 4.3, AC3, Code Review) */}
           {isSuccess && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="sr-only"
-              aria-atomic="true"
-            >
+            <div role="status" aria-live="polite" className="sr-only" aria-atomic="true">
               Added! Variety pack added to cart.
             </div>
           )}
 
           {/* Error message (Story 4.3, AC7, Task 7) */}
           {isError && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="mt-2 text-sm text-[var(--text-muted)] text-center"
-            >
+            <div role="status" aria-live="polite" className="mt-2 text-sm text-muted text-center">
               {COLLECTION_PROMPT_ADD_ERROR_MESSAGE}
             </div>
           )}
@@ -224,8 +189,8 @@ export function CollectionPrompt({
               'w-11 h-11', // 44x44px minimum touch target
               'rounded-full',
               'flex items-center justify-center',
-              'text-[var(--text-muted)] hover:text-[var(--text-primary)]',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2',
+              'text-muted hover:text-primary',
+              'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2',
               'transition-colors',
             )}
           >
@@ -237,12 +202,7 @@ export function CollectionPrompt({
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path
-                d="M12 4L4 12M4 4L12 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
+              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </DialogClose>
         </DialogContent>
@@ -259,8 +219,7 @@ export function CollectionPrompt({
  * Respects prefers-reduced-motion
  */
 export function CollectionPromptWithAnimation(props: CollectionPromptProps) {
-  const shouldReduceMotion =
-    typeof window !== 'undefined' && prefersReducedMotion();
+  const shouldReduceMotion = typeof window !== 'undefined' && prefersReducedMotion();
 
   // If reduced motion, render static prompt (no animation)
   if (shouldReduceMotion) {

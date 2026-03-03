@@ -1,3 +1,6 @@
+import OddDuckLogo from '~/assets/images/odd-duck-logo-white.avif';
+import SeweeLogo from '~/assets/images/sewee-outpost-logo.webp';
+
 /** Retail store locations - third-party retailers carrying Isla Suds products */
 
 export interface StoreLocation {
@@ -14,6 +17,7 @@ export interface StoreLocation {
 export interface RetailStore {
   name: string;
   website?: string;
+  logo?: string;
   locations: StoreLocation[];
 }
 
@@ -26,24 +30,9 @@ export const LOCATIONS_PAGE = {
   subheading: 'Pick up Isla Suds at these retail partners.',
   stores: [
     {
-      name: 'Sewee Outpost',
-      website: 'https://seweeoutpost.com',
-      locations: [
-        {
-          address: '4853 N Hwy 17',
-          city: 'Awendaw',
-          state: 'SC',
-          zip: '29429',
-          phone: '(843) 928-3493',
-          hours: 'Mon-Sun 7am-7pm',
-          lat: 32.9290544,
-          lng: -79.712732,
-        },
-      ],
-    },
-    {
       name: 'Odd Duck Market',
       website: 'https://oddduckmarkets.com',
+      logo: OddDuckLogo,
       locations: [
         {
           address: '1082 E Montague Ave',
@@ -64,6 +53,23 @@ export const LOCATIONS_PAGE = {
           hours: 'Mon-Sun 7am-4pm',
           lat: 33.0203403,
           lng: -80.1767895,
+        },
+      ],
+    },
+    {
+      name: 'Sewee Outpost',
+      website: 'https://seweeoutpost.com',
+      logo: SeweeLogo,
+      locations: [
+        {
+          address: '4853 N Hwy 17',
+          city: 'Awendaw',
+          state: 'SC',
+          zip: '29429',
+          phone: '(843) 928-3493',
+          hours: 'Mon-Sun 7am-7pm',
+          lat: 32.9290544,
+          lng: -79.712732,
         },
       ],
     },

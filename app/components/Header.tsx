@@ -54,9 +54,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   const buttonRef = useRef<HTMLButtonElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
   const tlButton = useRef<gsap.core.Timeline | null>(null);
-  const tlMenu = useRef<gsap.core.Timeline | null>(null);
+
+  const [hasOpened, setHasOpened] = useState(false);
+  useEffect(() => {
+    if (open && !hasOpened) {
+      setHasOpened(true);
+    }
+  }, [open, hasOpened]);
 
   useEffect(() => {
     // Check for prefers-reduced-motion preference
@@ -115,44 +120,9 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   }, []);
 
   useEffect(() => {
-    if (!menuRef.current) {
-      return;
-    }
-
-    let cancelled = false;
-    const menu = menuRef.current;
-
-    void import('gsap').then(({default: gsap}) => {
-      if (cancelled) return;
-
-      gsap.set(menu, {yPercent: -100, autoAlpha: 0});
-
-      tlMenu.current = gsap.timeline({paused: true});
-      tlMenu.current.to(menu, {
-        yPercent: 0,
-        autoAlpha: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-      });
-
-      if (open) {
-        tlMenu.current.play();
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [open]);
-
-  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && open) {
         toggleMenu();
-        // Or setOpen(false) if access to setOpen is preferred, but toggleMenu toggles.
-        // Since open is true, toggleMenu() will make it false.
-        // However, useMenuToggle only exposes toggleMenu.
-        // Let's verify useMenuToggle in Header.tsx
       }
     }
 
@@ -163,16 +133,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   }, [open, toggleMenu]);
 
   useEffect(() => {
-    if (!tlButton.current || !tlMenu.current) {
+    if (!tlButton.current) {
       return;
     }
 
     if (open) {
       tlButton.current.play();
-      tlMenu.current.play();
     } else {
       tlButton.current.reverse();
-      tlMenu.current.reverse();
     }
   }, [open]);
 
@@ -245,26 +213,16 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   return (
     <header
       className={styles['navigation-menu']}
-      // className={cn(
-      //   'fixed top-0 left-0 w-full py-4 px-5 md:px-10 z-100',
-      //   // 'sticky top-0 w-full z-20 bg-(--canvas-base)/95 dark:bg-(--canvas-elevated)/95 border-b sm:border-b-2 border-neutral-300 dark:border-[#2D2D2D] -mb-[2px]',
-      //   // Story 2.5: GPU-composited fade for scroll-triggered visibility
-      //   // Only apply transitions if NOT prefers-reduced-motion
-      //   // !prefersReducedMotion && 'transition-all duration-300',
-      //   // When on home and not past hero, use GPU-composited properties to hide
-      //   // isHomePage && !shouldShowHeader && 'opacity-0 pointer-events-none',
-      // )}
       // style={
       //   isHomePage && !shouldShowHeader && !prefersReducedMotion
       //     ? {
-      //         // GPU-composited transform for smooth fade
       //         transform: 'translateY(-100%)',
       //       }
       //     : undefined
       // }
     >
-      {open && (
-        <div ref={menuRef} className={styles['navigation-menu']}>
+      <>
+        {hasOpened && (
           <Suspense fallback={null}>
             <LazyHeaderMenu
               menu={menu}
@@ -272,10 +230,11 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
               primaryDomainUrl={header.shop.primaryDomain.url}
               publicStoreDomain={publicStoreDomain}
               onClose={toggleMenu}
+              open={open}
             />
           </Suspense>
-        </div>
-      )}
+        )}
+      </>
 
       <div className={styles['navbar']}>
         <NavLink prefetch="intent" to="/" style={activeLinkStyle} end className={styles['navbar-logo-link']}>
@@ -299,9 +258,22 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           </div>
         )}
 
-        {/* <div className="h-18 sm:h-24 px-[1.05rem] sm:px-6 flex items-center justify-end sm:justify-between relative gap-3"> */}
         <div className={styles['menu-cta-buttons-wrapper']}>
-          <Logo className={cn(styles['navbar-logo'], styles['navbar-logo-transparency-off'])} />
+          <div className={styles['cta-buttons']}>
+            <div className={cn(styles['menu-buttons-wrapper'], styles['menu-button-abs'])}>
+              <a href="/locations" className={cn(styles['navbar-button'], 'hidden sm:flex')}>
+                Find in stores
+              </a>
+
+              <HeaderCtas isLoggedIn={isLoggedIn} />
+
+              <Suspense fallback={<CartIconButton itemCount={0} />}>
+                <Await resolve={cart}>
+                  <CartIconButtonWrapper />
+                </Await>
+              </Suspense>
+            </div>
+          </div>
 
           {isMobile && (
             <button
@@ -323,23 +295,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
               />
             </button>
           )}
-
-          <div className={styles['cta-buttons']}>
-            <div className={cn(styles['menu-buttons-wrapper'], styles['menu-button-abs'])}>
-              <a href="/locations" className={styles['navbar-button']}>
-                Find in stores
-              </a>
-
-              <HeaderCtas isLoggedIn={isLoggedIn} />
-
-              {/* Story 5.10: Cart icon with badge */}
-              <Suspense fallback={<CartIconButton itemCount={0} />}>
-                <Await resolve={cart}>
-                  <CartIconButtonWrapper />
-                </Await>
-              </Suspense>
-            </div>
-          </div>
         </div>
       </div>
     </header>
@@ -348,67 +303,34 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
 function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
   return (
-    <nav className="header-ctas" role="navigation" aria-label="Header CTAs">
+    <nav className="header-ctas flex" role="navigation" aria-label="Header CTAs">
       {/* <HeaderMenuMobileToggle /> */}
       <NavLink
         prefetch="intent"
         to="/account"
         style={activeLinkStyle}
-        className={cn(styles['navbar-button'], styles['navbar-icon-button'])}
+        className={cn(styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
         aria-label="Account"
       >
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
             <User className="size-6" />
-            {/* {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')} */}
+            {/* <span className="sr-only">{(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}</span> */}
           </Await>
         </Suspense>
       </NavLink>
-      {/* <SearchToggle /> */}
     </nav>
   );
 }
 
-// function HeaderMenuMobileToggle() {
-//   const {open} = useAside();
-//   return (
-//     <button
-//       type="button"
-//       className="header-menu-mobile-toggle reset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2"
-//       onClick={() => open('mobile')}
-//       aria-label="Open menu"
-//     >
-//       <h3>☰</h3>
-//     </button>
-//   );
-// }
-
-// function SearchToggle() {
-//   const {open} = useAside();
-//   return (
-//     <button className="reset" onClick={() => open('search')}>
-//       Search
-//     </button>
-//   );
-// }
-
-/**
- * Story 5.10: Cart Icon Button Wrapper
- * Wraps CartIconButton with cart data from useOptimisticCart
- */
 function CartIconButtonWrapper() {
   const originalCart = useAsyncValue() as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
   return <CartIconButton itemCount={cart?.totalQuantity ?? 0} />;
 }
 
-/**
- * Story 5.10: Cart Icon Button
- * Cart icon with badge that opens CartDrawer via Zustand
- */
 function CartIconButton({itemCount}: {itemCount: number}) {
   const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
-
   const hasItems = itemCount > 0;
 
   const handleCartClick = () => {
@@ -419,34 +341,23 @@ function CartIconButton({itemCount}: {itemCount: number}) {
     <button
       type="button"
       onClick={handleCartClick}
-      className={cn(styles['navbar-button'], styles['navbar-icon-button'])}
-      // className={cn(
-      //   'relative',
-      //   'p-2.5', // 10px padding = 44px touch target with 24px icon
-      //   'text-(--text-primary)',
-      //   'hover:text-(--accent-primary)',
-      //   'transition-colors',
-      //   'rounded',
-      //   'focus:outline-none focus:ring-2 focus:ring-(--accent-primary)',
-      // )}
+      className={cn(styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
       aria-label={
         hasItems ? `Shopping cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Shopping cart, empty'
       }
     >
       <ShoppingBag className="size-6" />
 
-      {/* Badge - only show if has items (AC2, AC3) */}
       {hasItems && (
         <span
           className={cn(
-            'absolute -top-1 -right-1',
-            'min-w-[20px] h-5 px-1.5',
-            'bg-(--accent-primary) text-secondary',
+            'absolute -top-2 -right-2',
+            'flex content-center items-center justify-center size-7 pb-1',
+            'bg-red-700 text-secondary',
             'rounded-full',
-            'text-xs font-medium',
-            'flex items-center justify-center',
+            'text-sm font-medium leading-none',
           )}
-          aria-hidden="true" // Screen reader gets count from button aria-label
+          aria-hidden="true"
         >
           {itemCount > 99 ? '99+' : itemCount}
         </span>

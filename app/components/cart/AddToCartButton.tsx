@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {type FetcherWithComponents} from 'react-router';
+import React, {forwardRef, useEffect, useRef, useState} from 'react';
+import {useFetcher} from 'react-router';
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {ADD_TO_CART_ERROR_MESSAGE, ADD_TO_CART_BUTTON_STATES} from '~/content/errors';
 import {useExplorationStore} from '~/stores/exploration';
@@ -14,19 +14,18 @@ interface CartActionData {
   analytics?: {cartId?: string};
 }
 
-function AddToCartFormContent({
-  analytics,
-  children,
-  disabled,
-  fetcher,
-  onClick,
-}: {
-  analytics?: unknown;
-  children: React.ReactNode;
-  disabled?: boolean;
-  fetcher: FetcherWithComponents<CartActionData>;
-  onClick?: () => void;
-}) {
+export const AddToCartButton = forwardRef<
+  HTMLButtonElement,
+  {
+    analytics?: unknown;
+    children: React.ReactNode;
+    disabled?: boolean;
+    lines: Array<OptimisticCartLineInput>;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    className?: string;
+  } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'>
+>(({analytics, children, disabled, lines, onClick, className, ...props}, ref) => {
+  const fetcher = useFetcher<CartActionData>();
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -94,64 +93,67 @@ function AddToCartFormContent({
     ariaLabel = ADD_TO_CART_ERROR_MESSAGE;
   }
 
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Performance mark for button click
+    performance.mark('add-to-cart-start');
+
+    // Clear error on retry
+    if (error) {
+      setError(null);
+    }
+
+    if (onClick) {
+      onClick(e);
+    }
+
+    // Construct form data to submit to the Hydrogen cart action
+    const formData = new FormData();
+    formData.append(
+      'cartFormInput',
+      JSON.stringify({
+        action: CartForm.ACTIONS?.LinesAdd,
+        inputs: {lines},
+      }),
+    );
+    if (analytics) {
+      formData.append('analytics', JSON.stringify(analytics));
+    }
+
+    void fetcher.submit(formData, {method: 'POST', action: '/cart'});
+  };
+
   return (
-    <>
-      <input name="analytics" type="hidden" value={JSON.stringify(analytics)} />
-      <button
-        type="submit"
-        onClick={() => {
-          // Performance mark for button click
-          performance.mark('add-to-cart-start');
-
-          // Clear error on retry
-          if (error) {
-            setError(null);
-          }
-
-          onClick?.();
-        }}
-        disabled={disabled ?? (fetcher.state !== 'idle' || isSuccess)}
-        data-testid="add-to-cart-button"
-        className={cn('min-w-auto')}
-      >
-        {buttonText}
-      </button>
+    <button
+      ref={ref}
+      type="button"
+      onClick={handleAddToCart}
+      disabled={disabled ?? (fetcher.state !== 'idle' || isSuccess)}
+      data-testid="add-to-cart-button"
+      className={cn('min-w-auto relative', className)}
+      {...props}
+    >
+      {buttonText}
 
       {/* Screen reader announcements (AC6) */}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+      <span role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {ariaLabel}
-      </div>
+      </span>
 
       {/* Error message display (AC5) */}
       {error && (
-        <div role="alert" data-testid="add-to-cart-error" className="mt-2 text-sm text-red-600">
+        <span
+          role="alert"
+          data-testid="add-to-cart-error"
+          className="absolute top-full left-0 mt-2 text-sm text-red-600 w-max pointer-events-none"
+        >
           {error}
-        </div>
+        </span>
       )}
-    </>
+    </button>
   );
-}
+});
 
-export function AddToCartButton({
-  analytics,
-  children,
-  disabled,
-  lines,
-  onClick,
-}: {
-  analytics?: unknown;
-  children: React.ReactNode;
-  disabled?: boolean;
-  lines: Array<OptimisticCartLineInput>;
-  onClick?: () => void;
-}) {
-  return (
-    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS?.LinesAdd}>
-      {(fetcher: FetcherWithComponents<CartActionData>) => (
-        <AddToCartFormContent analytics={analytics} disabled={disabled} fetcher={fetcher} onClick={onClick}>
-          {children}
-        </AddToCartFormContent>
-      )}
-    </CartForm>
-  );
-}
+AddToCartButton.displayName = 'AddToCartButton';

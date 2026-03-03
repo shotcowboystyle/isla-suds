@@ -118,6 +118,6 @@ export default defineConfig(({mode, isSsrBuild}) => ({
     },
   },
   server: {
-    allowedHosts: ['.tryhydrogen.dev'],
+    allowedHosts: ['.tryhydrogen.dev', '7738-23-116-241-67.ngrok-free.app'],
   },
 }));

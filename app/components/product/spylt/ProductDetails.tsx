@@ -17,6 +17,7 @@ export function ProductDetails({product}: ProductDetailsProps) {
             SO CLEAN CLEAN
           </h2>
         </div>
+
         <div className="text-xl md:text-2xl font-medium leading-relaxed opacity-80">
           <p>
             Isla Suds is a natural goat milk soap made with simple, high-quality ingredients. It is free of harsh
@@ -31,10 +32,12 @@ export function ProductDetails({product}: ProductDetailsProps) {
             <h3 className="text-4xl font-black text-[#8B0000] mb-2">20g</h3>
             <p className="font-bold uppercase tracking-wide">Protein</p>
           </div>
+
           <div className="p-8 border-2 border-dashed border-[#8B0000] rounded-3xl">
             <h3 className="text-4xl font-black text-[#8B0000] mb-2">90</h3>
             <p className="font-bold uppercase tracking-wide">Calories</p>
           </div>
+
           <div className="p-8 border-2 border-dashed border-[#8B0000] rounded-3xl">
             <h3 className="text-4xl font-black text-[#8B0000] mb-2">0g</h3>
             <p className="font-bold uppercase tracking-wide">Sugar</p>

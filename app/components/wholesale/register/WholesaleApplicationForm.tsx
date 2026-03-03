@@ -100,8 +100,7 @@ export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormP
               <div className={styles['form-heading']}>Start your application</div>
 
               <div className={styles['form-fieldset']}>
-                {/* Contact Name */}
-                <div>
+                <div className={cn(styles['form-group'], 'col-span-1')}>
                   <label htmlFor="name" className="sr-only">
                     Contact Name <span className="text-red-500">*</span>
                   </label>
@@ -114,57 +113,14 @@ export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormP
                       styles['form-input'],
                       actionData?.fieldErrors?.name && 'border-red-500 focus-visible:ring-red-500',
                     )}
-                    placeholder="Jane Doe"
+                    placeholder="Contact Name"
                   />
                   {actionData?.fieldErrors?.name && (
                     <p className="text-sm text-red-500">{actionData.fieldErrors.name}</p>
                   )}
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="sr-only">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.email && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="jane@example.com"
-                  />
-                  {actionData?.fieldErrors?.email && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.email}</p>
-                  )}
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label htmlFor="phone" className="sr-only">
-                    Phone <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="(555) 123-4567"
-                  />
-                  {actionData?.fieldErrors?.phone && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.phone}</p>
-                  )}
-                </div>
-
-                {/* Business Name */}
-                <div>
+                <div className={cn(styles['form-group'], 'col-span-1')}>
                   <label htmlFor="businessName" className="sr-only">
                     Business Name <span className="text-red-500">*</span>
                   </label>
@@ -177,29 +133,70 @@ export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormP
                       styles['form-input'],
                       actionData?.fieldErrors?.businessName && 'border-red-500 focus-visible:ring-red-500',
                     )}
-                    placeholder="Isla Suds Retail"
+                    placeholder="Business Name"
                   />
                   {actionData?.fieldErrors?.businessName && (
                     <p className="text-sm text-red-500">{actionData.fieldErrors.businessName}</p>
                   )}
                 </div>
 
-                {/* Instagram Handle */}
-                <div>
+                <div className={cn(styles['form-group'], 'col-span-2')}>
+                  <label htmlFor="email" className="sr-only">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className={cn(
+                      styles['form-input'],
+                      actionData?.fieldErrors?.email && 'border-red-500 focus-visible:ring-red-500',
+                    )}
+                    placeholder="Email"
+                  />
+                  {actionData?.fieldErrors?.email && (
+                    <p className="text-sm text-red-500">{actionData.fieldErrors.email}</p>
+                  )}
+                </div>
+
+                <div className={cn(styles['form-group'], 'col-span-2')}>
+                  <label htmlFor="phone" className="sr-only">
+                    Phone <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    className={cn(
+                      styles['form-input'],
+                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
+                    )}
+                    placeholder="Phone"
+                  />
+                  {actionData?.fieldErrors?.phone && (
+                    <p className="text-sm text-red-500">{actionData.fieldErrors.phone}</p>
+                  )}
+                </div>
+
+                <div className={cn(styles['form-group'], 'col-span-2')}>
                   <label htmlFor="instagram" className="sr-only">
-                    Instagram Handle
+                    Instagram handle
                   </label>
                   <input
                     type="text"
                     id="instagram"
                     name="instagram"
-                    className={cn(styles['form-input'])}
-                    placeholder="@islasuds"
+                    className={cn(
+                      styles['form-input'],
+                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
+                    )}
+                    placeholder="Instagram Handle"
                   />
                 </div>
 
-                {/* Website */}
-                <div>
+                <div className={cn(styles['form-group'], 'col-span-2')}>
                   <label htmlFor="website" className="sr-only">
                     Website
                   </label>
@@ -207,13 +204,15 @@ export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormP
                     type="url"
                     id="website"
                     name="website"
-                    className={cn(styles['form-input'])}
-                    placeholder="https://islasuds.com"
+                    className={cn(
+                      styles['form-input'],
+                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
+                    )}
+                    placeholder="Website"
                   />
                 </div>
 
-                {/* Message */}
-                <div className="col-span-1 min-[992px]:col-span-2">
+                <div className={cn(styles['form-group'], 'col-span-2')}>
                   <label htmlFor="message" className="sr-only">
                     Tell us about your shop <span className="text-red-500">*</span>
                   </label>
@@ -234,7 +233,6 @@ export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormP
                 </div>
               </div>
 
-              {/* Error Message */}
               {actionData?.error && (
                 <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">{actionData.error}</div>
               )}

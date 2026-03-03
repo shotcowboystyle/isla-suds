@@ -26,7 +26,7 @@ vi.mock('~/components/Aside', () => ({
   }),
 }));
 
-vi.mock('~/components/AddToCartButton', () => ({
+vi.mock('~/components/cart/AddToCartButton', () => ({
   AddToCartButton: ({children, disabled}: any) => (
     <button type="submit" disabled={disabled}>
       {children}
@@ -64,12 +64,7 @@ describe('ProductForm', () => {
       price: {amount: '29.99', currencyCode: 'USD'},
     };
 
-    render(
-      <ProductForm
-        productOptions={productOptions as any}
-        selectedVariant={selectedVariant as any}
-      />,
-    );
+    render(<ProductForm productOptions={productOptions as any} selectedVariant={selectedVariant as any} />);
 
     // WHEN: Component renders
     // THEN: Size option should not be displayed (only one value)
@@ -117,12 +112,7 @@ describe('ProductForm', () => {
       price: {amount: '29.99', currencyCode: 'USD'},
     };
 
-    render(
-      <ProductForm
-        productOptions={productOptions as any}
-        selectedVariant={selectedVariant as any}
-      />,
-    );
+    render(<ProductForm productOptions={productOptions as any} selectedVariant={selectedVariant as any} />);
 
     // WHEN: Component renders
     // THEN: Size option should be displayed with both values
@@ -142,12 +132,7 @@ describe('ProductForm', () => {
       price: {amount: '29.99', currencyCode: 'USD'},
     };
 
-    render(
-      <ProductForm
-        productOptions={productOptions}
-        selectedVariant={selectedVariant as any}
-      />,
-    );
+    render(<ProductForm productOptions={productOptions} selectedVariant={selectedVariant as any} />);
 
     // WHEN: Component renders
     const addToCartButton = screen.getByRole('button', {name: /sold out/i});
@@ -168,12 +153,7 @@ describe('ProductForm', () => {
       price: {amount: '29.99', currencyCode: 'USD'},
     };
 
-    render(
-      <ProductForm
-        productOptions={productOptions}
-        selectedVariant={selectedVariant as any}
-      />,
-    );
+    render(<ProductForm productOptions={productOptions} selectedVariant={selectedVariant as any} />);
 
     // WHEN: Component renders
     const addToCartButton = screen.getByRole('button', {name: /add to cart/i});
@@ -225,10 +205,7 @@ describe('ProductForm', () => {
     };
 
     const {container} = render(
-      <ProductForm
-        productOptions={productOptions as any}
-        selectedVariant={selectedVariant as any}
-      />,
+      <ProductForm productOptions={productOptions as any} selectedVariant={selectedVariant as any} />,
     );
 
     // WHEN: Component renders

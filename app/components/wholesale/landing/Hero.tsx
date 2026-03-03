@@ -3,7 +3,8 @@ import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
-import WholesaleHeroBackground from '~/assets/images/wholesale-hero-background.webp';
+import WholesaleHeroBackgroundJpeg from '~/assets/images/wholesale-hero-background.jpeg';
+import WholesaleHeroBackgroundWebp from '~/assets/images/wholesale-hero-background.webp';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 if (typeof document !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
@@ -98,7 +99,18 @@ export function Hero() {
       <div ref={containerRef} className={styles['hero-section-container']}>
         {/* Background Image - converting the analysis description "lifestyle-oriented image" */}
         <div className="absolute inset-0 z-0">
-          <img src={WholesaleHeroBackground} alt="Wholesale Hero" className="h-full w-full object-cover opacity-60" />
+          <picture>
+            <source
+              srcSet={WholesaleHeroBackgroundWebp}
+              type="image/webp"
+              className="h-full w-full object-cover opacity-60"
+            />
+            <img
+              src={WholesaleHeroBackgroundJpeg}
+              alt="Wholesale hero background"
+              className="h-full w-full object-cover opacity-60"
+            />
+          </picture>
         </div>
 
         <div className={styles['hero-section-content']}>

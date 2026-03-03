@@ -1,25 +1,22 @@
 .statement-section {
-  background-color: #523122;
+  background-color: var(--color-dark-brown);
   flex-flow: column;
   justify-content: center;
   align-items: stretch;
   width: auto;
   height: auto;
   display: flex;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-block: 60px;
 }
 
 @media screen and (min-width: 480px) {
   .statement-section {
-    padding-top: 120px;
-    padding-bottom: 120px;
+    padding-block: 120px;
   }
 }
 @media screen and (min-width: 768px) {
   .statement-section {
-    padding-top: 150px;
-    padding-bottom: 150px;
+    padding-block: 150px;
     height: 100vh;
   }
 }
@@ -36,7 +33,7 @@
 .heading-text {
   color: var(--color-secondary);
   text-align: left;
-  letter-spacing: -0.3vw;
+  letter-spacing: -0.03vw;
   text-transform: uppercase;
   font-family: Antonio, sans-serif;
   font-size: 13vw;
@@ -87,10 +84,10 @@
   flex-flow: column;
   justify-content: space-between;
   display: flex;
+  padding: 24px 16px;
 }
 
 .card-1 {
-  inset: 0% auto auto 0%;
   flex: none;
   align-items: center;
   width: 90vw;
@@ -98,14 +95,14 @@
   margin-left: 0;
   padding: 24px 16px;
   position: static;
-  transform: rotate(5deg);
+  transform: rotate(1deg);
   outline-width: 4px;
+  inset: 0% auto auto 7vw;
 }
 @media screen and (min-width: 480px) {
   .card-1 {
     width: 80vw;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding-block: 24px;
   }
 }
 @media screen and (min-width: 768px) {
@@ -116,8 +113,7 @@
     outline-width: 0.4vw;
     width: auto;
     height: 21vw;
-    padding-left: 4vw;
-    padding-right: 4vw;
+    padding-inline: 4vw;
     margin-left: 0;
   }
 }
@@ -134,16 +130,14 @@
   height: auto;
   position: relative;
   bottom: 1vw;
-  transform: rotate(-5deg);
+  padding: 24px 16px;
+  transform: rotate(-2deg);
   outline-width: 4px;
-  padding-left: 16px;
-  padding-right: 16px;
 }
 @media screen and (min-width: 480px) {
   .card-2 {
     width: 80vw;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding-block: 24px;
     transform: rotate(-2deg);
   }
 }
@@ -152,10 +146,7 @@
     outline-width: 0.4vw;
     width: auto;
     height: 21vw;
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0;
     transform: rotate(-5deg);
   }
 }
@@ -172,20 +163,16 @@
   height: auto;
   margin-right: 0;
   position: static;
+  padding: 24px 16px;
   top: auto;
   right: auto;
   transform: rotate(4deg);
   outline-width: 4px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 0;
-  padding-bottom: 0;
 }
 @media screen and (min-width: 480px) {
   .card-3 {
     width: 80vw;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding-block: 24px;
   }
 }
 @media screen and (min-width: 768px) {
@@ -196,10 +183,7 @@
     top: 0;
     right: 7vw;
     transform: rotate(4deg);
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0;
   }
 }
 @media screen and (min-width: 992px) {
@@ -258,7 +242,7 @@
   line-height: 100%;
   position: static;
   width: auto;
-  margin-bottom: 0;
+  margin-block: 0;
   text-align: center;
 }
 @media screen and (min-width: 768px) {
@@ -291,4 +275,22 @@
 
 .button-wrapper {
   align-self: center;
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  color: var(--color-dark-brown);
+}
+@media screen and (min-width: 480px) {
+  .icon-wrapper {
+    margin-bottom: 1.5rem;
+  }
+}
+@media screen and (min-width: 768px) {
+  .icon-wrapper {
+    margin-bottom: 0;
+  }
 }

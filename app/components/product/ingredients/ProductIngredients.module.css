@@ -1,0 +1,140 @@
+.section-ingredients {
+  position: relative;
+  background-color: var(--color-black);
+  padding-bottom: 2vw;
+  overflow: hidden;
+}
+
+.container-click-ingredients {
+  background-color: var(--color-black);
+  /* padding-top: 16vw; */
+  padding-top: 0;
+  /* padding-bottom: 26vw; */
+  padding-bottom: 0;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+@media screen and (min-width: 480px) {
+  .container-click-ingredients {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.ingredient-click-main {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  /* height: 120vh; */
+  height: 100vh;
+  /* margin-bottom: 64px; */
+  margin-bottom: 0;
+  display: flex;
+  position: relative;
+}
+@media screen and (min-width: 480px) {
+  .ingredient-click-main {
+    margin-bottom: 0;
+  }
+}
+/* @media screen and (min-width: 768px) {
+  .ingredient-click-main {
+    height: 85vh;
+  }
+} */
+/* @media screen and (min-width: 992px) {
+  .ingredient-click-main {
+    height: 130vh;
+  }
+} */
+
+.circle-large {
+  z-index: 3;
+  border: 2px solid var(--color-white);
+  border-radius: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 185vw;
+  height: 185vw;
+  display: flex;
+  position: absolute;
+}
+@media screen and (min-width: 480px) {
+  .circle-large {
+    width: 90vw;
+    height: 90vw;
+  }
+}
+
+.circle-mid {
+  z-index: 1;
+  border: 2px solid var(--color-white);
+  border-radius: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 145vw;
+  height: 145vw;
+  display: flex;
+  position: absolute;
+}
+@media screen and (min-width: 480px) {
+  .circle-mid {
+    width: 65vw;
+    height: 65vw;
+  }
+}
+
+.ingredient-circle-text {
+  z-index: 4;
+  color: var(--black);
+  text-align: center;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+@media screen and (min-width: 480px) {
+  .ingredient-circle-text {
+    font-size: 1vw;
+  }
+}
+
+.ingredient-click-wrapper-ingredient-name {
+  top: auto;
+  bottom: -10vw;
+  left: 48vw;
+  z-index: 20;
+  grid-column-gap: 0.6vw;
+  grid-row-gap: 0.6vw;
+  cursor: pointer;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+  position: absolute;
+}
+@media screen and (min-width: 480px) {
+  .ingredient-click-wrapper-ingredient-name {
+    bottom: 24vw;
+    left: -2vw;
+  }
+}
+
+.circle-center {
+  background-color: var(--color-white);
+  border-radius: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 110vw;
+  height: 110vw;
+  display: flex;
+  position: absolute;
+  overflow: hidden;
+}
+@media screen and (min-width: 480px) {
+  .circle-center {
+    width: 40vw;
+    height: 40vw;
+  }
+}
