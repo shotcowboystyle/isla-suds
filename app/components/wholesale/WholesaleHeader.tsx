@@ -17,7 +17,7 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => {
     setShowLogoutConfirm(false);
   });
