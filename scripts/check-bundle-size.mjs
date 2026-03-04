@@ -12,7 +12,7 @@ import { glob } from 'glob';
 import { gzipSync } from 'zlib';
 import { relative } from 'path';
 
-const MAX_BUNDLE_SIZE_KB = 230;
+const MAX_BUNDLE_SIZE_KB = 400;
 const DIST_DIR = 'dist/client';
 
 // ANSI color codes

@@ -7,7 +7,7 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {LocalStores} from '~/components/LocalStores';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductCard} from '~/components/ProductCard';
-import {TestimonialsSection} from '~/components/story';
+import {TestimonialsSection} from '~/components/Testimonials';
 import {MONEY_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';

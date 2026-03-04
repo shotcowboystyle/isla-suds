@@ -206,7 +206,7 @@ function OrderItem({order}: {order: OrderItemFragment}) {
           <p className="font-semibold text-gray-900 text-lg">
             <Money data={order.totalPrice} />
           </p>
-          <p className="text-sm text-gray-500 capitalize">{order.financialStatus.toLowerCase()}</p>
+          <p className="text-sm text-gray-500 capitalize">{order.financialStatus?.toLowerCase()}</p>
         </div>
         <Link
           to={`/account/orders/${btoa(order.id)}`}

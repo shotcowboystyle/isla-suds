@@ -206,12 +206,37 @@ jobs:
           name: bundle-analysis
           path: dist/
 
+  # Check if Shopify Storefront API credentials are available
+  check-storefront-secrets:
+    name: Check Storefront Credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      available: ${{ steps.check.outputs.available }}
+    steps:
+      - name: Check for storefront API token
+        id: check
+        run: |
+          if [ -n "${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+            echo "::notice::Skipping storefront-dependent jobs (smoke tests, accessibility, lighthouse). Set up Shopify app integration to enable them."
+          fi
+
   # Lighthouse CI with Core Web Vitals
+  # Requires live Shopify Storefront API access (custom app integration)
   lighthouse:
     name: Lighthouse CI
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
+    env:
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
+      PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}
+      PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -246,6 +271,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
 
@@ -253,13 +285,6 @@ jobs:
         run: pnpm run lighthouse:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-      # - name: Lighthouse
-      #   uses: shopify/lighthouse-ci-action@v1
-      #   with:
-      #     access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
-      #     store: ${{ secrets.SHOP_STORE }}
-      #     # password: ${{ secrets.SHOP_PASSWORD }}
 
       - name: Upload Lighthouse results
         if: failure()
@@ -269,11 +294,13 @@ jobs:
           path: .lighthouseci/
 
   # Accessibility checks
+  # Requires live Shopify Storefront API access (custom app integration)
   accessibility:
     name: Accessibility (axe-core)
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
@@ -316,10 +343,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
-        env:
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Run accessibility checks
         run: pnpm run test:a11y
@@ -386,11 +418,13 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
   # Smoke tests - Critical path verification
+  # Requires live Shopify Storefront API access (custom app integration)
   smoke-tests:
     name: Smoke Tests (Full Journey)
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
@@ -433,10 +467,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
-        env:
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Run smoke tests
         run: pnpm run test:smoke
