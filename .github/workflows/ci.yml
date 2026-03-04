@@ -212,6 +212,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: bundle-size
+    env:
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
+      PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}
+      PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -246,6 +251,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
 
@@ -253,13 +265,6 @@ jobs:
         run: pnpm run lighthouse:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-      # - name: Lighthouse
-      #   uses: shopify/lighthouse-ci-action@v1
-      #   with:
-      #     access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
-      #     store: ${{ secrets.SHOP_STORE }}
-      #     # password: ${{ secrets.SHOP_PASSWORD }}
 
       - name: Upload Lighthouse results
         if: failure()
@@ -316,10 +321,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
-        env:
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Run accessibility checks
         run: pnpm run test:a11y
@@ -433,10 +443,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .env for worker runtime
+        run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PUBLIC_STORE_DOMAIN=${{ secrets.PUBLIC_STORE_DOMAIN }}" >> .env
+          echo "PUBLIC_STOREFRONT_API_TOKEN=${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" >> .env
+          echo "PUBLIC_STOREFRONT_ID=${{ secrets.PUBLIC_STOREFRONT_ID }}" >> .env
+
       - name: Build production bundle
         run: pnpm build
-        env:
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Run smoke tests
         run: pnpm run test:smoke
