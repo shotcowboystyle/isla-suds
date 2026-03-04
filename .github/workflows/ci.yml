@@ -206,14 +206,32 @@ jobs:
           name: bundle-analysis
           path: dist/
 
+  # Check if Shopify Storefront API credentials are available
+  check-storefront-secrets:
+    name: Check Storefront Credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      available: ${{ steps.check.outputs.available }}
+    steps:
+      - name: Check for storefront API token
+        id: check
+        run: |
+          if [ -n "${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+            echo "::notice::Skipping storefront-dependent jobs (smoke tests, accessibility, lighthouse). Set up Shopify app integration to enable them."
+          fi
+
   # Lighthouse CI with Core Web Vitals
   # Requires live Shopify Storefront API access (custom app integration)
   lighthouse:
     name: Lighthouse CI
-    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
@@ -279,10 +297,10 @@ jobs:
   # Requires live Shopify Storefront API access (custom app integration)
   accessibility:
     name: Accessibility (axe-core)
-    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
@@ -403,10 +421,10 @@ jobs:
   # Requires live Shopify Storefront API access (custom app integration)
   smoke-tests:
     name: Smoke Tests (Full Journey)
-    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
+    if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: bundle-size
+    needs: [bundle-size, check-storefront-secrets]
     env:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
