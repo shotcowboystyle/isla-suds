@@ -207,8 +207,10 @@ jobs:
           path: dist/
 
   # Lighthouse CI with Core Web Vitals
+  # Requires live Shopify Storefront API access (custom app integration)
   lighthouse:
     name: Lighthouse CI
+    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: bundle-size
@@ -274,8 +276,10 @@ jobs:
           path: .lighthouseci/
 
   # Accessibility checks
+  # Requires live Shopify Storefront API access (custom app integration)
   accessibility:
     name: Accessibility (axe-core)
+    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: bundle-size
@@ -396,8 +400,10 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
   # Smoke tests - Critical path verification
+  # Requires live Shopify Storefront API access (custom app integration)
   smoke-tests:
     name: Smoke Tests (Full Journey)
+    if: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: bundle-size

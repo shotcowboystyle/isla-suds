@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   ci: {
     collect: {
       // Run Lighthouse against local preview server
