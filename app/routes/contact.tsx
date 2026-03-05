@@ -1,7 +1,8 @@
-import {useFetcher, useActionData, data} from 'react-router';
+import {useActionData, data} from 'react-router';
 import {ContactForm} from '~/components/contact/ContactForm';
 import {ContactHeader} from '~/components/contact/ContactHeader';
 import {CONTACT_PAGE} from '~/content/contact';
+import {sendContactFormEmail} from '~/lib/email.server';
 import {isValidEmail} from '~/utils/validation';
 import type {Route} from './+types/contact';
 
@@ -9,7 +10,7 @@ export const meta: Route.MetaFunction = () => {
   return [{title: CONTACT_PAGE.meta.title}, {name: 'description', content: CONTACT_PAGE.meta.description}];
 };
 
-export async function action({request}: Route.ActionArgs) {
+export async function action({request, context}: Route.ActionArgs) {
   const formData = await request.formData();
   const name = String(formData.get('name') || '');
   const email = String(formData.get('email') || '');
@@ -27,8 +28,26 @@ export async function action({request}: Route.ActionArgs) {
     return data({fieldErrors: {email: 'Please enter a valid email address'}}, {status: 400});
   }
 
-  // MVP: Form validation passes. Email sending not yet integrated.
-  // Future: Integrate with Shopify Forms or external email service.
+  const founderEmail = context.env.FOUNDER_EMAIL;
+  const resendApiKey = context.env.RESEND_API_KEY;
+
+  if (!founderEmail || !resendApiKey) {
+    return data({error: 'Something went wrong. Please try again.'}, {status: 500});
+  }
+
+  try {
+    await sendContactFormEmail({
+      apiKey: resendApiKey,
+      to: founderEmail,
+      name,
+      email,
+      subject,
+      orderNumber: orderNumber || undefined,
+      message,
+    });
+  } catch {
+    return data({error: 'Something went wrong. Please try again.'}, {status: 500});
+  }
 
   return data({success: true});
 }

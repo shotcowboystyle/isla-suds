@@ -1,9 +1,10 @@
 // import {redirect, useActionData} from 'react-router';
-import {useActionData} from 'react-router';
+import {useActionData, data} from 'react-router';
 import {PartnersApplicationForm} from '~/components/partners/register/PartnersApplicationForm';
 // import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 // import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 // import {getB2BCompany} from '~/lib/wholesale';
+import {submitToShopify} from '~/lib/shopify-admin.server';
 import {isValidEmail} from '~/utils/validation';
 import type {Route} from './+types/partners.register';
 
@@ -31,12 +32,14 @@ export const meta: Route.MetaFunction = () => {
 //   return {};
 // }
 
-export async function action({request}: Route.ActionArgs) {
+export async function action({request, context}: Route.ActionArgs) {
   const formData = await request.formData();
   const name = String(formData.get('name') || '');
   const email = String(formData.get('email') || '');
   const phone = String(formData.get('phone') || '');
   const businessName = String(formData.get('businessName') || '');
+  const instagram = String(formData.get('instagram') || '');
+  const website = String(formData.get('website') || '');
   const message = String(formData.get('message') || '');
 
   // Basic validation
@@ -56,8 +59,39 @@ export async function action({request}: Route.ActionArgs) {
     };
   }
 
-  // MVP: Validation passes. Email/customer creation not yet integrated.
-  // Future: Integrate with email service or Shopify customer API.
+  const note = [
+    'Wholesale Partner Application',
+    '',
+    `Business: ${businessName}`,
+    instagram ? `Instagram: ${instagram}` : null,
+    website ? `Website: ${website}` : null,
+    '',
+    'Message:',
+    message,
+  ]
+    .filter((line) => line !== null)
+    .join('\n');
+
+  try {
+    const result = await submitToShopify(
+      context.env.PUBLIC_STORE_DOMAIN,
+      context.env.SHOPIFY_ADMIN_API_TOKEN,
+      {
+        email,
+        firstName: name,
+        phone,
+        tags: 'wholesale-applicant',
+        note,
+        acceptsMarketing: true,
+      },
+    );
+
+    if (!result.success) {
+      return data({success: false, error: result.error}, {status: 500});
+    }
+  } catch {
+    return data({success: false, error: 'Something went wrong. Please try again.'}, {status: 500});
+  }
 
   return {success: true};
 }

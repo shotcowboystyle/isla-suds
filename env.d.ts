@@ -11,5 +11,7 @@ import '@total-typescript/ts-reset';
 declare global {
   interface Env {
     FOUNDER_EMAIL?: string;
+    RESEND_API_KEY?: string;
+    SHOPIFY_ADMIN_API_TOKEN?: string;
   }
 }

@@ -1,88 +1,84 @@
 /**
  * Email Utility (Server-side only)
  *
- * Handles sending emails for invoice requests and other notifications.
- * MVP: Logs to console, ready for external service integration.
+ * Sends transactional emails via Resend.
+ * Requires RESEND_API_KEY and FOUNDER_EMAIL env vars.
  */
 
+import {Resend} from 'resend';
 import {formatDate} from '~/utils/format-date';
 import {formatMoney} from '~/utils/format-money';
 import type {EmailOrder, EmailCustomer} from '~/types/wholesale';
 
+const FROM_ADDRESS = 'Isla Suds <notifications@islasuds.com>';
+
+function getResend(apiKey: string): Resend {
+  return new Resend(apiKey);
+}
+
+// ── Contact Form ────────────────────────────────────────────────────────
+
+interface ContactFormParams {
+  apiKey: string;
+  to: string;
+  name: string;
+  email: string;
+  subject: string;
+  orderNumber?: string;
+  message: string;
+}
+
+export async function sendContactFormEmail({
+  apiKey,
+  to,
+  name,
+  email,
+  subject,
+  orderNumber,
+  message,
+}: ContactFormParams): Promise<void> {
+  const resend = getResend(apiKey);
+
+  await resend.emails.send({
+    from: FROM_ADDRESS,
+    to,
+    replyTo: email,
+    subject: `Contact: ${subject}`,
+    html: `
+      <h2>New Contact Form Submission</h2>
+      <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+      <p><strong>Subject:</strong> ${subject}</p>
+      ${orderNumber ? `<p><strong>Order #:</strong> ${orderNumber}</p>` : ''}
+      <hr />
+      <p>${message.replace(/\n/g, '<br />')}</p>
+    `,
+  });
+}
+
+// ── Invoice Request ─────────────────────────────────────────────────────
+
 interface InvoiceRequestParams {
+  apiKey: string;
   order: EmailOrder;
   customer: EmailCustomer;
   founderEmail: string;
 }
 
-/**
- * Send invoice request email to founder
- *
- * MVP Implementation: Logs email content to console
- * Future: Integrate with Resend, SendGrid, or Shopify Email API
- *
- * @param params - Order, customer, and recipient email information
- */
 export async function sendInvoiceRequestEmail({
+  apiKey,
   order,
   customer,
   founderEmail,
 }: InvoiceRequestParams): Promise<void> {
-  const emailSubject = `Invoice Request: Order #${order.orderNumber} from ${customer.company?.name || customer.firstName}`;
-
-  const emailBody = `
-New invoice request from wholesale partner:
-
-Partner: ${customer.firstName} ${customer.lastName}
-Company: ${customer.company?.name || 'N/A'}
-Email: ${customer.email}
-
-Order Details:
-- Order Number: ${order.orderNumber}
-- Order Date: ${formatDate(order.processedAt)}
-- Total: ${formatMoney(order.currentTotalPrice)}
-- Status: ${order.fulfillmentStatus}
-
-Items:
-${order.lineItems.edges
-  .map(({node}) => `- ${node.quantity}x ${node.title}`)
-  .join('\n')}
-
-Log in to Shopify admin to generate and send the invoice.
-  `.trim();
-
-  // MVP: No-op email sending. Replace with Resend, SendGrid, or Shopify Email API.
-
-  // Simulate successful send (MVP behavior)
-  // See story Dev Notes for production integration options:
-  // Resend, SendGrid, Shopify Email API, or Zapier webhook
-  await new Promise((resolve) => setTimeout(resolve, 100));
-}
-
-/**
- * Example Resend Integration (commented out)
- *
- * Uncomment and install 'resend' package when ready to use:
- * npm install resend
- */
-
-/*
-import { Resend } from 'resend';
-
-export async function sendInvoiceRequestEmail({
-  order,
-  customer,
-  founderEmail,
-}: InvoiceRequestParams): Promise<void> {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const resend = getResend(apiKey);
 
   await resend.emails.send({
-    from: 'wholesale@islasuds.com',
+    from: FROM_ADDRESS,
     to: founderEmail,
-    subject: `Invoice Request: Order #${order.orderNumber} from ${customer.company?.name}`,
+    subject: `Invoice Request: Order #${order.orderNumber} from ${customer.company?.name || customer.firstName}`,
     html: `
       <h2>Invoice Request from ${customer.firstName} ${customer.lastName}</h2>
-      <p><strong>Company:</strong> ${customer.company?.name}</p>
+      <p><strong>Company:</strong> ${customer.company?.name || 'N/A'}</p>
       <p><strong>Email:</strong> ${customer.email}</p>
 
       <h3>Order Details</h3>
@@ -93,13 +89,12 @@ export async function sendInvoiceRequestEmail({
 
       <h3>Items</h3>
       <ul>
-        ${order.lineItems.edges.map(({ node }) =>
-          `<li>${node.quantity}x ${node.title}</li>`
-        ).join('')}
+        ${order.lineItems.edges
+          .map(({node}) => `<li>${node.quantity}x ${node.title}</li>`)
+          .join('')}
       </ul>
 
       <p>Log in to Shopify admin to generate and send the invoice.</p>
     `,
   });
 }
-*/

@@ -113,7 +113,7 @@ export default defineConfig(({mode, isSsrBuild}) => ({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: ['set-cookie-parser', 'cookie', 'react-router'],
+      include: ['resend', 'set-cookie-parser', 'cookie', 'react-router'],
       noExternals: ['@responsive-image/react'],
     },
   },
