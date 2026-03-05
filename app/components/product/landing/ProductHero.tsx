@@ -18,7 +18,6 @@ export function ProductHero({product, productOptions, selectedVariant}: ProductH
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
-  console.log('PRODUCT', product);
   const pricePerUnit = product.selectedOrFirstAvailableVariant?.price;
   const formattedUnitPrice = formatMoney(pricePerUnit?.amount ?? 0, pricePerUnit?.currencyCode ?? 'USD');
 

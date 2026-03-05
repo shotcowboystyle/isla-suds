@@ -92,6 +92,7 @@ export async function action({request, params, context}: Route.ActionArgs) {
     }
 
     await sendInvoiceRequestEmail({
+      apiKey: context.env.RESEND_API_KEY!,
       order,
       customer: {
         email: customer.emailAddress?.emailAddress ?? '',

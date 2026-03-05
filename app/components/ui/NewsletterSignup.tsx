@@ -1,7 +1,17 @@
-import {FaArrowRight} from 'react-icons/fa6';
+import {useFetcher} from 'react-router';
 import styles from './NewsletterSignup.module.css';
 
+interface NewsletterResponse {
+  success?: boolean;
+  error?: string;
+}
+
 export const NewsletterSignup = () => {
+  const fetcher = useFetcher<NewsletterResponse>();
+  const isSubmitting = fetcher.state === 'submitting';
+  const isSuccess = fetcher.data?.success === true;
+  const error = fetcher.data?.error;
+
   return (
     <div className={styles['newsletter-signup-wrapper']}>
       <p className={styles['paragraph']}>
@@ -9,44 +19,58 @@ export const NewsletterSignup = () => {
       </p>
 
       <div className={styles['footer-form']}>
-        <form
-          id="newsletter-form"
-          name="newsletter-form"
-          data-name="newsletter-form"
-          method="post"
-          className={styles['footer-form']}
-          aria-label="Newsletter signup"
-        >
-          <input
-            className={styles['text-field']}
-            maxLength={256}
-            name="email"
-            placeholder="Enter your email"
-            type="email"
-            id="newsletter-email"
-            required={true}
-          />
+        {!isSuccess ? (
+          <fetcher.Form
+            method="post"
+            action="/api/newsletter"
+            id="newsletter-form"
+            name="newsletter-form"
+            data-name="newsletter-form"
+            className={styles['footer-form']}
+            aria-label="Newsletter signup"
+          >
+            <input
+              className={styles['text-field']}
+              maxLength={256}
+              name="email"
+              placeholder="Enter your email"
+              type="email"
+              id="newsletter-email"
+              required={true}
+              disabled={isSubmitting}
+            />
 
-          <input type="submit" data-wait="Please wait..." className={styles['submit-button']} value="" />
-        </form>
+            <input
+              type="submit"
+              className={styles['submit-button']}
+              value=""
+              disabled={isSubmitting}
+              aria-label={isSubmitting ? 'Subscribing...' : 'Subscribe'}
+            />
+          </fetcher.Form>
+        ) : (
+          <div
+            className={styles['form-submit-success']}
+            tabIndex={-1}
+            role="region"
+            aria-label="Newsletter signup success"
+            style={{display: 'block'}}
+          >
+            <div>Thank you! Your submission has been received!</div>
+          </div>
+        )}
 
-        <div
-          className={styles['form-submit-success']}
-          tabIndex={-1}
-          role="region"
-          aria-label="Newsletter signup success"
-        >
-          <div>Thank you! Your submission has been received!</div>
-        </div>
-
-        <div
-          className={styles['form-submit-failure']}
-          tabIndex={-1}
-          role="region"
-          aria-label="Newsletter signup failure"
-        >
-          <div>Oops! Something went wrong while submitting the form.</div>
-        </div>
+        {error && (
+          <div
+            className={styles['form-submit-failure']}
+            tabIndex={-1}
+            role="alert"
+            aria-label="Newsletter signup failure"
+            style={{display: 'block'}}
+          >
+            <div>{error}</div>
+          </div>
+        )}
       </div>
     </div>
   );

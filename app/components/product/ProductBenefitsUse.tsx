@@ -12,10 +12,10 @@ export function ProductBenefitsUse() {
               <h2 className={styles['text-content-heading-h2']}>When to Use</h2>
 
               {PRODUCT_USE.map((item) => (
-                <>
+                <div key={item.id} className={styles['text-content']}>
                   <h4 className={styles['text-content-heading-h4']}>{item.title}</h4>
                   <p className={styles['text-content-text']}>{item.description}</p>
-                </>
+                </div>
               ))}
 
               <h4 className={styles['text-content-heading-h4']}>Our advice</h4>
