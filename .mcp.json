@@ -2,11 +2,17 @@
   "mcpServers": {
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
     },
     "ios-simulator": {
       "command": "npx",
-      "args": ["-y", "ios-simulator-mcp"]
+      "args": [
+        "-y",
+        "ios-simulator-mcp"
+      ]
     }
   }
 }

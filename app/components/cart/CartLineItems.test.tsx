@@ -38,9 +38,6 @@ vi.mock('~/utils/format-money', () => ({
 
 // Mock motion library components (Story 5.7 - animation integration)
 vi.mock('~/lib/motion', () => ({
-  AnimatePresence: ({children}: any) => children,
-  MotionLi: ({children, ...props}: any) => <li {...props}>{children}</li>,
-  fadeOutExitVariant: {},
   prefersReducedMotion: vi.fn(() => true), // Use reduced motion to skip GSAP animations in tests
 }));
 
@@ -59,9 +56,7 @@ import {useRouteLoaderData, useFetcher} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
 
 describe('CartLineItems', () => {
-  const mockUseRouteLoaderData = useRouteLoaderData as ReturnType<
-    typeof vi.fn
-  >;
+  const mockUseRouteLoaderData = useRouteLoaderData as ReturnType<typeof vi.fn>;
   const mockUseOptimisticCart = useOptimisticCart as ReturnType<typeof vi.fn>;
   const mockUseFetcher = useFetcher as ReturnType<typeof vi.fn>;
 
@@ -154,9 +149,7 @@ describe('CartLineItems', () => {
             nodes: [],
           },
         },
-        selectedOptions: options.withVariant
-          ? [{name: 'Size', value: 'Large'}]
-          : [],
+        selectedOptions: options.withVariant ? [{name: 'Size', value: 'Large'}] : [],
         quantityAvailable: 10,
       },
     }));
@@ -178,21 +171,11 @@ describe('CartLineItems', () => {
       },
       cost: {
         subtotalAmount: {
-          amount: lines
-            .reduce(
-              (sum, line) => sum + parseFloat(line.cost.totalAmount.amount),
-              0,
-            )
-            .toFixed(2),
+          amount: lines.reduce((sum, line) => sum + parseFloat(line.cost.totalAmount.amount), 0).toFixed(2),
           currencyCode: 'USD',
         },
         totalAmount: {
-          amount: lines
-            .reduce(
-              (sum, line) => sum + parseFloat(line.cost.totalAmount.amount),
-              0,
-            )
-            .toFixed(2),
+          amount: lines.reduce((sum, line) => sum + parseFloat(line.cost.totalAmount.amount), 0).toFixed(2),
           currencyCode: 'USD',
         },
         totalDutyAmount: null,
@@ -215,14 +198,8 @@ describe('CartLineItems', () => {
 
       const images = screen.getAllByRole('img');
       expect(images).toHaveLength(2);
-      expect(images[0]).toHaveAttribute(
-        'src',
-        expect.stringContaining('cdn.shopify.com/product-1'),
-      );
-      expect(images[1]).toHaveAttribute(
-        'src',
-        expect.stringContaining('cdn.shopify.com/product-2'),
-      );
+      expect(images[0]).toHaveAttribute('src', expect.stringContaining('cdn.shopify.com/product-1'));
+      expect(images[1]).toHaveAttribute('src', expect.stringContaining('cdn.shopify.com/product-2'));
     });
 
     it('uses lazy loading attribute on images', () => {
@@ -560,9 +537,7 @@ describe('CartLineItems', () => {
       render(<CartLineItems originalCart={cart} />);
 
       // Should use exact message from CART_QUANTITY_UPDATE_ERROR_MESSAGE
-      const errorMessages = screen.getAllByText(
-        "Couldn't update quantity. Let's try again.",
-      );
+      const errorMessages = screen.getAllByText("Couldn't update quantity. Let's try again.");
       expect(errorMessages.length).toBeGreaterThan(0);
     });
 
@@ -582,9 +557,7 @@ describe('CartLineItems', () => {
       render(<CartLineItems originalCart={cart} />);
 
       // Should display inventory-specific message
-      const errorMessages = screen.getAllByText(
-        /don't have that many in stock/i,
-      );
+      const errorMessages = screen.getAllByText(/don't have that many in stock/i);
       expect(errorMessages.length).toBeGreaterThan(0);
     });
 
@@ -643,9 +616,7 @@ describe('CartLineItems', () => {
       render(<CartLineItems originalCart={cart} />);
 
       // Should not display any error message
-      expect(
-        screen.queryByText(/Couldn't update quantity/i),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/Couldn't update quantity/i)).not.toBeInTheDocument();
     });
   });
 
@@ -942,9 +913,7 @@ describe('CartLineItems', () => {
 
       render(<CartLineItems originalCart={cart} />);
 
-      expect(
-        screen.getAllByText(/very long product name/).length,
-      ).toBeGreaterThan(0);
+      expect(screen.getAllByText(/very long product name/).length).toBeGreaterThan(0);
     });
 
     it('handles zero dollar line total', () => {
@@ -1113,9 +1082,7 @@ describe('CartLineItems', () => {
       render(<CartLineItems originalCart={cart} />);
 
       // Should detect inventory error and display appropriate message
-      const errorMessages = screen.getAllByText(
-        /don't have that many in stock/i,
-      );
+      const errorMessages = screen.getAllByText(/don't have that many in stock/i);
       expect(errorMessages.length).toBeGreaterThan(0);
     });
   });
@@ -1188,9 +1155,7 @@ describe('CartLineItems', () => {
         name: /remove lavender fields.*from cart/i,
       });
       expect(removeButton).toHaveAttribute('aria-label');
-      expect(removeButton.getAttribute('aria-label')).toContain(
-        'Lavender Fields',
-      );
+      expect(removeButton.getAttribute('aria-label')).toContain('Lavender Fields');
     });
 
     it('remove button is keyboard accessible', () => {

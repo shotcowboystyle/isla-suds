@@ -1,0 +1,117 @@
+Unused files (38)
+app/components/errors/index.ts                        
+app/components/faqs/FAQs.module.css                   
+app/components/faqs/FAQs.tsx                          
+app/components/locations/LocationsContactUs.module.css
+app/components/locations/LocationsContactUs.tsx       
+app/components/Partner.module.css                     
+app/components/Partner.tsx                            
+app/components/Preloader copy.tsx                     
+app/components/Preloader.module copy.css              
+app/components/product/index.ts                       
+app/components/product/landing/StickyAddToCart.tsx    
+app/components/product/spylt/Hero.tsx                 
+app/components/product/spylt/Marquee.tsx              
+app/components/product/spylt/Nutrition.tsx            
+app/components/product/spylt/ProductDetails.tsx       
+app/components/product/spylt/StickyAddToCart.tsx      
+app/components/ProductImage.tsx                       
+app/components/SearchFormPredictive.tsx               
+app/components/SearchResultsPredictive.tsx            
+app/components/TwoColumnLayout.tsx                    
+app/components/ui/Button.typecheck.tsx                
+app/content/faqs.ts                                   
+app/cookie.server.ts                                  
+app/hooks/use-is-tablet.ts                            
+app/hooks/use-scroll-trigger.ts                       
+app/lib/context.ts                                    
+app/lib/session.ts                                    
+app/lib/shopify/index.ts                              
+app/styles/app.css                                    
+app/styles/reset.css                                  
+app/styles/tokens.css                                 
+lighthouserc.js                                       
+server.ts                                             
+tests/support/factories/cart.factory.ts               
+tests/support/factories/variant.factory.ts            
+tests/support/fixtures/cart.fixture.ts                
+tests/support/fixtures/product.fixture.ts             
+tests/support/helpers/wait-for.ts                     
+Unused dependencies (6)
+cookie             package.json:46:6
+graphql-tag        package.json:49:6
+react-responsive   package.json:59:6
+react-router-dom   package.json:61:6
+set-cookie-parser  package.json:62:6
+split-type         package.json:63:6
+Unused devDependencies (6)
+@graphql-codegen/cli    package.json:73:6 
+@types/eslint           package.json:91:6 
+esbuild                 package.json:97:6 
+eslint-config-prettier  package.json:99:6 
+lighthouse              package.json:111:6
+prettier                package.json:112:6
+Unresolved imports (1)
+./+types/wholesale.register  app/routes/partners.register.tsx:8:26
+Unused exports (28)
+BenefitsSection                              app/components/story/index.ts:1:9                        
+HeroSection                                  app/components/story/index.ts:2:9                        
+IngredientsSection                           app/components/story/index.ts:3:9                        
+MessageSection                               app/components/story/index.ts:4:9                        
+ProductsList                                 app/components/story/index.ts:5:9                        
+VideoSection                                 app/components/story/index.ts:7:9                        
+NavigationMenuIndicator                      app/components/ui/NavigationMenu.tsx:131:3               
+CART_REMOVE_GENERIC_ERROR_MESSAGE            app/content/errors.ts:103:14                             
+BUNDLE_VALUE_PROPOSITIONS                    app/content/products.ts:139:14                           
+DEFAULT_BUNDLE_VALUE_PROPOSITION             app/content/products.ts:146:14                           
+HERO_TAGLINE                                 app/content/story.ts:2:14                                
+CUSTOMER_FRAGMENT                            app/graphql/customer-account/CustomerDetailsQuery.ts:2:14
+ORDER_ITEM_FRAGMENT                          app/graphql/customer-account/CustomerOrdersQuery.ts:2:14 
+CUSTOMER_ORDERS_FRAGMENT                     app/graphql/customer-account/CustomerOrdersQuery.ts:23:14
+PRODUCT_VARIANT_FRAGMENT                     app/graphql/product/ProductDetail.ts:1:14                
+PRODUCT_FRAGMENT                             app/graphql/product/ProductDetail.ts:38:14               
+MotionSection                                app/lib/motion.ts:20:14                                  
+MotionSpan                                   app/lib/motion.ts:28:14                                  
+MotionLi                                     app/lib/motion.ts:32:14                                  
+AnimatePresence                              app/lib/motion.ts:37:14                                  
+fadeOutExitVariant                           app/lib/motion.ts:93:14                                  
+clearTextureRevealTiming           function  app/lib/performance.ts:130:17                            
+isWholesaleCustomer                function  app/lib/wholesale.ts:10:17                               
+createProduct                      function  tests/support/factories/product.factory.ts:40:17         
+resetProductFactory                function  tests/support/factories/product.factory.ts:76:17         
+calculateMedian                    function  tests/support/helpers/performance.ts:87:17               
+getCoreWebVitals                   function  tests/support/helpers/performance.ts:122:23              
+hasPreloadLink                     function  tests/support/helpers/preload.ts:30:23                   
+Unused exported types (31)
+CartMainProps                     type       app/components/CartMain.tsx:10:13                 
+PictureProps                      type       app/components/Picture.tsx:59:23                  
+BundleCardProps                   interface  app/components/product/BundleCard.tsx:8:18        
+CollectionPromptProps             interface  app/components/product/CollectionPrompt.tsx:23:18 
+ConstellationGridProps            interface  app/components/product/ConstellationGrid.tsx:12:18
+ProductCardProps                  interface  app/components/product/ProductCard.tsx:7:18       
+ProductRevealInfoProps            interface  app/components/product/ProductRevealInfo.tsx:14:18
+ScentNarrativeProps               interface  app/components/product/ScentNarrative.tsx:5:18    
+TextureRevealProps                interface  app/components/product/TextureReveal.tsx:22:18    
+ButtonProps                       type       app/components/ui/Button.tsx:23:14                
+LiquidButtonProps                 interface  app/components/ui/LiquidButton.tsx:5:18           
+OrderProductCardProps             interface  app/components/wholesale/OrderProductCard.tsx:9:18
+OrderSummaryProps                 interface  app/components/wholesale/OrderSummary.tsx:12:18   
+QuantitySelectorProps             interface  app/components/wholesale/QuantitySelector.tsx:5:18
+WholesaleHeaderProps              interface  app/components/wholesale/WholesaleHeader.tsx:8:18 
+VarietyPackProduct                interface  app/content/collection-prompt.ts:34:18            
+ProductContent                    type       app/content/products.ts:173:13                    
+UseCollectionPromptTriggerParams  interface  app/hooks/use-collection-prompt-trigger.ts:18:18  
+UseCollectionPromptTriggerResult  interface  app/hooks/use-collection-prompt-trigger.ts:26:18  
+MotionDivProps                    type       app/lib/motion.ts:45:13                           
+MotionSectionProps                type       app/lib/motion.ts:46:13                           
+MotionArticleProps                type       app/lib/motion.ts:47:13                           
+MotionSpanProps                   type       app/lib/motion.ts:48:13                           
+MotionLiProps                     type       app/lib/motion.ts:49:13                           
+Lenis                             type       app/lib/scroll.ts:108:14                          
+ProductVariant                    interface  app/types/wholesale.ts:21:18                      
+LineItem                          interface  app/types/wholesale.ts:30:18                      
+LineItemEdge                      interface  app/types/wholesale.ts:39:18                      
+ShippingAddress                   interface  app/types/wholesale.ts:43:18                      
+TestProduct                       type       tests/support/factories/product.factory.ts:14:13  
+PerformanceMeasurement            type       tests/support/helpers/performance.ts:13:13        
+Configuration hints (1)

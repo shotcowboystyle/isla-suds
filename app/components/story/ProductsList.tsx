@@ -5,6 +5,7 @@ import {SplitText} from 'gsap/SplitText';
 import {ProductCard} from '~/components/ProductCard';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {productsList} from '~/content/products';
+import {useIsDesktop} from '~/hooks/use-is-desktop';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './ProductsList.module.css';
@@ -18,6 +19,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
   const text2Ref = useRef<HTMLHeadingElement>(null);
 
   const {isMobile, isLoading} = useIsMobile();
+  const {isDesktop, isLoading: isLoadingDesktop} = useIsDesktop();
 
   useGSAP(
     () => {
@@ -77,7 +79,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
 
   useGSAP(
     () => {
-      if (isMobile || isLoading || !sectionRef.current || !sliderRef.current) {
+      if (!isDesktop || isLoadingDesktop || !sectionRef.current || !sliderRef.current) {
         return;
       }
 
@@ -100,15 +102,15 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
         ease: 'none',
       });
     },
-    {dependencies: [isLoading, isMobile, sectionRef, sliderRef]},
+    {dependencies: [isLoadingDesktop, isDesktop, sectionRef, sliderRef]},
   );
 
   return (
     <section>
       <div ref={sectionRef} className={cn(styles['track'], 'relative', 'md:overflow-hidden')}>
         <div className={styles['camera']}>
-          <div ref={sliderRef} className={styles['frame']}>
-            <div className={styles['item']}>
+          <div className={styles['frame']}>
+            <div ref={sliderRef} className={styles['item']}>
               <div className={styles['text-wrapper']}>
                 <h1 ref={text1Ref} className={styles['heading-text']}>
                   We have 4
@@ -136,12 +138,12 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={cn(styles['actions-wrapper'])}>
-          <div className={styles['actions-container']}>
-            <div className={styles['actions-content']}>
-              <LiquidButton href="/collections/frontpage" text="GET IT NOW" />
+          <div className={cn(styles['actions-wrapper'])}>
+            <div className={styles['actions-container']}>
+              <div className={styles['actions-content']}>
+                <LiquidButton href="/collections/frontpage" text="SHOP ALL PRODUCTS" />
+              </div>
             </div>
           </div>
         </div>

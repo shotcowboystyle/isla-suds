@@ -4,7 +4,7 @@ import {Hero} from './Hero';
 import {IntroSection} from './IntroSection';
 import {PerksSection} from './PerksSection';
 
-export function WholesaleLandingPage() {
+export function PartnersLandingPage() {
   return (
     <main className="w-full">
       <Hero />

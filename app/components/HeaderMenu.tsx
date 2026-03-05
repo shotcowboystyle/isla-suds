@@ -57,7 +57,7 @@ const FALLBACK_HEADER_MENU = {
       tags: [],
       title: 'Wholesale',
       type: 'PAGE',
-      url: '/wholesale',
+      url: '/partners',
       items: [],
       image: WholesaleImage,
     },
@@ -89,20 +89,12 @@ type Viewport = 'desktop' | 'mobile';
 interface HeaderMenuProps {
   menu: HeaderQuery['menu'];
   primaryDomainUrl: string;
-  viewport: Viewport;
   publicStoreDomain: string;
   onClose: () => void;
   open: boolean;
 }
 
-export default function HeaderMenu({
-  menu,
-  primaryDomainUrl,
-  viewport,
-  publicStoreDomain,
-  onClose,
-  open,
-}: HeaderMenuProps) {
+export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, onClose, open}: HeaderMenuProps) {
   const [activeMenu, setActiveMenu] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -167,7 +159,7 @@ export default function HeaderMenu({
   return (
     <div ref={containerRef} className="fixed inset-0 w-full h-dvh bg-secondary z-200">
       <div className="flex items-center h-full">
-        <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-full">
+        <div className="flex flex-col justify-center items-center w-full lg:w-1/2 h-full">
           <nav className="flex flex-col items-center" role="navigation">
             {/* {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => { */}
             {FALLBACK_HEADER_MENU.items.map((item, index) => {
@@ -203,34 +195,34 @@ export default function HeaderMenu({
           </nav>
 
           <ul className="mt-5 flex items-center gap-4">
-            <li className="font-paragraph text-black text-center mx-[1vw]">
+            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
               <a
                 href="https://www.youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
               >
                 YouTube
               </a>
             </li>
 
-            <li className="font-paragraph text-black text-center mx-[1vw]">
+            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
               <a
                 href="https://www.instagram.com/islasuds/"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
               >
                 Instagram
               </a>
             </li>
 
-            <li className="font-paragraph text-black text-center mx-[1vw]">
+            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
               <a
                 href="https://www.tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[5vw] md:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
               >
                 TikTok
               </a>
@@ -238,7 +230,7 @@ export default function HeaderMenu({
           </ul>
         </div>
 
-        <div className="hidden md:flex w-[57%] md:w-1/2 h-full pointer-events-none">
+        <div className="hidden lg:flex w-[57%] lg:w-1/2 h-full pointer-events-none">
           <Picture
             loading="lazy"
             src={FALLBACK_HEADER_MENU.items[activeMenu].image}

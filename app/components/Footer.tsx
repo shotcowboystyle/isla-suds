@@ -16,46 +16,13 @@ interface FooterProps {
   publicStoreDomain: string;
 }
 
-export function Footer({
-  footer: footerPromise,
-  header,
-  publicStoreDomain,
-  disableSpacer = false,
-  onHeightChange,
-}: FooterProps & {disableSpacer?: boolean; onHeightChange?: (height: number) => void}) {
+export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [footerHeight, setFooterHeight] = useState(0);
-
-  useEffect(() => {
-    if (!footerRef.current) {
-      return;
-    }
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        // use borderBoxSize if available for precise outer height (including padding/borders), fallback to contentRect
-        const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
-        setFooterHeight(height);
-        onHeightChange?.(height);
-      }
-    });
-
-    observer.observe(footerRef.current);
-    return () => observer.disconnect();
-  }, [onHeightChange]);
 
   return (
     <>
-      {/* {!disableSpacer && <div style={{height: footerHeight, zIndex: -9999}} />} */}
-      {/* <div ref={footerRef} className="fixed bottom-0 w-full z-1" style={{zIndex: 1}}> */}
-      <div
-        id="footer-wrapper"
-        ref={footerRef}
-        className="relative w-full z-1"
-        style={{marginTop: -footerHeight, height: footerHeight}}
-      >
+      <div id="footer-wrapper" className="relative w-full z-1">
         <Suspense>
           <Await resolve={footerPromise}>
             {(footer) => (
@@ -78,9 +45,7 @@ export function Footer({
                       />
                     </div>
 
-                    {/* <div className={styles['grid-spacer']}></div> */}
-
-                    {/* <NewsletterSignup /> */}
+                    <NewsletterSignup />
 
                     <div className={styles['policies-wrapper']}>
                       {FALLBACK_FOOTER_POLICIES.items.map((item) => (
@@ -197,12 +162,12 @@ const FALLBACK_FOOTER_MENU = {
       items: [],
     },
     {
-      id: 'footer-wholesale',
+      id: 'footer-partners',
       resourceId: null,
       tags: [],
       title: 'Wholesale',
       type: 'PAGE',
-      url: '/wholesale',
+      url: '/partners',
       items: [],
     },
     {

@@ -43,16 +43,18 @@ export function ProductIngredients() {
       revealTl
         .from(circleLargeRef.current, {
           duration: 1,
-          scale: 0,
+          scale: 0.8,
           stagger: 0.5,
           ease: 'circ.inOut',
+          scrub: true,
         })
         .from(
           circleMidRef.current,
           {
             duration: 1,
-            scale: 0,
+            scale: 0.8,
             ease: 'circ.inOut',
+            scrub: true,
           },
           '<',
         )
@@ -60,8 +62,9 @@ export function ProductIngredients() {
           circleCenterRef.current,
           {
             duration: 1,
-            scale: 0,
+            scale: 0.8,
             ease: 'circ.inOut',
+            scrub: true,
           },
           '<',
         )

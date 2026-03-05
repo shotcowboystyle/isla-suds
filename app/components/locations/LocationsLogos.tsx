@@ -12,8 +12,7 @@ export function LocationsLogos() {
         <div className={styles['logos-grid']}>
           {LOCATIONS_PAGE.stores.map((store) => (
             <div className={styles['grid-item']} key={store.name}>
-              {/* <img className={styles['location-logo']} src={store.logo} alt={store.name} /> */}
-              <img src={store.logo} alt={store.name} className="w-full h-full object-contain px-4 py-2" />
+              <img src={store.logo} alt={store.name} className={styles['location-logo']} />
               <div className="hidden">
                 <h2 className="text-fluid-heading mb-4 text-(--text-primary) border-b border-(--border-subtle) pb-2">
                   {store.website ? (

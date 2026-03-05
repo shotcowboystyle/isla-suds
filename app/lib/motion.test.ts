@@ -1,5 +1,5 @@
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
-import {prefersReducedMotion, fadeInVariants, scaleInVariants, slideUpVariants} from './motion';
+import {prefersReducedMotion} from './motion';
 
 describe('prefersReducedMotion', () => {
   const originalWindow = globalThis.window;
@@ -59,34 +59,5 @@ describe('prefersReducedMotion', () => {
 
     // Should return safe fallback
     expect(result).toBe(false);
-  });
-});
-
-describe('Animation Variants', () => {
-  describe('fadeInVariants', () => {
-    it('should have correct structure', () => {
-      expect(fadeInVariants).toHaveProperty('hidden');
-      expect(fadeInVariants).toHaveProperty('visible');
-      expect(fadeInVariants.hidden).toEqual({opacity: 0});
-      expect(fadeInVariants.visible).toEqual({opacity: 1});
-    });
-  });
-
-  describe('scaleInVariants', () => {
-    it('should have correct structure', () => {
-      expect(scaleInVariants).toHaveProperty('hidden');
-      expect(scaleInVariants).toHaveProperty('visible');
-      expect(scaleInVariants.hidden).toEqual({opacity: 0, scale: 0.95});
-      expect(scaleInVariants.visible).toEqual({opacity: 1, scale: 1});
-    });
-  });
-
-  describe('slideUpVariants', () => {
-    it('should have correct structure', () => {
-      expect(slideUpVariants).toHaveProperty('hidden');
-      expect(slideUpVariants).toHaveProperty('visible');
-      expect(slideUpVariants.hidden).toEqual({opacity: 0, y: 20});
-      expect(slideUpVariants.visible).toEqual({opacity: 1, y: 0});
-    });
   });
 });

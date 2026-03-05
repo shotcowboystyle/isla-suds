@@ -28,7 +28,7 @@ export function LocationsPage({products}: LocationsPageProps) {
 
   return (
     <div className={styles['locations-page']}>
-      <div className="px-2 sm:px-10 py-12 sm:py-20 max-w-5xl mx-auto">
+      <div className={styles['locations-page-wrapper']}>
         <LocationsHeader />
 
         <div className="flex border-b border-(--border-subtle) mb-12 mx-auto justify-center space-x-8">

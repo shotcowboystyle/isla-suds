@@ -7,14 +7,21 @@
   padding-top: 24vw;
   padding-inline: 5vw;
 }
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 768px) {
   .ingredients-section-wrapper {
-    min-height: 50dvh;
+    min-height: 100dvh;
   }
-}
+} */
 @media screen and (min-width: 768px) {
   .ingredients-section-wrapper {
-    padding-inline: 5%;
+    /* justify-content: flex-start; */
+    align-items: center;
+    flex-flow: column;
+    width: auto;
+    display: flex;
+    /* height: 120vh; */
+    padding-top: 12vw;
+    /* padding-inline: 0; */
   }
 }
 @media screen and (min-width: 992px) {
@@ -25,8 +32,7 @@
     width: auto;
     display: flex;
     height: 120vh;
-    padding-left: 0;
-    padding-right: 0;
+    padding-inline: 0;
   }
 }
 
@@ -84,12 +90,18 @@
   line-height: 110%;
   overflow: hidden;
 }
-
+@media screen and (min-width: 768px) {
+  .section-heading {
+    font-size: 9vw;
+    text-align: left;
+    line-height: normal;
+  }
+}
 @media screen and (min-width: 992px) {
   .section-heading {
     font-size: 7.9vw;
-    text-align: left;
-    line-height: normal;
+    /* text-align: left;
+    line-height: normal; */
   }
 }
 
@@ -114,7 +126,6 @@
   overflow: hidden;
   transform: rotate(-3deg);
 }
-
 @media screen and (min-width: 768px) {
   .clipped-box {
     margin-top: 0;
@@ -130,7 +141,6 @@
   padding: 0 1.5vw 1vw;
   text-transform: uppercase;
 }
-
 @media screen and (min-width: 480px) {
   .clipped-heading-text {
     font-size: 7.8vw;
@@ -145,23 +155,21 @@
   right: 0;
   margin-top: 24px;
 }
-
 @media screen and (min-width: 480px) {
   .paragraph-text-wrapper {
     margin-top: 0;
   }
 }
-
 @media screen and (min-width: 768px) {
   .paragraph-text-wrapper {
-    position: static;
-    margin-top: 0;
+    position: absolute;
+    inset: 30vw 2vw auto auto;
+    max-width: 40vw;
   }
 }
-
 @media screen and (min-width: 992px) {
   .paragraph-text-wrapper {
-    position: absolute;
+    /* position: absolute; */
     inset: 24vw 2vw auto auto;
     max-width: 20vw;
   }
@@ -177,11 +185,16 @@
   line-height: 125%;
   text-align: left;
 }
-
 @media screen and (min-width: 768px) {
   .paragraph-text {
-    font-size: 1.04vw;
+    font-size: 2.6vw;
     text-align: right;
+  }
+}
+@media screen and (min-width: 992px) {
+  .paragraph-text {
+    font-size: 1.04vw;
+    /* text-align: right; */
   }
 }
 

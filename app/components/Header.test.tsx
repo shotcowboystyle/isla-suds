@@ -16,11 +16,9 @@ const {mockSetCartDrawerOpen, mockExplorationState} = vi.hoisted(() => {
     cartDrawerOpen: false,
     setCartDrawerOpen: mockSetCartDrawerOpen,
     productsExplored: new Set(),
-    textureRevealsTriggered: 0,
     storyMomentShown: false,
     sessionStartTime: 0,
     addProductExplored: vi.fn(),
-    incrementTextureReveals: vi.fn(),
     setStoryMomentShown: vi.fn(),
     resetSession: vi.fn(),
   };
@@ -178,11 +176,11 @@ describe('Header', () => {
   });
 
   describe('FALLBACK_HEADER_MENU - Wholesale Link (AC1, AC2)', () => {
-    it('renders wholesale link in mobile menu pointing to /wholesale', () => {
+    it('renders wholesale link in mobile menu pointing to /partners', () => {
       renderHeaderMenu('mobile');
       const wholesaleLink = screen.getByRole('link', {name: /wholesale/i});
       expect(wholesaleLink).toBeInTheDocument();
-      expect(wholesaleLink).toHaveAttribute('href', '/wholesale');
+      expect(wholesaleLink).toHaveAttribute('href', '/partners');
     });
 
     it('wholesale link has correct title text', () => {

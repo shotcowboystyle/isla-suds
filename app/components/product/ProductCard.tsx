@@ -79,7 +79,7 @@ export function ProductCard({
       data-testid="product-card"
       className={cn(
         'product-card group block',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2',
         'transition-all duration-300',
         // Hover effect on desktop only (GPU-composited)
         'lg:hover:scale-[1.02] lg:hover:z-10',

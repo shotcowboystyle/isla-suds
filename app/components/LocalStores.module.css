@@ -2,13 +2,13 @@
   z-index: 10;
   background-color: var(--color-black);
   width: 100%;
-  padding-top: 2vw;
+  padding-block-start: 2vw;
   display: block;
   overflow: hidden;
 }
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 768px) {
   .map-section-wrapper {
-    padding-top: 10vw;
+    padding-block-start: 10vw;
     overflow: visible;
   }
 }
@@ -20,7 +20,7 @@
   display: flex;
   height: 400px;
 }
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 992px) {
   .map-section-inner {
     height: auto;
   }
@@ -31,8 +31,7 @@
   justify-content: center;
   align-items: flex-start;
   margin-top: 0;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-inline: 5%;
   display: flex;
   position: absolute;
 }
@@ -54,8 +53,7 @@
   outline: 0.5vw #3b393d;
   justify-content: center;
   align-items: center;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-block: 0;
   padding: 0 1.2vw 2vw;
   font-size: 7.8vw;
   font-weight: 500;
@@ -64,6 +62,16 @@
   position: relative;
   top: auto;
   overflow: hidden;
+}
+@media screen and (min-width: 768px) {
+  .heading-text-wrapper {
+    margin-block-start: 4vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .heading-text-wrapper {
+    margin-block-start: 2vw;
+  }
 }
 
 .heading-text {
@@ -80,6 +88,12 @@
   }
 }
 @media screen and (min-width: 768px) {
+  .heading-text {
+    font-size: 6vw;
+    line-height: 105%;
+  }
+}
+@media screen and (min-width: 992px) {
   .heading-text {
     font-size: 7.8vw;
     line-height: 9vw;
@@ -124,7 +138,13 @@
   font-weight: 700;
   font-size: 13vw;
 }
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 768px) {
+  .clipped-text {
+    font-size: 6vw;
+    line-height: 105%;
+  }
+}
+@media screen and (min-width: 992px) {
   .clipped-text {
     font-size: 7.9vw;
     line-height: 110%;
@@ -139,6 +159,16 @@
 @media screen and (min-width: 480px) {
   .paragraph-text-wrapper {
     padding-left: 1.2vw;
+  }
+}
+@media screen and (min-width: 768px) {
+  .paragraph-text-wrapper {
+    margin-block: 5vw 2.5vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .paragraph-text-wrapper {
+    margin-block: 4vw;
   }
 }
 
@@ -159,13 +189,14 @@
 }
 @media screen and (min-width: 768px) {
   .paragraph-text {
-    width: 17vw;
-    font-size: 1.04vw;
+    font-size: 2.4vw;
+    width: 40vw;
   }
 }
 @media screen and (min-width: 992px) {
   .paragraph-text {
     font-size: 1.04vw;
+    width: 17vw;
   }
 }
 
@@ -176,7 +207,7 @@
   max-width: none;
   height: 100%;
 }
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 992px) {
   .background-image {
     max-width: 100%;
     height: auto;

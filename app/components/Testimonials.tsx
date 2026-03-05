@@ -5,7 +5,7 @@ import DripImage from '~/assets/images/slider-dip.png?responsive';
 import {Picture} from '~/components/Picture';
 import {VideoCard} from '~/components/VideoCard';
 import {testimonialsData} from '~/content/testimonials';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {useIsDesktop} from '~/hooks/use-is-desktop';
 import {cn} from '~/utils/cn';
 import styles from './Testimonials.module.css';
 
@@ -16,7 +16,7 @@ export const TestimonialsSection = () => {
   const text2Ref = useRef<HTMLHeadingElement>(null);
   const text3Ref = useRef<HTMLHeadingElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
+  const {isDesktop, isLoading} = useIsDesktop();
 
   useGSAP(
     () => {
@@ -25,7 +25,6 @@ export const TestimonialsSection = () => {
       }
 
       gsap.set(scrollContainerRef.current, {
-        // marginTop: isMobile ? '0' : '-140vh',
         marginTop: 0,
       });
 
@@ -57,7 +56,7 @@ export const TestimonialsSection = () => {
           '<',
         );
     },
-    {dependencies: [scrollContainerRef, text1Ref, text2Ref, text3Ref, isMobile, isLoading]},
+    {dependencies: [scrollContainerRef, text1Ref, text2Ref, text3Ref, isLoading]},
   );
 
   useGSAP(
@@ -86,7 +85,7 @@ export const TestimonialsSection = () => {
           `.animated-video-card:nth-child(${index + 1})`,
           {
             yPercent: testimonial.translation.y,
-            ...(!isMobile && {xPercent: testimonial.translation.x}),
+            ...(isDesktop && {xPercent: testimonial.translation.x}),
             // stagger: 0.2,
             duration: cardDuration,
             ease: 'power4.inOut',
@@ -101,7 +100,7 @@ export const TestimonialsSection = () => {
       //   ease: 'power4.inOut',
       // });
     },
-    {dependencies: [scrollContainerRef, isLoading, isMobile]},
+    {dependencies: [scrollContainerRef, isLoading, isDesktop]},
   );
 
   return (

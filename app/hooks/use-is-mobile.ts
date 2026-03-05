@@ -1,16 +1,7 @@
 import {useMediaQuery} from './use-media-query';
 
-const MOBILE_QUERY = '(max-width: 768px)';
-const MOBILE_UA_KEYWORDS = [
-  'android',
-  'webos',
-  'iphone',
-  'ipad',
-  'ipod',
-  'blackberry',
-  'windows phone',
-  'mobile',
-];
+const MOBILE_QUERY = '(max-width: 480px)';
+const MOBILE_UA_KEYWORDS = ['android', 'webos', 'iphone', 'ipod', 'blackberry', 'windows phone', 'mobile'];
 
 interface UseIsMobileReturn {
   isMobile: boolean;

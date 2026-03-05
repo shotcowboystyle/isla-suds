@@ -7,7 +7,6 @@ import {
   Links,
   Meta,
   Scripts,
-  ScrollRestoration,
   useRouteLoaderData,
   useLocation,
 } from 'react-router';
@@ -167,7 +166,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
       </head>
       <body>
         {children}
-        <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>
     </html>
@@ -188,6 +186,13 @@ export default function App() {
   // SSR-safe, respects prefers-reduced-motion, graceful fallback
   // B2B routes (/wholesale/*) should NOT use Lenis (native scroll only)
   useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    // Always scroll to top on navigation or refresh
+    window.scrollTo(0, 0);
+
     // Check if current route is a B2B route - Lenis should not initialize for wholesale routes
     const isWholesaleRoute = location.pathname.startsWith('/wholesale');
     const isHome = location.pathname === '/';

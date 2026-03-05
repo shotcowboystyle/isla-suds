@@ -167,9 +167,19 @@
     }
   }
 
+  html.lenis {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto;
+  }
+
   body {
     background-color: transparent;
     background-image: linear-gradient(180deg, #90cfd3 64%, #fcf4e1 100%);
+    font-size: 14px;
+    line-height: 20px;
+    min-height: 100%;
   }
 
   body::-webkit-scrollbar {
@@ -226,9 +236,8 @@
   }
 
   h1 {
-    margin-top: 20px;
     color: var(--text-black);
-    letter-spacing: -0.5vw;
+    letter-spacing: -0.35vw;
     text-transform: uppercase;
     margin: 0;
     font-family: var(--font-sans);
@@ -244,10 +253,10 @@
       line-height: 9vw;
     }
   }
-
   @media screen and (min-width: 992px) {
     h1 {
       font-size: 7.8vw;
+      line-height: 9vw;
     }
   }
 
@@ -378,4 +387,28 @@
 .card-bg-eucalyptus,
 .card-bg-color-eucalyptus {
   background-color: var(--color-eucalyptus);
+}
+
+.word {
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  padding-right: 0.26vw;
+  margin-bottom: -0.1em;
+  transform-origin: bottom;
+}
+
+.split-text {
+  direction: ltr;
+  letter-spacing: -0.35vw;
+  text-indent: 0;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: Antonio, sans-serif;
+  font-weight: 700;
+  line-height: 9vw;
+  display: block;
 }

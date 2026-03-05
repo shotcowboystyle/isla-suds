@@ -4,10 +4,19 @@
 }
 
 .account-page-container {
-  padding-inline: 1rem;
+  padding-inline: 1vw;
   padding-block: 3rem 5rem;
   max-width: 1400px;
   margin-inline: auto;
+}
+/* @media screen and (min-width: 480px) {
+  .account-page-container {
+  }
+} */
+@media screen and (min-width: 768px) {
+  .account-page-container {
+    padding-top: 5vw;
+  }
 }
 
 .account-page-header {
@@ -21,6 +30,18 @@
   letter-spacing: 0.05em;
   color: var(--color-black);
 }
+@media screen and (min-width: 480px) {
+  .account-page-heading-title {
+    font-size: 11vw;
+    line-height: 120%;
+  }
+}
+@media screen and (min-width: 768px) {
+  .account-page-heading-title {
+    font-size: 3vw;
+    line-height: 110%;
+  }
+}
 
 .account-page-heading-text {
   margin-top: 1rem;
@@ -29,3 +50,15 @@
   font-size: 4vw;
   line-height: 120%;
 }
+@media screen and (min-width: 480px) {
+  .account-page-heading-text {
+    font-size: 1.2vw;
+    line-height: 120%;
+  }
+}
+/* @media screen and (min-width: 768px) {
+  .account-page-heading-text {
+    font-size: 3vw;
+    line-height: 110%;
+  }
+} */
