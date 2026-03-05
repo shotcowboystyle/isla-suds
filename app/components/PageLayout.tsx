@@ -29,7 +29,6 @@ export function PageLayout({
 }: PageLayoutProps) {
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const [footerHeight, setFooterHeight] = useState(0);
 
   return (
     <Aside.Provider>
@@ -55,16 +54,10 @@ export function PageLayout({
         <>
           <div id="smooth-wrapper" className="relative z-10">
             <div id="smooth-content" className="relative">
-              <main id="main-content" className="relative overflow-hidden z-10 bg-black">
+              <main id="main-content" className="relative z-10 bg-black">
                 {children}
               </main>
-              <Footer
-                footer={footer}
-                header={header}
-                publicStoreDomain={publicStoreDomain}
-                // disableSpacer
-                onHeightChange={setFooterHeight}
-              />
+              <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
             </div>
           </div>
         </>

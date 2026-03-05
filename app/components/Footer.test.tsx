@@ -35,11 +35,7 @@ const publicStoreDomain = 'isla-suds.myshopify.com';
 function renderFooter() {
   return render(
     <MemoryRouter>
-      <Footer
-        footer={Promise.resolve(mockFooterData)}
-        header={mockHeader}
-        publicStoreDomain={publicStoreDomain}
-      />
+      <Footer footer={Promise.resolve(mockFooterData)} header={mockHeader} publicStoreDomain={publicStoreDomain} />
     </MemoryRouter>,
   );
 }
@@ -73,7 +69,7 @@ describe('Footer', () => {
         name: /wholesale/i,
       });
       expect(wholesaleLink).toBeInTheDocument();
-      expect(wholesaleLink).toHaveAttribute('href', '/wholesale');
+      expect(wholesaleLink).toHaveAttribute('href', '/partners');
     });
 
     it('navigation links are not disabled (no pointer-events-none)', async () => {
@@ -113,18 +109,14 @@ describe('Footer', () => {
     it('renders copyright text with current year', async () => {
       renderFooter();
       const currentYear = new Date().getFullYear();
-      const copyrights = await screen.findAllByText(
-        new RegExp(`© ${currentYear} Isla Suds`, 'i'),
-      );
+      const copyrights = await screen.findAllByText(new RegExp(`© ${currentYear} Isla Suds`, 'i'));
       expect(copyrights.length).toBeGreaterThan(0);
     });
 
     it('copyright text uses appropriate styling', async () => {
       renderFooter();
       const currentYear = new Date().getFullYear();
-      const copyrights = await screen.findAllByText(
-        new RegExp(`© ${currentYear} Isla Suds`, 'i'),
-      );
+      const copyrights = await screen.findAllByText(new RegExp(`© ${currentYear} Isla Suds`, 'i'));
       // At least one copyright element should be present with text styling
       expect(copyrights[0]).toBeInTheDocument();
     });
@@ -155,9 +147,7 @@ describe('Footer', () => {
       renderFooter();
       const homeLink = await screen.findByRole('link', {name: /home/i});
       expect(homeLink).toHaveClass('focus-visible:ring-2');
-      expect(homeLink).toHaveClass(
-        'focus-visible:ring-[var(--accent-secondary)]',
-      );
+      expect(homeLink).toHaveClass('focus-visible:ring-[var(--accent-secondary)]');
     });
   });
 

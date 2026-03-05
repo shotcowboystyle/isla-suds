@@ -14,7 +14,7 @@
   position: absolute;
 }
 
-@media (width >= 48rem) {
+@media screen and (min-width: 992px) {
   .video-card {
     border-radius: 2vw;
     width: 21.7vw;
@@ -70,6 +70,7 @@
 
   .card-7 {
     right: 25vw;
+    bottom: -60vw;
   }
 }
 
@@ -81,7 +82,7 @@
   .card-5,
   .card-6 {
     border-width: 5px;
-    bottom: -120vw;
+    bottom: -60vw;
     right: 25vw;
   }
 }
@@ -96,7 +97,7 @@
   .card-7 {
     border-width: 0.4vw;
     border-radius: 2vw;
-    bottom: -40vw;
+    bottom: -30vw;
     right: 40vw;
   }
 }
@@ -114,6 +115,13 @@
   position: absolute;
   inset: auto auto 6vw 4vw;
 }
+@media screen and (min-width: 992px) {
+  .media-cart-info-wrapper {
+    font-size: 1.034vw;
+    line-height: 120%;
+    inset: auto auto 1vw 1vw;
+  }
+}
 
 .avatar {
   outline-offset: 0px;
@@ -123,6 +131,13 @@
   width: 6vw;
   height: 6vw;
   margin-right: 2.5vw;
+}
+@media screen and (min-width: 992px) {
+  .avatar {
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 0.5vw;
+  }
 }
 
 .media-cart-lightbox {

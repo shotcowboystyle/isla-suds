@@ -38,6 +38,13 @@
   max-width: 100%;
   z-index: 3;
 }
+@media screen and (min-width: 768px) {
+  .liquid-button {
+    width: 40vw;
+    height: 9vw;
+    font-size: 3.1vw;
+  }
+}
 
 @media screen and (min-width: 992px) {
   .liquid-button {

@@ -67,7 +67,7 @@
   transform-origin: 0%;
   color: var(--color-secondary);
   border: 0 solid var(--color-black);
-  outline: 0.5vw solid var(--color-primary);
+  outline: 0.5vw solid var(--color-teal-light);
   justify-content: center;
   align-items: center;
   width: auto;
@@ -98,7 +98,7 @@
   flex: none;
   justify-content: flex-start;
   align-items: center;
-  padding: 0 1.2vw 2vw;
+  padding: 0 1.2vw 1vw;
   font-weight: 700;
   font-size: 13vw;
   line-height: 120%;

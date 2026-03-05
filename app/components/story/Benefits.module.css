@@ -3,15 +3,16 @@
   background-color: #222123;
   background-image: none;
   width: auto;
-  height: 70vh;
+  /* height: 70vh; */
+  height: auto;
   display: flex;
   position: static;
   flex-flow: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  padding-block: 14vw;
 }
-
 /* min-width: 768px and up: adjust vertical alignment (was max-width: 767px, so now applies above that) */
 @media screen and (min-width: 768px) {
   .benefits-section {
@@ -57,25 +58,28 @@
   font-weight: 400;
   line-height: 120%;
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-block: 0;
+  margin-inline: 16px;
   position: static;
   inset: 3vw 0% auto;
-  margin-inline: 16px;
 }
-
 @media screen and (min-width: 480px) {
   .paragraph-text-start {
-    margin-left: 0;
-    margin-right: 0;
+    margin-inline: 0;
   }
 }
-
 @media screen and (min-width: 768px) {
   .paragraph-text-start {
-    font-size: 1.04vw;
+    font-size: 3.1vw;
     margin-top: 5vw;
     line-height: 115%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .paragraph-text-start {
+    font-size: 1.04vw;
+    /* margin-top: 5vw;
+    line-height: 115%; */
   }
 }
 
@@ -89,7 +93,6 @@
   position: relative;
   margin-block: 50px;
 }
-
 @media screen and (min-width: 768px) {
   .clipped-boxes-wrapper {
     width: 65vw;
@@ -149,20 +152,23 @@
   font-weight: 400;
   z-index: 3;
   position: relative;
-  margin-top: 0;
-  margin-bottom: 50px;
+  margin-block-start: 50px;
   font-size: 5vw;
   line-height: 120%;
   inset: auto 0% 3vw;
 }
-
-/* Tablet and up */
 @media screen and (min-width: 768px) {
+  .paragraph-text-end {
+    font-size: 3.1vw;
+    line-height: 105%;
+    margin-block: 9vw 2vw;
+  }
+}
+@media screen and (min-width: 992px) {
   .paragraph-text-end {
     font-size: 1.04vw;
     line-height: 115%;
-    margin-top: 4vw;
-    margin-bottom: 5vw;
+    margin-block: 5vw;
   }
 }
 

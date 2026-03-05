@@ -1,10 +1,11 @@
 import {lazy, Suspense, useEffect, useRef, useState} from 'react';
-import {Await, NavLink, useAsyncValue, useLocation, useNavigate, useRouteLoaderData} from 'react-router';
+// import {Await, NavLink, useAsyncValue, useLocation, useNavigate, useRouteLoaderData} from 'react-router';
+import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
 import {ShoppingBag, User} from 'lucide-react';
 // import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
-import {useHomeScroll} from '~/contexts/home-scroll-context';
+// import {useHomeScroll} from '~/contexts/home-scroll-context';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -35,21 +36,20 @@ interface HeaderProps {
   publicStoreDomain: string;
 }
 
-type Viewport = 'desktop' | 'mobile';
-
 export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProps) {
-  const location = useLocation();
+  // const location = useLocation();
   const {shop, menu} = header;
-  const isPathNotShowCloseButton = ['/'].includes(location.pathname) || location.pathname.startsWith('/products');
-  const navigate = useNavigate();
+  // const isPathNotShowCloseButton = ['/'].includes(location.pathname) || location.pathname.startsWith('/products');
+  // const navigate = useNavigate();
 
   const {open, toggleMenu} = useMenuToggle();
-  const {isMobile, isLoading} = useIsMobile();
+  const {isMobile} = useIsMobile();
 
   // Story 2.5: Scroll-aware header on home page only
-  const isHomePage = location.pathname === '/';
-  const homeScroll = useHomeScroll();
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  // const isHomePage = location.pathname === '/';
+  // const homeScroll = useHomeScroll();
+  // const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [, setPrefersReducedMotion] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
@@ -57,6 +57,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   const tlButton = useRef<gsap.core.Timeline | null>(null);
 
   const [hasOpened, setHasOpened] = useState(false);
+
   useEffect(() => {
     if (open && !hasOpened) {
       setHasOpened(true);
@@ -80,7 +81,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
   // On home page: hide header when at hero (isPastHero = false)
   // On other pages: always show header
-  const shouldShowHeader = !isHomePage || homeScroll?.isPastHero;
+  // const shouldShowHeader = !isHomePage || homeScroll?.isPastHero;
 
   useEffect(() => {
     if (!buttonRef.current || !line1Ref.current || !line2Ref.current) {
@@ -226,7 +227,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           <Suspense fallback={null}>
             <LazyHeaderMenu
               menu={menu}
-              viewport="desktop"
               primaryDomainUrl={header.shop.primaryDomain.url}
               publicStoreDomain={publicStoreDomain}
               onClose={toggleMenu}

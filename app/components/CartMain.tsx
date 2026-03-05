@@ -7,7 +7,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 export type CartLayout = 'page' | 'aside';
 
-export type CartMainProps = {
+type CartMainProps = {
   cart: CartApiQueryFragment | null;
   layout: CartLayout;
 };
@@ -22,9 +22,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cart = useOptimisticCart(originalCart);
 
   const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
-  const withDiscount =
-    cart &&
-    Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
+  const withDiscount = cart && Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
   const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
 
@@ -45,20 +43,12 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   );
 }
 
-function CartEmpty({
-  hidden = false,
-}: {
-  hidden: boolean;
-  layout?: CartMainProps['layout'];
-}) {
+function CartEmpty({hidden = false}: {hidden: boolean; layout?: CartMainProps['layout']}) {
   const {close} = useAside();
   return (
     <div hidden={hidden}>
       <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
-      </p>
+      <p>Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you started!</p>
       <br />
       <Link to="/collections" onClick={close} prefetch="viewport">
         Continue shopping →

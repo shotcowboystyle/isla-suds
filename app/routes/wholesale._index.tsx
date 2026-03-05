@@ -1,5 +1,4 @@
 import {redirect, useLoaderData} from 'react-router';
-import {WholesaleLandingPage} from '~/components/wholesale/landing/WholesaleLandingPage';
 import {LastOrder} from '~/components/wholesale/LastOrder';
 import {PartnerAcknowledgment} from '~/components/wholesale/PartnerAcknowledgment';
 import {PlaceNewOrderCTA} from '~/components/wholesale/PlaceNewOrderCTA';
@@ -27,7 +26,7 @@ export async function loader({context}: Route.LoaderArgs) {
   // If not logged in, return public state to render landing page
   if (!customerId) {
     return {
-      isPublic: true,
+      // isPublic: true,
       partnerName: null,
       storeCount: null,
       lastOrder: null,
@@ -64,7 +63,7 @@ export async function loader({context}: Route.LoaderArgs) {
     }
 
     return {
-      isPublic: false,
+      // isPublic: false,
       partnerName: firstName || 'Partner',
       storeCount: wholesaleContent.dashboard.storeCount,
       lastOrder,
@@ -202,9 +201,9 @@ export async function action({request, context}: Route.ActionArgs): Promise<Reor
 export default function WholesaleDashboard() {
   const data = useLoaderData<typeof loader>();
 
-  if ('isPublic' in data && data.isPublic) {
-    return <WholesaleLandingPage />;
-  }
+  // if ('isPublic' in data && data.isPublic) {
+  //   return <WholesaleLandingPage />;
+  // }
 
   const {partnerName, storeCount, lastOrder} = data as {
     partnerName: string;

@@ -57,8 +57,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -78,8 +77,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -89,10 +87,7 @@ describe('Wholesale Portal Layout', () => {
       await waitFor(() => {
         // Partner name should be displayed in header (first name only)
         const welcomeText = screen.getByText((content, element) => {
-          return (
-            element?.tagName === 'SPAN' &&
-            /Welcome.*Jane/i.test(content)
-          );
+          return element?.tagName === 'SPAN' && /Welcome.*Jane/i.test(content);
         });
         expect(welcomeText).toBeInTheDocument();
       });
@@ -104,8 +99,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -127,9 +121,7 @@ describe('Wholesale Portal Layout', () => {
 
       // Confirmation dialog should appear
       await waitFor(() => {
-        expect(
-          screen.getByText(/are you sure you want to log out/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/are you sure you want to log out/i)).toBeInTheDocument();
       });
     });
   });
@@ -143,7 +135,6 @@ describe('Wholesale Portal Layout', () => {
       // The component source should not contain motion.* imports
       const componentSource = WholesaleLayout.toString();
       expect(componentSource).not.toMatch(/motion\./);
-      expect(componentSource).not.toMatch(/framer-motion/);
 
       // Lenis initialization logic lives in root.tsx and is tested there
       // This test verifies wholesale components remain animation-free
@@ -157,8 +148,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -177,8 +167,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -200,8 +189,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -212,9 +200,7 @@ describe('Wholesale Portal Layout', () => {
         const header = container.querySelector('header');
         expect(header).toBeInTheDocument();
         // Should use Tailwind classes that map to design tokens
-        expect(header?.className).toMatch(
-          /text-|bg-|min-h-|px-|py-|flex|items-center/,
-        );
+        expect(header?.className).toMatch(/text-|bg-|min-h-|px-|py-|flex|items-center/);
       });
     });
   });
@@ -225,8 +211,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -246,8 +231,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -274,8 +258,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -300,9 +283,7 @@ describe('Wholesale Portal Layout', () => {
 
       // Tab to logout button
       await user.tab();
-      expect(
-        screen.getByRole('button', {name: wholesaleContent.auth.logoutButton}),
-      ).toHaveFocus();
+      expect(screen.getByRole('button', {name: wholesaleContent.auth.logoutButton})).toHaveFocus();
     });
 
     it('shows visible focus states on interactive elements', async () => {
@@ -311,8 +292,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -337,8 +317,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -346,9 +325,7 @@ describe('Wholesale Portal Layout', () => {
       render(<RemixStub initialEntries={['/wholesale']} />);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', {name: wholesaleContent.auth.logoutButton}),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: wholesaleContent.auth.logoutButton})).toBeInTheDocument();
       });
 
       // Tab to logout button (logo + 2 nav links + logout = 4 tabs)
@@ -366,9 +343,7 @@ describe('Wholesale Portal Layout', () => {
       await user.keyboard('{Enter}');
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/are you sure you want to log out/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/are you sure you want to log out/i)).toBeInTheDocument();
       });
     });
 
@@ -378,8 +353,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -387,9 +361,7 @@ describe('Wholesale Portal Layout', () => {
       render(<RemixStub initialEntries={['/wholesale']} />);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', {name: wholesaleContent.auth.logoutButton}),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: wholesaleContent.auth.logoutButton})).toBeInTheDocument();
       });
 
       // Open logout dialog
@@ -399,18 +371,14 @@ describe('Wholesale Portal Layout', () => {
       await user.click(logoutButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/are you sure you want to log out/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/are you sure you want to log out/i)).toBeInTheDocument();
       });
 
       // Press Escape to close dialog
       await user.keyboard('{Escape}');
 
       await waitFor(() => {
-        expect(
-          screen.queryByText(/are you sure you want to log out/i),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText(/are you sure you want to log out/i)).not.toBeInTheDocument();
       });
     });
 
@@ -420,8 +388,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -429,9 +396,7 @@ describe('Wholesale Portal Layout', () => {
       const {container} = render(<RemixStub initialEntries={['/wholesale']} />);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', {name: wholesaleContent.auth.logoutButton}),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: wholesaleContent.auth.logoutButton})).toBeInTheDocument();
       });
 
       // Open logout dialog
@@ -441,9 +406,7 @@ describe('Wholesale Portal Layout', () => {
       await user.click(logoutButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/are you sure you want to log out/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/are you sure you want to log out/i)).toBeInTheDocument();
       });
 
       // Click overlay (not dialog content) to close
@@ -453,9 +416,7 @@ describe('Wholesale Portal Layout', () => {
       }
 
       await waitFor(() => {
-        expect(
-          screen.queryByText(/are you sure you want to log out/i),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText(/are you sure you want to log out/i)).not.toBeInTheDocument();
       });
     });
 
@@ -465,8 +426,7 @@ describe('Wholesale Portal Layout', () => {
         {
           path: '/wholesale',
           Component: WholesaleLayout,
-          loader: () =>
-            Promise.resolve({customer: mockCustomer.data.customer}),
+          loader: () => Promise.resolve({customer: mockCustomer.data.customer}),
           children: [{path: '', Component: () => <div>Dashboard Content</div>}],
         },
       ]);
@@ -474,9 +434,7 @@ describe('Wholesale Portal Layout', () => {
       render(<RemixStub initialEntries={['/wholesale']} />);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', {name: wholesaleContent.auth.logoutButton}),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: wholesaleContent.auth.logoutButton})).toBeInTheDocument();
       });
 
       // Open logout dialog

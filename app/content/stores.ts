@@ -1,4 +1,4 @@
-import OddDuckLogo from '~/assets/images/odd-duck-logo-white.avif';
+import OddDuckLogo from '~/assets/images/odd-duck-logo.avif';
 import SeweeLogo from '~/assets/images/sewee-outpost-logo.webp';
 
 /** Retail store locations - third-party retailers carrying Isla Suds products */

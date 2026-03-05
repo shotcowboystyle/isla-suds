@@ -35,18 +35,14 @@ vi.mock('react-router', () => ({
     </a>
   ),
   Await: ({resolve, children}: any) => {
-    const result = typeof resolve === 'object' && resolve !== null && typeof resolve.then === 'function'
-      ? null
-      : resolve;
+    const result =
+      typeof resolve === 'object' && resolve !== null && typeof resolve.then === 'function' ? null : resolve;
     return children(result);
   },
 }));
 
 // Mock motion library components (Story 5.7 - animation integration)
 vi.mock('~/lib/motion', () => ({
-  AnimatePresence: ({children}: any) => children,
-  MotionLi: ({children, ...props}: any) => <li {...props}>{children}</li>,
-  fadeOutExitVariant: {},
   prefersReducedMotion: vi.fn(() => false),
 }));
 

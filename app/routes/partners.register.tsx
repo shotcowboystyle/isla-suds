@@ -1,34 +1,35 @@
-import {redirect, useActionData} from 'react-router';
-import {WholesaleApplicationForm} from '~/components/wholesale/register/WholesaleApplicationForm';
-import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
-import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
-import {getB2BCompany} from '~/lib/wholesale';
+// import {redirect, useActionData} from 'react-router';
+import {useActionData} from 'react-router';
+import {PartnersApplicationForm} from '~/components/partners/register/PartnersApplicationForm';
+// import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
+// import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
+// import {getB2BCompany} from '~/lib/wholesale';
 import {isValidEmail} from '~/utils/validation';
-import type {Route} from './+types/wholesale.register';
+import type {Route} from './+types/partners.register';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Apply for Wholesale | Isla Suds'}];
+  return [{title: 'Apply to be a Wholesale Partner | Isla Suds'}];
 };
 
-export async function loader({context}: Route.LoaderArgs) {
-  const customerId = await context.session.get('customerId');
+// export async function loader({context}: Route.LoaderArgs) {
+//   const customerId = await context.session.get('customerId');
 
-  if (customerId) {
-    try {
-      const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
-      if (customer?.data?.customer) {
-        if (getB2BCompany(customer.data.customer)) {
-          // Already a wholesale customer, redirect to dashboard
-          return redirect(WHOLESALE_ROUTES.DASHBOARD);
-        }
-      }
-    } catch (e) {
-      // Ignore errors, just render the application form
-    }
-  }
+//   if (customerId) {
+//     try {
+//       const customer = await context.customerAccount.query(WHOLESALE_CUSTOMER_QUERY);
+//       if (customer?.data?.customer) {
+//         if (getB2BCompany(customer.data.customer)) {
+//           // Already a wholesale customer, redirect to dashboard
+//           return redirect(WHOLESALE_ROUTES.DASHBOARD);
+//         }
+//       }
+//     } catch (e) {
+//       // Ignore errors, just render the application form
+//     }
+//   }
 
-  return {};
-}
+//   return {};
+// }
 
 export async function action({request}: Route.ActionArgs) {
   const formData = await request.formData();
@@ -61,8 +62,8 @@ export async function action({request}: Route.ActionArgs) {
   return {success: true};
 }
 
-export default function WholesaleRegister() {
+export default function PartnersRegister() {
   const actionData = useActionData<typeof action>();
 
-  return <WholesaleApplicationForm actionData={actionData} />;
+  return <PartnersApplicationForm actionData={actionData} />;
 }

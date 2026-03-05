@@ -2,9 +2,9 @@ import {useRef, useEffect} from 'react';
 import {Form, useNavigation} from 'react-router';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {cn} from '~/utils/cn';
-import styles from './WholesaleApplicationForm.module.css';
+import styles from './PartnersApplicationForm.module.css';
 
-interface WholesaleApplicationFormProps {
+interface PartnersApplicationFormProps {
   actionData?: {
     success: boolean;
     error?: string;
@@ -18,7 +18,7 @@ interface WholesaleApplicationFormProps {
   };
 }
 
-export function WholesaleApplicationForm({actionData}: WholesaleApplicationFormProps) {
+export function PartnersApplicationForm({actionData}: PartnersApplicationFormProps) {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   const formRef = useRef<HTMLFormElement>(null);

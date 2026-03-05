@@ -127,7 +127,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
       <div ref={containerRef} className={styles['hero-section-container']}>
         <div className={styles['hero-section-content']}>
           <div className={styles['letter-animation']}>
-            <h1 ref={text1Ref} className={styles['hero-text']}>
+            <h1 ref={text1Ref} className={cn(styles['hero-text'], 'split-text')}>
               {HERO_TAGLINE_START}
             </h1>
           </div>

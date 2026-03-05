@@ -5,10 +5,15 @@
   margin-bottom: 10vw;
   align-self: center;
 }
-
 @media screen and (min-width: 768px) {
   .collection-item {
-    width: 100%;
+    margin-bottom: 18vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .collection-item {
+    width: auto;
+    height: auto;
     margin-right: 15vw;
     margin-bottom: 0;
     align-self: center;
@@ -22,7 +27,7 @@
   transform: rotate(0);
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 992px) {
   .collection-item.is-home-page:nth-child(odd) {
     width: auto;
     transform: rotate(-8deg);
@@ -33,8 +38,12 @@
   margin-right: 0;
   transform: rotate(0);
 }
-
 @media screen and (min-width: 768px) {
+  .collection-item.is-home-page:nth-child(4n) {
+    margin-bottom: 8vw;
+  }
+}
+@media screen and (min-width: 992px) {
   .collection-item.is-home-page:nth-child(2n) {
     width: auto;
   }
@@ -61,19 +70,16 @@
   padding-inline: 5vw;
   border-radius: 3vw;
 }
-
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) {
   .card {
     padding-block: 1.2vw;
     padding-inline: 3vw;
   }
-}
-
+} */
 @media screen and (min-width: 768px) {
   .card {
-    width: 50vw;
-    padding-top: 0;
-    padding-bottom: 6vw;
+    width: 100%;
+    padding-inline: 3vw;
   }
 }
 
@@ -96,12 +102,16 @@
   transform: scale(1.4) translateY(-15%) rotate(5deg);
   transition: all 0.2s ease-in-out;
 }
-
+@media screen and (min-width: 768px) {
+  .card-soap-bar {
+    /* width: 60vw; */
+    transform: scale(1.3) translateY(-15%) rotate(5deg);
+  }
+}
 @media screen and (min-width: 992px) {
   .card-soap-bar {
     width: 20vw;
     transform: scale(1) translateY(0) rotate(0deg);
-    transition: all 0.2s ease-in-out;
   }
 }
 
@@ -114,10 +124,16 @@
   inset: -5vw 0% 0%;
   opacity: 1;
 }
+@media screen and (min-width: 768px) {
+  .card-additional {
+    width: 105vw;
+  }
+}
 @media screen and (min-width: 992px) {
   .card-additional {
     opacity: 0;
-    width: 45vw;
+    /* width: 45vw; */
+    width: 90%;
   }
 }
 
@@ -127,7 +143,7 @@
 
 .card.is-home-page:hover .card-additional {
   opacity: 1;
-  transform: scale(1.3) translateY(-5%);
+  transform: scale(1.2) translateY(-5%);
 }
 
 .card-heading {
@@ -144,20 +160,26 @@
   bottom: 16px;
   left: 16px;
 }
-
 @media screen and (min-width: 768px) {
   .card-heading {
-    font-size: 3.1vw;
+    font-size: 4.8vw;
     bottom: 50px;
     left: 50px;
+    max-width: 80%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .card-heading {
+    font-size: 3.1vw;
+    max-width: 100%;
   }
 }
 
 .add-to-cart-button {
   z-index: 5;
-  margin-top: 4px;
   justify-content: flex-end;
   align-items: center;
+  align-self: flex-end;
   width: auto;
   display: flex;
   background-color: var(--color-black);
@@ -173,17 +195,22 @@
   cursor: pointer;
   transition: all 0.1s ease-in-out;
   margin-block-start: calc(var(--spacing) * 6);
-
-  &:hover {
-    background-color: var(--color-neutral-800);
-  }
 }
-
 .add-to-cart-button:hover {
   background-color: var(--color-secondary);
   color: var(--color-black);
-  font-size: 1.8vw;
-  padding-inline: 2.1vw;
-  padding-block: 1.2vw;
-  margin-block-start: 0;
+}
+@media screen and (min-width: 768px) {
+  .add-to-cart-button {
+    font-size: 3.4vw;
+    padding: 5.5vw 2.1vw;
+    margin-block-start: 0;
+  }
+}
+@media screen and (min-width: 992px) {
+  .add-to-cart-button {
+    font-size: 1.2vw;
+    padding: 2.1vw;
+    margin-block-start: 0;
+  }
 }

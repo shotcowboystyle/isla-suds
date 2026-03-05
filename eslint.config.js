@@ -240,7 +240,7 @@ export default [
         {
           groups: [
             'builtin', // Node.js built-in modules
-            'external', // External libraries (react, react-router, framer-motion, etc.)
+            'external', // External libraries (react, react-router, etc.)
             'internal', // Internal absolute imports (~/components/...)
             ['parent', 'sibling'], // Relative imports (./, ../)
             'type', // Type imports (import type)

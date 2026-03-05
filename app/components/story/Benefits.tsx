@@ -49,9 +49,21 @@ export const BenefitsSection = () => {
       </p>
 
       <div ref={containerRef} className={styles['clipped-boxes-wrapper']}>
-        <ClippedTextBox id="benefit-title-1" text="Moisturizing" className={styles['wrapper-left']} index={1} />
+        <ClippedTextBox
+          id="benefit-title-1"
+          text="Moisturizing"
+          className={styles['wrapper-left']}
+          index={1}
+          textColor="secondary"
+        />
         <ClippedTextBox id="benefit-title-2" text="Fragrance-free" className={styles['wrapper-right']} index={2} />
-        <ClippedTextBox id="benefit-title-3" text="Natural Ingredients" className={styles['wrapper-left']} index={3} />
+        <ClippedTextBox
+          id="benefit-title-3"
+          text="Natural Ingredients"
+          className={styles['wrapper-left']}
+          index={3}
+          textColor="secondary"
+        />
         <ClippedTextBox id="benefit-title-4" text="No Parabens" className={styles['wrapper-right']} index={4} />
       </div>
 

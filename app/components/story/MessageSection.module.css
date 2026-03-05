@@ -10,16 +10,10 @@
   overflow: hidden;
   height: 100vh;
 }
-
-@media screen and (min-width: 768px) {
-  .message-section-wrapper {
-    height: auto;
-  }
-}
-
 @media screen and (min-width: 992px) {
   .message-section-wrapper {
-    overflow: visible;
+    height: auto;
+    /* overflow: visible; */
   }
 }
 
@@ -32,15 +26,19 @@
   width: auto;
   height: auto;
   margin-top: 0;
-  padding: 12vw 0;
+  padding-block: 12vw;
   display: flex;
   position: relative;
   inset: 0 0% 0%;
 }
-
 @media screen and (min-width: 480px) {
   .text-wrapper {
     padding-block: 8vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .text-wrapper {
+    padding-block: 6vw;
   }
 }
 
@@ -103,7 +101,6 @@
   display: block;
   position: static;
 }
-
 @media screen and (min-width: 992px) {
   .clipped-text-wrapper {
     grid-template-rows: auto;
@@ -171,8 +168,17 @@
   font-size: 50px;
   line-height: 110%;
 }
-
 @media screen and (min-width: 480px) {
+  .clipped-text {
+    font-size: 7.8vw;
+  }
+}
+@media screen and (min-width: 768px) {
+  .clipped-text {
+    font-size: 11vw;
+  }
+}
+@media screen and (min-width: 992px) {
   .clipped-text {
     font-size: 7.8vw;
   }
@@ -181,13 +187,18 @@
 .paragraph-wrapper {
   margin-top: 3vw;
 }
-
+@media screen and (min-width: 768px) {
+  .paragraph-wrapper {
+    max-width: 60vw;
+  }
+}
 @media screen and (min-width: 992px) {
   .paragraph-wrapper {
     justify-content: center;
     align-self: center;
     align-items: center;
     display: flex;
+    max-width: 100%;
   }
 }
 
@@ -200,18 +211,16 @@
   width: 80vw;
   margin-block: 3rem 0;
 }
-
 @media screen and (min-width: 768px) {
   .paragraph {
-    font-size: 16px;
+    font-size: 3vw;
   }
 }
-
 @media screen and (min-width: 992px) {
   .paragraph {
     font-size: 1.4vw;
     line-height: 1.3;
-    width: 26vw;
+    width: 32vw;
     margin-block: 4vw 0;
   }
 }

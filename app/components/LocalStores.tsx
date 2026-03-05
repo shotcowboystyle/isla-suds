@@ -101,9 +101,7 @@ export function LocalStores() {
             </p>
           </div>
 
-          <div className="mt-6">
-            <LiquidButton href="/locations" text="Find a Store" />
-          </div>
+          <LiquidButton href="/locations" text="Find a Store" />
         </div>
 
         <img src={StoreMap} loading="lazy" width="1840" alt="Store Map" className={styles['background-image']} />
