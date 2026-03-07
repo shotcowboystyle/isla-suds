@@ -72,9 +72,7 @@
   }
 }
 
-.social-heading-1,
-.social-heading-2,
-.social-heading-3 {
+.social-heading {
   z-index: 3;
   color: var(--color-black);
   letter-spacing: -0.4vw;
@@ -86,6 +84,11 @@
   font-weight: 700;
   line-height: 105%;
   position: relative;
+}
+@media screen and (min-width: 480px) {
+  .social-heading {
+    font-size: 17vw;
+  }
 }
 
 .social-heading-2 {

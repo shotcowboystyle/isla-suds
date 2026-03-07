@@ -15,7 +15,7 @@ export const NewsletterSignup = () => {
   return (
     <div className={styles['newsletter-signup-wrapper']}>
       <p className={styles['paragraph']}>
-        Get Exclusive Early Access and Stay Informed About Product Updates, Events, and More!
+        Get exclusive early access and stay informed about product updates, events, and more!
       </p>
 
       <div className={styles['footer-form']}>

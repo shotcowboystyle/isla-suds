@@ -36,7 +36,7 @@ export function LocalStores() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 70%' : 'top center',
-          end: isMobile ? 'top 50%' : 'top center',
+          end: isMobile ? '+=50%' : '+=500px',
         },
       });
 

@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 import {LiquidButton} from '~/components/ui/LiquidButton';
+import {SimpleCard} from '~/components/ui/SimpleCard';
 import {cn} from '~/utils/cn';
 import styles from './PerksSection.module.css';
 
@@ -12,7 +13,7 @@ if (typeof document !== 'undefined') {
 }
 
 export function PerksSection() {
-  const perks = [
+  const PERKS = [
     {
       id: 1,
       number: '01',
@@ -139,15 +140,8 @@ export function PerksSection() {
       </div>
 
       <div className={styles['brand-core-cards']}>
-        {perks.map((perk, index) => (
-          <div key={perk.id} className={cn(styles['brand-core-card'], styles[`card-${index + 1}`])}>
-            <div className={styles['title-wrapper']}>
-              <div className={styles['title-number']}>{perk.number}</div>
-              <h3 className={styles['title-text']}>{perk.title}</h3>
-            </div>
-            <div className={styles['icon-wrapper']}>{perk.icon}</div>
-            <p className={styles['paragraph']}>{perk.description}</p>
-          </div>
+        {PERKS.map((perk, index) => (
+          <SimpleCard key={perk.id} className={`card-${index + 1}`} {...perk} />
         ))}
       </div>
 

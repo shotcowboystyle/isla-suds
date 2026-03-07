@@ -78,8 +78,8 @@ export function IngredientsSection() {
   );
 
   return (
-    <section>
-      <div ref={sectionRef} className={styles['ingredients-section-wrapper']}>
+    <section ref={sectionRef}>
+      <div className={styles['ingredients-section-wrapper']}>
         <Picture
           src={ingredientsDripImage}
           alt="ingredients drip bg"

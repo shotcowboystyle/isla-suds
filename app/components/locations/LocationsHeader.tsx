@@ -54,7 +54,7 @@ export function LocationsHeader() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom top',
+          end: '+=300px',
           scrub: true,
         },
       });

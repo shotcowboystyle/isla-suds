@@ -39,7 +39,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
           trigger: sectionRef.current,
           start: isMobile ? 'top 75%' : 'top 60%',
           // end: isMobile ? 'top bottom' : '70% top',
-          end: '70% top',
+          end: '+=700px',
           toggleActions: 'play none none reverse',
         },
       });

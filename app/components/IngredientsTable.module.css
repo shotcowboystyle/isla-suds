@@ -2,9 +2,8 @@
   gap: 4px;
   flex-flow: column;
   justify-content: center;
-  align-items: center;
-  margin-top: 2vw;
-  margin-bottom: 2vw;
+  align-items: flex-start;
+  margin-block: 2vw;
   width: 100%;
   display: flex;
   z-index: 10;
@@ -12,7 +11,7 @@
 @media screen and (min-width: 480px) {
   .ingredients-list-wrapper {
     gap: 0.75vw;
-    margin-bottom: 8vw;
+    margin-block: 24vw 8vw;
     width: auto;
   }
 }
@@ -39,6 +38,13 @@
   gap: 0.5vw;
   display: flex;
 }
+@media screen and (min-width: 992px) {
+  .ingredient-group {
+    max-width: 65vw;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
 
 .ingredient-item {
   gap: 4px;
@@ -50,36 +56,12 @@
   padding: 4px 10px 4px 4px;
   display: flex;
   position: relative;
-  transform: translate3d(0, 0, 0);
 }
 @media screen and (min-width: 480px) {
   .ingredient-item {
     gap: 0.75vw;
     padding: 0.5vw 1.5vw 0.5vw 0.5vw;
   }
-}
-
-.item-1-1 {
-  transform: translate3d(150%, 50%, 0);
-}
-.item-1-2 {
-  transform: translate3d(55%, 50%, 0);
-}
-.item-1-3 {
-  transform: translate3d(-45%, 50%, 0);
-}
-.item-1-4 {
-  transform: translate3d(-155%, 50%, 0);
-}
-
-.item-2-1 {
-  transform: translate3d(135%, -50%, 0);
-}
-.item-2-2 {
-  transform: translate3d(25%, -50%, 0);
-}
-.item-2-3 {
-  transform: translate3d(-70%, -50%, 0);
 }
 
 .ingredient-icon-wrapper {
@@ -124,29 +106,26 @@
   }
 }
 
-.ingredient-icon-circle.is-1-1 {
+.ingredient-icon-circle.is-1 {
   background-color: var(--color-coral);
 }
-.ingredient-icon-circle.is-1-2 {
+.ingredient-icon-circle.is-2 {
   background-color: var(--color-primary);
 }
-.ingredient-icon-circle.is-1-3 {
+.ingredient-icon-circle.is-3 {
   background-color: var(--color-accent-secondary);
 }
-.ingredient-icon-circle.is-1-4 {
+.ingredient-icon-circle.is-4 {
   background-color: var(--color-lavender);
 }
-.ingredient-icon-circle.is-2-1 {
+.ingredient-icon-circle.is-5 {
   background-color: var(--color-sea-salt-dark);
 }
-.ingredient-icon-circle.is-2-2 {
+.ingredient-icon-circle.is-6 {
   background-color: var(--color-eucalyptus-light);
 }
-.ingredient-icon-circle.is-2-3 {
+.ingredient-icon-circle.is-7 {
   background-color: var(--color-yellow-brown);
-}
-.ingredient-icon-circle.is-2-4 {
-  background-color: var(--color-accent);
 }
 .ingredient-icon-circle {
   border-radius: 100%;

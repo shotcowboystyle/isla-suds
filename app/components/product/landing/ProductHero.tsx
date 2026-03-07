@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {AddToCartButton} from '~/components/cart/AddToCartButton';
-// import {StickyAddToCart} from '~/components/product/spylt/StickyAddToCart';
+// import {StickyAddToCart} from '~/components/product/landing/StickyAddToCart';
 import {ProductForm} from '~/components/ProductForm';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
@@ -34,8 +34,6 @@ export function ProductHero({product, productOptions, selectedVariant}: ProductH
     },
     {scope: containerRef},
   );
-
-  console.log('PRODUCT', product);
 
   return (
     <div ref={containerRef} className={styles['hero-wrapper']}>
@@ -154,6 +152,7 @@ export function ProductHero({product, productOptions, selectedVariant}: ProductH
             </div>
           </div>
 
+          {/* <StickyAddToCart product={product} selectedVariant={selectedVariant} /> */}
           <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} hideAddToCart={true} />
         </div>
       </div>

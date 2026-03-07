@@ -133,7 +133,7 @@ export default function Collection() {
         <div className="pb-[4vw] sm:px-4 md:px-[2vw] my-[4vw] md:my-[10vw]">
           <PaginatedResourceSection<ProductItemFragment>
             connection={collection.products}
-            resourcesClassName="products-grid grid gap-4 auto-cols-[1fr] grid-cols-[1fr] sm:grid-cols-[1fr_1fr] md:grid-cols-[1fr_1fr_1fr] grid-rows-[auto_auto]"
+            resourcesClassName="products-grid grid gap-4 auto-cols-[1fr] grid-cols-[1fr] sm:grid-cols-[1fr_1fr] grid-rows-[auto_auto] items-center justify-center mx-auto"
           >
             {({node: product, index}) => (
               <ProductCard key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
@@ -163,6 +163,7 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
+    availableForSale
     featuredImage {
       id
       altText
@@ -176,6 +177,20 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
       }
       maxVariantPrice {
         ...Money
+      }
+    }
+    variants(first: 1) {
+      nodes {
+        id
+        title
+        availableForSale
+        price {
+          ...Money
+        }
+        selectedOptions {
+          name
+          value
+        }
       }
     }
   }

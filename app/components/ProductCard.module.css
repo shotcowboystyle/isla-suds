@@ -13,12 +13,13 @@
 @media screen and (min-width: 992px) {
   .collection-item {
     width: auto;
-    height: auto;
-    margin-right: 15vw;
     margin-bottom: 0;
-    align-self: center;
+    justify-self: center;
   }
-  .collection-item:last-child {
+  .collection-item.is-home-page {
+    margin-right: 15vw;
+  }
+  .collection-item.is-home-page:last-child {
     margin-right: 10vw;
   }
 }
@@ -29,7 +30,6 @@
 
 @media screen and (min-width: 992px) {
   .collection-item.is-home-page:nth-child(odd) {
-    width: auto;
     transform: rotate(-8deg);
   }
 }
@@ -44,11 +44,7 @@
   }
 }
 @media screen and (min-width: 992px) {
-  .collection-item.is-home-page:nth-child(2n) {
-    width: auto;
-  }
   .collection-item.is-home-page:nth-child(3) {
-    width: auto;
     margin-left: 15vw;
   }
 }
@@ -118,8 +114,7 @@
 .card-additional {
   z-index: 3;
   width: 85vw;
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
   position: absolute;
   inset: -5vw 0% 0%;
   opacity: 1;
@@ -132,7 +127,6 @@
 @media screen and (min-width: 992px) {
   .card-additional {
     opacity: 0;
-    /* width: 45vw; */
     width: 90%;
   }
 }

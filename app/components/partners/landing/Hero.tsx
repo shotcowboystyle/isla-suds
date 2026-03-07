@@ -79,7 +79,7 @@ export function Hero() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom top',
+          end: '+=500px',
           scrub: true,
         },
       });

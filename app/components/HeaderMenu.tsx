@@ -37,7 +37,7 @@ const FALLBACK_HEADER_MENU = {
       tags: [],
       title: 'Shop',
       type: 'PAGE',
-      url: '/collections',
+      url: '/collections/frontpage',
       items: [],
       image: CatalogImage,
     },

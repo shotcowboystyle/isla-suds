@@ -28,6 +28,15 @@
   z-index: 5;
 }
 
+@media screen and (hover: hover) {
+  .ingredient-item-button:hover .item-text-wrapper {
+    background-color: var(--color-white);
+  }
+  .ingredient-item-button:hover .item-text {
+    color: var(--color-black);
+  }
+}
+
 .item-icon-wrapper {
   border: 2px solid var(--color-white);
   background-color: var(--color-black);
@@ -113,6 +122,11 @@
     padding: 0.75vw 1.5vw;
   }
 }
+@media screen and (min-width: 992px) {
+  .item-text-wrapper {
+    padding: 1.5vw 2.5vw;
+  }
+}
 
 .item-text {
   color: var(--color-white);
@@ -122,5 +136,10 @@
 @media screen and (min-width: 480px) {
   .item-text {
     font-size: 1.5vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .item-text {
+    font-size: 2vw;
   }
 }
