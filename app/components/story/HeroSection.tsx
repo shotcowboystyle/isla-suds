@@ -101,7 +101,7 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom top',
+          // end: 'bottom top',
           scrub: true,
         },
       });

@@ -6,9 +6,9 @@ import {LocalStores} from '~/components/LocalStores';
 import {ProductIngredients} from '~/components/product/ingredients/ProductIngredients';
 import {Marquee} from '~/components/product/landing/Marquee';
 import {ProductHero} from '~/components/product/landing/ProductHero';
-import {ProductBenefitsUse} from '~/components/product/ProductBenefitsUse';
 import {TestimonialsSection} from '~/components/Testimonials';
 import {cn} from '~/utils/cn';
+import {FallInLove} from './FallInLove';
 import styles from './ProductLandingPage.module.css';
 
 interface ProductLandingPageProps {
@@ -68,9 +68,9 @@ export function ProductLandingPage({product}: ProductLandingPageProps) {
         <ProductHero product={product} productOptions={productOptions} selectedVariant={selectedVariant} />
       </div>
       <Marquee text="GENTLE & SOOTHING • MOISTURIZING • FRAGRANCE-FREE • " className="bg-black text-white" />
-      <ProductBenefitsUse />
-      <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-milk" />
+      <FallInLove />
       <ProductIngredients />
+      <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-milk" />
       <TestimonialsSection />
       <LocalStores />
     </section>

@@ -1,19 +1,20 @@
 import {useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
+import PinVideoPoster from '~/assets/images/pin-video-poster.webp';
+import LightboxButtonImage from '~/assets/images/play.svg';
+import PlayIcon from '~/assets/images/polygon-3.svg';
+import PinVideo from '~/assets/video/pin-video.mp4';
 import {useIsMobile} from '~/hooks/use-is-mobile';
+import {cn} from '~/utils/cn';
 import styles from './VideoSection.module.css';
-import PinVideoPoster from '../../assets/images/pin-video-poster.webp';
-import LightboxButtonImage from '../../assets/images/play.svg';
-import PlayIcon from '../../assets/images/polygon-3.svg';
-import PinVideo from '../../assets/video/pin-video.mp4';
-import {cn} from '../../utils/cn';
 
 export const VideoSection = () => {
   const {isMobile, isLoading} = useIsMobile();
 
   const stickyCircleWrapper = useRef<HTMLDivElement>(null);
   const stickyCircleElement = useRef<HTMLDivElement>(null);
+  const stickyCircleVideoWrapper = useRef<HTMLDivElement>(null);
   const cursorElement = useRef<HTMLDivElement>(null);
   const desktopVideoRef = useRef<HTMLVideoElement>(null);
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
@@ -43,36 +44,55 @@ export const VideoSection = () => {
         isMobile ||
         !stickyCircleWrapper.current ||
         !stickyCircleElement.current ||
+        !stickyCircleVideoWrapper.current ||
         !cursorElement.current
       ) {
         return;
       }
 
-      const videoTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: stickyCircleWrapper.current,
-          start: 'top top',
-          end: '100% top',
-          scrub: 1,
-          // pin: stickyCircleElement.current,
-          pin: true,
-        },
-      });
-
-      videoTl.to(stickyCircleElement.current, {
-        duration: 0.5,
-        clipPath: 'circle(100% at 50% 50%)',
-      });
+      const videoTl = gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: stickyCircleWrapper.current,
+            scrub: true,
+            start: 'top top',
+            end: '+=300%',
+            pin: true,
+          },
+        })
+        .to(
+          stickyCircleElement.current,
+          {
+            clipPath: 'circle(100% at 50% 50%)',
+          },
+          'sameTime',
+        )
+        .to(
+          stickyCircleVideoWrapper.current,
+          {
+            scale: 1,
+          },
+          'sameTime',
+        );
     },
-    {dependencies: [stickyCircleWrapper, stickyCircleElement, cursorElement, isLoading, isMobile]},
+    {
+      dependencies: [
+        stickyCircleWrapper,
+        stickyCircleElement,
+        stickyCircleVideoWrapper,
+        cursorElement,
+        isLoading,
+        isMobile,
+      ],
+    },
   );
 
   return (
-    <div>
+    <div ref={stickyCircleWrapper}>
       {!isLoading && !isMobile && (
         <div className={styles['effect-wrapper']} data-speed="auto">
           <div className={styles['effect-wrapper-inner']}>
-            <div ref={stickyCircleWrapper} className={styles['cursor-wrapper']}>
+            <div className={styles['cursor-wrapper']}>
               <div ref={cursorElement} className={styles['cursor']}>
                 <div
                   ref={stickyCircleElement}
@@ -94,7 +114,7 @@ export const VideoSection = () => {
                     </div>
                   </button>
 
-                  <div className={cn(styles['background-video-wrapper'], 'size-full')}>
+                  <div ref={stickyCircleVideoWrapper} className={cn(styles['background-video-wrapper'], 'size-full')}>
                     <video
                       ref={desktopVideoRef}
                       playsInline
@@ -113,7 +133,6 @@ export const VideoSection = () => {
               </div>
             </div>
           </div>
-          <div className="spacer"></div>
         </div>
       )}
 

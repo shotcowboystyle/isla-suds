@@ -7,7 +7,14 @@
   display: grid;
   align-items: center;
   justify-content: center;
-  column-gap: 33vw;
+}
+@media (min-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 35vw;
+  }
 }
 
 .heading-wrapper {
@@ -19,6 +26,13 @@
   .heading-wrapper {
     padding-inline: 20vw;
     margin-top: 0;
+  }
+}
+@media (min-width: 992px) {
+  .heading-wrapper {
+    align-self: center;
+    justify-self: center;
+    padding-inline: 3vw;
   }
 }
 
@@ -37,6 +51,12 @@
     font-size: 3.9vw;
   }
 }
+@media (min-width: 992px) {
+  .heading-text {
+    font-size: 2.7vw;
+    text-align: right;
+  }
+}
 
 .description-wrapper {
   place-self: start;
@@ -48,6 +68,15 @@
     max-width: 30vw;
     margin-top: 0;
     place-self: start;
+  }
+}
+@media (min-width: 992px) {
+  .description-wrapper {
+    max-width: 100%;
+    margin-top: 0;
+    align-self: center;
+    justify-self: flex-start;
+    padding-inline: 1vw;
   }
 }
 
@@ -77,6 +106,12 @@
     font-size: 4vw;
   }
 }
+@media (min-width: 992px) {
+  .description-price {
+    font-size: 1.5vw;
+    letter-spacing: 0;
+  }
+}
 
 .description-text-wrapper {
   display: flex;
@@ -98,6 +133,11 @@
 @media (min-width: 480px) {
   .description-text {
     font-size: 4vw;
+  }
+}
+@media (min-width: 992px) {
+  .description-text {
+    font-size: 1vw;
   }
 }
 

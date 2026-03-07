@@ -32,7 +32,7 @@ export const TestimonialsSection = () => {
         scrollTrigger: {
           trigger: scrollContainerRef.current,
           start: 'top bottom',
-          end: '200% top',
+          end: '+=200%',
           scrub: true,
         },
       });
@@ -69,7 +69,7 @@ export const TestimonialsSection = () => {
         scrollTrigger: {
           trigger: scrollContainerRef.current,
           start: '10% top',
-          end: '200% top',
+          end: '+=200%',
           scrub: 1.5,
           pin: true,
           invalidateOnRefresh: true,
@@ -118,15 +118,15 @@ export const TestimonialsSection = () => {
         </div>
 
         <div className={styles['social-text-wrapper']}>
-          <h1 ref={text1Ref} className={styles['social-heading-1']}>
+          <h1 ref={text1Ref} className={styles['social-heading']}>
             What&apos;s
           </h1>
 
-          <h1 ref={text2Ref} className={cn(styles['social-heading-2'])}>
+          <h1 ref={text2Ref} className={cn(styles['social-heading'], styles['social-heading-2'])}>
             everyone
           </h1>
 
-          <h1 ref={text3Ref} className={styles['social-heading-3']}>
+          <h1 ref={text3Ref} className={cn(styles['social-heading'], styles['social-heading-3'])}>
             Saying
           </h1>
         </div>

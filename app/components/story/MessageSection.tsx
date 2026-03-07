@@ -47,8 +47,9 @@ export const MessageSection = () => {
         stagger: 1,
         scrollTrigger: {
           trigger: text1Ref.current,
-          start: isMobile ? 'top 65%' : 'top center',
-          end: '30% center',
+          // start: isMobile ? 'top 65%' : 'top center',
+          start: 'top 85%',
+          end: '+=750px',
           scrub: true,
         },
       });
@@ -57,19 +58,22 @@ export const MessageSection = () => {
         color: '#faeade',
         ease: 'power1.in',
         stagger: 1,
+        delay: 0.5,
         scrollTrigger: {
           trigger: text2Ref.current,
-          start: isMobile ? 'top 65%' : 'top center',
-          end: '30% center',
+          // start: isMobile ? 'top 65%' : 'top center',
+          start: 'top 60%',
+          end: '+=500px',
           scrub: true,
         },
       });
 
       const revealTl = gsap.timeline({
-        delay: 0.5,
+        // delay: 0.5,
         scrollTrigger: {
           trigger: text1Ref.current,
-          start: isMobile ? 'top 70%' : 'top 60%',
+          // start: isMobile ? 'top 70%' : 'top 60%',
+          start: 'top 50%',
         },
       });
 
@@ -83,7 +87,9 @@ export const MessageSection = () => {
       const paragraphTl = gsap.timeline({
         scrollTrigger: {
           trigger: paragraphRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
+          end: '+=500px',
+          scrub: true,
         },
       });
 

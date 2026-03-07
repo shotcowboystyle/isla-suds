@@ -3,6 +3,7 @@
   background-color: var(--color-black);
   padding-bottom: 2vw;
   overflow: hidden;
+  height: 100%;
 }
 
 .container-click-ingredients {

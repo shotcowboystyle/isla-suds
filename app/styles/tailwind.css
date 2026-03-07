@@ -279,10 +279,6 @@
     line-height: 30px;
   }
 
-  .spacer {
-    height: 100vh;
-  }
-
   .paragraph-line {
     text-wrap: nowrap;
     overflow: hidden;

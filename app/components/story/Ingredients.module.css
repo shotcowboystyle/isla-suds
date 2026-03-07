@@ -26,11 +26,11 @@
 }
 @media screen and (min-width: 992px) {
   .ingredients-section-wrapper {
-    justify-content: flex-end;
-    align-items: center;
-    flex-flow: column;
-    width: auto;
-    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    /* flex-flow: column; */
+    /* width: auto; */
+    /* display: flex; */
     height: 120vh;
     padding-inline: 0;
   }
