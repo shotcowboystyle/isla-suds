@@ -52,14 +52,14 @@ export function PageLayout({
 
       {isHome ? (
         <>
-          <div id="smooth-wrapper" className="relative z-10">
-            <div id="smooth-content" className="relative">
-              <main id="main-content" className="relative z-10 bg-black">
-                {children}
-              </main>
-              <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
-            </div>
-          </div>
+          {/* <div id="smooth-wrapper" className="relative z-10">
+          <div id="smooth-content" className="relative"> */}
+          <main id="main-content" className="relative z-10 bg-black">
+            {children}
+          </main>
+          <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
+          {/* </div>
+        </div> */}
         </>
       ) : (
         <>

@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import {NavLink} from 'react-router';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
+// import {Image} from '@shopify/hydrogen';
 import AboutUsImage from '~/assets/images/menu-about-us.webp?responsive';
 import ContactImage from '~/assets/images/menu-catalog.png?responsive';
 import CatalogImage from '~/assets/images/menu-contact.jpeg?responsive';
@@ -84,6 +85,12 @@ const FALLBACK_HEADER_MENU = {
   ],
 };
 
+const SOCIAL_LINKS = [
+  {label: 'YouTube', href: 'https://www.youtube.com'},
+  {label: 'Instagram', href: 'https://www.instagram.com/islasuds/'},
+  {label: 'TikTok', href: 'https://www.tiktok.com'},
+];
+
 type Viewport = 'desktop' | 'mobile';
 
 interface HeaderMenuProps {
@@ -141,6 +148,22 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
           0.5 + index * 0.1, // Added more delay here to wait for slide down
         );
       });
+
+      // Animate social links
+      const socialLinks = gsap.utils.toArray<HTMLElement>('.social-link');
+      gsap.set(socialLinks, {opacity: 0, y: 20});
+
+      tlRef.current!.to(
+        socialLinks,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power3.out',
+        },
+        0.5 + splits.length * 0.1,
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -195,38 +218,21 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
           </nav>
 
           <ul className="mt-5 flex items-center gap-4">
-            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
-              <a
-                href="https://www.youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+            {SOCIAL_LINKS.map((link) => (
+              <li
+                key={link.label}
+                className="social-link font-paragraph text-black opacity-60 hover:opacity-100 text-center mx-[1vw] md:mx-[3vw]"
               >
-                YouTube
-              </a>
-            </li>
-
-            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
-              <a
-                href="https://www.instagram.com/islasuds/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
-              >
-                Instagram
-              </a>
-            </li>
-
-            <li className="font-paragraph text-black text-center mx-[1vw] md:mx-[3vw]">
-              <a
-                href="https://www.tiktok.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
-              >
-                TikTok
-              </a>
-            </li>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -237,6 +243,13 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
             alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
             className="w-full h-screen! object-cover transition-opacity duration-500"
           />
+          {/* <Image
+            alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
+              aspectRatio="5/3"
+              data={FALLBACK_HEADER_MENU.items[activeMenu].image}
+              // loading={loading}
+            className="w-full h-screen! object-cover transition-opacity duration-500"
+            /> */}
         </div>
       </div>
     </div>

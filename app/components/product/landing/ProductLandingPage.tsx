@@ -2,6 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {useOptimisticVariant, getAdjacentAndFirstAvailableVariants, Image, getProductOptions} from '@shopify/hydrogen';
 import {gsap} from 'gsap';
+import {Flip} from 'gsap/Flip';
 import {LocalStores} from '~/components/LocalStores';
 import {ProductIngredients} from '~/components/product/ingredients/ProductIngredients';
 import {Marquee} from '~/components/product/landing/Marquee';

@@ -57,39 +57,43 @@ test.describe('Navigation', () => {
     await page.waitForLoadState('networkidle');
 
     // WHEN: User clicks mobile menu button
-    const menuButton = page.locator('button[aria-label*="menu" i]').first();
+    const menuButton = page.locator('button[aria-label="Toggle menu"]').first();
 
     if ((await menuButton.count()) > 0) {
       await menuButton.click();
 
-      // THEN: Mobile menu opens
-      const mobileMenu = page.locator(
-        'aside[aria-label*="menu" i], nav[aria-label*="menu" i]',
-      );
-      await expect(mobileMenu.first()).toBeVisible({timeout: 2000});
+      // THEN: Mobile menu opens (HeaderMenu renders a nav inside a fixed overlay div)
+      // Use the nav without aria-label to distinguish from the header CTAs nav (aria-label="Header CTAs")
+      const mobileMenu = page.locator('nav[role="navigation"]:not([aria-label])');
+      await expect(mobileMenu).toBeVisible({timeout: 2000});
 
-      // WHEN: User closes menu (Escape key or close button)
+      // WHEN: User closes menu via Escape key
       await page.keyboard.press('Escape');
 
-      // THEN: Mobile menu closes
-      await expect(mobileMenu.first()).not.toBeVisible();
+      // THEN: Mobile menu closes (GSAP animates container to yPercent: -100)
+      await expect(mobileMenu).not.toBeVisible({timeout: 2000});
     }
   });
 
-  test('[P1] should navigate to cart page via cart icon', async ({page}) => {
+  test('[P1] should open cart drawer via cart button', async ({page}) => {
     // GIVEN: User is on any page
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // WHEN: User clicks cart icon in header
-    const cartLink = page.locator('header').locator('a[href="/cart"]');
-    await cartLink.click();
+    // WHEN: User clicks the cart button in header
+    // The cart is a button (not a link) with aria-label "Shopping cart, empty" or "Shopping cart, N item(s)"
+    const cartButton = page
+      .locator('header')
+      .locator('button[aria-label^="Shopping cart"]');
+    await cartButton.click();
 
-    // THEN: Cart page loads
-    await expect(page).toHaveURL('/cart');
-    await expect(
-      page.getByRole('heading', {name: /cart/i}),
-    ).toBeVisible();
+    // THEN: Cart drawer (Radix Dialog) opens with the cart title visible
+    const cartDialog = page.locator('[aria-labelledby="cart-title"]');
+    await expect(cartDialog).toBeVisible({timeout: 2000});
+
+    const cartTitle = page.locator('#cart-title');
+    await expect(cartTitle).toBeVisible();
+    await expect(cartTitle).toContainText('Cart');
   });
 
   test('[P1] should display logo and link to home', async ({page}) => {

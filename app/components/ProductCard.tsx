@@ -100,7 +100,7 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
         {/* Only pre-load Shopify Images if productImageUrl from the CMS list isn't present, or fallback to it */}
         {productImageUrl ? (
           <Picture
-            ref={subjectRef}
+            // ref={subjectRef}
             loading={loading}
             src={productImageUrl}
             alt={product.title}
@@ -120,7 +120,7 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
         )}
 
         <Picture
-          ref={elementsRef}
+          // ref={elementsRef}
           loading={loading}
           src={particlesUrl}
           alt="particles"

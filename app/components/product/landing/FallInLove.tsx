@@ -1,6 +1,11 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {SplitText} from 'gsap/SplitText';
+if (typeof document !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 import {SimpleCard} from '~/components/ui/SimpleCard';
 import {useIsDesktop} from '~/hooks/use-is-desktop';
 import {useIsMobile} from '~/hooks/use-is-mobile';
@@ -129,9 +134,9 @@ export function FallInLove() {
         scrollTrigger: {
           trigger: sectionCircle.current,
           start: 'top top',
-          end: `+=${windowInnerWidth}`,
-          scrub: !0,
-          pin: !0,
+          end: `+=${windowInnerWidth * 3}`,
+          scrub: 1.5,
+          pin: true,
           invalidateOnRefresh: true,
         },
       });
@@ -263,7 +268,7 @@ export function FallInLove() {
                 </svg>
               </div>
 
-              <svg
+              {/* <svg
                 className={styles['svg-bubbles']}
                 width="1456"
                 height="363"
@@ -278,11 +283,13 @@ export function FallInLove() {
                 <circle cx="781.344" cy="32" r="6.375" fill="#FEF7E6" stroke="#0E0E0E" strokeWidth="1.25"></circle>
                 <circle cx="1098.34" cy="76" r="6.375" fill="#FEF7E6" stroke="#0E0E0E" strokeWidth="1.25"></circle>
                 <circle cx="315.344" cy="7" r="6.375" fill="#FEF7E6" stroke="#0E0E0E" strokeWidth="1.25"></circle>
-              </svg>
+              </svg> */}
             </div>
           </div>
         </div>
       </div>
+
+      <div className="bg-red size-[200px] absolute -bottom-[100px] left-50% translate-x-[-50%]">Box</div>
     </div>
   );
 }

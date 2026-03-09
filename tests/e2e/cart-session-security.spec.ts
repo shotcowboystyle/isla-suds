@@ -19,8 +19,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart (triggers cart creation)
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: JavaScript tries to access session cookie
     const cookieAccessibleViaJS = await page.evaluate(() => {
@@ -40,8 +40,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: We inspect cookies from the browser context
     const cookies = await context.cookies();
@@ -59,8 +59,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: We inspect cookies
     const cookies = await context.cookies();
@@ -75,8 +75,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: JavaScript checks localStorage for cart ID
     const cartIdInLocalStorage = await page.evaluate(() => {
@@ -98,8 +98,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: JavaScript checks sessionStorage for cart ID
     const cartIdInSessionStorage = await page.evaluate(() => {
@@ -128,8 +128,8 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
     // WHEN: We inspect cookies
     const cookies = await context.cookies();
@@ -150,32 +150,40 @@ test.describe('Cart Session Cookie Security (AC5)', () => {
 
   test('[P0] should persist cart ID across page navigation using cookies', async ({
     page,
+    context,
   }) => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.locator('[data-testid="add-to-cart-button"]').click();
+    await expect(page.locator('[role="dialog"][aria-labelledby="cart-title"]')).toBeVisible();
 
-    // Close cart drawer to see badge
+    // Verify session cookie exists after add-to-cart
+    const cookiesAfterAdd = await context.cookies();
+    const sessionCookieAfterAdd = cookiesAfterAdd.find((c) => c.name === 'session');
+    expect(sessionCookieAfterAdd).toBeDefined();
+
+    // Close cart drawer
     await page.keyboard.press('Escape');
-    const initialBadgeText = await page
-      .locator('a[href="/cart"]')
-      .locator('span')
-      .first()
-      .textContent();
+
+    // Read initial cart button aria-label to capture item count
+    const cartButton = page.locator('button[aria-label^="Shopping cart"]');
+    const initialAriaLabel = await cartButton.getAttribute('aria-label');
 
     // WHEN: User navigates to different page
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // THEN: Cart badge should show same count (cart persisted via cookies)
-    const finalBadgeText = await page
-      .locator('a[href="/cart"]')
-      .locator('span')
-      .first()
-      .textContent();
+    // THEN: Session cookie should still be present
+    const cookiesAfterNav = await context.cookies();
+    const sessionCookieAfterNav = cookiesAfterNav.find((c) => c.name === 'session');
+    expect(sessionCookieAfterNav).toBeDefined();
 
-    expect(finalBadgeText).toBe(initialBadgeText);
+    // Cart button should show same item count (cart persisted via session cookie)
+    const finalAriaLabel = await page
+      .locator('button[aria-label^="Shopping cart"]')
+      .getAttribute('aria-label');
+
+    expect(finalAriaLabel).toBe(initialAriaLabel);
   });
 });

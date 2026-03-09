@@ -1,5 +1,5 @@
-import {lazy, Suspense, useEffect, useRef, type RefObject} from 'react';
-import {Await, useLoaderData, Link, useOutletContext, useLocation} from 'react-router';
+import {lazy, Suspense, useEffect} from 'react';
+import {useLoaderData} from 'react-router';
 import {HeroSection} from '~/components/story/HeroSection';
 import {productsListHandles} from '~/content/products';
 import {
@@ -7,9 +7,7 @@ import {
   FEATURED_COLLECTION_QUERY,
   RECOMMENDED_PRODUCTS_QUERY,
 } from '~/graphql/product/ProductList';
-import {cn} from '~/utils/cn';
 import type {Route} from './+types/_index';
-import type {ScrollSmoother as ScrollSmootherType} from 'gsap/ScrollSmoother';
 
 const MessageSection = lazy(() =>
   import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
@@ -86,42 +84,20 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
-  const localHeroRef = useRef<HTMLElement>(null);
-  const outletContext = useOutletContext() as {heroRef?: RefObject<HTMLElement>} | undefined;
-  const heroRef = outletContext?.heroRef ?? localHeroRef;
-
-  const location = useLocation();
-  const smootherRef = useRef<ScrollSmootherType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([import('gsap'), import('gsap/ScrollSmoother'), import('gsap/ScrollTrigger'), import('@gsap/react')])
-      .then(([{default: gsap}, {ScrollSmoother}, {ScrollTrigger}, {useGSAP}]) => {
+    Promise.all([import('gsap'), import('gsap/ScrollTrigger'), import('@gsap/react')])
+      .then(([{default: gsap}, {ScrollTrigger}, {useGSAP}]) => {
         if (cancelled) {
           return;
         }
 
-        gsap.registerPlugin(ScrollSmoother, ScrollTrigger, useGSAP);
+        gsap.registerPlugin(ScrollTrigger, useGSAP);
 
         // Refresh ScrollTrigger to ensure start/end positions are correct
         ScrollTrigger.refresh();
-
-        smootherRef.current = ScrollSmoother.create({
-          smooth: 3, // Smoothness duration in seconds
-          effects: true, // Enable data-speed and data-lag effects
-          wrapper: '#smooth-wrapper',
-          content: '#smooth-content',
-          normalizeScroll: true, // Normalizes touch/wheel events for smoother scrolling
-          ignoreMobileResize: true, // Prevents resizing issues on mobile
-        });
-
-        // ScrollTrigger.create({
-        //   trigger: '#footer-wrapper',
-        //   pin: true,
-        //   start: 'bottom bottom',
-        //   end: '+=100%',
-        // });
       })
       .catch((_error: Error) => {
         // Safe to continue: GSAP is a progressive enhancement, page works without it
@@ -129,37 +105,30 @@ export default function Homepage() {
 
     return () => {
       cancelled = true;
-      if (smootherRef.current) {
-        smootherRef.current.kill();
-        smootherRef.current = null;
-      }
     };
   }, []);
 
-  useEffect(() => {
-    smootherRef.current?.scrollTo(0, false);
-  }, [location.pathname]);
-
   return (
-    <div className="home">
-      <div className={cn('flex flex-col bg-transparent')}>
-        <div className="block bg-black overflow-hidden">
-          <HeroSection ref={heroRef} />
-        </div>
+    <div className="home flex flex-col bg-transparent">
+      {/* <div className="block bg-black overflow-hidden"> */}
+      <div className="block bg-black overflow-visible">
+        <HeroSection />
+      </div>
 
-        <div className="z-1">
-          <Suspense fallback={null}>
-            <MessageSection />
-            <ProductsList products={data.productsList} />
-            <IngredientsSection />
-            <div className="block bg-black relative">
-              <BenefitsSection />
-              <VideoSection />
-            </div>
-            <TestimonialsSection />
-            <LocalStores />
-          </Suspense>
-        </div>
+      <div className="z-2 overflow-visible relative">
+        <Suspense fallback={null}>
+          <MessageSection />
+          <ProductsList products={data.productsList} />
+          <IngredientsSection />
+
+          <div className="block bg-black relative">
+            <BenefitsSection />
+            <VideoSection />
+          </div>
+
+          <TestimonialsSection />
+          <LocalStores />
+        </Suspense>
       </div>
     </div>
   );

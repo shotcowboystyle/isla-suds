@@ -15,20 +15,12 @@ export function IngredientsSection() {
   const title1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
-  const tableBoxRef = useRef<HTMLDivElement>(null);
 
   const {isMobile, isLoading} = useIsMobile();
 
   useGSAP(
     () => {
-      if (
-        isLoading ||
-        !sectionRef.current ||
-        !title1Ref.current ||
-        !clippedBoxRef.current ||
-        !paragraphRef.current ||
-        !tableBoxRef.current
-      ) {
+      if (isLoading || !sectionRef.current || !title1Ref.current || !clippedBoxRef.current || !paragraphRef.current) {
         return;
       }
 
@@ -74,7 +66,7 @@ export function IngredientsSection() {
           '-=0.25',
         );
     },
-    {dependencies: [sectionRef, title1Ref, clippedBoxRef, paragraphRef, tableBoxRef, isLoading, isMobile]},
+    {dependencies: [sectionRef, title1Ref, clippedBoxRef, paragraphRef, isLoading, isMobile]},
   );
 
   return (

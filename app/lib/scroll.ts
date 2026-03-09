@@ -43,9 +43,9 @@ export async function initLenis(): Promise<Lenis | null> {
   }
 
   // Desktop-only check (≥1024px breakpoint)
-  if (!window.matchMedia('(min-width: 1024px)').matches) {
-    return null;
-  }
+  // if (!window.matchMedia('(min-width: 1024px)').matches) {
+  //   return null;
+  // }
 
   // Accessibility: respect prefers-reduced-motion
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

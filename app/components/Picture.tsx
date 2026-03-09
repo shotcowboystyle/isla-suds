@@ -3,7 +3,10 @@ import {ResponsiveImage} from '@responsive-image/react';
 import {cn} from '~/utils/cn';
 import type {ImageData} from '@responsive-image/core';
 
-interface PictureProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'children' | 'width' | 'height'> {
+export interface PictureProps extends Omit<
+  ImgHTMLAttributes<HTMLImageElement>,
+  'src' | 'children' | 'width' | 'height'
+> {
   src: ImageData;
   alt: string;
   width?: number;
@@ -18,42 +21,28 @@ interface PictureProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' |
   decoding?: 'async' | 'sync' | 'auto';
 }
 
-const Picture = forwardRef<HTMLImageElement, PictureProps>(
-  (
-    {
-      src,
-      alt,
-      formats: _formats,
-      fallbackFormat: _fallbackFormat,
-      widths: _widths,
-      sizes,
-      pictureAttributes: _pictureAttributes,
-      loading = 'lazy',
-      decoding = 'async',
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    // ResponsiveImage handles all the responsive logic automatically
-    // We just need to pass through the relevant props
-    return (
-      <ResponsiveImage
-        ref={ref}
-        src={src}
-        alt={alt}
-        sizes={sizes}
-        loading={loading}
-        decoding={decoding}
-        className={cn(className)}
-        // Pass any additional img attributes
-        {...props}
-        // ResponsiveImage automatically generates formats and widths based on Vite config
-      />
-    );
-  },
-);
-
-Picture.displayName = 'Picture';
-
-export {Picture, type PictureProps};
+export function Picture({
+  src,
+  alt,
+  formats: _formats,
+  fallbackFormat: _fallbackFormat,
+  widths: _widths,
+  sizes,
+  pictureAttributes: _pictureAttributes,
+  loading = 'lazy',
+  decoding = 'async',
+  className,
+  ...props
+}: PictureProps) {
+  return (
+    <ResponsiveImage
+      src={src}
+      alt={alt}
+      sizes={sizes}
+      loading={loading}
+      decoding={decoding}
+      className={cn(className)}
+      {...props}
+    />
+  );
+}

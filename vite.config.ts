@@ -3,6 +3,7 @@ import {reactRouter} from '@react-router/dev/vite';
 import {setupPlugins} from '@responsive-image/vite-plugin';
 import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import {analyzer} from 'vite-bundle-analyzer';
 import {ViteImageOptimizer} from 'vite-plugin-image-optimizer';
@@ -14,6 +15,7 @@ export default defineConfig(({mode, isSsrBuild}) => ({
     hydrogen(),
     oxygen(),
     tsconfigPaths(),
+    tailwindcss(),
     setupPlugins({
       cache: true,
       lqip: {type: 'thumbhash'},
@@ -118,7 +120,7 @@ export default defineConfig(({mode, isSsrBuild}) => ({
   server: {
     allowedHosts: ['.tryhydrogen.dev', '5b3d-23-116-241-67.ngrok-free.app'],
   },
-  css: {
-    devSourcemap: false,
-  },
+  // css: {
+  //   devSourcemap: false,
+  // },
 }));

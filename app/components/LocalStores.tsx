@@ -12,20 +12,12 @@ export function LocalStores() {
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
-  const buttonWrapperRef = useRef<HTMLDivElement>(null);
 
   const {isMobile, isLoading} = useIsMobile();
 
   useGSAP(
     () => {
-      if (
-        isLoading ||
-        !sectionRef.current ||
-        !heading1Ref.current ||
-        !clippedBoxRef.current ||
-        !paragraphRef.current ||
-        !buttonWrapperRef.current
-      ) {
+      if (isLoading || !sectionRef.current || !heading1Ref.current || !clippedBoxRef.current || !paragraphRef.current) {
         return;
       }
 
@@ -36,7 +28,7 @@ export function LocalStores() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 70%' : 'top center',
-          end: isMobile ? '+=50%' : '+=500px',
+          end: isMobile ? '+=50%' : '+=500',
         },
       });
 
@@ -66,19 +58,19 @@ export function LocalStores() {
             stagger: 0.01,
           },
           '-=0.5',
-        )
-        .from(
-          buttonWrapperRef.current,
-          {
-            opacity: 0,
-            duration: 0.5,
-            width: 0,
-            ease: 'circ.out',
-          },
-          '-=0.5',
         );
+      // .from(
+      //   buttonWrapperRef.current,
+      //   {
+      //     opacity: 0,
+      //     duration: 0.5,
+      //     width: 0,
+      //     ease: 'circ.out',
+      //   },
+      //   '-=0.5',
+      // );
     },
-    {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, buttonWrapperRef, isLoading, isMobile]},
+    {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, isLoading, isMobile]},
   );
 
   return (

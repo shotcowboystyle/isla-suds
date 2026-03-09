@@ -1,133 +1,156 @@
 import {test, expect} from '@playwright/test';
-import {
-  getPreloadLinks,
-  waitForPreloadLinks,
-  getPreloadLinkAttributes,
-  hasOptimizationParams,
-} from '../support/helpers/preload';
 
 /**
- * Story 3.1: Image Preloading with Intersection Observer
+ * Product Card Image Loading
  *
- * Tests verify that texture images are preloaded when the constellation
- * approaches viewport, ensuring <100ms reveal performance (NFR4).
+ * Tests verify that product card images are present in the DOM, use lazy loading
+ * for below-fold content, load successfully when scrolled into view, and avoid
+ * duplicate images within each card.
  */
 
-test.describe('Image Preloading (Story 3.1)', () => {
+test.describe('Product Card Image Loading', () => {
   test.beforeEach(async ({page}) => {
-    // Navigate to home page with constellation
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
   });
 
-  test('[P0] should preload images when constellation enters viewport', async ({
+  test('[P0] should render image elements inside each product card', async ({
     page,
   }) => {
-    // GIVEN: User is on the home page
-    // Constellation is below viewport (scroll position at top)
-    const initialLinks = await getPreloadLinks(page);
-    expect(initialLinks.length).toBe(0); // No preload links initially
+    // GIVEN: The home page has loaded with the product list
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
 
-    // WHEN: User scrolls toward constellation (trigger at 200px before viewport)
-    await page.evaluate(() => {
-      const constellation = document.querySelector('.constellation-grid');
-      if (constellation) {
-        // Scroll to position that triggers rootMargin: 200px
-        const rect = constellation.getBoundingClientRect();
-        const targetScroll = window.scrollY + rect.top - window.innerHeight - 200;
-        window.scrollTo(0, targetScroll);
-      }
-    });
-
-    // Wait for IntersectionObserver to trigger preload
-    await waitForPreloadLinks(page, 1, {timeout: 3000});
-
-    // THEN: Preload links exist in document head
-    const preloadLinks = await getPreloadLinks(page);
-    expect(preloadLinks.length).toBeGreaterThan(0);
-
-    // AND: All preload links have correct attributes (AC1)
-    for (const href of preloadLinks) {
-      const attrs = await getPreloadLinkAttributes(page, href);
-      expect(attrs.rel).toBe('preload');
-      expect(attrs.as).toBe('image');
-      expect(attrs.href).toBeTruthy();
+    // THEN: Each product card contains at least one img element
+    // ProductCard renders a soap bar image (Picture or Shopify Image) and a particles image (Picture)
+    for (let i = 0; i < cardCount; i++) {
+      const card = productCards.nth(i);
+      const images = card.locator('img');
+      const imageCount = await images.count();
+      expect(imageCount).toBeGreaterThanOrEqual(1);
     }
   });
 
-  test('[P1] should prevent duplicate preload links on re-scroll', async ({
+  test('[P0] should use lazy loading attribute on product card images', async ({
     page,
   }) => {
-    // GIVEN: User scrolls to trigger constellation preload
-    await page.evaluate(() => {
-      const constellation = document.querySelector('.constellation-grid');
-      if (constellation) {
-        const rect = constellation.getBoundingClientRect();
-        const targetScroll = window.scrollY + rect.top - window.innerHeight - 200;
-        window.scrollTo(0, targetScroll);
+    // GIVEN: The product cards are rendered on the home page
+    // ProductCard defaults to loading="lazy" for its images
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
+
+    // THEN: Images within product cards have loading="lazy"
+    for (let i = 0; i < cardCount; i++) {
+      const card = productCards.nth(i);
+      const images = card.locator('img');
+      const imageCount = await images.count();
+
+      for (let j = 0; j < imageCount; j++) {
+        const loadingAttr = await images.nth(j).getAttribute('loading');
+        expect(loadingAttr).toBe('lazy');
       }
-    });
-
-    await waitForPreloadLinks(page, 1, {timeout: 3000});
-    const firstLoadCount = await getPreloadLinks(page).then((l) => l.length);
-
-    // WHEN: User scrolls up and back down again (re-trigger intersection)
-    await page.evaluate(() => window.scrollTo(0, 0)); // Scroll to top
-    await page.waitForTimeout(500); // Wait for scroll to settle
-
-    await page.evaluate(() => {
-      const constellation = document.querySelector('.constellation-grid');
-      if (constellation) {
-        const rect = constellation.getBoundingClientRect();
-        const targetScroll = window.scrollY + rect.top - window.innerHeight - 200;
-        window.scrollTo(0, targetScroll);
-      }
-    });
-
-    await page.waitForTimeout(500); // Wait for potential duplicate injection
-
-    // THEN: Preload link count remains the same (no duplicates, AC3)
-    const secondLoadCount = await getPreloadLinks(page).then((l) => l.length);
-    expect(secondLoadCount).toBe(firstLoadCount);
-
-    // Verify URLs are unique
-    const links = await getPreloadLinks(page);
-    const uniqueLinks = new Set(links);
-    expect(uniqueLinks.size).toBe(links.length);
+    }
   });
 
-  test('[P1] should use optimized Shopify CDN URLs with format and width parameters', async ({
+  test('[P1] should load images successfully when scrolled into view', async ({
     page,
   }) => {
-    // GIVEN: User scrolls to trigger constellation preload
-    await page.evaluate(() => {
-      const constellation = document.querySelector('.constellation-grid');
-      if (constellation) {
-        const rect = constellation.getBoundingClientRect();
-        const targetScroll = window.scrollY + rect.top - window.innerHeight - 200;
-        window.scrollTo(0, targetScroll);
-      }
-    });
+    // GIVEN: Product cards exist on the page
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
 
-    await waitForPreloadLinks(page, 1, {timeout: 3000});
+    // WHEN: The first product card is scrolled into view
+    const firstCard = productCards.first();
+    await firstCard.scrollIntoViewIfNeeded();
 
-    // WHEN: Preload links are created
-    const preloadLinks = await getPreloadLinks(page);
+    // THEN: At least the first card's images load successfully
+    // Wait for images to finish loading after scroll
+    const firstCardImages = firstCard.locator('img');
+    const firstCardImageCount = await firstCardImages.count();
+    expect(firstCardImageCount).toBeGreaterThanOrEqual(1);
 
-    // THEN: All URLs include Shopify CDN optimization parameters (AC2)
-    for (const href of preloadLinks) {
-      // Check for width and format parameters
-      expect(href).toMatch(/width=\d+/);
-      expect(href).toMatch(/format=(webp|avif)/);
+    for (let i = 0; i < firstCardImageCount; i++) {
+      const img = firstCardImages.nth(i);
+      await expect(img).toBeVisible({timeout: 10000});
 
-      // Verify via helper
-      const isOptimized = await hasOptimizationParams(page, href);
-      expect(isOptimized).toBe(true);
+      // Verify the image loaded (naturalWidth > 0 means the resource was fetched)
+      const isLoaded = await img.evaluate(
+        (el: HTMLImageElement) => el.complete && el.naturalWidth > 0,
+      );
+      expect(isLoaded).toBe(true);
     }
+  });
 
-    // AND: fetchpriority is set to high (AC2)
-    for (const href of preloadLinks) {
-      const attrs = await getPreloadLinkAttributes(page, href);
-      expect(attrs.fetchpriority).toBe('high');
+  test('[P1] should have exactly two images per product card (soap bar and particles)', async ({
+    page,
+  }) => {
+    // GIVEN: Product cards are rendered
+    // Each ProductCard renders:
+    //   1. A soap bar image (via Picture or Shopify Image)
+    //   2. A particles/elements image (via Picture)
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
+
+    // THEN: Each card contains exactly 2 img elements (no duplicates, no missing)
+    for (let i = 0; i < cardCount; i++) {
+      const card = productCards.nth(i);
+      const images = card.locator('img');
+      const imageCount = await images.count();
+      expect(imageCount).toBe(2);
+    }
+  });
+
+  test('[P1] should render responsive picture elements for local product images', async ({
+    page,
+  }) => {
+    // GIVEN: Product cards use the Picture component which renders <picture><source> elements
+    // The Picture component wraps ResponsiveImage, generating srcset for multiple sizes
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
+
+    // THEN: Cards contain <picture> elements with <source> children providing responsive formats
+    const firstCard = productCards.first();
+    const pictureElements = firstCard.locator('picture');
+    const pictureCount = await pictureElements.count();
+
+    // At least one picture element should exist (the particles image always uses Picture)
+    expect(pictureCount).toBeGreaterThanOrEqual(1);
+
+    // Verify source elements have srcset attributes for responsive loading
+    for (let i = 0; i < pictureCount; i++) {
+      const sources = pictureElements.nth(i).locator('source');
+      const sourceCount = await sources.count();
+
+      if (sourceCount > 0) {
+        const srcset = await sources.first().getAttribute('srcset');
+        expect(srcset).toBeTruthy();
+      }
+    }
+  });
+
+  test('[P1] should have alt text on all product card images', async ({
+    page,
+  }) => {
+    // GIVEN: Product cards are rendered with images
+    const productCards = page.locator('[role="listitem"]');
+    const cardCount = await productCards.count();
+    expect(cardCount).toBeGreaterThan(0);
+
+    // THEN: Every image has a non-empty alt attribute for accessibility
+    for (let i = 0; i < cardCount; i++) {
+      const card = productCards.nth(i);
+      const images = card.locator('img');
+      const imageCount = await images.count();
+
+      for (let j = 0; j < imageCount; j++) {
+        const alt = await images.nth(j).getAttribute('alt');
+        expect(alt).toBeTruthy();
+      }
     }
   });
 });

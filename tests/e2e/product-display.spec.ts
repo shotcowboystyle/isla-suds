@@ -19,13 +19,13 @@ test.describe('Product Display', () => {
       page.getByRole('heading', {name: /The 3-in-1 Shampoo Bar/i}),
     ).toBeVisible({timeout: 5000});
 
-    // THEN: Product image is visible
-    const productImage = page.locator('img[alt*="Shampoo"]').first();
+    // THEN: Product image is visible (Shopify Image component with variant or product title alt text)
+    const productImage = page.locator('img').first();
     await expect(productImage).toBeVisible();
 
     // THEN: Add to cart button is visible
     await expect(
-      page.locator('button[type="submit"]:has-text("Add to cart")'),
+      page.locator('[data-testid="add-to-cart-button"]'),
     ).toBeVisible();
   });
 
@@ -60,24 +60,22 @@ test.describe('Product Display', () => {
     }
   });
 
-  test('[P1] should show "Sold out" for unavailable variants', async ({
+  test('[P1] should show "Sold Out" for unavailable variants', async ({
     page,
   }) => {
     // GIVEN: User is on a product page
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
 
-    // THEN: If variant is unavailable, button shows "Sold out"
+    // THEN: Add to cart button is visible (either "Add to Cart" or "Sold Out")
     const addToCartButton = page.locator(
-      'button[type="submit"]:has-text("Add to cart"), button[type="submit"]:has-text("Sold out")',
+      '[data-testid="add-to-cart-button"]',
     );
-
-    // Button should be visible (either "Add to cart" or "Sold out")
     await expect(addToCartButton).toBeVisible();
 
-    // If "Sold out", button should be disabled
+    // If "Sold Out", button should be disabled
     const buttonText = await addToCartButton.textContent();
-    if (buttonText?.includes('Sold out')) {
+    if (buttonText?.includes('Sold Out')) {
       await expect(addToCartButton).toBeDisabled();
     }
   });
@@ -86,12 +84,13 @@ test.describe('Product Display', () => {
     // GIVEN: User is on a product page
     await page.goto('/products/the-3-in-1-shampoo-bar');
 
-    // THEN: Product price is visible
-    const priceElement = page.locator('.product-price, [class*="price"]');
-    await expect(priceElement.first()).toBeVisible({timeout: 5000});
+    // THEN: Product price is visible (rendered as an h2 in the product hero)
+    // Price is formatted via Intl.NumberFormat, e.g. "$12.99"
+    const priceElement = page.getByText(/^\$\d+\.\d{2}$/).first();
+    await expect(priceElement).toBeVisible({timeout: 5000});
 
     // THEN: Price matches currency format (e.g., $29.99)
-    const priceText = await priceElement.first().textContent();
-    expect(priceText).toMatch(/\$\d+\.\d{2}/);
+    const priceText = await priceElement.textContent();
+    expect(priceText).toMatch(/^\$\d+\.\d{2}$/);
   });
 });

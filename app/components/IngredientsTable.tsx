@@ -2,7 +2,6 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './IngredientsTable.module.css';
 import {INGREDIENTS} from '../content/ingredients';
@@ -18,8 +17,6 @@ interface IngredientsTableProps {
 export const IngredientsTable = ({className}: IngredientsTableProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
-
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -30,16 +27,11 @@ export const IngredientsTable = ({className}: IngredientsTableProps) => {
         .timeline({
           scrollTrigger: {
             trigger: containerRef.current,
-            start: 'top 80%',
+            start: 'top 60%',
             end: '+=1000',
-            scrub: true,
-            // toggleActions: 'play none none reverse',
           },
         })
         .from('.animated-ingredient-item', {
-          // duration: 1.5,
-          // opacity: 0,
-          // scale: 0.5,
           x: (index, target) => {
             const container = target.closest(`.${styles['ingredient-group']}`);
             if (!container) return 0;
@@ -58,7 +50,7 @@ export const IngredientsTable = ({className}: IngredientsTableProps) => {
           stagger: 0.05,
         });
     },
-    {scope: containerRef, dependencies: [containerRef, isLoading, isMobile]},
+    {scope: containerRef, dependencies: [containerRef]},
   );
 
   return (
