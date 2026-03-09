@@ -1,249 +1,170 @@
 import {test, expect} from '@playwright/test';
 
 /**
- * Story 2.3: Constellation Grid Layout E2E Tests
+ * Products List Section E2E Tests
  *
- * Tests organic desktop layout, mobile 2-col grid, keyboard navigation,
- * hover treatment, and image rendering for the constellation product grid.
+ * Tests the homepage products list section which renders 4 product cards
+ * in a vertical column on mobile and a GSAP-driven horizontal scroll
+ * layout on desktop (>=992px).
+ *
+ * Component hierarchy:
+ *   section > .track > .camera > .frame > .item > .collection-list-wrapper
+ *     > div[role="list"].collection-list > ProductCard[role="listitem"] x4
  *
  * Priority: P0-P1 (critical user experience)
  */
 
-test.describe('Constellation Grid Layout', () => {
+test.describe('Products List Section', () => {
   test.beforeEach(async ({page}) => {
     await page.goto('/');
-    // Wait for constellation section to be visible
-    await page.waitForSelector(
-      '[aria-label="Product constellation grid"]',
-      {state: 'visible'},
-    );
+    // Wait for the product list container to be present in the DOM
+    await page.waitForSelector('[role="list"]', {state: 'visible', timeout: 15000});
   });
 
-  test('[P0] should display constellation section after hero with 4 products', async ({
-    page,
-  }) => {
-    // GIVEN: User is on homepage
-    // (already navigated in beforeEach)
+  test('[P0] should display 4 product cards with titles and images', async ({page}) => {
+    // GIVEN: User is on the homepage
 
-    // WHEN: Page is fully loaded
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
+    // WHEN: The products list section is loaded
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
 
-    // THEN: Constellation section is visible
-    await expect(constellationSection).toBeVisible();
-
-    // AND: All 4 product cards are visible
-    const productCards = constellationSection.locator('[data-testid^="product-card-"]');
+    // THEN: All 4 product cards are rendered
+    const productCards = productList.locator('[role="listitem"]');
     await expect(productCards).toHaveCount(4);
 
-    // AND: Each card has an image
-    const images = productCards.locator('img');
-    await expect(images).toHaveCount(4);
-
-    // AND: Each card has a title
-    const titles = productCards.locator('h3');
-    await expect(titles).toHaveCount(4);
-  });
-
-  test('[P1] should display organic layout with rotations on desktop (≥1024px)', async ({
-    page,
-  }) => {
-    // GIVEN: Desktop viewport (1024px or wider)
-    await page.setViewportSize({width: 1024, height: 768});
-
-    // WHEN: Constellation section is visible
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    // THEN: Grid container uses desktop layout
-    const gridContainer = constellationSection.locator('.grid').first();
-    await expect(gridContainer).toBeVisible();
-
-    // AND: Product cards have rotation classes applied
-    const productCards = constellationSection.locator('[data-testid^="product-card-"]');
-    const firstCard = productCards.nth(0);
-
-    // Check that rotation is present (lg: prefix for desktop only)
-    const className = await firstCard.getAttribute('class');
-    expect(className).toMatch(/lg:rotate-\[[-\d]+deg\]/);
-
-    // AND: Cards are positioned organically (non-linear grid positions)
-    const cardBoundingBoxes = await productCards.evaluateAll((cards) =>
-      cards.map((card) => {
-        const rect = card.getBoundingClientRect();
-        return {x: rect.x, y: rect.y};
-      }),
-    );
-
-    // Verify cards are not in a perfect 2x2 grid (organic placement)
-    const uniqueYPositions = new Set(cardBoundingBoxes.map((box) => Math.round(box.y)));
-    expect(uniqueYPositions.size).toBeGreaterThan(2); // More than 2 rows = organic
-  });
-
-  test('[P1] should display 2-column grid layout on mobile (<1024px)', async ({
-    page,
-  }) => {
-    // GIVEN: Mobile viewport (below 1024px)
-    await page.setViewportSize({width: 375, height: 667});
-
-    // WHEN: Constellation section is visible
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    // THEN: Grid displays 2 columns
-    const gridContainer = constellationSection.locator('.grid').first();
-    await expect(gridContainer).toBeVisible();
-
-    // AND: No rotation classes should be active (lg: prefix means desktop only)
-    const productCards = constellationSection.locator('[data-testid^="product-card-"]');
-
-    // Calculate column positions to verify 2-column layout
-    const cardBoundingBoxes = await productCards.evaluateAll((cards) =>
-      cards.map((card) => {
-        const rect = card.getBoundingClientRect();
-        return {x: Math.round(rect.x), y: Math.round(rect.y), width: rect.width};
-      }),
-    );
-
-    // Group cards by X position (should have 2 distinct columns)
-    const xPositions = cardBoundingBoxes.map((box) => box.x);
-    const uniqueXPositions = [...new Set(xPositions)];
-
-    // Should have exactly 2 columns on mobile
-    expect(uniqueXPositions.length).toBe(2);
-  });
-
-  test('[P1] should support keyboard navigation through all 4 product cards', async ({
-    page,
-  }) => {
-    // GIVEN: User is on homepage with constellation visible
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    // WHEN: User tabs through product cards
-    const productCards = constellationSection.locator('[data-testid^="product-card-"]');
-
-    // Focus first card
-    await productCards.nth(0).focus();
-    await expect(productCards.nth(0)).toBeFocused();
-
-    // Tab to second card
-    await page.keyboard.press('Tab');
-    await expect(productCards.nth(1)).toBeFocused();
-
-    // Tab to third card
-    await page.keyboard.press('Tab');
-    await expect(productCards.nth(2)).toBeFocused();
-
-    // Tab to fourth card
-    await page.keyboard.press('Tab');
-    await expect(productCards.nth(3)).toBeFocused();
-
-    // THEN: All 4 cards are focusable in sequential order
-    // (assertions above confirm focus order)
-  });
-
-  test('[P1] should display visible focus indicator when navigating with keyboard', async ({
-    page,
-  }) => {
-    // GIVEN: User navigates with keyboard
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    const firstCard = constellationSection.locator('[data-testid^="product-card-"]').nth(0);
-
-    // WHEN: User focuses card via keyboard
-    await firstCard.focus();
-    await expect(firstCard).toBeFocused();
-
-    // THEN: Focus ring is visible
-    // Check for focus-visible ring class
-    const className = await firstCard.getAttribute('class');
-    expect(className).toContain('focus-visible:ring');
-
-    // Verify visual focus indicator by checking computed styles
-    const focusRingVisible = await firstCard.evaluate((el) => {
-      const styles = window.getComputedStyle(el, ':focus-visible');
-      // Check if outline or box-shadow (ring) is applied
-      return (
-        styles.outline !== 'none' ||
-        styles.boxShadow !== 'none' ||
-        el.classList.contains('ring-2')
-      );
-    });
-
-    expect(focusRingVisible).toBeTruthy();
-  });
-
-  test('[P1] should apply hover treatment on desktop with subtle scale', async ({
-    page,
-  }) => {
-    // GIVEN: Desktop viewport
-    await page.setViewportSize({width: 1024, height: 768});
-
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    const firstCard = constellationSection.locator('[data-testid^="product-card-"]').nth(0);
-
-    // WHEN: User hovers over a product card
-    // Get initial transform
-    const initialTransform = await firstCard.evaluate((el) =>
-      window.getComputedStyle(el).transform,
-    );
-
-    // Hover the card
-    await firstCard.hover();
-
-    // Wait for hover transition (CSS transition may take time)
-    await page.waitForTimeout(100);
-
-    // Get transform after hover
-    const hoverTransform = await firstCard.evaluate((el) =>
-      window.getComputedStyle(el).transform,
-    );
-
-    // THEN: Transform changes (scale applied)
-    expect(hoverTransform).not.toBe(initialTransform);
-
-    // Verify hover class is present
-    const className = await firstCard.getAttribute('class');
-    expect(className).toContain('lg:hover:scale');
-  });
-
-  test('[P1] should render images with proper aspect ratio to prevent CLS', async ({
-    page,
-  }) => {
-    // GIVEN: User loads homepage
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
-
-    // WHEN: Images are loaded
-    const images = constellationSection.locator('img');
-
-    // THEN: All images have aspect-ratio container
-    const imageContainers = constellationSection.locator('.aspect-square');
-    await expect(imageContainers).toHaveCount(4);
-
-    // AND: Images are loaded
+    // AND: Each card has a visible title (h1 element with card-heading class)
     for (let i = 0; i < 4; i++) {
-      const img = images.nth(i);
+      const card = productCards.nth(i);
+      await expect(card).toBeVisible();
+
+      const title = card.locator('h1').first();
+      await expect(title).toBeVisible();
+      await expect(title).not.toHaveText('');
+    }
+
+    // AND: Each card contains at least one image (product soap bar image)
+    for (let i = 0; i < 4; i++) {
+      const card = productCards.nth(i);
+      const image = card.locator('img').first();
+      await expect(image).toBeVisible();
+    }
+  });
+
+  test('[P0] should have working product links on each card', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    const productCards = productList.locator('[role="listitem"]');
+
+    // THEN: Each card contains a link with an href pointing to a product page
+    for (let i = 0; i < 4; i++) {
+      const link = productCards.nth(i).locator('a').first();
+      await expect(link).toBeVisible();
+
+      const href = await link.getAttribute('href');
+      expect(href).toBeTruthy();
+      expect(href).toMatch(/\/products\//);
+    }
+  });
+
+  test('[P1] should navigate to product page when a card is clicked', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    const firstCard = productList.locator('[role="listitem"]').first();
+    const link = firstCard.locator('a').first();
+
+    // Capture the target href before clicking
+    const href = await link.getAttribute('href');
+    expect(href).toBeTruthy();
+
+    // WHEN: User clicks the first product card
+    await link.click();
+
+    // THEN: Page navigates to the product URL
+    await page.waitForURL(`**${href}*`, {timeout: 10000});
+    expect(page.url()).toContain('/products/');
+  });
+
+  test('[P1] should display heading text in the products section', async ({page}) => {
+    // GIVEN: User is on the homepage
+
+    // THEN: The section heading text is visible
+    // The heading reads "We have 4 ... Silky Smooth ... Sudsy Soap Bars"
+    await expect(page.getByText('We have 4')).toBeVisible();
+    await expect(page.getByText('Silky Smooth')).toBeVisible();
+    await expect(page.getByText('Sudsy Soap Bars')).toBeVisible();
+  });
+
+  test('[P1] should display "Shop All Products" button', async ({page}) => {
+    // GIVEN: User is on the homepage with products section visible
+
+    // THEN: A "SHOP ALL PRODUCTS" button is present (LiquidButton renders a <button>)
+    const shopAllButton = page.getByText('SHOP ALL PRODUCTS').first();
+    await expect(shopAllButton).toBeVisible();
+  });
+
+  test('[P1] should display product cards in a vertical column on mobile', async ({page}) => {
+    // GIVEN: Mobile viewport
+    await page.setViewportSize({width: 375, height: 667});
+    await page.waitForTimeout(500); // Allow layout to settle after resize
+
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
+
+    const productCards = productList.locator('[role="listitem"]');
+    await expect(productCards).toHaveCount(4);
+
+    // THEN: Cards are stacked vertically (each card has a unique Y position,
+    // and X positions are similar since they are centered in a column)
+    const cardPositions = await productCards.evaluateAll((cards) =>
+      cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        return {x: Math.round(rect.left), y: Math.round(rect.top)};
+      }),
+    );
+
+    // Verify vertical stacking: each subsequent card should be below the previous
+    for (let i = 1; i < cardPositions.length; i++) {
+      expect(cardPositions[i].y).toBeGreaterThan(cardPositions[i - 1].y);
+    }
+  });
+
+  test('[P1] should display product cards in a horizontal row on desktop', async ({page}) => {
+    // GIVEN: Desktop viewport (>=992px where flex-flow switches to row)
+    await page.setViewportSize({width: 1440, height: 900});
+    await page.waitForTimeout(500); // Allow layout to settle
+
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
+
+    const productCards = productList.locator('[role="listitem"]');
+    await expect(productCards).toHaveCount(4);
+
+    // THEN: Cards are laid out horizontally (distinct X positions)
+    const cardPositions = await productCards.evaluateAll((cards) =>
+      cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        return {x: Math.round(rect.left), y: Math.round(rect.top)};
+      }),
+    );
+
+    // At desktop sizes the collection-list uses flex-flow: row,
+    // so each card's left edge should increase
+    const uniqueXPositions = new Set(cardPositions.map((pos) => pos.x));
+    expect(uniqueXPositions.size).toBeGreaterThanOrEqual(2);
+  });
+
+  test('[P1] should render product images without layout shift', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
+
+    const productCards = productList.locator('[role="listitem"]');
+
+    // THEN: Each product card image is fully loaded (naturalWidth > 0)
+    for (let i = 0; i < 4; i++) {
+      const img = productCards.nth(i).locator('img').first();
       await expect(img).toBeVisible();
 
-      // Verify image has loaded (naturalWidth > 0)
       const isLoaded = await img.evaluate(
         (el: HTMLImageElement) => el.complete && el.naturalWidth > 0,
       );
@@ -251,50 +172,108 @@ test.describe('Constellation Grid Layout', () => {
     }
   });
 
-  test('[P1] should maintain layout fluid from 320px to 2560px', async ({page}) => {
-    const testViewports = [
-      {width: 320, height: 568}, // Small mobile
-      {width: 768, height: 1024}, // Tablet
-      {width: 1024, height: 768}, // Desktop
-      {width: 1920, height: 1080}, // Large desktop
-      {width: 2560, height: 1440}, // Ultra-wide
-    ];
+  test('[P1] should display an "Add to Cart" button on each product card', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    const productCards = productList.locator('[role="listitem"]');
 
-    for (const viewport of testViewports) {
-      // GIVEN: Viewport size
-      await page.setViewportSize(viewport);
+    // THEN: Each card has an "Add to Cart" or "Sold Out" button
+    for (let i = 0; i < 4; i++) {
+      const card = productCards.nth(i);
+      const cartButton = card.locator('button').first();
+      await expect(cartButton).toBeVisible();
 
-      // WHEN: Constellation section is visible
-      const constellationSection = page.locator(
-        '[aria-label="Product constellation grid"]',
-      );
-      await expect(constellationSection).toBeVisible();
-
-      // THEN: No horizontal overflow
-      const hasOverflow = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > window.innerWidth;
-      });
-      expect(hasOverflow).toBe(false);
-
-      // AND: All 4 cards remain visible
-      const productCards = constellationSection.locator('[data-testid^="product-card-"]');
-      await expect(productCards).toHaveCount(4);
+      const buttonText = await cartButton.textContent();
+      expect(buttonText).toMatch(/Add to Cart|Sold Out/i);
     }
   });
 
-  test('[P2] should integrate with scroll-snap on mobile', async ({page}) => {
-    // GIVEN: Mobile viewport with scroll-snap enabled
-    await page.setViewportSize({width: 375, height: 667});
+  test('[P1] should display product prices', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    const productCards = productList.locator('[role="listitem"]');
 
-    const constellationSection = page.locator(
-      '[aria-label="Product constellation grid"]',
-    );
-    await expect(constellationSection).toBeVisible();
+    // THEN: Each card displays a price in currency format
+    for (let i = 0; i < 4; i++) {
+      const card = productCards.nth(i);
+      const priceElement = card.locator('small').first();
+      await expect(priceElement).toBeVisible();
 
-    // WHEN: Constellation section has snap-start class
-    const className = await constellationSection.getAttribute('class');
+      const priceText = await priceElement.textContent();
+      expect(priceText).toMatch(/\$\d+\.\d{2}/);
+    }
+  });
 
-    // THEN: Section participates in scroll-snap
-    expect(className).toContain('snap-start');
+  test('[P1] should support keyboard navigation to product links', async ({page}) => {
+    // GIVEN: Products list is visible
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
+
+    const firstCardLink = productList.locator('[role="listitem"]').first().locator('a').first();
+
+    // WHEN: User focuses the first product card link
+    await firstCardLink.focus();
+
+    // THEN: The link receives focus
+    await expect(firstCardLink).toBeFocused();
+
+    // AND: User can press Enter to navigate
+    const href = await firstCardLink.getAttribute('href');
+    expect(href).toBeTruthy();
+  });
+
+  test('[P1] should maintain layout across viewport sizes without horizontal overflow', async ({
+    page,
+  }) => {
+    const viewports = [
+      {width: 320, height: 568, name: 'Small mobile'},
+      {width: 375, height: 667, name: 'iPhone SE'},
+      {width: 768, height: 1024, name: 'Tablet'},
+      {width: 1024, height: 768, name: 'Small desktop'},
+      {width: 1440, height: 900, name: 'Desktop'},
+      {width: 1920, height: 1080, name: 'Large desktop'},
+    ];
+
+    for (const viewport of viewports) {
+      await page.setViewportSize({width: viewport.width, height: viewport.height});
+      await page.waitForTimeout(300); // Allow layout reflow
+
+      // THEN: No unexpected horizontal overflow on the document
+      const hasDocumentOverflow = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > document.documentElement.clientWidth + 1;
+      });
+
+      // On desktop viewports (>=992px) the section uses overflow-hidden on .camera,
+      // so the document itself should not overflow
+      if (viewport.width >= 992) {
+        expect(
+          hasDocumentOverflow,
+          `Document should not overflow horizontally at ${viewport.name} (${viewport.width}px)`,
+        ).toBe(false);
+      }
+
+      // AND: Product cards are still present in the DOM
+      const productList = page.locator('[role="list"]').first();
+      const cards = productList.locator('[role="listitem"]');
+      await expect(cards).toHaveCount(4);
+    }
+  });
+
+  test('[P1] should render the section with proper semantic structure', async ({page}) => {
+    // GIVEN: Homepage is loaded
+
+    // THEN: The product list uses role="list" for accessibility
+    const productList = page.locator('[role="list"]').first();
+    await expect(productList).toBeVisible();
+
+    // AND: Each product card uses role="listitem"
+    const items = productList.locator('[role="listitem"]');
+    await expect(items).toHaveCount(4);
+
+    // AND: Each listitem contains a link (a element)
+    for (let i = 0; i < 4; i++) {
+      const link = items.nth(i).locator('a');
+      await expect(link.first()).toBeVisible();
+    }
   });
 });

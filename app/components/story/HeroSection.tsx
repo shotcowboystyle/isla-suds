@@ -1,4 +1,4 @@
-import {forwardRef, useRef} from 'react';
+import {forwardRef, useRef, useEffect} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
@@ -10,11 +10,11 @@ import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.png?respons
 import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.png';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
 import {Picture} from '~/components/Picture';
-import styles from '~/components/story/HeroSection.module.css';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {HERO_CONTENT, HERO_TAGLINE_START, HERO_TAGLINE_END} from '~/content/story';
 import {usePreloader} from '~/contexts/preloader-context';
 import {cn} from '~/utils/cn';
+import styles from './HeroSection.module.css';
 
 interface HeroSectionProps {
   className?: string;
@@ -37,19 +37,58 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
     }
 
     vid.pause();
-    vid.currentTime = vid.duration;
+    // vid.currentTime = vid.duration;
   };
+
+  // useEffect(() => {
+  //   if (preloaderComplete && videoRef.current) {
+  //     videoRef.current.play().catch(console.error);
+  //   }
+  // }, [preloaderComplete]);
 
   useGSAP(
     () => {
-      if (!containerRef.current || !text1Ref.current || !clippedBox1Ref.current || !preloaderComplete) {
+      if (!containerRef.current) {
+        return;
+      }
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        })
+        .to(containerRef.current, {
+          rotate: 7,
+          scale: 0.9,
+          yPercent: 30,
+          ease: 'power1.inOut',
+        });
+    },
+    {dependencies: [containerRef]},
+  );
+
+  useGSAP(
+    () => {
+      if (
+        // !containerRef.current ||
+        !text1Ref.current ||
+        !clippedBox1Ref.current ||
+        !preloaderComplete ||
+        !videoRef.current
+      ) {
         return;
       }
 
       const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
 
+      videoRef.current.play().catch(console.error);
+
       const tl = gsap.timeline({
-        delay: 2,
+        delay: 0.5,
       });
 
       tl.to(containerRef.current, {
@@ -96,22 +135,6 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           },
           '-=0.4',
         );
-
-      const heroTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          // end: 'bottom top',
-          scrub: true,
-        },
-      });
-
-      heroTl.to(containerRef.current, {
-        rotate: 7,
-        scale: 0.9,
-        yPercent: 30,
-        ease: 'power1.inOut',
-      });
     },
     {dependencies: [containerRef, text1Ref, clippedBox1Ref, paragraphRef, buttonRef, preloaderComplete]},
   );
@@ -120,8 +143,8 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
     <section
       ref={ref}
       data-testid="hero-section"
-      // className={cn(styles['hero-section'], 'snap-start', className)}
-      className={cn(styles['hero-section'], className)}
+      className={cn(styles['hero-section'], 'snap-start', className)}
+      // className={cn(styles['hero-section'], className)}
       aria-label="Hero section"
     >
       <div ref={containerRef} className={styles['hero-section-container']}>
@@ -157,10 +180,10 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           <video
             ref={videoRef}
             src={HeroVideo}
+            autoPlay={false}
             playsInline={true}
             muted={true}
-            autoPlay={true}
-            preload="none"
+            // preload="none"
             onEnded={handleVideoEnd}
             poster={HeroVideoThumbnailUrl}
             width={1920}

@@ -41,100 +41,80 @@ export const MessageSection = () => {
         aria: 'none',
       });
 
-      gsap.to(text1Splitted.words, {
-        color: '#faeade',
-        ease: 'power1.in',
-        stagger: 1,
+      const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: text1Ref.current,
-          // start: isMobile ? 'top 65%' : 'top center',
-          start: 'top 85%',
-          end: '+=750px',
+          start: isMobile ? 'top 90%' : 'top 50%',
+          // end: '+=800',
           scrub: true,
         },
       });
 
-      gsap.to(text2Splitted.words, {
-        color: '#faeade',
-        ease: 'power1.in',
-        stagger: 1,
-        delay: 0.5,
-        scrollTrigger: {
-          trigger: text2Ref.current,
-          // start: isMobile ? 'top 65%' : 'top center',
-          start: 'top 60%',
-          end: '+=500px',
-          scrub: true,
-        },
-      });
-
-      const revealTl = gsap.timeline({
-        // delay: 0.5,
-        scrollTrigger: {
-          trigger: text1Ref.current,
-          // start: isMobile ? 'top 70%' : 'top 60%',
-          start: 'top 50%',
-        },
-      });
-
-      revealTl.from(clippedBox1Ref.current, {
-        duration: 1,
-        opacity: 0,
-        width: 0,
-        ease: 'circ.inOut',
-      });
-
-      const paragraphTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: paragraphRef.current,
-          start: 'top 90%',
-          end: '+=500px',
-          scrub: true,
-        },
-      });
-
-      paragraphTl.from(splittedParagraph.words, {
-        yPercent: 300,
-        rotate: 3,
-        ease: 'power1.inOut',
-        duration: 1,
-        stagger: 0.03,
-      });
+      masterTl
+        .to(text1Splitted.words, {
+          color: '#faeade',
+          ease: 'power1.in',
+          stagger: 1,
+        })
+        .from(
+          clippedBox1Ref.current,
+          {
+            duration: 2.5,
+            opacity: 0,
+            width: 0,
+            ease: 'circ.inOut',
+          },
+          '-=0.5',
+        )
+        .to(text2Splitted.words, {
+          color: '#faeade',
+          ease: 'power1.in',
+          stagger: 1,
+        })
+        .from(splittedParagraph.words, {
+          yPercent: 300,
+          rotate: 3,
+          ease: 'power1.inOut',
+          duration: 2.5,
+          stagger: 0.03,
+        });
     },
     {dependencies: [sectionRef, text1Ref, clippedBox1Ref, text2Ref, paragraphRef, isLoading, isMobile]},
   );
 
   return (
-    <section ref={sectionRef} className={styles['message-section-wrapper']} data-speed="0.5" data-lag="0.5">
-      <div className={styles['text-wrapper']} data-lag="0.5">
-        <div className={styles['grid']}>
-          <div className={styles['heading-text-wrapper']}>
-            <h1 ref={text1Ref} className={cn(styles['heading-text'])}>
-              Freshen up and feel great in your
-            </h1>
-          </div>
+    <section data-speed="0.5" data-lag="0.5">
+      <div ref={sectionRef} className={styles['message-section-wrapper']}>
+        <div className={styles['text-wrapper']} data-lag="0.5">
+          <div className={styles['grid']}>
+            <div className={styles['heading-text-wrapper']}>
+              <h1 ref={text1Ref} className={cn(styles['heading-text'])}>
+                Freshen up and feel great in your
+              </h1>
+            </div>
 
-          <div className={styles['clipped-text-wrapper']}>
-            <div className={styles['clipped-text-inner']}>
-              <div className={styles['clipped-text-content-wrapper']}>
-                <div ref={clippedBox1Ref} className={styles['clipped-text-content']}>
-                  <h1 className={cn(styles['clipped-text'])}>own skin</h1>
+            <div className={styles['clipped-text-wrapper']}>
+              <div className={styles['clipped-text-inner']}>
+                <div className={styles['clipped-text-content-wrapper']}>
+                  <div ref={clippedBox1Ref} className={styles['clipped-text-content']}>
+                    <h1 className={cn(styles['clipped-text'])}>own skin</h1>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div className={styles['heading-text-wrapper']}>
+              <h1 ref={text2Ref} className={cn(styles['heading-text'])}>
+                and glow with every cleanse from Isla Suds
+              </h1>
+            </div>
           </div>
 
-          <div className={styles['heading-text-wrapper']}>
-            <h1 ref={text2Ref} className={cn(styles['heading-text'])}>
-              and glow with every cleanse from Isla Suds
-            </h1>
-          </div>
+          <p ref={paragraphRef} className={cn(styles['paragraph'])}>
+            Unscented goat milk soap is a gentle, nourishing bar, thoughtfully crafted for your sensitive, reactive, and
+            fragrance-intolerant skin.
+          </p>
         </div>
-
-        <p ref={paragraphRef} className={cn(styles['paragraph'])}>
-          Unscented goat milk soap is a gentle, nourishing bar, thoughtfully crafted for your sensitive, reactive, and
-          fragrance-intolerant skin.
-        </p>
       </div>
     </section>
   );

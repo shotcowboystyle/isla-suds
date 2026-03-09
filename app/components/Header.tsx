@@ -54,6 +54,8 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   const buttonRef = useRef<HTMLButtonElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
+  const mobkleLine1Ref = useRef<HTMLDivElement>(null);
+  const mobkleLine2Ref = useRef<HTMLDivElement>(null);
   const tlButton = useRef<gsap.core.Timeline | null>(null);
 
   const [hasOpened, setHasOpened] = useState(false);
@@ -314,7 +316,7 @@ function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
       >
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
-            <User className="size-6" />
+            <User className={styles['navbar-icon-button-icon']} />
             {/* <span className="sr-only">{(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}</span> */}
           </Await>
         </Suspense>
@@ -346,7 +348,7 @@ function CartIconButton({itemCount}: {itemCount: number}) {
         hasItems ? `Shopping cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Shopping cart, empty'
       }
     >
-      <ShoppingBag className="size-6" />
+      <ShoppingBag className={styles['navbar-icon-button-icon']} />
 
       {hasItems && (
         <span

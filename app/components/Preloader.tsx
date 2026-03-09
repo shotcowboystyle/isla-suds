@@ -171,6 +171,7 @@ function generateBubbleKeyframes(params: any) {
 // export function Preloader({initialDelay = 0, minDisplayTime = 250000, onComplete}: PreloaderProps) {
 export function Preloader({initialDelay = 0, minDisplayTime = 2500, onComplete}: PreloaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const appRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
@@ -226,13 +227,14 @@ export function Preloader({initialDelay = 0, minDisplayTime = 2500, onComplete}:
       // Ensure initial state prevents FOUC
       tl.set(containerRef.current, {yPercent: 100, autoAlpha: 1});
       tl.set('.logo-wrapper', {y: 100, autoAlpha: 0});
+      tl.set('.bubble', {autoAlpha: 0, scale: 0.5});
 
       // 2. Bathtub Entrance (The hand slides up)
       tl.to(containerRef.current, {
         yPercent: 0, // Fully viewable at bottom
         duration: 1, // Slower to allow elastic bounce to be visible
         ease: 'elastic.out(1, 0.5)',
-        delay: initialDelay / 1000,
+        delay: initialDelay / 1000 + 0.3, // 0.3s delay before starting
       });
 
       // 3. Logo Float Up (animate wrapper)
@@ -248,76 +250,86 @@ export function Preloader({initialDelay = 0, minDisplayTime = 2500, onComplete}:
         '-=0.5',
       );
 
+      // Start bobbling and floating bubbles as the logo bounces out
+      tl.add(() => {
+        gsap.to('.logo-wrapper', {
+          y: -45, // Bobble between -55 and -45
+          duration: 1.5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+
+        const bubbles = gsap.utils.toArray<HTMLElement>('.bubble');
+        bubbles.forEach((bubble) => {
+          gsap.to(bubble, {
+            y: -100 - gsap.utils.random(0, 100),
+            autoAlpha: 0,
+            scale: 1.5,
+            duration: gsap.utils.random(1.5, 3),
+            repeat: -1,
+            repeatDelay: gsap.utils.random(0.5, 1.5),
+            delay: gsap.utils.random(0, 0.3), // Short delay so they pop out as logo reaches top
+            ease: 'power1.out',
+            startAt: {y: -20, autoAlpha: 1, scale: 0.5},
+          });
+          gsap.to(bubble, {
+            x: '+=20',
+            duration: gsap.utils.random(0.5, 1),
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+          });
+        });
+      }, '-=0.8');
+
       // Add a pause to the timeline to wait for content to load
       tl.add(() => {
-        // We check the ref here to be safe, though closure capture of 'isPageLoaded' might be stale?
-        // Actually, if we use the state 'isPageLoaded', it matches the initial render closure.
-        // We can check the DOM readyState or use a ref.
         if (document.readyState !== 'complete') {
           tl.pause();
         }
       });
 
-      // 5. Exit Animation - Quick Fade Out
+      // 5. Exit Animation - Sink downwards then fade background
       tl.to(
         containerRef.current,
         {
-          autoAlpha: 0,
-          duration: 0.5,
-          ease: 'power1.out',
-          // Ensure we respect minDisplayTime from the START of the timeline
-          // minDisplayTime includes the entrance animation + wait time
-          // If we want the preloader to show for AT LEAST minDisplayTime:
-          // We can just add a delay here relative to the start time (0)
+          yPercent: 100, // Sink back through the floor
+          duration: 0.8,
+          ease: 'power2.in',
         },
-        `>${Math.max(0, minDisplayTime / 1000 - 2.2)}`,
-      ); // Approx duration of previous animations is ~2.2s
+        `>${Math.max(0, minDisplayTime / 1000 - 2.5)}`, // Approx duration of previous animations
+      );
+
+      tl.to(appRef.current, {
+        autoAlpha: 0,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
 
       tl.call(() => {
         setIsVisible(false);
         if (onComplete) onComplete();
       });
 
-      // 3. Bubbles Animation
-      // const bubbles = gsap.utils.toArray<HTMLElement>('.bubble');
-      // bubbles.forEach((bubble) => {
-      //   const delay = gsap.utils.random(0, 2);
-      //   const duration = gsap.utils.random(1.5, 3);
-      //   const repeatDelay = gsap.utils.random(0.5, 1.5);
-
-      //   gsap.to(bubble, {
-      //     y: -100 - gsap.utils.random(0, 100),
-      //     opacity: 0,
-      //     scale: 1.5,
-      //     duration, // Shorthand
-      //     repeat: -1,
-      //     repeatDelay, // Shorthand
-      //     delay, // Shorthand
-      //     ease: 'power1.out',
-      //     startAt: {y: 0, opacity: 1, scale: 0.5},
-      //   });
-
-      //   gsap.to(bubble, {
-      //     x: '+=20',
-      //     duration: gsap.utils.random(0.5, 1),
-      //     repeat: -1,
-      //     yoyo: true,
-      //     ease: 'sine.inOut',
-      //   });
-      // });
-
       return () => {
         window.removeEventListener('resize', handleResize);
         tl.kill();
+        gsap.killTweensOf('.logo-wrapper');
+        gsap.killTweensOf('.bubble');
       };
     },
-    {scope: containerRef},
+    {scope: appRef},
   );
 
   if (!isVisible) return null;
 
   return (
-    <div className={styles.app} style={{position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#292934'}}>
+    <div
+      ref={appRef}
+      className={styles.app}
+      style={{position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#292934'}}
+    >
       <div className={styles.outerContainer}>
         <div ref={containerRef} className={styles.container}>
           <div className={cn(styles.deco, styles.d1)}></div>

@@ -1,340 +1,257 @@
 import {test, expect} from '@playwright/test';
 
 /**
- * E2E Tests: Sticky Header with Scroll Trigger
- * Story 2.5 - Acceptance Criteria: AC1, AC2, AC3, AC4, AC5
+ * E2E Tests: Header Component
  *
- * Tests scroll-triggered sticky header visibility on home page,
- * accessibility (keyboard, focus, reduced motion), and scope to home only.
+ * The header uses `position: sticky` and is always visible on all pages.
+ * There is no scroll-triggered hide/show behavior (that code is commented out).
+ *
+ * Tests verify:
+ * - Header is always visible on the home page and other pages
+ * - Header contains the expected controls (logo, menu button, cart button)
+ * - ARIA attributes are correct
+ * - Keyboard navigation works
+ * - Reduced motion preference has no effect (no animations to disable)
  */
 
-test.describe('Sticky Header - Visibility on Home Page', () => {
-  test('[P1] should hide header when at top of home page', async ({page}) => {
-    // GIVEN: User is at top of home page
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // WHEN: Page loads at top (hero in viewport)
-    const header = page.locator('header');
-
-    // THEN: Header should be hidden (opacity-0, pointer-events-none)
-    await expect(header).toHaveCSS('opacity', '0');
-
-    // Verify header has pointer-events-none class when hidden
-    const hasPointerEventsNone = await header.evaluate((el) =>
-      el.classList.contains('pointer-events-none')
-    );
-    expect(hasPointerEventsNone).toBe(true);
-  });
-
-  test('[P1] should show header when scrolling past hero section', async ({
+test.describe('Header - Always Visible', () => {
+  test('should be visible on the home page without scrolling', async ({
     page,
   }) => {
-    // GIVEN: User is at top of home page
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     const header = page.locator('header');
-
-    // Verify header is initially hidden
-    await expect(header).toHaveCSS('opacity', '0');
-
-    // WHEN: User scrolls past the hero section
-    // Find hero section and scroll past it
-    const hero = page.locator('section').first(); // HeroSection is first section
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-
-    // Scroll past hero by its full height + 100px
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-
-    // Wait for IntersectionObserver to trigger state change
-    await page.waitForTimeout(300);
-
-    // THEN: Header should be visible (opacity-1)
-    await expect(header).toHaveCSS('opacity', '1');
-
-    // Verify header does NOT have pointer-events-none when visible
-    const hasPointerEventsNone = await header.evaluate((el) =>
-      el.classList.contains('pointer-events-none')
-    );
-    expect(hasPointerEventsNone).toBe(false);
+    await expect(header).toBeVisible();
   });
 
-  test('[P1] should hide header when scrolling back to top', async ({page}) => {
-    // GIVEN: User has scrolled past hero (header is visible)
+  test('should remain visible after scrolling on the home page', async ({
+    page,
+  }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     const header = page.locator('header');
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
+    await expect(header).toBeVisible();
 
-    // Scroll past hero to show header
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
+    // Scroll down significantly
+    await page.evaluate(() => {
+      window.scrollTo({top: 1000, behavior: 'instant'});
+    });
 
-    // Verify header is visible
-    await expect(header).toHaveCSS('opacity', '1');
+    // Header should still be visible (sticky positioning)
+    await expect(header).toBeVisible();
+  });
 
-    // WHEN: User scrolls back to top
+  test('should be visible on non-home pages', async ({page}) => {
+    await page.goto('/collections');
+    await page.waitForLoadState('networkidle');
+
+    const header = page.locator('header');
+    await expect(header).toBeVisible();
+  });
+
+  test('should remain visible after scrolling on non-home pages', async ({
+    page,
+  }) => {
+    await page.goto('/collections');
+    await page.waitForLoadState('networkidle');
+
+    const header = page.locator('header');
+    await expect(header).toBeVisible();
+
+    await page.evaluate(() => {
+      window.scrollTo({top: 500, behavior: 'instant'});
+    });
+
+    await expect(header).toBeVisible();
+
     await page.evaluate(() => {
       window.scrollTo({top: 0, behavior: 'instant'});
     });
 
-    // Wait for IntersectionObserver to trigger state change
-    await page.waitForTimeout(300);
-
-    // THEN: Header should be hidden again
-    await expect(header).toHaveCSS('opacity', '0');
-
-    const hasPointerEventsNone = await header.evaluate((el) =>
-      el.classList.contains('pointer-events-none')
-    );
-    expect(hasPointerEventsNone).toBe(true);
+    await expect(header).toBeVisible();
   });
-});
 
-test.describe('Sticky Header - Accessibility', () => {
-  test('[P1] should support keyboard navigation on sticky header', async ({
-    page,
-  }) => {
-    // GIVEN: User has scrolled past hero (sticky header is visible)
+  test('should use sticky positioning', async ({page}) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
+    const header = page.locator('header');
+    const position = await header.evaluate((el) => {
+      return window.getComputedStyle(el).position;
+    });
 
-    // WHEN: User navigates with Tab key
-    await page.keyboard.press('Tab'); // Focus first interactive element
+    expect(position).toBe('sticky');
+  });
+});
 
-    // THEN: Logo link should be focusable
+test.describe('Header - Structure and Controls', () => {
+  test('should contain a logo link to the home page', async ({page}) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const logoLink = page.locator('header a[href="/"]').first();
+    await expect(logoLink).toBeVisible();
+  });
+
+  test('should contain a cart button with correct aria-label', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Cart button uses aria-label "Shopping cart, empty" when no items
+    const cartButton = page.locator(
+      'header button[aria-label="Shopping cart, empty"]',
+    );
+    await expect(cartButton).toBeVisible();
+
+    const ariaLabel = await cartButton.getAttribute('aria-label');
+    expect(ariaLabel).toBe('Shopping cart, empty');
+  });
+
+  test('should contain a menu toggle button with correct aria-label', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const menuButton = page.locator(
+      'header button[aria-label="Toggle menu"]',
+    );
+    await expect(menuButton.first()).toBeVisible();
+
+    const ariaLabel = await menuButton.first().getAttribute('aria-label');
+    expect(ariaLabel).toBe('Toggle menu');
+  });
+
+  test('should contain an account link', async ({page}) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const accountLink = page.locator('header a[aria-label="Account"]');
+    await expect(accountLink).toBeVisible();
+  });
+
+  test('menu toggle button should have aria-expanded attribute', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const menuButton = page
+      .locator('header button[aria-label="Toggle menu"]')
+      .first();
+    await expect(menuButton).toBeVisible();
+
+    // Initially the menu should be closed
+    const ariaExpanded = await menuButton.getAttribute('aria-expanded');
+    expect(ariaExpanded).toBe('false');
+  });
+});
+
+test.describe('Header - Keyboard Navigation', () => {
+  test('should allow tabbing through header controls', async ({page}) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Tab into the header -- first focusable element should be the logo link
+    await page.keyboard.press('Tab');
     const logoLink = page.locator('header a[href="/"]').first();
     await expect(logoLink).toBeFocused();
+  });
 
-    // AND: User can activate with Enter
+  test('should activate logo link with Enter key', async ({page}) => {
+    await page.goto('/collections');
+    await page.waitForLoadState('networkidle');
+
+    const logoLink = page.locator('header a[href="/"]').first();
+    await logoLink.focus();
+    await expect(logoLink).toBeFocused();
+
     await page.keyboard.press('Enter');
     await page.waitForURL('/');
     expect(page.url()).toContain('/');
   });
 
-  test('[P1] should show focus indicators on header controls', async ({
-    page,
-  }) => {
-    // GIVEN: User has scrolled past hero (sticky header is visible)
+  test('should show focus indicators on header controls', async ({page}) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
-
-    // WHEN: User tabs to logo link
     const logoLink = page.locator('header a[href="/"]').first();
     await logoLink.focus();
 
-    // THEN: Focus ring should be visible
-    // Check for focus-visible:ring-2 classes (per Story 2.3)
+    // Should have some visible outline/ring when focused
     const outlineStyle = await logoLink.evaluate((el) => {
       return window.getComputedStyle(el).outline;
     });
 
-    // Should have some outline/ring (not "none")
     expect(outlineStyle).not.toBe('none');
     expect(outlineStyle).not.toBe('');
   });
 
-  test('[P1] should have accessible labels on header controls', async ({
-    page,
-  }) => {
-    // GIVEN: User has scrolled past hero (sticky header is visible)
+  test('should close menu on Escape key press', async ({page}) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
+    const menuButton = page
+      .locator('header button[aria-label="Toggle menu"]')
+      .first();
 
-    // WHEN: Checking header controls for labels
-    // Cart link should have aria-label="Shopping cart"
-    const cartLink = page.locator('header a[aria-label="Shopping cart"]');
-    await expect(cartLink).toBeVisible();
+    // Open the menu
+    await menuButton.click();
+    await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
 
-    // Hamburger menu should have aria-label="Open menu"
-    const hamburgerButton = page.locator(
-      'header button[aria-label="Open menu"]',
-    );
-    await expect(hamburgerButton).toBeVisible();
-
-    // THEN: All controls have appropriate accessible labels
-    expect(await cartLink.getAttribute('aria-label')).toBe('Shopping cart');
-    expect(await hamburgerButton.getAttribute('aria-label')).toBe('Open menu');
+    // Press Escape to close
+    await page.keyboard.press('Escape');
+    await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   });
+});
 
-  test('[P1] should disable fade animation when prefers-reduced-motion is set', async ({
+test.describe('Header - Accessibility', () => {
+  test('should have a screen-reader-only shop name in the logo link', async ({
     page,
   }) => {
-    // GIVEN: User has prefers-reduced-motion enabled
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const srOnly = page.locator('header a[href="/"] strong.sr-only');
+    await expect(srOnly).toBeAttached();
+
+    // The text should not be empty
+    const text = await srOnly.textContent();
+    expect(text).toBeTruthy();
+  });
+
+  test('should have a navigation landmark for header CTAs', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const ctaNav = page.locator('header nav[aria-label="Header CTAs"]');
+    await expect(ctaNav).toBeAttached();
+  });
+
+  test('should not be affected by reduced motion preference', async ({
+    page,
+  }) => {
+    // Enable reduced motion
     await page.emulateMedia({reducedMotion: 'reduce'});
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
     const header = page.locator('header');
 
-    // Verify header is initially hidden
-    await expect(header).toHaveCSS('opacity', '0');
+    // Header should still be visible -- no animations to disable
+    await expect(header).toBeVisible();
 
-    // WHEN: User scrolls past hero
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
-
-    // THEN: Header should be visible WITHOUT transition
-    // Check that transition-duration is NOT present (instant visibility)
-    const transitionDuration = await header.evaluate((el) => {
-      return window.getComputedStyle(el).transitionDuration;
-    });
-
-    // Should be "0s" (no transition) when reduced motion is enabled
-    expect(transitionDuration).toBe('0s');
-
-    // Header should still be visible (opacity-1)
-    await expect(header).toHaveCSS('opacity', '1');
-  });
-});
-
-test.describe('Sticky Header - Scope to Home Page Only', () => {
-  test('[P1] should always show header on non-home pages', async ({page}) => {
-    // GIVEN: User is on a non-home page (e.g., /collections)
-    await page.goto('/collections');
-    await page.waitForLoadState('networkidle');
-
-    // WHEN: Page loads
-    const header = page.locator('header');
-
-    // THEN: Header should always be visible (not hidden)
-    await expect(header).toHaveCSS('opacity', '1');
-
-    // Should NOT have pointer-events-none class
-    const hasPointerEventsNone = await header.evaluate((el) =>
-      el.classList.contains('pointer-events-none')
-    );
-    expect(hasPointerEventsNone).toBe(false);
-  });
-
-  test('[P1] should NOT apply scroll-triggered behavior on non-home pages', async ({
-    page,
-  }) => {
-    // GIVEN: User is on a non-home page (e.g., /collections)
-    await page.goto('/collections');
-    await page.waitForLoadState('networkidle');
-
-    const header = page.locator('header');
-
-    // Verify header is visible initially
-    await expect(header).toHaveCSS('opacity', '1');
-
-    // WHEN: User scrolls down the page
+    // Scroll and verify it remains visible
     await page.evaluate(() => {
-      window.scrollTo({top: 500, behavior: 'instant'});
-    });
-    await page.waitForTimeout(300);
-
-    // THEN: Header should STILL be visible (no scroll-triggered hide)
-    await expect(header).toHaveCSS('opacity', '1');
-
-    // WHEN: User scrolls back to top
-    await page.evaluate(() => {
-      window.scrollTo({top: 0, behavior: 'instant'});
-    });
-    await page.waitForTimeout(300);
-
-    // THEN: Header should STILL be visible
-    await expect(header).toHaveCSS('opacity', '1');
-  });
-
-  test('[P1] should show header on product pages', async ({page}) => {
-    // GIVEN: User is on a product page
-    // Note: This test will navigate to /products and check first product
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-
-    // Find first product link and navigate to it
-    const firstProductLink = page.locator('a[href^="/products/"]').first();
-
-    // Check if products exist
-    const productCount = await firstProductLink.count();
-    if (productCount === 0) {
-      test.skip(true, 'No products found');
-      return;
-    }
-
-    await firstProductLink.click();
-    await page.waitForLoadState('networkidle');
-
-    // WHEN: Product page loads
-    const header = page.locator('header');
-
-    // THEN: Header should be visible
-    await expect(header).toHaveCSS('opacity', '1');
-
-    const hasPointerEventsNone = await header.evaluate((el) =>
-      el.classList.contains('pointer-events-none')
-    );
-    expect(hasPointerEventsNone).toBe(false);
-  });
-});
-
-test.describe('Sticky Header - GPU-Composited Animation', () => {
-  test('[P1] should use GPU-composited properties for fade (transform, opacity)', async ({
-    page,
-  }) => {
-    // GIVEN: User is at home page with normal motion preference
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    const header = page.locator('header');
-
-    // WHEN: Checking header styles
-    const transform = await header.evaluate((el) => {
-      return window.getComputedStyle(el).transform;
+      window.scrollTo({top: 1000, behavior: 'instant'});
     });
 
-    // THEN: Transform should be applied when hidden
-    // When hidden, transform should be translateY(-100%)
-    expect(transform).toBeDefined();
-
-    // Scroll past hero to trigger visibility
-    const hero = page.locator('section').first();
-    const heroHeight = await hero.evaluate((el) => el.clientHeight);
-    await page.evaluate((scrollAmount) => {
-      window.scrollTo({top: scrollAmount, behavior: 'instant'});
-    }, heroHeight + 100);
-    await page.waitForTimeout(300);
-
-    // When visible, transform should be none/identity matrix
-    const transformVisible = await header.evaluate((el) => {
-      return window.getComputedStyle(el).transform;
-    });
-
-    // Should be identity matrix "matrix(1, 0, 0, 1, 0, 0)" or "none"
-    expect(['matrix(1, 0, 0, 1, 0, 0)', 'none']).toContain(transformVisible);
+    await expect(header).toBeVisible();
   });
 });

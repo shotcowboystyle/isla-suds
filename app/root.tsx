@@ -195,9 +195,10 @@ export default function App() {
 
     // Check if current route is a B2B route - Lenis should not initialize for wholesale routes
     const isWholesaleRoute = location.pathname.startsWith('/wholesale');
-    const isHome = location.pathname === '/';
+    // const isHome = location.pathname === '/';
 
-    if (isWholesaleRoute || isHome) {
+    // if (isWholesaleRoute || isHome) {
+    if (isWholesaleRoute) {
       // Ensure Lenis is destroyed for B2B routes and Home (which uses ScrollSmoother)
       destroyLenis();
       return;
@@ -215,13 +216,14 @@ export default function App() {
       resizeTimeout = setTimeout(() => {
         const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
 
-        if (isDesktop) {
-          // On desktop, ensure Lenis is initialized
-          void initLenis();
-        } else {
-          // On mobile, ensure Lenis is destroyed
-          destroyLenis();
-        }
+        void initLenis();
+        // if (isDesktop) {
+        //   // On desktop, ensure Lenis is initialized
+        //   void initLenis();
+        // } else {
+        //   // On mobile, ensure Lenis is destroyed
+        //   destroyLenis();
+        // }
       }, 150); // 150ms debounce
     };
 

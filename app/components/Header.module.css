@@ -111,8 +111,15 @@
   padding: 1vw;
 }
 
-.menu-button:hover {
-  background-color: var(--color-coral-light);
+.menu-button:active {
+  background-color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-button:hover,
+  .menu-button:active {
+    background-color: var(--color-coral-light);
+  }
 }
 
 .menu-button-line {
@@ -143,12 +150,12 @@
   margin-top: 2px;
   margin-bottom: 0;
 }
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) {
   .menu-button-line-2-mobile {
     margin-top: 2px;
     margin-bottom: 0;
   }
-}
+} */
 
 .menu-cta-buttons-wrapper,
 .cta-buttons {
@@ -159,7 +166,7 @@
   position: relative;
 }
 .menu-cta-buttons-wrapper {
-  gap: 0.5vw;
+  gap: 2vw;
 }
 @media screen and (min-width: 480px) {
   .menu-cta-buttons-wrapper,
@@ -212,8 +219,10 @@
   background-color: var(--color-white);
 }
 
-.menu-button-mobile:hover {
-  background-color: var(--color-coral-light);
+@media (hover: hover) and (pointer: fine) {
+  .menu-button-mobile:hover {
+    background-color: var(--color-coral-light);
+  }
 }
 
 @media screen and (min-width: 480px) {
@@ -250,14 +259,12 @@
 
 @media screen and (min-width: 480px) and (max-width: 991px) {
   .menu-button-abs {
-    margin-left: auto;
-    margin-right: auto;
+    margin-inline: auto;
   }
 }
 @media screen and (max-width: 479px) {
   .menu-button-abs {
-    margin-left: auto;
-    margin-right: auto;
+    margin-inline: auto;
   }
 }
 
@@ -281,9 +288,11 @@
   text-decoration: none;
 }
 
-.navbar-button:hover {
-  background-color: var(--color-coral-light);
-  text-decoration: none;
+@media (hover: hover) and (pointer: fine) {
+  .navbar-button:hover {
+    background-color: var(--color-coral-light);
+    text-decoration: none;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -313,5 +322,22 @@
 @media screen and (min-width: 992px) {
   .navbar-icon-button {
     width: 3.1vw;
+  }
+}
+
+.navbar-icon-button-icon {
+  /* --navbar-icon-button-icon: 13vw; */
+
+  width: var(--navbar-icon-button-icon, 13vw);
+  height: var(--navbar-icon-button-icon, 13vw);
+}
+@media screen and (min-width: 768px) {
+  .navbar-icon-button-icon {
+    --navbar-icon-button-icon: 10vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .navbar-icon-button-icon {
+    --navbar-icon-button-icon: 1.15vw;
   }
 }

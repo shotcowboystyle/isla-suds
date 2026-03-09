@@ -5,7 +5,18 @@ import {test, expect} from '@playwright/test';
  *
  * Tests cart data persistence across page reloads and browser restarts.
  * Critical for abandoned cart recovery and user experience.
+ *
+ * Cart drawer uses Radix Dialog (role="dialog" with aria-labelledby="cart-title").
+ * Add to cart button uses type="button" with data-testid="add-to-cart-button".
+ * Cart button in header: <button aria-label="Shopping cart, N item(s)"> with badge <span>.
+ * Session cookie named "session" stores the cart ID server-side.
  */
+
+/** Selector for the Radix Dialog cart drawer */
+const CART_DRAWER = '[role="dialog"][aria-labelledby="cart-title"]';
+
+/** Selector for the header cart button */
+const CART_BUTTON = 'button[aria-label^="Shopping cart"]';
 
 test.describe('Cart Persistence', () => {
   test('[P0] should persist cart across browser close/reopen (AC2)', async ({
@@ -17,13 +28,16 @@ test.describe('Cart Persistence', () => {
 
     await page1.goto('/products/the-3-in-1-shampoo-bar');
     await page1.waitForLoadState('networkidle');
-    await page1.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page1.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page1.click('[data-testid="add-to-cart-button"]');
+    await expect(page1.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // Close cart drawer to see badge
     await page1.keyboard.press('Escape');
-    const cartBadge = page1.locator('a[href="/cart"]').locator('span').first();
-    const initialCount = await cartBadge.textContent();
+    await expect(page1.locator(CART_DRAWER)).not.toBeVisible({timeout: 3000});
+
+    // Get the cart badge count from the header cart button's aria-label
+    const cartButton1 = page1.locator(CART_BUTTON);
+    const ariaLabel1 = await cartButton1.getAttribute('aria-label');
 
     // Get cookies to persist across browser restart
     const cookies = await context1.cookies();
@@ -41,21 +55,21 @@ test.describe('Cart Persistence', () => {
     await page2.waitForLoadState('networkidle');
 
     // THEN: Cart still has the item (persisted via session cookie)
-    const reloadedCount = await page2
-      .locator('a[href="/cart"]')
-      .locator('span')
-      .first()
-      .textContent();
-    expect(reloadedCount).toBe(initialCount);
+    const cartButton2 = page2.locator(CART_BUTTON);
+    const ariaLabel2 = await cartButton2.getAttribute('aria-label');
+    expect(ariaLabel2).toBe(ariaLabel1);
 
-    // THEN: Cart page shows the product
-    await page2.goto('/cart');
+    // THEN: Cart drawer shows the product when opened
+    await cartButton2.click();
+    await expect(page2.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
     await expect(
-      page2.getByRole('heading', {name: 'The 3-in-1 Shampoo Bar'}),
+      page2.locator(CART_DRAWER).getByText('The 3-in-1 Shampoo Bar'),
     ).toBeVisible();
 
     // THEN: Cart subtotal is accurate
-    await expect(page2.locator('text=/Total/')).toBeVisible();
+    await expect(
+      page2.locator(CART_DRAWER).getByText('Subtotal'),
+    ).toBeVisible();
 
     // Cleanup
     await page2.close();
@@ -66,28 +80,30 @@ test.describe('Cart Persistence', () => {
     // GIVEN: User adds a product to cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // Close cart drawer to see badge
     await page.keyboard.press('Escape');
+    await expect(page.locator(CART_DRAWER)).not.toBeVisible({timeout: 3000});
 
-    // Get initial cart count from badge
-    const cartBadge = page.locator('a[href="/cart"]').locator('span').first();
-    const initialCount = await cartBadge.textContent();
+    // Get initial cart count from header cart button aria-label
+    const cartButton = page.locator(CART_BUTTON);
+    const initialAriaLabel = await cartButton.getAttribute('aria-label');
 
     // WHEN: User reloads the page
     await page.reload();
     await page.waitForLoadState('networkidle');
 
     // THEN: Cart still shows the same item count
-    const reloadedCount = await cartBadge.textContent();
-    expect(reloadedCount).toBe(initialCount);
+    const reloadedAriaLabel = await cartButton.getAttribute('aria-label');
+    expect(reloadedAriaLabel).toBe(initialAriaLabel);
 
     // THEN: Cart drawer still contains the product
-    await page.click('a[href="/cart"]');
+    await cartButton.click();
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
     await expect(
-      page.getByRole('heading', {name: 'The 3-in-1 Shampoo Bar'}),
+      page.locator(CART_DRAWER).getByText('The 3-in-1 Shampoo Bar'),
     ).toBeVisible();
   });
 
@@ -98,29 +114,33 @@ test.describe('Cart Persistence', () => {
     // GIVEN: User has a cart with an item
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
-    // WHEN: Cart ID is invalidated (simulate expiration)
+    // Close the drawer before clearing cookies
+    await page.keyboard.press('Escape');
+    await expect(page.locator(CART_DRAWER)).not.toBeVisible({timeout: 3000});
+
+    // WHEN: Cart ID is invalidated (simulate expiration by clearing cookies)
     await context.clearCookies();
-    await page.evaluate(() => {
-      localStorage.clear();
-      sessionStorage.clear();
-    });
 
     // Reload page to trigger cart recovery
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    // THEN: App should recover gracefully (either show empty cart or recreate cart)
-    // Navigate to cart page
-    await page.goto('/cart');
+    // THEN: App should recover gracefully (show empty cart or recreate cart)
+    // Open cart drawer to verify state
+    const cartButton = page.locator(CART_BUTTON);
+    await cartButton.click();
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // Should show either:
     // 1. Empty cart (graceful degradation), OR
-    // 2. New cart created successfully
-    const cartEmpty = page.getByText('Your cart is empty');
-    const cartLoaded = page.locator('form[action="/cart"]');
+    // 2. New cart created successfully (drawer content loaded without crash)
+    const cartEmpty = page.locator(CART_DRAWER).getByText(
+      /Your cart is empty/i,
+    );
+    const cartLoaded = page.locator(CART_DRAWER).locator('#cart-title');
 
     // At least one of these should be visible (app didn't crash)
     const isGraceful =
@@ -133,7 +153,7 @@ test.describe('Cart Persistence', () => {
     ).toBeTruthy();
 
     // THEN: No error message shown to user
-    const errorMessage = page.locator('text=/error|failed|wrong/i');
+    const errorMessage = page.locator(CART_DRAWER).locator('text=/error|failed|wrong/i');
     await expect(errorMessage).not.toBeVisible();
   });
 
@@ -142,7 +162,7 @@ test.describe('Cart Persistence', () => {
     context,
   }) => {
     // GIVEN: User has a malformed cart ID in session cookie
-    // Simulate by manually setting invalid cart ID in cookie
+    // Simulate by manually setting invalid session cookie
     await page.goto('/');
     await context.addCookies([
       {
@@ -160,20 +180,30 @@ test.describe('Cart Persistence', () => {
     await page.waitForLoadState('networkidle');
 
     // THEN: App should recover gracefully without error
-    await page.goto('/cart');
+    // Open cart drawer to verify state
+    const cartButton = page.locator(CART_BUTTON);
+    await cartButton.click();
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // Should show empty cart (graceful fallback)
-    const cartEmpty = page.getByText(/Your cart is empty|Looks like you haven't added anything yet/i);
+    const cartEmpty = page.locator(CART_DRAWER).getByText(
+      /Your cart is empty/i,
+    );
     await expect(cartEmpty).toBeVisible();
 
     // THEN: No error message shown to user
-    const errorMessage = page.locator('text=/error|failed|wrong/i');
+    const errorMessage = page.locator(CART_DRAWER).locator('text=/error|failed|wrong/i');
     await expect(errorMessage).not.toBeVisible();
+
+    // Close the drawer before navigating
+    await page.keyboard.press('Escape');
+    await expect(page.locator(CART_DRAWER)).not.toBeVisible({timeout: 3000});
 
     // THEN: User can continue shopping (add new item)
     await page.goto('/products/the-3-in-1-shampoo-bar');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // THEN: New cart ID replaces invalid one
     const cookies = await context.cookies();
@@ -189,8 +219,8 @@ test.describe('Cart Persistence', () => {
     // GIVEN: User has a valid cart ID that was deleted on Shopify side
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
 
     // Get cart ID from cookies
     const cookies = await context.cookies();
@@ -200,16 +230,29 @@ test.describe('Cart Persistence', () => {
     // Note: Can't actually delete cart on Shopify in test, but verify recovery path exists
     expect(cartIdExists || sessionCookie).toBeDefined();
 
+    // Close the drawer before clearing cookies
+    await page.keyboard.press('Escape');
+    await expect(page.locator(CART_DRAWER)).not.toBeVisible({timeout: 3000});
+
     // WHEN: Cart fetch fails (simulated by clearing cookies)
     await context.clearCookies();
 
     // THEN: App should recover silently
-    await page.goto('/cart');
-    const cartEmpty = page.getByText(/Your cart is empty|Looks like you haven't added anything yet/i);
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Open cart drawer to verify empty state
+    const cartButton = page.locator(CART_BUTTON);
+    await cartButton.click();
+    await expect(page.locator(CART_DRAWER)).toBeVisible({timeout: 5000});
+
+    const cartEmpty = page.locator(CART_DRAWER).getByText(
+      /Your cart is empty/i,
+    );
     await expect(cartEmpty).toBeVisible();
 
     // THEN: No error shown to user (warm error handling)
-    const errorMessage = page.locator('text=/error|failed|something went wrong/i');
+    const errorMessage = page.locator(CART_DRAWER).locator('text=/error|failed|something went wrong/i');
     await expect(errorMessage).not.toBeVisible();
   });
 });

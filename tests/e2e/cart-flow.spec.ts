@@ -5,7 +5,16 @@ import {test, expect} from '@playwright/test';
  *
  * Tests core cart functionality that directly impacts revenue.
  * These tests must pass before any deployment.
+ *
+ * Cart drawer uses Radix Dialog (role="dialog" with aria-labelledby="cart-title").
+ * Add to cart button uses type="button" with data-testid="add-to-cart-button".
+ * Product titles in cart are rendered as Link elements, not headings.
+ * Remove button has aria-label="Remove {product name} from cart".
+ * Checkout is a <button> that navigates via window.location.href.
  */
+
+/** Selector for the Radix Dialog cart drawer */
+const CART_DRAWER = '[role="dialog"][aria-labelledby="cart-title"]';
 
 test.describe('Cart Flow', () => {
   test('[P0] should add product to cart and open cart drawer', async ({
@@ -15,18 +24,18 @@ test.describe('Cart Flow', () => {
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
 
-    // WHEN: User clicks "Add to cart" button
-    await page.click('button[type="submit"]:has-text("Add to cart")');
+    // WHEN: User clicks "Add to Cart" button
+    await page.click('[data-testid="add-to-cart-button"]');
 
     // THEN: Cart drawer opens
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible({
+    await expect(page.locator(CART_DRAWER)).toBeVisible({
       timeout: 5000,
     });
 
-    // THEN: Product appears in cart
+    // THEN: Product appears in cart (title is in a Link element, not a heading)
     await expect(
-      page.locator('aside[aria-label="Cart"]').getByRole('heading'),
-    ).toContainText('The 3-in-1 Shampoo Bar');
+      page.locator(CART_DRAWER).getByText('The 3-in-1 Shampoo Bar'),
+    ).toBeVisible();
   });
 
   test('[P0] should update cart quantity when user changes quantity', async ({
@@ -35,20 +44,19 @@ test.describe('Cart Flow', () => {
     // GIVEN: User has a product in cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible();
 
-    // WHEN: User updates quantity to 2
+    // WHEN: User updates quantity to 2 via the number input
     const quantityInput = page
-      .locator('aside[aria-label="Cart"]')
+      .locator(CART_DRAWER)
       .locator('input[type="number"]')
       .first();
     await quantityInput.fill('2');
 
-    // THEN: Total updates to reflect new quantity
-    // Note: Actual total depends on product price, we just verify it changes
+    // THEN: Subtotal is visible in the drawer footer
     await expect(
-      page.locator('aside[aria-label="Cart"]').locator('text=/Total/'),
+      page.locator(CART_DRAWER).getByText('Subtotal'),
     ).toBeVisible();
   });
 
@@ -58,19 +66,21 @@ test.describe('Cart Flow', () => {
     // GIVEN: User has a product in cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible();
 
-    // WHEN: User clicks remove button
+    // WHEN: User clicks remove button (aria-label="Remove {product name} from cart")
     await page
-      .locator('aside[aria-label="Cart"]')
-      .locator('button[name="Remove"]')
+      .locator(CART_DRAWER)
+      .locator('button[aria-label*="Remove"]')
       .first()
       .click();
 
-    // THEN: Cart shows as empty
+    // THEN: Cart shows as empty with the expected message
     await expect(
-      page.locator('aside[aria-label="Cart"]').getByText('Your cart is empty'),
+      page
+        .locator(CART_DRAWER)
+        .getByText("Your cart is empty. Let's find something you'll love."),
     ).toBeVisible();
   });
 
@@ -80,25 +90,25 @@ test.describe('Cart Flow', () => {
     // GIVEN: User has a product in cart
     await page.goto('/products/the-3-in-1-shampoo-bar');
     await page.waitForLoadState('networkidle');
-    await page.click('button[type="submit"]:has-text("Add to cart")');
-    await expect(page.locator('aside[aria-label="Cart"]')).toBeVisible();
+    await page.click('[data-testid="add-to-cart-button"]');
+    await expect(page.locator(CART_DRAWER)).toBeVisible();
 
-    // WHEN: User clicks "Proceed to Checkout" or "Continue to Checkout"
+    // WHEN: User clicks the "Checkout" button
+    // The checkout button is a <button> (not a link) inside the cart dialog.
+    // It navigates via window.location.href = cart.checkoutUrl.
     const checkoutButton = page
-      .locator('aside[aria-label="Cart"]')
-      .locator('a:has-text("Checkout"), button:has-text("Checkout")')
+      .locator(CART_DRAWER)
+      .locator('button:has-text("Checkout")')
       .first();
 
-    // Wait for navigation to Shopify checkout
-    const [checkoutPage] = await Promise.all([
-      page.waitForEvent('popup', {timeout: 10000}).catch(() => null), // Handle popup
-      page.waitForNavigation({timeout: 10000}).catch(() => null), // Handle same-tab navigation
+    // Wait for same-tab navigation triggered by window.location.href
+    await Promise.all([
+      page.waitForURL(/checkout|shopify/, {timeout: 10000}).catch(() => null),
       checkoutButton.click(),
     ]);
 
     // THEN: User is redirected to Shopify checkout (URL contains shopify or checkout domain)
-    const finalPage = checkoutPage || page;
-    const url = finalPage.url();
+    const url = page.url();
 
     expect(
       url.includes('checkout') || url.includes('shopify'),
