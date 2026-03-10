@@ -190,5 +190,5 @@ development_status:
   # Sequence: CC-2 → CC-1 → CC-3 (CC-2 is a blocker)
   # ============================================================================
   cc-2-deploy-shopify-functions-wholesale-discount-app: done
-  cc-1-update-order-page-pricing-to-wholesale-metafield: review
+  cc-1-update-order-page-pricing-to-wholesale-metafield: done
   cc-3-update-planning-artifacts-for-tag-based-pricing: backlog

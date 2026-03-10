@@ -59,16 +59,6 @@ export function LocalStores() {
           },
           '-=0.5',
         );
-      // .from(
-      //   buttonWrapperRef.current,
-      //   {
-      //     opacity: 0,
-      //     duration: 0.5,
-      //     width: 0,
-      //     ease: 'circ.out',
-      //   },
-      //   '-=0.5',
-      // );
     },
     {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, isLoading, isMobile]},
   );

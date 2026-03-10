@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {NavLink} from 'react-router';
+import {useEffect, useRef, useState, useCallback} from 'react';
+import {NavLink, useLocation} from 'react-router';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 // import {Image} from '@shopify/hydrogen';
@@ -105,6 +105,36 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
   const [activeMenu, setActiveMenu] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const location = useLocation();
+
+  const resetActiveMenu = useCallback(() => {
+    const currentIndex = FALLBACK_HEADER_MENU.items.findIndex((item) => {
+      if (!item.url) return false;
+      const itemUrl =
+        item.url.includes('myshopify.com') ||
+        item.url.includes(publicStoreDomain) ||
+        item.url.includes(primaryDomainUrl)
+          ? new URL(item.url).pathname
+          : item.url;
+
+      if (itemUrl === '/') {
+        return location.pathname === '/';
+      }
+      // Shop item should remain active on collection and product pages
+      if (itemUrl.startsWith('/collections')) {
+        return location.pathname.startsWith('/collections') || location.pathname.startsWith('/products');
+      }
+      return location.pathname.startsWith(itemUrl);
+    });
+
+    setActiveMenu(currentIndex !== -1 ? currentIndex : 0);
+  }, [location.pathname, publicStoreDomain, primaryDomainUrl]);
+
+  useEffect(() => {
+    if (open) {
+      resetActiveMenu();
+    }
+  }, [open, resetActiveMenu]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -183,7 +213,7 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
     <div ref={containerRef} className="fixed inset-0 w-full h-dvh bg-secondary z-200">
       <div className="flex items-center h-full">
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 h-full">
-          <nav className="flex flex-col items-center" role="navigation">
+          <nav className="flex flex-col items-center" role="navigation" onMouseLeave={resetActiveMenu}>
             {/* {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => { */}
             {FALLBACK_HEADER_MENU.items.map((item, index) => {
               if (!item.url) {

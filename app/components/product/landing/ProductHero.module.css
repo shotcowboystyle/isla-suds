@@ -1,5 +1,6 @@
 .hero-wrapper {
   height: 100%;
+  z-index: -1;
 }
 
 .hero-container {

@@ -4,14 +4,19 @@
   background-color: var(--color-white);
   cursor: pointer;
   border-radius: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
   width: 56px;
   height: 56px;
-  /* display: flex; */
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0);
   position: absolute;
   bottom: 50vw;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 @media screen and (min-width: 480px) {
   .close-button-wrapper {
@@ -40,6 +45,7 @@
   width: 2px;
   height: 50%;
   position: absolute;
+  transition: all 0.3s linear;
 }
 
 .is-cl-1 {
@@ -48,4 +54,15 @@
 
 .is-cl-2 {
   transform: rotate(-45deg);
+}
+
+@media screen and (hover: hover) {
+  .close-button-wrapper:hover {
+    background-color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  .close-button-wrapper:hover .close-button-line {
+    background-color: var(--color-white);
+  }
 }

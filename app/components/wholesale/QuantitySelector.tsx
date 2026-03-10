@@ -7,6 +7,7 @@ export interface QuantitySelectorProps {
   onChange: (value: number) => void;
   productName: string;
   disabled?: boolean;
+  'aria-describedby'?: string;
 }
 
 export function QuantitySelector({
@@ -14,6 +15,7 @@ export function QuantitySelector({
   onChange,
   productName,
   disabled = false,
+  'aria-describedby': ariaDescribedby,
 }: QuantitySelectorProps) {
   const [displayValue, setDisplayValue] = useState(String(value));
   const [isInvalid, setIsInvalid] = useState(false);
@@ -74,6 +76,7 @@ export function QuantitySelector({
       role="group"
       aria-label={`Quantity for ${productName}`}
       aria-disabled={disabled}
+      aria-describedby={ariaDescribedby}
       className={cn('flex flex-col gap-1')}
     >
       <div className={cn('flex items-center gap-2')}>
@@ -130,7 +133,7 @@ export function QuantitySelector({
         </button>
       </div>
 
-      <div aria-live="polite" role="status" className={cn('min-h-[1.25rem]')}>
+      <div aria-live="polite" role="status" className={cn('min-h-5')}>
         {isInvalid && (
           <p className={cn('text-xs text-red-500')}>{wholesaleContent.order.moqError}</p>
         )}

@@ -2,7 +2,6 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
 
@@ -12,12 +11,10 @@ export const MessageSection = () => {
   const clippedBox1Ref = useRef<HTMLDivElement>(null);
   const text2Ref = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
-  const {isMobile, isLoading} = useIsMobile();
 
   useGSAP(
     () => {
       if (
-        isLoading ||
         !sectionRef.current ||
         !text1Ref.current ||
         !clippedBox1Ref.current ||
@@ -44,9 +41,8 @@ export const MessageSection = () => {
       const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: text1Ref.current,
-          start: isMobile ? 'top 90%' : 'top 50%',
-          // end: '+=800',
-          scrub: true,
+          start: 'top 95%',
+          scrub: 4.5,
         },
       });
 
@@ -59,18 +55,23 @@ export const MessageSection = () => {
         .from(
           clippedBox1Ref.current,
           {
-            duration: 2.5,
+            duration: 8,
             opacity: 0,
             width: 0,
-            ease: 'circ.inOut',
+            ease: 'power2.inOut',
+            stagger: 0.03,
+          },
+          '-=0.03',
+        )
+        .to(
+          text2Splitted.words,
+          {
+            color: '#faeade',
+            ease: 'power1.in',
+            stagger: 1,
           },
           '-=0.5',
         )
-        .to(text2Splitted.words, {
-          color: '#faeade',
-          ease: 'power1.in',
-          stagger: 1,
-        })
         .from(splittedParagraph.words, {
           yPercent: 300,
           rotate: 3,
@@ -79,7 +80,7 @@ export const MessageSection = () => {
           stagger: 0.03,
         });
     },
-    {dependencies: [sectionRef, text1Ref, clippedBox1Ref, text2Ref, paragraphRef, isLoading, isMobile]},
+    {dependencies: [sectionRef, text1Ref, clippedBox1Ref, text2Ref, paragraphRef]},
   );
 
   return (

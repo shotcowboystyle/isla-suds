@@ -22,6 +22,7 @@ const mockProducts = [
       availableForSale: true,
       price: {amount: '6.00', currencyCode: 'USD' as const},
     },
+    wholesalePrice: {amount: '6.00', currencyCode: 'USD' as const} as {amount: string; currencyCode: 'USD'} | null,
   },
   {
     id: 'gid://shopify/Product/2',
@@ -33,6 +34,7 @@ const mockProducts = [
       availableForSale: true,
       price: {amount: '7.00', currencyCode: 'USD' as const},
     },
+    wholesalePrice: {amount: '7.00', currencyCode: 'USD' as const} as {amount: string; currencyCode: 'USD'} | null,
   },
 ];
 

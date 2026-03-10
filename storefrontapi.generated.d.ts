@@ -1345,6 +1345,9 @@ export type WholesaleProductFieldsFragment = Pick<
     nodes: Array<
       Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
         price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        metafield?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+        >;
       }
     >;
   };
@@ -1370,6 +1373,9 @@ export type WholesaleProductsQuery = {
         nodes: Array<
           Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
             price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            metafield?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+            >;
           }
         >;
       };
@@ -1384,6 +1390,9 @@ export type WholesaleProductsQuery = {
         nodes: Array<
           Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
             price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            metafield?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+            >;
           }
         >;
       };
@@ -1398,6 +1407,9 @@ export type WholesaleProductsQuery = {
         nodes: Array<
           Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
             price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            metafield?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+            >;
           }
         >;
       };
@@ -1412,6 +1424,9 @@ export type WholesaleProductsQuery = {
         nodes: Array<
           Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
             price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            metafield?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+            >;
           }
         >;
       };
@@ -1496,7 +1511,7 @@ interface GeneratedQueryTypes {
     return: PredictiveSearchQuery;
     variables: PredictiveSearchQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment WholesaleProductFields on Product {\n    id\n    title\n    handle\n    featuredImage {\n      url\n      altText\n      width\n      height\n    }\n    variants(first: 1) {\n      nodes {\n        id\n        availableForSale\n        price {\n          amount\n          currencyCode\n        }\n      }\n    }\n  }\n\n  query WholesaleProducts(\n    $country: CountryCode\n    $language: LanguageCode\n    $buyer: BuyerInput\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n  ) @inContext(country: $country, language: $language, buyer: $buyer) {\n    soap1: product(handle: $handle1) {\n      ...WholesaleProductFields\n    }\n    soap2: product(handle: $handle2) {\n      ...WholesaleProductFields\n    }\n    soap3: product(handle: $handle3) {\n      ...WholesaleProductFields\n    }\n    soap4: product(handle: $handle4) {\n      ...WholesaleProductFields\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment WholesaleProductFields on Product {\n    id\n    title\n    handle\n    featuredImage {\n      url\n      altText\n      width\n      height\n    }\n    variants(first: 1) {\n      nodes {\n        id\n        availableForSale\n        price {\n          amount\n          currencyCode\n        }\n        metafield(namespace: "wholesale", key: "price") {\n          value\n          type\n        }\n      }\n    }\n  }\n\n  query WholesaleProducts(\n    $country: CountryCode\n    $language: LanguageCode\n    $buyer: BuyerInput\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n  ) @inContext(country: $country, language: $language, buyer: $buyer) {\n    soap1: product(handle: $handle1) {\n      ...WholesaleProductFields\n    }\n    soap2: product(handle: $handle2) {\n      ...WholesaleProductFields\n    }\n    soap3: product(handle: $handle3) {\n      ...WholesaleProductFields\n    }\n    soap4: product(handle: $handle4) {\n      ...WholesaleProductFields\n    }\n  }\n': {
     return: WholesaleProductsQuery;
     variables: WholesaleProductsQueryVariables;
   };

@@ -1,6 +1,6 @@
 # Story CC-1: Update Order Page Pricing from B2B Context to Wholesale Metafield
 
-Status: review
+Status: done
 
 ## Story
 
@@ -59,6 +59,13 @@ so that I get accurate wholesale pricing on Shopify Basic without requiring Shop
   - [x] Run `pnpm codegen`
   - [x] Run `pnpm typecheck` — zero new errors (3 pre-existing in Header.test.tsx, contact.test.tsx)
   - [x] Run `pnpm lint` — zero errors (41 pre-existing warnings)
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][High] Security Vulnerability in Action: Add validation to checkout action to ensure variants are available and properly priced before cart creation `wholesale.order.tsx:132`
+- [x] [AI-Review][High] Unhandled Loader Exception: Wrap `JSON.parse(metafieldValue)` in try/catch block `wholesale.order.tsx:92`
+- [x] [AI-Review][Medium] Unsafe Float Parsing: Guard against `NaN` when parsing `wholesalePrice.amount` `OrderSummary.tsx`
+- [x] [AI-Review][Low] Accessibility: Add `aria-describedby` to `QuantitySelector` and bind it to unavailability messages `QuantitySelector.tsx` & `OrderProductCard.tsx`
 
 ## Dev Notes
 
@@ -272,6 +279,7 @@ Claude Opus 4.6
 - Handles both `number_decimal` and `money` metafield types per dev notes
 - Zero new type errors, zero lint errors introduced
 - Pre-existing type errors in Header.test.tsx (viewport prop) and contact.test.tsx (unstable_pattern) are unrelated
+- Post-Code Review: Fixed unhandled loader JSON exception, security vulnerability in cart checkout action, unsafe float parsing in OrderSummary, and missing accessibility attributes in QuantitySelector.
 
 ### File List
 - `app/content/wholesale.ts` — Added `priceOnRequest` string
