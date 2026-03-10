@@ -156,6 +156,10 @@ export function ProductHero({product, productOptions, selectedVariant}: ProductH
           <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} hideAddToCart={true} />
         </div>
       </div>
+
+      <div className="lg-circle-section z-0">
+        <div className={`lg-circle card-bg-${product.tags[0]}`}></div>
+      </div>
     </div>
   );
 }

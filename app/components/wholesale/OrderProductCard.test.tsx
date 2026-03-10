@@ -33,8 +33,11 @@ const mockProduct = {
   },
 };
 
+const mockWholesalePrice = {amount: '6.00', currencyCode: 'USD' as const};
+
 const defaultProps = {
   product: mockProduct,
+  wholesalePrice: mockWholesalePrice as typeof mockWholesalePrice | null,
   quantity: 0,
   onQuantityChange: vi.fn(),
 };
@@ -153,6 +156,26 @@ describe('OrderProductCard', () => {
     render(<OrderProductCard {...defaultProps} />);
 
     expect(screen.queryByText('Currently unavailable')).not.toBeInTheDocument();
+  });
+
+  it('shows "Price on request" when wholesalePrice is null', () => {
+    render(<OrderProductCard {...defaultProps} wholesalePrice={null} />);
+
+    expect(screen.getByText('Price on request')).toBeInTheDocument();
+    expect(screen.queryByText(/per unit/i)).not.toBeInTheDocument();
+  });
+
+  it('disables quantity selector when wholesalePrice is null', () => {
+    render(<OrderProductCard {...defaultProps} wholesalePrice={null} />);
+
+    expect(screen.getByRole('spinbutton')).toBeDisabled();
+  });
+
+  it('applies reduced opacity when wholesalePrice is null', () => {
+    render(<OrderProductCard {...defaultProps} wholesalePrice={null} />);
+
+    const article = screen.getByRole('article', {name: 'Lavender Bar Soap'});
+    expect(article).toHaveClass('opacity-60');
   });
 
   it('applies reduced opacity class to article when product is unavailable', () => {

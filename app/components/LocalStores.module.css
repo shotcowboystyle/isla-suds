@@ -45,7 +45,6 @@
 .heading-text-wrapper {
   z-index: 3;
   outline-offset: 0px;
-  color: var(--color-secondary);
   text-align: center;
   text-transform: uppercase;
   background-color: #c88e6400;
@@ -79,6 +78,7 @@
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: 13vw;
+  color: var(--color-secondary);
 }
 @media screen and (min-width: 480px) {
   .heading-text {

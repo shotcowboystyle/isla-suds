@@ -1,4 +1,4 @@
-# generated: 2026-01-26
+# generated: 2026-03-10
 # project: isla-suds
 # project_key: isla-suds
 # tracking_system: file-system
@@ -33,7 +33,7 @@
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
-generated: 2026-01-26
+generated: 2026-03-10
 project: isla-suds
 project_key: isla-suds
 tracking_system: file-system
@@ -179,6 +179,16 @@ development_status:
   wo-2-3-server-side-quantity-validation: done
 
   # Epic WO-3: Access Points Integration (2 stories)
-  epic-wo-3: in-progress
+  epic-wo-3: done
   wo-3-1-add-place-new-order-cta-on-dashboard: done
   wo-3-2-add-new-order-link-in-wholesale-header: done
+
+  # ============================================================================
+  # Course Correction: Wholesale Pricing Migration (3 stories)
+  # Trigger: Staying on Shopify Basic instead of upgrading to Plus
+  # Proposal: sprint-change-proposal-2026-03-10.md (APPROVED)
+  # Sequence: CC-2 → CC-1 → CC-3 (CC-2 is a blocker)
+  # ============================================================================
+  cc-2-deploy-shopify-functions-wholesale-discount-app: done
+  cc-1-update-order-page-pricing-to-wholesale-metafield: done
+  cc-3-update-planning-artifacts-for-tag-based-pricing: backlog

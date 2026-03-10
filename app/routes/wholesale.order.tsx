@@ -29,6 +29,10 @@ const WHOLESALE_PRODUCT_FRAGMENT = `#graphql
           amount
           currencyCode
         }
+        metafield(namespace: "wholesale", key: "price") {
+          value
+          type
+        }
       }
     }
   }
@@ -82,10 +86,25 @@ export async function loader({context}: Route.LoaderArgs) {
 
   const products = [soap1, soap2, soap3, soap4]
     .filter((p): p is NonNullable<typeof p> => Boolean(p))
-    .map(({variants, ...rest}) => ({
-      ...rest,
-      variant: variants.nodes[0],
-    }));
+    .map(({variants, ...rest}) => {
+      const variant = variants.nodes[0];
+      const metafieldValue = variant.metafield?.value;
+
+      let wholesalePrice: typeof variant.price | null = null;
+      if (metafieldValue) {
+        try {
+          const amount = variant.metafield?.type === 'money'
+            ? (JSON.parse(metafieldValue) as {amount: string}).amount
+            : metafieldValue;
+          wholesalePrice = {amount, currencyCode: variant.price.currencyCode};
+        } catch (error) {
+          console.error('Failed to parse wholesale price metafield:', error);
+          wholesalePrice = null;
+        }
+      }
+
+      return {...rest, variant, wholesalePrice};
+    });
 
   return {products};
 }
@@ -119,18 +138,55 @@ export async function action({request, context}: Route.ActionArgs): Promise<Chec
     }
   }
 
-  // Build lines array — skip 0 quantities
+  // Validate variant IDs are available for sale and have a wholesale price
+  const customerAccessToken = await context.session.get('customerAccessToken');
+  const [handle1, handle2, handle3, handle4] = wholesaleContent.catalog.productHandles;
+  
+  const {soap1, soap2, soap3, soap4} = await context.storefront.query(WHOLESALE_PRODUCTS_QUERY, {
+    variables: {
+      buyer: customerAccessToken ? {customerAccessToken} : undefined,
+      handle1,
+      handle2,
+      handle3,
+      handle4,
+    },
+  });
+
+  const validProducts = [soap1, soap2, soap3, soap4].filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const validVariantIds = new Set<string>();
+  
+  for (const p of validProducts) {
+    const variant = p.variants.nodes[0];
+    const metafieldValue = variant.metafield?.value;
+    let hasPrice = false;
+    
+    if (metafieldValue) {
+      if (variant.metafield?.type === 'money') {
+        try {
+          hasPrice = !!(JSON.parse(metafieldValue) as {amount: string}).amount;
+        } catch {
+          hasPrice = false;
+        }
+      } else {
+        hasPrice = true;
+      }
+    }
+    
+    if (variant.availableForSale && hasPrice) {
+      validVariantIds.add(variant.id);
+    }
+  }
+
+  // Build lines array — skip 0 quantities and ensure the item is valid
   const lines = Object.entries(quantities)
-    .filter(([, qty]) => qty >= 6)
+    .filter(([merchandiseId, qty]) => qty >= 6 && validVariantIds.has(merchandiseId))
     .map(([merchandiseId, quantity]) => ({merchandiseId, quantity}));
 
   if (lines.length === 0) {
-    return {success: false, error: wholesaleContent.auth.genericError};
+    return {success: false, error: "No valid items selected for order."};
   }
 
   try {
-    const customerAccessToken = await context.session.get('customerAccessToken');
-
     const result = await context.cart.create({
       lines,
       buyerIdentity: customerAccessToken ? {customerAccessToken} : undefined,
@@ -191,6 +247,7 @@ export default function WholesaleOrderPage() {
             <OrderProductCard
               key={product.id}
               product={product}
+              wholesalePrice={product.wholesalePrice}
               quantity={quantities[product.variant.id] ?? 0}
               onQuantityChange={handleQuantityChange}
             />

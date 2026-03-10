@@ -3,11 +3,16 @@ import {useGSAP} from '@gsap/react';
 import {useOptimisticVariant, getAdjacentAndFirstAvailableVariants, Image, getProductOptions} from '@shopify/hydrogen';
 import {gsap} from 'gsap';
 import {Flip} from 'gsap/Flip';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+if (typeof document !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, Flip, useGSAP);
+}
+import {JumboMarquee} from '~/components/JumboMarquee';
 import {LocalStores} from '~/components/LocalStores';
 import {ProductIngredients} from '~/components/product/ingredients/ProductIngredients';
-import {Marquee} from '~/components/product/landing/Marquee';
 import {ProductHero} from '~/components/product/landing/ProductHero';
 import {TestimonialsSection} from '~/components/Testimonials';
+import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import {FallInLove} from './FallInLove';
 import styles from './ProductLandingPage.module.css';
@@ -29,33 +34,37 @@ export function ProductLandingPage({product}: ProductLandingPageProps) {
 
   const variantImage = selectedVariant?.image ?? product.selectedOrFirstAvailableVariant?.image;
 
-  const imageRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+
+  const {isMobile, isLoading} = useIsMobile();
 
   useGSAP(
     () => {
-      if (!imageRef.current) return;
+      if (isMobile || isLoading || !imageWrapperRef.current || !sectionRef.current) {
+        return;
+      }
 
-      const tl = gsap.timeline();
-
-      tl.from(
-        imageRef.current,
-        {
-          scale: 0.8,
-          opacity: 0,
-          duration: 1.2,
-          ease: 'power2.out',
+      gsap.to(imageWrapperRef.current, {
+        rotation: 90,
+        bottom: '-130%',
+        ease: 'circ.inOut',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 5%',
+          end: '+=200%',
+          scrub: 1,
         },
-        '-=0.5',
-      );
+      });
     },
-    {scope: imageRef},
+    {dependencies: [isMobile, isLoading, sectionRef, imageWrapperRef]},
   );
 
   return (
-    <section className={styles['section-wrapper']}>
+    <section ref={sectionRef} className={styles['section-wrapper']}>
       <div className={cn(styles['section-container'], `card-bg-${product.tags[0]}`)}>
         {variantImage && (
-          <div ref={imageRef} className={styles['image-wrapper']}>
+          <div ref={imageWrapperRef} className={styles['image-wrapper']}>
             <Image
               src={variantImage.url}
               alt={variantImage.altText || product.title}
@@ -68,10 +77,12 @@ export function ProductLandingPage({product}: ProductLandingPageProps) {
 
         <ProductHero product={product} productOptions={productOptions} selectedVariant={selectedVariant} />
       </div>
-      <Marquee text="GENTLE & SOOTHING • MOISTURIZING • FRAGRANCE-FREE • " className="bg-black text-white" />
-      <FallInLove />
       <ProductIngredients />
-      <Marquee text="CLEAN & SAFE • EVERYDAY USE • " direction="right" className="bg-milk" />
+      <FallInLove color={product.tags[0]} />
+      <JumboMarquee
+        color={product.tags[0]}
+        text="gentle & soothing, moisturizing, fragrance-free, clean & safe, everyday use"
+      />
       <TestimonialsSection />
       <LocalStores />
     </section>

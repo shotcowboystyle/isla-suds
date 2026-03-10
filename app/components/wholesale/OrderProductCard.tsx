@@ -10,13 +10,14 @@ export interface OrderProductCardProps {
   product: Omit<WholesaleProductFieldsFragment, 'variants'> & {
     variant: WholesaleVariant;
   };
+  wholesalePrice: WholesaleVariant['price'] | null;
   quantity: number;
   onQuantityChange: (variantId: string, quantity: number) => void;
 }
 
-export function OrderProductCard({product, quantity, onQuantityChange}: OrderProductCardProps) {
+export function OrderProductCard({product, wholesalePrice, quantity, onQuantityChange}: OrderProductCardProps) {
   const {title, featuredImage, variant} = product;
-  const isDisabled = !variant.availableForSale;
+  const isDisabled = !variant.availableForSale || !wholesalePrice;
 
   return (
     <article
@@ -44,17 +45,30 @@ export function OrderProductCard({product, quantity, onQuantityChange}: OrderPro
       <div className={cn('flex flex-col gap-1')}>
         <h2 className={cn('text-base font-medium text-[--text-primary]')}>{title}</h2>
         <p className={cn('text-sm text-[--text-muted]')}>
-          <Money data={variant.price} /> {wholesaleContent.order.pricePerUnit}
+          {wholesalePrice ? (
+            <><Money data={wholesalePrice} /> {wholesaleContent.order.pricePerUnit}</>
+          ) : (
+            <span id={`price-unavailable-${variant.id}`}>{wholesaleContent.order.priceOnRequest}</span>
+          )}
         </p>
       </div>
 
-      {isDisabled && <p className={cn('text-sm text-[--text-muted]')}>{wholesaleContent.order.productUnavailable}</p>}
+      {isDisabled && (
+        <p id={`status-unavailable-${variant.id}`} className={cn('text-sm text-[--text-muted]')}>
+          {wholesaleContent.order.productUnavailable}
+        </p>
+      )}
 
       <QuantitySelector
         value={quantity}
         onChange={(qty) => onQuantityChange(variant.id, qty)}
         productName={title}
         disabled={isDisabled}
+        aria-describedby={
+          isDisabled 
+            ? (!wholesalePrice ? `price-unavailable-${variant.id}` : `status-unavailable-${variant.id}`)
+            : undefined
+        }
       />
     </article>
   );

@@ -7,6 +7,7 @@ type WholesaleVariant = WholesaleProductFieldsFragment['variants']['nodes'][0];
 
 type SummaryProduct = Omit<WholesaleProductFieldsFragment, 'variants'> & {
   variant: WholesaleVariant;
+  wholesalePrice: WholesaleVariant['price'] | null;
 };
 
 export interface OrderSummaryProps {
@@ -21,17 +22,19 @@ export function OrderSummary({products, quantities, onCheckout, isLoading = fals
   const {summary} = wholesaleContent.order;
 
   const selectedItems = products
-    .filter((p) => (quantities[p.variant.id] ?? 0) > 0)
+    .filter((p) => (quantities[p.variant.id] ?? 0) > 0 && p.wholesalePrice)
     .map((p) => {
       const qty = quantities[p.variant.id];
-      const lineAmount = (parseFloat(p.variant.price.amount) * qty).toFixed(2);
+      const parsedAmount = parseFloat(p.wholesalePrice!.amount);
+      const safeAmount = Number.isNaN(parsedAmount) ? 0 : parsedAmount;
+      const lineAmount = (safeAmount * qty).toFixed(2);
       return {
         id: p.id,
         title: p.title,
         quantity: qty,
         lineTotal: {
           amount: lineAmount,
-          currencyCode: p.variant.price.currencyCode,
+          currencyCode: p.wholesalePrice!.currencyCode,
         },
       };
     });

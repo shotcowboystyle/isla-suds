@@ -1,5 +1,5 @@
 .section-wrapper {
-  background-color: var(--color-primary);
+  /* background-color: var(--color-primary); */
   min-height: 100vh;
 }
 
@@ -19,16 +19,18 @@
   display: flex;
   height: 40vh;
   place-self: center;
-  margin-top: 14vh;
+  /* margin-top: 14vh; */
 }
 @media (min-width: 480px) {
   .image-wrapper {
     position: fixed;
     inset: 0;
+    /* top: 50%;
+    transform: translateY(-50%); */
     margin-top: 0;
   }
 }
-@media (min-width: 992px) {
+@media screen and (min-width: 992px) {
   .image-wrapper {
     height: 20vw;
   }

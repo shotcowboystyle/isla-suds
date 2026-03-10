@@ -52,7 +52,7 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
   const {cartDrawerOpen, setCartDrawerOpen} = useExplorationStore();
   const cart = useOptimisticCart(originalCart);
 
-  const isLoading = !originalCart;
+  const isLoading = false;
   const itemCount = cart?.lines?.nodes?.length ?? 0;
   const subtotal = cart?.cost?.subtotalAmount;
   const [liveMessage, setLiveMessage] = React.useState('');

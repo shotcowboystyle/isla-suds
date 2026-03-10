@@ -6,7 +6,15 @@
   flex-flow: column;
   justify-content: space-between;
   display: flex;
+  align-items: center;
   padding: 24px 16px;
+}
+@media screen and (min-width: 768px) {
+  .brand-core-card {
+    padding-block: 2vw;
+    padding-inline: 1vw;
+    height: 24vw;
+  }
 }
 
 .title-wrapper {
@@ -14,12 +22,12 @@
   justify-content: center;
   align-items: center;
   display: flex;
-  margin-bottom: 4rem;
+  /* margin-bottom: 4rem; */
 }
 @media screen and (min-width: 480px) {
-  .title-wrapper {
+  /* .title-wrapper {
     margin-bottom: 3rem;
-  }
+  } */
 }
 @media screen and (min-width: 768px) {
   .title-wrapper {
@@ -65,18 +73,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
   color: var(--color-dark-brown);
 }
 @media screen and (min-width: 480px) {
-  .icon-wrapper {
+  /* .icon-wrapper {
     margin-bottom: 1.5rem;
-  }
+  } */
 }
 @media screen and (min-width: 768px) {
-  .icon-wrapper {
+  /* .icon-wrapper {
     margin-bottom: 0;
-  }
+  } */
+}
+
+.icon-wrapper svg {
+  height: 12vw;
+  width: auto;
 }
 
 .paragraph {

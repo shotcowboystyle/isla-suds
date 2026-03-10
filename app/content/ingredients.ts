@@ -40,8 +40,8 @@ export const INGREDIENTS: IngredientItem[] = [
     },
     startingPositions: {
       top: 'auto',
-      bottom: '12.5vw',
-      left: '-13.5vw',
+      bottom: '20.5vw',
+      left: '-12.5vw',
     },
   },
   {
@@ -60,7 +60,7 @@ export const INGREDIENTS: IngredientItem[] = [
     },
     startingPositions: {
       top: 'auto',
-      bottom: '42.5vw',
+      bottom: '49.5vw',
       left: '-0.5vw',
     },
   },
@@ -74,14 +74,14 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Droplet,
     startingPositionsMobile: {
-      top: '4vw',
+      top: '-6vw',
       left: 'auto',
-      right: '24.5vw',
+      right: '64vw',
     },
     startingPositions: {
-      top: '42vw',
+      top: '25vw',
       left: 'auto',
-      right: '-15.5vw',
+      right: '-3.5vw',
     },
   },
   {
@@ -94,14 +94,14 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Circle,
     startingPositionsMobile: {
-      bottom: '40vw',
+      top: '4vw',
       left: 'auto',
       right: '24.5vw',
     },
     startingPositions: {
-      bottom: '40vw',
+      top: '37vw',
       left: 'auto',
-      right: '-15.5vw',
+      right: '-13.5vw',
     },
   },
   {
@@ -118,8 +118,8 @@ export const INGREDIENTS: IngredientItem[] = [
       left: '50.5vw',
     },
     startingPositions: {
-      top: '37vw',
-      left: '-3.5vw',
+      top: '32vw',
+      left: '-4vw',
     },
   },
   {
@@ -136,8 +136,8 @@ export const INGREDIENTS: IngredientItem[] = [
       left: '42vw',
     },
     startingPositions: {
-      top: '47vw',
-      left: '9vw',
+      top: '43vw',
+      left: '8vw',
     },
   },
   {
@@ -150,14 +150,14 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Flower,
     startingPositionsMobile: {
-      top: '-6vw',
+      bottom: '40vw',
       left: 'auto',
-      right: '64vw',
+      right: '24.5vw',
     },
     startingPositions: {
-      top: '42vw',
+      top: '23vw',
       left: 'auto',
-      right: '9vw',
+      right: '-0.5vw',
     },
   },
 ];

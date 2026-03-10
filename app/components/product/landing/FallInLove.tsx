@@ -12,7 +12,11 @@ import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './FallInLove.module.css';
 
-export function FallInLove() {
+interface FallInLoveProps {
+  color: string;
+}
+
+export function FallInLove({color}: FallInLoveProps) {
   const SECTION_CONTENT = [
     {
       id: 1,
@@ -114,7 +118,9 @@ export function FallInLove() {
         ease: 'none',
         scrollTrigger: {
           trigger: sectionCircle.current,
+          // start: 'top bottom-=' + 0.06 * windowWidth,
           start: 'top bottom-=' + 0.06 * windowWidth,
+          end: '+=500',
           scrub: !0,
         },
       });
@@ -133,7 +139,7 @@ export function FallInLove() {
       const horizontalScrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionCircle.current,
-          start: 'top top',
+          start: 'top +=200',
           end: `+=${windowInnerWidth * 3}`,
           scrub: 1.5,
           pin: true,
@@ -151,8 +157,11 @@ export function FallInLove() {
 
   return (
     <div className={styles['section-wrapper']}>
+      <div className="lg-circle-section cir-top">
+        <div className="lg-circle cir-top bg-secondary"></div>
+      </div>
       <div ref={sectionCircle} className={styles['section-circle']}>
-        <svg
+        {/* <svg
           ref={sectionArc}
           className={styles['arc']}
           width="1517"
@@ -161,8 +170,8 @@ export function FallInLove() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M0 92.0674C528.5 -28.9327 977.5 -32.4328 1516.5 92.0674H0Z" fill="#FEF7E6"></path>
-        </svg>
+          <path d="M0 92.0674C528.5 -28.9327 977.5 -32.4328 1516.5 92.0674H0Z" className="fill-milk"></path>
+        </svg> */}
 
         <div ref={innerCircle} className={styles['inner-circle']}>
           <div className={styles['circle']}>
@@ -288,8 +297,6 @@ export function FallInLove() {
           </div>
         </div>
       </div>
-
-      <div className="bg-red size-[200px] absolute -bottom-[100px] left-50% translate-x-[-50%]">Box</div>
     </div>
   );
 }

@@ -9,43 +9,27 @@ import {cn} from '~/utils/cn';
  * when the shopping cart has no items.
  */
 export function EmptyCart() {
-  const setCartDrawerOpen = useExplorationStore(
-    (state) => state.setCartDrawerOpen,
-  );
+  const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
 
   const handleExplore = () => {
     setCartDrawerOpen(false); // Close drawer before navigation
   };
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-center',
-        'h-full p-6 text-center',
-        'space-y-6',
-      )}
-    >
-      <p
-        className={cn(
-          'text-[var(--text-primary)]',
-          'text-lg sm:text-xl',
-          'max-w-sm',
-        )}
-      >
-        {CART_MESSAGES.empty}
-      </p>
+    <div className={cn('flex flex-col items-center justify-center', 'h-full p-6 text-center', 'space-y-6')}>
+      <p className={cn('text-(--text-primary)', 'text-lg sm:text-xl', 'max-w-sm')}>{CART_MESSAGES.empty}</p>
       <Link
-        to="/"
+        to="/collections/all"
         onClick={handleExplore}
         className={cn(
           'inline-flex items-center justify-center',
-          'bg-[var(--accent-primary)] text-white',
-          'hover:bg-[var(--accent-primary)]/90 active:bg-[var(--accent-primary)]/80',
+          'bg-(--accent-primary) text-white',
+          'hover:bg-(--accent-primary)/90 active:bg-(--accent-primary)/80',
           'rounded px-6 h-11',
           'w-full sm:w-auto',
           'transition-colors',
           'font-medium',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)]',
+          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-(--accent-primary)',
         )}
         aria-label="Explore the Collection, closes cart"
       >

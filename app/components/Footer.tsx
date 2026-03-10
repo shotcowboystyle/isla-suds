@@ -87,6 +87,7 @@ function FooterMenu({
 }) {
   const classes =
     'transition-colors inline-block text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-secondary)] focus-visible:ring-offset-2 transition duration-300';
+  const location = useLocation();
 
   return (
     <nav className={styles['links-grid']} role="navigation" aria-label="Footer navigation">
@@ -103,6 +104,16 @@ function FooterMenu({
           (primaryDomainUrl && item.url.includes(primaryDomainUrl));
         const url = hasAbsoluteUrl ? new URL(item.url, primaryDomainUrl || 'https://localhost').pathname : item.url;
         const isExternal = !url.startsWith('/');
+
+        let isActive = false;
+        if (url === '/') {
+          isActive = location.pathname === '/';
+        } else if (url.startsWith('/collections')) {
+          isActive = location.pathname.startsWith('/collections') || location.pathname.startsWith('/products');
+        } else {
+          isActive = location.pathname.startsWith(url);
+        }
+
         return isExternal ? (
           <a
             href={url}
@@ -119,7 +130,10 @@ function FooterMenu({
             end
             key={item.id}
             prefetch="intent"
-            style={activeLinkStyle}
+            style={({isPending}) => ({
+              fontWeight: isActive ? 'bold' : undefined,
+              color: isPending ? 'var(--color-neutral-400)' : 'var(--color-secondary)',
+            })}
             to={url}
           >
             {item.title}
@@ -213,10 +227,3 @@ const FALLBACK_FOOTER_POLICIES = {
     },
   ],
 };
-
-function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'var(--color-neutral-400)' : 'var(--color-secondary)',
-  };
-}

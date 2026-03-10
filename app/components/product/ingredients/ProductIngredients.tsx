@@ -36,43 +36,48 @@ export function ProductIngredients() {
         delay: 0.5,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%',
+          start: 'top top',
         },
       });
 
       revealTl
         .from(circleLargeRef.current, {
-          duration: 1,
-          scale: 0.8,
-          stagger: 0.5,
-          ease: 'circ.inOut',
-          scrub: true,
+          duration: 0.7,
+          scale: 0,
+          stagger: 0.15,
+          ease: 'power1.out',
         })
         .from(
           circleMidRef.current,
           {
-            duration: 1,
-            scale: 0.8,
-            ease: 'circ.inOut',
-            scrub: true,
+            duration: 0.7,
+            scale: 0,
+            ease: 'power1.out',
           },
-          '<',
+          '-=1.1',
         )
         .from(
           circleCenterRef.current,
           {
-            duration: 1,
-            scale: 0.8,
-            ease: 'circ.inOut',
-            scrub: true,
+            duration: 0.7,
+            scale: 0,
+            ease: 'power1.out',
           },
-          '<',
+          '-=0.55',
         )
         // use the shortcut string syntax or call the util methods in a tween
+        .from(
+          '[data-product-item-wrapper]',
+          {
+            opacity: 0,
+            stagger: 0.035,
+          },
+          '>',
+        )
         .to(
           '[data-product-item-wrapper]',
           {
-            x: 'random(-5, 5, 0.25)',
+            x: 'random(-10, 25, 0.55)',
             repeat: -1,
             repeatRefresh: true,
             duration: 1,
@@ -94,7 +99,7 @@ export function ProductIngredients() {
 
       <div className={cn(styles['container-click-ingredients'])}>
         <div className={cn(styles['ingredient-click-main'])}>
-          <div ref={circleLargeRef} className={cn(styles['circle-large'])}>
+          <div data-animated-circle ref={circleLargeRef} className={cn(styles['circle-large'])}>
             {ingredientsGroup2Ref.current?.map((ingredient, index) => (
               <FloatingIngredientButton
                 key={ingredient.id}
@@ -102,11 +107,12 @@ export function ProductIngredients() {
                 groupIndex={2}
                 itemIndex={index + 1}
                 isActive={activeIngredientId === ingredient.id}
+                isAnyActive={!!activeIngredientId}
                 onClick={() => setActiveIngredientId(ingredient.id)}
               />
             ))}
 
-            <div ref={circleMidRef} className={cn(styles['circle-mid'])}>
+            <div data-animated-circle ref={circleMidRef} className={cn(styles['circle-mid'])}>
               {ingredientsGroup1Ref.current?.map((ingredient, index) => (
                 <FloatingIngredientButton
                   key={ingredient.id}
@@ -114,14 +120,16 @@ export function ProductIngredients() {
                   groupIndex={1}
                   itemIndex={index + 1}
                   isActive={activeIngredientId === ingredient.id}
+                  isAnyActive={!!activeIngredientId}
                   onClick={() => setActiveIngredientId(ingredient.id)}
                 />
               ))}
             </div>
 
-            <div ref={circleCenterRef} className={cn(styles['circle-center'])}>
+            <div data-animated-circle ref={circleCenterRef} className={cn(styles['circle-center'])}>
               <IngredientContent activeIngredientId={activeIngredientId} />
             </div>
+
             <IngredientContentCloseButton isActive={!!activeIngredientId} onClick={() => setActiveIngredientId(null)} />
           </div>
         </div>

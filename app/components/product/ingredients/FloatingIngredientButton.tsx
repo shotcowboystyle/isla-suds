@@ -1,3 +1,6 @@
+import {useRef} from 'react';
+import {useGSAP} from '@gsap/react';
+import gsap from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './FloatingIngredientButton.module.css';
@@ -8,6 +11,7 @@ interface FloatingIngredientButtonProps {
   groupIndex?: number;
   itemIndex?: number;
   isActive?: boolean;
+  isAnyActive?: boolean;
   onClick?: () => void;
 }
 
@@ -16,12 +20,35 @@ export function FloatingIngredientButton({
   groupIndex,
   itemIndex,
   isActive,
+  isAnyActive,
   onClick,
 }: FloatingIngredientButtonProps) {
   const {isMobile} = useIsMobile();
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!itemRef.current) return;
+
+    if (isAnyActive && !isActive) {
+      gsap.to(itemRef.current, {
+        autoAlpha: 0,
+        scale: 0.5,
+        duration: 0.4,
+        ease: 'power2.inOut',
+      });
+    } else {
+      gsap.to(itemRef.current, {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: 'back.out(1.5)',
+      });
+    }
+  }, [isActive, isAnyActive]);
 
   return (
     <div
+      ref={itemRef}
       data-product-item-wrapper
       className={cn(styles['ingredient-item-wrapper'], 'animated-item', isActive && 'is-active')}
       style={isMobile ? {...ingredient.startingPositionsMobile} : {...ingredient.startingPositions}}
