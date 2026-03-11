@@ -34,7 +34,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 - Product Browsing (FR1-4): Display 4 soap products with images, names, and wholesale pricing on a single order page
 - Order Building (FR5-10): Quantity selectors starting at 0, increment/decrement and direct input, running order summary with line totals and subtotal, instant UI updates
 - Order Validation (FR11-15): MOQ 6 per product, inline validation for quantities 1-5, checkout button disabled until at least one valid product, server-side validation before cart creation
-- Order Submission (FR16-19): Cart creation with buyer identity, Shopify checkout redirect, wholesale pricing applied via B2B price list
+- Order Submission (FR16-19): Cart creation with buyer identity, Shopify checkout redirect, 20% automatic discount via Shopify Functions app when `wholesale` customer tag detected
 - Navigation & Access (FR20-23): "Place New Order" CTA on dashboard, "New Order" in header nav, B2B auth-protected
 - Product Availability (FR24-25): Unavailable products shown but disabled
 - Error Handling (FR26-27): Cart creation failure messaging with quantity preservation
@@ -42,9 +42,9 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 **Non-Functional Requirements (18 total):**
 
 - Performance: <2.5s LCP, <50ms order summary updates, <3s cart creation + redirect, no new heavy dependencies
-- Security: B2B auth on every request, server-side quantity validation, prices exclusively via Shopify buyer identity (no client-side price logic)
+- Security: B2B auth on every request, server-side quantity validation, wholesale unit prices from variant metafields (`wholesale.price`); checkout discount via Shopify Functions
 - Accessibility: WCAG 2.1 AA, keyboard-operable quantity selectors, aria-live validation announcements, 44x44px touch targets
-- Integration: Storefront API with buyer identity context, same cart creation pattern as reorder flow, Shopify-hosted checkout
+- Integration: Storefront API with variant metafield for wholesale price display, same cart creation pattern as reorder flow, Shopify-hosted checkout
 - UX Tone: Non-aggressive validation ("Minimum order is 6 units"), warm error recovery ("Something went wrong. Your order is safe — let's try again."), subtle loading states (button state change, not spinners)
 
 **Scale & Complexity:**
@@ -57,7 +57,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 
 - **Existing wholesale auth guards** — route must use the same B2B verification pattern as other `/wholesale/*` routes
 - **Hydrogen Cart Context** — cart creation must use `context.cart.create()` with buyer identity, matching the reorder flow
-- **Storefront API buyer identity** — wholesale prices returned only when products are queried with authenticated buyer identity context
+- **Storefront API variant metafields** — wholesale prices from `wholesale.price` metafield; buyerIdentity still needed for Shopify Functions discount at checkout
 - **Bundle budget <200KB** — no new heavy dependencies; this page is form inputs and a summary, not animation-heavy
 - **No Framer Motion, no Lenis** — B2B portal uses native scroll and no animations per established dual-audience architecture
 - **Content centralization** — all user-facing copy must live in `app/content/wholesale.ts`, not hardcoded in components
@@ -110,9 +110,9 @@ This feature is built within the existing Isla Suds Shopify Hydrogen codebase. A
 
 **Decision: Storefront API with product handles + buyer identity**
 - Rationale: 4 known products, no catalog browsing needed. Explicit handles are predictable and testable.
-- Loader queries products by handle via `context.storefront.query()` with buyer identity context to surface wholesale pricing
+- Loader queries products by handle, extracts `wholesale.price` variant metafield, and maps to MoneyV2 for display. buyerIdentity still passed on cart creation for Shopify Functions tag detection
 - Variant IDs extracted in loader and passed to client alongside product data (each soap = single variant)
-- Prices are NEVER computed or stored client-side — Shopify B2B price list is the sole source of truth (NFR7)
+- Prices are NEVER computed client-side — `wholesale.price` variant metafield is the display price source; checkout discount applied by Shopify Functions (NFR7)
 - Affects: Route loader, GraphQL query design
 
 **Decision: React useState for quantity state**
@@ -137,8 +137,8 @@ This feature is built within the existing Isla Suds Shopify Hydrogen codebase. A
 ### API & Communication Patterns
 
 **Decision: New Storefront API GraphQL query for wholesale products**
-- Query fetches products by handle with fields: id, title, handle, featuredImage, variants(first: 1) { id, price, availableForSale }
-- Buyer identity context applied at query level to surface B2B pricing
+- Query fetches products by handle with fields: id, title, handle, featuredImage, variants(first: 1) { id, price, availableForSale, metafield(namespace: "wholesale", key: "price") { value type } }
+- Variant metafield fetched for wholesale price display; buyerIdentity passed on cart creation (not on product query)
 - Query lives in `app/graphql/product/WholesaleProducts.ts` (new file, follows existing graphql directory pattern)
 - Limit: explicit `first: 1` on variants since each soap has a single variant
 - Affects: Route loader, codegen types
@@ -268,8 +268,9 @@ fetcher.submit(formData, { method: 'POST' });
 #### Price Display
 
 ```typescript
-// ✅ Correct: Use Shopify's Money type directly from API response
+// ✅ Correct: Wholesale price from `wholesale.price` variant metafield, mapped in loader to MoneyV2
 // Display using Intl.NumberFormat or Hydrogen's <Money> component
+// Show "Price on request" fallback when metafield missing
 // Prices come from the loader — never computed client-side
 
 // ❌ Wrong: Parse price strings and do math client-side
@@ -327,7 +328,7 @@ useEffect(() => {
 
 | Anti-Pattern | Why It's Wrong | Do This Instead |
 |-------------|----------------|-----------------|
-| Client-side price calculation | Wholesale prices must come from Shopify B2B (NFR7) | Display prices from loader data only |
+| Client-side price calculation | Wholesale prices from `wholesale.price` metafield via loader (NFR7) | Display prices from loader data only |
 | `useNavigate()` for checkout | Shopify checkout is an external URL | `window.location.href` |
 | Zustand for quantities | Page-local state, doesn't cross boundaries | `useState` in route component |
 | New CSS module file for order page | B2B portal uses Tailwind directly | `cn()` with Tailwind classes |
@@ -435,8 +436,8 @@ The `wholesale.tsx` layout loader is the auth gate. The order page route is a ch
 ### Integration Points
 
 **Storefront API (loader):**
-- Query: `WHOLESALE_PRODUCTS_QUERY` with buyer identity
-- Returns: product data with wholesale pricing
+- Query: `WHOLESALE_PRODUCTS_QUERY` with `wholesale.price` variant metafield
+- Returns: product data with wholesale pricing from metafield (mapped to MoneyV2 in loader)
 - Cache: default (not `CacheLong` — prices could change)
 
 **Cart API (action):**
@@ -472,11 +473,9 @@ The `wholesale.tsx` layout loader is the auth gate. The order page route is a ch
 
 **QuantitySelector step attribute:** Changed from `step={6}` to `step={1}`. MOQ 6 is a minimum threshold, not an increment. Partners can order 7, 12, 18 — any quantity >= 6. The +/- buttons increment by 1.
 
-### Implementation Risk: Storefront API Buyer Identity
+### Implementation Risk: Storefront API Buyer Identity — **RESOLVED**
 
-The order page is the first wholesale route to query the Storefront API for products with B2B pricing. The reorder flow uses Customer Account API (order history), not Storefront API (product catalog). The mechanism for passing buyer identity to Storefront API queries to surface wholesale pricing should be verified as the first implementation task — before building any UI components. This aligns with the PRD risk mitigation strategy.
-
-**Recommended first task:** Write a standalone loader test that queries the Storefront API with buyer identity and confirms wholesale prices are returned correctly.
+The Storefront API buyer identity mechanism for wholesale pricing has been replaced by the variant metafield approach. Implemented and verified in CC-1. The `wholesale.price` variant metafield is fetched in the loader and mapped to MoneyV2 for display. buyerIdentity is still passed on cart creation for Shopify Functions tag detection at checkout. The Shopify Functions discount app (`isla-suds-wholesale-discount`) applies a 20% automatic discount when the `wholesale` customer tag is detected. Metafield + Shopify Functions approach confirmed working.
 
 ### Architecture Completeness Checklist
 
