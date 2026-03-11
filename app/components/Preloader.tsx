@@ -1,8 +1,4 @@
 import {useEffect, useRef, useState} from 'react';
-import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
-import {cn} from '~/utils/cn';
-import {LogoStackedBubbles} from './LogoStackedBubbles';
 import styles from './Preloader.module.css';
 
 interface PreloaderProps {
@@ -11,385 +7,82 @@ interface PreloaderProps {
   onComplete?: () => void;
 }
 
-// Animated bubbles constants
-const INITIAL_STATE = {
-  backgroundColor: '#fff',
-  border: 'initial',
-  top: '48px',
-  left: '40px',
-};
-
-const TRANSPARENT_STATE = {
-  backgroundColor: 'transparent',
-  border: '2px dotted #fff',
-  transform: 'translate(5px, 5px)',
-  width: '10px',
-  height: '10px',
-};
-
-const SCALE_OPACITY = {
-  transform: 'translate(5px, 5px) scale(1.5)',
-  opacity: 0,
-};
-
-const BUBBLES_CONFIGS = [
-  {
-    id: '.bubble1',
-    duration: 1,
-    step1Duration: 0.4,
-    step1Left: '-10px',
-    step2Duration: 0.2,
-    step2Top: '44px',
-    step2Left: '-30px',
-    step3Duration: 0.4,
-    step3Top: '24px',
-    step3Left: '-60px',
-  },
-  {
-    id: '.bubble2',
-    duration: 1,
-    step1Duration: 0.3,
-    step1Left: '10px',
-    step2Duration: 0.3,
-    step2Top: '-10px',
-    step2Left: '0px',
-    step3Duration: 0.4,
-    step3Top: '-40px',
-    step3Left: '-30px',
-  },
-  {
-    id: '.bubble3',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '0px',
-    step2Duration: 0.5,
-    step2Top: '24px',
-    step2Left: '-30px',
-  },
-  {
-    id: '.bubble4',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '360px',
-    step2Duration: 0.5,
-    step2Top: '14px',
-    step2Left: '380px',
-    step3Duration: 0.5,
-    step3Top: '-40px',
-    step3Left: '380px',
-  },
-  {
-    id: '.bubble5',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '300px',
-    step2Duration: 0.5,
-    step2Top: '-20px',
-    step2Left: '300px',
-    step3Duration: 0.5,
-    step3Top: '-43px',
-    step3Left: '280px',
-  },
-  {
-    id: '.bubble6',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '320px',
-    step2Duration: 0.5,
-    step2Top: '0px',
-    step2Left: '350px',
-  },
-  {
-    id: '.bubble7',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '325px',
-    step2Duration: 0.5,
-    step2Top: '0px',
-    step2Left: '310px',
-  },
-  {
-    id: '.bubble8',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '320px',
-    step2Duration: 0.5,
-    step2Top: '-34px',
-    step2Left: '350px',
-  },
-  {
-    id: '.bubble9',
-    duration: 1,
-    step1Duration: 0.5,
-    step1Left: '305px',
-    step2Duration: 0.5,
-    step2Top: '-18px',
-    step2Left: '438px',
-  },
+/**
+ * Individual SVG letter paths extracted from LogoStackedBubbles.
+ * Top row: I-S-L-A, Bottom row: S-U-D-S
+ */
+const LETTERS = [
+  {id: 'i1', d: 'M8.09 108.95c-2.037-.177-2.554-2.493-2.138-4.162.508-2.817 1.495-5.536 1.772-8.4C8.75 88.1 8.71 79.66 7.545 71.39c-.296-2.723-1.354-5.292-1.675-8.005-.41-2.071 1.848-2.905 3.516-2.885 3.16-.158 6.356-.27 9.503.122 2.246.004 2.804 2.447 2.118 4.189-.783 2.944-1.688 5.872-1.949 8.925-.843 8.038-.745 16.206.512 24.195.332 2.892 1.771 5.57 1.804 8.499-.012 2.08-2.399 2.532-4.044 2.611-3.075.168-6.168.097-9.24-.09'},
+  {id: 's1', d: 'M37.873 109.497c-4.168-.499-8.748-1.777-11.361-5.312-1.596-2.16-1.876-5.731.47-7.482 2.703-2.097 7.133-.994 8.53 2.14 1.487 3.152 5.61 5.144 8.89 3.601 2.188-.998 2.804-4.577.628-5.915-3.737-2.352-8.25-3-12.083-5.177-3.233-1.706-6.597-4.357-7.016-8.245-.324-4.209 2.26-8.367 6.022-10.201 5.169-2.612 11.361-2.956 16.905-1.424 3.025.881 6.36 2.774 7.021 6.122.585 2.403-.866 5.182-3.405 5.638-2.66.654-5.447-.97-6.596-3.377-1.715-2.719-6.118-3.907-8.483-1.386-1.403 1.442-.956 3.934.903 4.735 5.093 2.914 11.461 3.196 16.041 7.079 2.797 2.457 3.215 6.6 2.63 10.062-.814 4.373-4.727 7.426-8.855 8.503-3.32.94-6.83 1.01-10.24.64'},
+  {id: 'l1', d: 'M63.24 108.723c-2.239-.364-2.407-3.095-1.759-4.826 1.52-4.97 1.547-10.21 1.758-15.357.109-6.91.258-13.868-.65-20.735-.419-2.46-1.548-5.009-.79-7.508 1.087-2.202 3.866-2.484 5.946-3.24 1.829-.398 4.111-1.518 5.78-.169 1.31 1.903.807 4.394.803 6.566-.431 5.357-.93 10.716-.839 16.097.084 7.33.26 14.711 1.55 21.944.336 2.046 1.819 4.313.526 6.3-1.401 1.537-3.734 1.055-5.601 1.283-2.237.014-4.53.142-6.724-.355'},
+  {id: 'a1', d: 'M87.984 109.051c-3.91-1.004-7.313-4.21-7.885-8.306-.684-4.174.495-9.014 4.204-11.446 4.71-3.125 10.561-3.246 16.011-3.517 2.157.327 3.602-1.6 2.55-3.545-.389-2.394-2.118-4.684-4.648-5.006-2.815-.55-5.596 1.485-6.264 4.2-1.774 3.812-8.33 3.874-10.036-.02-1.07-2.9.62-6.066 3.085-7.65 4.644-3.08 10.55-3.732 15.973-2.996 4.36.628 9.114 2.729 10.824 7.093 1.656 4.312 1.488 9.03 1.778 13.568.242 2.964-.004 6.11 1.231 8.883.973 1.541 2.729 2.807 2.64 4.832-.08 2.952-3.357 4.444-5.958 4.258-2.935-.088-6.053-1.683-7.163-4.511-1.09-.22-2.486 2.13-3.865 2.58-3.745 2.043-8.343 2.69-12.477 1.583m11.043-7.515c2.635-1.025 3.929-3.89 3.962-6.576.703-2.412-1.894-3.729-3.933-3.568-3.145-.022-6.866 1.127-8.208 4.245-1.24 2.65.79 5.738 3.488 6.346 1.551.436 3.238.222 4.69-.447'},
+  {id: 's2', d: 'M13.757 168.319c-4.991-.74-10.356-2.964-12.863-7.613-1.67-3.04-1.076-7.744 2.435-9.197 3.235-1.452 6.983.721 8.26 3.812 2.01 4.466 7.964 7.182 12.446 4.766 3.13-1.722 3.48-6.946.29-8.801-4.45-2.817-9.84-3.585-14.372-6.261-4.253-2.293-8.501-5.969-8.951-11.086-.375-4.9 2.233-9.924 6.6-12.253 6.094-3.366 13.596-3.787 20.219-1.868 3.836 1.141 7.95 3.766 8.561 8.048.588 2.975-1.152 6.546-4.404 6.902-3.159.499-5.887-1.96-6.908-4.763-2.01-3.983-8.018-5.737-11.458-2.582-2.166 2.1-2.007 6.317.835 7.779 5.459 3.19 12.007 4.005 17.284 7.585 3.375 2.037 5.76 5.654 5.94 9.633.624 4.978-1.53 10.274-5.847 12.978-5.288 3.461-11.986 3.765-18.067 2.92'},
+  {id: 'u1', d: 'M55.504 168.35c-3.807-.547-7.795-2.24-9.708-5.778-2.6-4.804-2.716-10.427-3.004-15.753-.17-3.638-.438-7.276-1.049-10.868-.274-1.86.093-4.26 2.122-4.963 2.416-.844 5.068-.786 7.583-.537 2.11.165 2.66 2.505 2.552 4.256-.147 6.445-1.706 12.952-.341 19.367.47 2.539 2.144 5.213 4.913 5.556 2.357.518 4.969-.55 6.066-2.75 2.033-3.931 1.818-8.537 1.578-12.83-.148-3.424-1.077-6.778-1.046-10.208-.148-2.104 1.935-3.247 3.783-3.275 2.413-.169 4.999-.614 7.3.343 1.912 1.026 1.45 3.536 1.304 5.318-.537 5.68-.813 11.38-1.277 17.062-.567 4.988-2.428 10.352-6.848 13.187-4.095 2.65-9.28 2.647-13.928 1.873'},
+  {id: 'd1', d: 'M94.547 168.338c-6.557-1.279-10.954-7.435-12.179-13.703-1.244-6.199-.227-13.013 3.358-18.284 4.002-5.777 12.32-8.469 18.69-5.092 1.499 1.522 4 2.03 3.402-.943.017-3.358-1.55-6.532-1.367-9.884.374-2.862 3.701-3.579 6.012-4.219 2.029-.387 4.738-1.49 6.336.357 1.238 2.616.218 5.61.098 8.36-.97 10.556-1.41 21.259.044 31.791.213 2.77 1.601 5.303 1.72 8.07.151 2.218-2.098 3.528-4.073 3.509-2.412.06-5.687.232-6.978-2.278-.3-1.433-1.305-2.689-2.36-.891-3.324 3.144-8.307 4.076-12.703 3.207m9.277-9.02c3.418-2.187 4.114-6.71 4.1-10.46-.155-3.654-.97-7.906-4.17-10.135-2.817-1.784-6.58-.447-8.373 2.163-3.232 4.389-3.623 10.741-1.047 15.521 1.857 3.156 6.178 4.866 9.49 2.912'},
+  {id: 's3', d: 'M135.657 168.403c-4.08-.613-8.475-2.394-10.582-6.16-1.27-2.154-.795-5.314 1.484-6.588 2.785-1.77 6.968-.654 8.28 2.446 1.274 2.454 4.116 4.306 6.928 3.506 1.581-.493 3.864-1.4 3.832-3.37-.543-2.052-2.751-2.981-4.47-3.883-4.159-1.79-8.672-2.993-12.292-5.836-2.514-1.814-4.35-4.89-3.781-8.067.46-3.46 2.614-6.604 5.718-8.216 5.14-2.753 11.407-3.144 16.973-1.553 3.206.939 6.64 3.126 7.154 6.699.535 2.328-1.24 4.688-3.575 5.016-2.494.567-5.246-.722-6.332-3.057-1.616-2.54-5.46-4.013-8.048-2.06-1.648 1.393-1.488 4.485.588 5.399 4.915 2.505 10.78 2.903 15.274 6.292 2.522 1.822 3.268 5.093 3.176 8.042.14 4.059-2.293 7.968-5.94 9.724-4.404 2.251-9.59 2.318-14.387 1.666'},
 ];
 
-function generateBubbleKeyframes(params: any) {
-  const keyframes = [];
-
-  // Add initial state
-  keyframes.push({
-    duration: params.duration,
-    ...INITIAL_STATE,
-  });
-
-  // Add animation steps
-  keyframes.push({
-    duration: params.step1Duration,
-    left: params.step1Left,
-  });
-  keyframes.push({
-    duration: params.step2Duration,
-    top: params.step2Top,
-    left: params.step2Left,
-  });
-  keyframes.push({
-    duration: params.step3Duration,
-    top: params.step3Top,
-    left: params.step3Left,
-  });
-
-  // Add transparent state
-  keyframes.push({
-    duration: 0,
-    ...TRANSPARENT_STATE,
-  });
-
-  // Add scale and opacity
-  keyframes.push({
-    duration: params.scaleDuration,
-    ...SCALE_OPACITY,
-  });
-
-  return keyframes;
-}
-
-// export function Preloader({initialDelay = 0, minDisplayTime = 250000, onComplete}: PreloaderProps) {
-export function Preloader({initialDelay = 0, minDisplayTime = 2500, onComplete}: PreloaderProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const appRef = useRef<HTMLDivElement>(null);
+export function Preloader({minDisplayTime = 2500, onComplete}: PreloaderProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [isPageLoaded, setIsPageLoaded] = useState(false);
-  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const [isPopping, setIsPopping] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
+  // Wait for page load + minimum display time, then trigger pop
   useEffect(() => {
-    // Check if window is already loaded
+    const startTime = Date.now();
+
+    const triggerPop = () => {
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, minDisplayTime - elapsed);
+
+      setTimeout(() => setIsPopping(true), remaining);
+    };
+
     if (document.readyState === 'complete') {
-      setIsPageLoaded(true);
+      triggerPop();
     } else {
-      const handleLoad = () => setIsPageLoaded(true);
+      const handleLoad = () => triggerPop();
       window.addEventListener('load', handleLoad);
       return () => window.removeEventListener('load', handleLoad);
     }
-  }, []);
+  }, [minDisplayTime]);
 
-  // Resume timeline when page is loaded
+  // After pop animation completes, hide overlay and signal parent
   useEffect(() => {
-    if (isPageLoaded && timelineRef.current) {
-      timelineRef.current.play();
-    }
-  }, [isPageLoaded]);
+    if (!isPopping) return;
 
-  useGSAP(
-    () => {
-      // 1. Responsive Scaling
-      const handleResize = () => {
-        // if (!containerRef.current) return;
-        // const windowWidth = window.innerWidth;
-        // const baseWidth = 300; // Visual width of the hand
-        // const targetWidth = windowWidth * 0.75; // Reduced width (was 0.9)
-        // // const targetWidth = windowWidth * 0.35; // Reduced width (was 0.9)
-        // // const maxScale = 10; // Allow it to scale up significantly on desktop
-        // const maxScale = 5; // Allow it to scale up significantly on desktop
-        // let scale = targetWidth / baseWidth;
-        // scale = Math.min(scale, maxScale);
-        // gsap.set(containerRef.current, {scale});
-      };
+    // Pop (0.7s) + stagger (0.35s) + overlay fade (0.4s at 0.7s delay) = ~1.2s total
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      onCompleteRef.current?.();
+    }, 1200);
 
-      handleResize();
-      window.addEventListener('resize', handleResize);
-
-      // 2. Main Timeline
-      const tl = gsap.timeline({
-        paused: false, // Start playing immediately
-        onComplete: () => {
-          // We do NOT hide it here yet, because the exit animation is part of the timeline
-          // Actually, the exit animation is at the end of the timeline
-        },
-      });
-
-      timelineRef.current = tl;
-
-      // Ensure initial state prevents FOUC
-      tl.set(containerRef.current, {yPercent: 100, autoAlpha: 1});
-      tl.set('.logo-wrapper', {y: 100, autoAlpha: 0});
-      tl.set('.bubble', {autoAlpha: 0, scale: 0.5});
-
-      // 2. Bathtub Entrance (The hand slides up)
-      tl.to(containerRef.current, {
-        yPercent: 0, // Fully viewable at bottom
-        duration: 1, // Slower to allow elastic bounce to be visible
-        ease: 'elastic.out(1, 0.5)',
-        delay: initialDelay / 1000 + 0.3, // 0.3s delay before starting
-      });
-
-      // 3. Logo Float Up (animate wrapper)
-      tl.to(
-        '.logo-wrapper',
-        {
-          y: -55, // Float up, but stay connected visually
-          startAt: {y: 20},
-          autoAlpha: 1,
-          duration: 1.2,
-          ease: 'elastic.out(1, 0.5)',
-        },
-        '-=0.5',
-      );
-
-      // Start bobbling and floating bubbles as the logo bounces out
-      tl.add(() => {
-        gsap.to('.logo-wrapper', {
-          y: -45, // Bobble between -55 and -45
-          duration: 1.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-
-        const bubbles = gsap.utils.toArray<HTMLElement>('.bubble');
-        bubbles.forEach((bubble) => {
-          gsap.to(bubble, {
-            y: -100 - gsap.utils.random(0, 100),
-            autoAlpha: 0,
-            scale: 1.5,
-            duration: gsap.utils.random(1.5, 3),
-            repeat: -1,
-            repeatDelay: gsap.utils.random(0.5, 1.5),
-            delay: gsap.utils.random(0, 0.3), // Short delay so they pop out as logo reaches top
-            ease: 'power1.out',
-            startAt: {y: -20, autoAlpha: 1, scale: 0.5},
-          });
-          gsap.to(bubble, {
-            x: '+=20',
-            duration: gsap.utils.random(0.5, 1),
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-          });
-        });
-      }, '-=0.8');
-
-      // Add a pause to the timeline to wait for content to load
-      tl.add(() => {
-        if (document.readyState !== 'complete') {
-          tl.pause();
-        }
-      });
-
-      // 5. Exit Animation - Sink downwards then fade background
-      tl.to(
-        containerRef.current,
-        {
-          yPercent: 100, // Sink back through the floor
-          duration: 0.8,
-          ease: 'power2.in',
-        },
-        `>${Math.max(0, minDisplayTime / 1000 - 2.5)}`, // Approx duration of previous animations
-      );
-
-      tl.to(appRef.current, {
-        autoAlpha: 0,
-        duration: 0.5,
-        ease: 'power1.out',
-      });
-
-      tl.call(() => {
-        setIsVisible(false);
-        if (onComplete) onComplete();
-      });
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        tl.kill();
-        gsap.killTweensOf('.logo-wrapper');
-        gsap.killTweensOf('.bubble');
-      };
-    },
-    {scope: appRef},
-  );
+    return () => clearTimeout(timer);
+  }, [isPopping]);
 
   if (!isVisible) return null;
 
   return (
     <div
-      ref={appRef}
-      className={styles.app}
-      style={{position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#292934'}}
+      className={`${styles.overlay}${isPopping ? ` ${styles.popping}` : ''}`}
+      role="status"
+      aria-label="Loading"
     >
-      <div className={styles.outerContainer}>
-        <div ref={containerRef} className={styles.container}>
-          <div className={cn(styles.deco, styles.d1)}></div>
-          <div className={cn(styles.deco, styles.d2)}></div>
-          <div className={cn(styles.deco, styles.d3)}></div>
-          <div className={cn(styles.deco, styles.d4)}></div>
-          <div className={cn(styles.deco, styles.d5)}></div>
-          <div className={cn(styles.deco, styles.d6)}></div>
-          <div className={cn(styles.deco, styles.d7)}></div>
-          <div className={cn(styles.deco, styles.d8)}></div>
-          <div className={cn(styles.deco, styles.d9)}></div>
-          <div className={cn(styles.deco, styles.d10)}></div>
-          <div className={cn(styles['bathtub-body'])}>
-            <div className={cn(styles['bathtub-hand'])}>
-              <div className={cn(styles.foam, styles.f1)}></div>
-              <div className={cn(styles.foam, styles.f2)}></div>
-              <div className={cn(styles.foam, styles.f5)}></div>
-              {/* <div className={cn(styles.foam, styles.f6)}></div> */}
-              <div className={cn(styles.foam, styles.f7)}></div>
-              <div className={cn(styles.foam, styles.f8)}></div>
-              <div className={cn(styles.foam, styles.f9)}></div>
-              <div className={cn(styles.foam, styles.f10)}></div>
-
-              <div className={cn(styles.foam, styles.f11)}></div>
-              <div className={cn(styles.foam, styles.f12)}></div>
-              <div className={cn(styles.foam, styles.f13)}></div>
-              <div className={cn(styles.foam, styles.f14)}></div>
-              {/* <div className={cn(styles.foam, styles.f15)}></div> */}
-              <div className={cn(styles.foam, styles.f16)}></div>
-            </div>
-            <div className={cn(styles.logoWrapper, 'logo-wrapper')}>
-              <LogoStackedBubbles className={styles.logo} />
-              <div className={cn(styles.logoFoam, styles.lf1)}></div>
-              <div className={cn(styles.logoFoam, styles.lf2)}></div>
-              <div className={cn(styles.logoFoam, styles.lf3)}></div>
-            </div>
-            <div className={cn(styles.foam, styles.f3)}></div>
-            <div className={cn(styles.foam, styles.f4)}></div>
-            <div className={cn(styles['bathtub-body-s'])}></div>
-            <div className={cn(styles['bathtub-foot'])}></div>
-            <div className={cn(styles['bathtub-foot'], styles['bathtub-foot-right'])}></div>
-            <div className={cn(styles['bathtub-shadow'])}></div>
-            <div className={cn(styles['bathtub-shadow'], styles['bathtub-shadow-small'])}></div>
-            <div className={cn(styles['bathtub-shadow'], styles['bathtub-shadow-foot'])}></div>
-            <div
-              className={cn(styles['bathtub-shadow'], styles['bathtub-shadow-foot'], styles['bathtub-shadow-right'])}
-            ></div>
-          </div>
-          <div className={cn(styles.bubble, styles['bubble-left'], styles.bubble1, 'bubble bubble1')}></div>
-          <div className={cn(styles.bubble, styles['bubble-left'], styles.bubble2, 'bubble bubble2')}></div>
-          <div className={cn(styles.bubble, styles['bubble-left'], styles.bubble3, 'bubble bubble3')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble4, 'bubble bubble4')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble5, 'bubble bubble5')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble6, 'bubble bubble6')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble7, 'bubble bubble7')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble8, 'bubble bubble8')}></div>
-          <div className={cn(styles.bubble, styles['bubble-right'], styles.bubble9, 'bubble bubble9')}></div>
-        </div>
-      </div>
-      <div className={cn(styles.floor)}></div>
+      <svg
+        className={styles.logo}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 55 168.844 118"
+        aria-hidden="true"
+      >
+        {LETTERS.map(({id, d}, i) => (
+          <path
+            key={id}
+            className={`${styles.letter} ${styles[`l${i + 1}`]}`}
+            d={d}
+          />
+        ))}
+      </svg>
     </div>
   );
 }

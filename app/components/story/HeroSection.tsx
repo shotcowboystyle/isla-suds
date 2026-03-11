@@ -83,17 +83,22 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
         return;
       }
 
+      // Hide container for entrance animation — the Preloader overlay covers this
+      // so users won't see a flash. CSS defaults to opacity: 1 for SSR paint (FCP/LCP).
+      gsap.set(containerRef.current, {autoAlpha: 0});
+
       const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
 
-      videoRef.current.play().catch(console.error);
+      videoRef.current.play().catch(() => {
+        // Safe to continue: autoplay may be blocked by browser policy
+      });
 
       const tl = gsap.timeline({
         delay: 0.5,
       });
 
       tl.to(containerRef.current, {
-        opacity: 1,
-        y: 0,
+        autoAlpha: 1,
         ease: 'power1.inOut',
       })
         .from(
