@@ -58,13 +58,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({formMethod, currentU
 export function links() {
   return [
     {
-      rel: 'preload',
-      as: 'font',
-      href: '/fonts/Antonio-VariableFont_wght.woff2',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous' as const,
-    },
-    {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
     },
@@ -72,7 +65,6 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'preload', as: 'style', href: tailwindCss},
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
@@ -197,9 +189,7 @@ export default function App() {
     const isWholesaleRoute = location.pathname.startsWith('/wholesale');
     // const isHome = location.pathname === '/';
 
-    // if (isWholesaleRoute || isHome) {
     if (isWholesaleRoute) {
-      // Ensure Lenis is destroyed for B2B routes and Home (which uses ScrollSmoother)
       destroyLenis();
       return;
     }

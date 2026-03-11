@@ -85,7 +85,9 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
 
       const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
 
-      videoRef.current.play().catch(console.error);
+      videoRef.current.play().catch(() => {
+        // Safe to continue: autoplay may be blocked by browser policy
+      });
 
       const tl = gsap.timeline({
         delay: 0.5,

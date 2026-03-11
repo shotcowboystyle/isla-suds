@@ -22,7 +22,7 @@ export function LocalStores() {
       }
 
       const heading1Split = SplitText.create(heading1Ref.current, {type: 'chars'});
-      const paragraphSplit = SplitText.create(paragraphRef.current, {type: 'words'});
+      const paragraphSplit = SplitText.create(paragraphRef.current, {type: 'words', aria: 'none'});
 
       const contentTl = gsap.timeline({
         scrollTrigger: {
@@ -86,7 +86,7 @@ export function LocalStores() {
           <LiquidButton href="/locations" text="Find a Store" />
         </div>
 
-        <img src={StoreMap} loading="lazy" width="1840" alt="Store Map" className={styles['background-image']} />
+        <img src={StoreMap} loading="lazy" width="1840" height="775" alt="Store Map" className={styles['background-image']} />
       </div>
     </section>
   );
