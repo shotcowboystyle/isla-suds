@@ -54,7 +54,7 @@ This document provides the complete epic and story breakdown for the Isla Suds W
 - FR16: Wholesale partners can submit their order via a "Proceed to Checkout" action
 - FR17: System creates a Shopify cart with the selected line items and the partner's buyer identity
 - FR18: System redirects the partner to Shopify checkout after successful cart creation
-- FR19: Wholesale partners receive their B2B wholesale pricing at checkout (applied via buyer identity)
+- FR19: Wholesale partners receive an automatic 20% discount at checkout, applied by the Shopify Functions discount app when the partner's `wholesale` customer tag is detected via buyer identity
 
 **Navigation & Access**
 - FR20: Wholesale partners can access the order page via a "Place New Order" button on the dashboard
@@ -81,7 +81,7 @@ This document provides the complete epic and story breakdown for the Isla Suds W
 **Security**
 - NFR5: Every request to the order page must verify wholesale partner status (B2B authentication)
 - NFR6: All quantities validated server-side before cart creation — client-side validation alone is bypassable
-- NFR7: Wholesale prices applied exclusively via Shopify B2B buyer identity — no client-side price logic
+- NFR7: Wholesale unit prices sourced from variant metafields (`wholesale.price`) — no client-side price calculation. Checkout discount applied exclusively via Shopify Functions
 
 **Accessibility**
 - NFR8: WCAG 2.1 AA compliance (site-wide commitment)
@@ -91,7 +91,7 @@ This document provides the complete epic and story breakdown for the Isla Suds W
 - NFR12: Inline errors announced to assistive technology via aria-live
 
 **Integration**
-- NFR13: Products fetched with buyer identity context to display wholesale pricing via Storefront API
+- NFR13: Products fetched with `wholesale.price` variant metafield for price display; customer access token passed as buyer identity so Shopify Functions can detect the `wholesale` tag at checkout
 - NFR14: Cart creation uses same context.cart.create() pattern as existing reorder flow
 - NFR15: Shopify-hosted checkout URL returned and navigated to seamlessly
 
@@ -179,14 +179,14 @@ So that I can see what's available and make informed ordering decisions.
 **When** they navigate to `/wholesale/order`
 **Then** all 4 soap products are displayed in a grid layout
 **And** each product shows its image, name, and wholesale unit price
-**And** prices are fetched via Storefront API with buyer identity context (wholesale B2B pricing)
+**And** prices are sourced from variant `wholesale.price` metafield; "Price on request" shown for missing metafields
 **And** the page is mobile-responsive (single column <640px, 2-column grid 640px+)
 
 **Given** a non-wholesale visitor
 **When** they attempt to access `/wholesale/order`
 **Then** they are redirected by the existing wholesale layout auth guard
 
-**Scope:** Route constant (`wholesale-routes.ts`), content strings (`wholesale.ts`), GraphQL query (`WholesaleProducts.ts` + codegen), `OrderProductCard` component (display only, no quantity selector yet), route file (`wholesale.order.tsx`) with loader. Includes verifying Storefront API returns wholesale prices with buyer identity as architecture risk gate.
+**Scope:** Route constant (`wholesale-routes.ts`), content strings (`wholesale.ts`), GraphQL query (`WholesaleProducts.ts` + codegen), `OrderProductCard` component (display only, no quantity selector yet), route file (`wholesale.order.tsx`) with loader. Architecture risk gate resolved — metafield approach verified in CC-1.
 
 **FRs:** FR1, FR2, FR3, FR4, FR23
 
@@ -340,7 +340,7 @@ So that I can complete my purchase.
 **Given** a successful cart creation response
 **When** the component receives `fetcher.data`
 **Then** the partner is redirected to the Shopify checkout URL via `window.location.href`
-**And** wholesale B2B pricing is applied at checkout (NFR7 — via buyer identity, not client-side)
+**And** 20% wholesale discount is applied at checkout via Shopify Functions (NFR7 — Shopify Functions detects `wholesale` tag, not client-side)
 
 **Given** the full flow from button tap to checkout redirect
 **Then** the total time is <3s (NFR3)
