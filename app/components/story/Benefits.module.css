@@ -58,11 +58,12 @@
   width: 100%;
   display: flex;
   position: relative;
-  margin-block: 150px;
+  margin-block: 50px;
 }
 @media screen and (min-width: 768px) {
   .clipped-boxes-wrapper {
     width: 65vw;
+    margin-block: 150px;
   }
 }
 @media screen and (min-width: 992px) {
@@ -87,18 +88,19 @@
 }
 
 .paragraph-text-end {
-  text-align: center;
+  color: var(--color-secondary);
   font-family:
     Proxima Nova,
     sans-serif;
-  color: var(--color-secondary);
-  font-weight: 400;
-  z-index: 3;
-  position: relative;
-  margin-block-start: 50px;
   font-size: 5vw;
+  font-weight: 400;
   line-height: 120%;
-  inset: auto 0% 3vw;
+  text-align: center;
+  margin-block: 50px 100px;
+  margin-inline: 16px;
+  position: static;
+  inset: 3vw 0% auto;
+  z-index: 3;
 }
 @media screen and (min-width: 768px) {
   .paragraph-text-end {

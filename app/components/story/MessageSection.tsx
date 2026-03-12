@@ -40,9 +40,9 @@ export const MessageSection = () => {
 
       const masterTl = gsap.timeline({
         scrollTrigger: {
-          trigger: text1Ref.current,
-          start: 'top 95%',
-          scrub: 4.5,
+          trigger: sectionRef.current,
+          start: 'top 90%',
+          // scrub: 1,
         },
       });
 
@@ -50,35 +50,37 @@ export const MessageSection = () => {
         .to(text1Splitted.words, {
           color: '#faeade',
           ease: 'power1.in',
-          stagger: 1,
+          stagger: 0.15,
         })
         .from(
           clippedBox1Ref.current,
           {
-            duration: 8,
+            duration: 0.5,
             opacity: 0,
             width: 0,
-            ease: 'power2.inOut',
-            stagger: 0.03,
+            ease: 'circ.out',
           },
-          '-=0.03',
+          '-=0.3',
         )
         .to(
           text2Splitted.words,
           {
             color: '#faeade',
             ease: 'power1.in',
-            stagger: 1,
+            stagger: 0.15,
           },
           '-=0.5',
         )
-        .from(splittedParagraph.words, {
-          yPercent: 300,
-          rotate: 3,
-          ease: 'power1.inOut',
-          duration: 2.5,
-          stagger: 0.03,
-        });
+        .from(
+          splittedParagraph.words,
+          {
+            yPercent: 300,
+            rotate: 3,
+            ease: 'power1.inOut',
+            stagger: 0.03,
+          },
+          '-=0.5',
+        );
     },
     {dependencies: [sectionRef, text1Ref, clippedBox1Ref, text2Ref, paragraphRef]},
   );

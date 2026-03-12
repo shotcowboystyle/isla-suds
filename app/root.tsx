@@ -13,9 +13,7 @@ import {
 import {Analytics, getShopAnalytics, useNonce, type ShopAnalytics} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
 import {CartDrawer} from '~/components/cart/CartDrawer';
-import {RouteErrorFallback} from '~/components/errors/RouteErrorFallback';
 import {Preloader} from '~/components/Preloader';
-import {HomeScrollProvider} from '~/contexts/home-scroll-context';
 import {PreloaderProvider, usePreloader} from '~/contexts/preloader-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {usePastHero} from '~/hooks/use-past-hero';
@@ -264,7 +262,7 @@ function AppContent({
   return (
     <>
       <Preloader onComplete={() => setPreloaderComplete(true)} />
-      {isHome ? <HomeScrollProvider isPastHero={isPastHero}>{layoutContent}</HomeScrollProvider> : layoutContent}
+      {layoutContent}
       <CartDrawer />
     </>
   );

@@ -2,13 +2,12 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Image, Money} from '@shopify/hydrogen';
 import gsap from 'gsap';
-import LavenderElementsImage from '~/assets/images/lavender-elements.webp?responsive';
+import LavenderElementsImage from '~/assets/images/lavender-elements.webp';
 import {productsList} from '~/content/products';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {useVariantUrl} from '~/lib/variant-url';
 import {cn} from '~/utils/cn';
 import {AddToCartButton} from './cart/AddToCartButton';
-import {Picture} from './Picture';
 import styles from './ProductCard.module.css';
 import type {
   CollectionItemFragment,
@@ -99,7 +98,7 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
       >
         {/* Only pre-load Shopify Images if productImageUrl from the CMS list isn't present, or fallback to it */}
         {productImageUrl ? (
-          <Picture
+          <img
             // ref={subjectRef}
             loading={loading}
             src={productImageUrl}
@@ -119,7 +118,7 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
           )
         )}
 
-        <Picture
+        <img
           // ref={elementsRef}
           loading={loading}
           src={particlesUrl}

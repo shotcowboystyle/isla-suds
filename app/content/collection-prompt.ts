@@ -15,17 +15,15 @@ export interface CollectionPromptContent {
  */
 export const COLLECTION_PROMPT_COPY: CollectionPromptContent = {
   headline: 'Loving what you see? Get the whole collection.',
-  description:
-    'Experience all four handcrafted scents together. Each bar tells its own story.',
+  description: 'Experience all four handcrafted scents together. Each bar tells its own story.',
   buttonText: 'Get the Collection',
   dismissLabel: 'Close',
 };
 
-import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp?responsive';
-import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp?responsive';
-import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp?responsive';
-import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp?responsive';
-import type {ImageData} from '@responsive-image/core';
+import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp';
+import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp';
+import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp';
+import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp';
 
 /**
  * Variety pack product information
@@ -34,7 +32,7 @@ import type {ImageData} from '@responsive-image/core';
 export interface VarietyPackProduct {
   handle: string;
   name: string;
-  image: ImageData;
+  image: string;
 }
 
 /**

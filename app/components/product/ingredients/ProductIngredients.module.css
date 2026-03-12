@@ -1,14 +1,13 @@
 .section-ingredients {
   position: relative;
   background-color: var(--color-black);
-  padding-bottom: 2vw;
+  padding-block: 2vw;
   overflow: hidden;
   height: 100%;
 }
 @media screen and (min-width: 480px) {
   .container-click-ingredients {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-block: 0;
   }
 }
 
@@ -33,14 +32,13 @@
   width: 100%;
   /* height: 120vh; */
   height: 100vh;
-  /* margin-bottom: 64px; */
-  margin-bottom: 0;
+  margin-block: 64px;
   display: flex;
   position: relative;
 }
 @media screen and (min-width: 480px) {
   .ingredient-click-main {
-    margin-bottom: 0;
+    margin-block: 0;
   }
 }
 /* @media screen and (min-width: 768px) {

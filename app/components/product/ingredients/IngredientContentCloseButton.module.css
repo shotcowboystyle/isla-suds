@@ -13,7 +13,7 @@
   visibility: hidden;
   transform: scale(0);
   position: absolute;
-  bottom: 50vw;
+  bottom: 45vw;
   transition:
     background 0.3s,
     color 0.3s;

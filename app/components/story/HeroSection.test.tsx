@@ -30,7 +30,7 @@ vi.mock('gsap/SplitText', () => ({
 }));
 
 // Mock image/video imports
-vi.mock('~/assets/images/hero-mobile-2.png?responsive', () => ({
+vi.mock('~/assets/images/hero-mobile-2.png', () => ({
   default: {src: '/mock-hero-mobile.png'},
 }));
 

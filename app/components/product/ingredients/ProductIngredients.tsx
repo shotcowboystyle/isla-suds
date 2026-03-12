@@ -1,8 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
-import ingredientsDripImage from '~/assets/images/slider-dip.png?responsive';
-import {Picture} from '~/components/Picture';
 import {INGREDIENTS, type IngredientItem} from '~/content/ingredients';
 import {cn} from '~/utils/cn';
 import {FloatingIngredientButton} from './FloatingIngredientButton';
@@ -91,12 +89,6 @@ export function ProductIngredients() {
 
   return (
     <section ref={sectionRef} className={styles['section-ingredients']}>
-      <Picture
-        src={ingredientsDripImage}
-        alt="ingredients drip bg"
-        className={cn(styles['ingredients-drip-image'], 'w-full object-cover z-1')}
-      />
-
       <div className={cn(styles['container-click-ingredients'])}>
         <div className={cn(styles['ingredient-click-main'])}>
           <div data-animated-circle ref={circleLargeRef} className={cn(styles['circle-large'])}>

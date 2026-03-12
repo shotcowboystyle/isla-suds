@@ -122,7 +122,7 @@ export default function Collection() {
 
         {collection.title === 'Featured' ? (
           <div className="justify-center items-center mt-[3vw] flex sm:px-4 text-center">
-            <p className="collection-description text-[4.5vw] md:text-[1.04vw] leading-[115%] w-full px-[5vw] pb-[5vw] text-black">
+            <p className="collection-description text-[4.5vw] md:text-[1.04vw] leading-[115%] w-full px-[5vw] pb-[20vw] sm:pb-[5vw] text-black">
               Browse all our bold and fresh cleansers, ready to fuel your next bath. Discover your favorite today!
             </p>
           </div>

@@ -73,7 +73,7 @@
   letter-spacing: -1px;
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 11vw;
+  font-size: 12vw;
   font-weight: 700;
   line-height: 110%;
 }
@@ -90,7 +90,7 @@
   padding: 4px 12px;
   position: absolute;
   bottom: 10vw;
-  font-size: 3vw;
+  font-size: 4vw;
   color: var(--color-black);
 }
 @media screen and (min-width: 480px) {
@@ -103,8 +103,8 @@
 }
 
 .ingredient-center-circle-wrap {
-  width: 65%;
-  height: 65%;
+  width: 75%;
+  height: 75%;
   position: absolute;
   opacity: 0;
   visibility: hidden;
@@ -135,7 +135,7 @@
 
 .ingredient-content-wrap {
   z-index: 4;
-  width: 47.5%;
+  width: 80%;
   height: auto;
   position: relative;
   /* opacity: 0; */
@@ -155,7 +155,7 @@
 
 .ingredient-text {
   color: var(--color-secondary);
-  font-size: 2.1vw;
+  font-size: 4.1vw;
   font-weight: 500;
   line-height: 1.2;
   position: relative;

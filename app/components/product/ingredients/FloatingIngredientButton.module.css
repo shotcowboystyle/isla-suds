@@ -1,7 +1,7 @@
 .ingredient-item-wrapper {
-  bottom: 14vw;
+  /* bottom: 14vw;
   left: auto;
-  right: 40vw;
+  right: 40vw; */
   position: absolute;
   height: 0;
   z-index: 2;

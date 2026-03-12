@@ -41,13 +41,6 @@ vi.mock('~/components/Picture', () => ({
   Picture: ({alt, ...props}: any) => <img alt={alt || ''} {...props} />,
 }));
 
-vi.mock('~/contexts/home-scroll-context', () => ({
-  useHomeScroll: () => ({
-    isPastHero: true,
-    heroProgress: 0,
-  }),
-}));
-
 vi.mock('~/hooks/use-is-mobile', () => ({
   useIsMobile: () => ({isMobile: false, isLoading: false}),
 }));
@@ -80,22 +73,22 @@ vi.mock('@shopify/hydrogen', () => ({
 }));
 
 // Mock image imports used by HeaderMenu
-vi.mock('../assets/images/menu-about-us.webp?responsive', () => ({
+vi.mock('../assets/images/menu-about-us.webp', () => ({
   default: {src: '/mock-about-us.webp'},
 }));
-vi.mock('../assets/images/menu-policies.webp?responsive', () => ({
+vi.mock('../assets/images/menu-policies.webp', () => ({
   default: {src: '/mock-policies.webp'},
 }));
-vi.mock('../assets/images/menu-catalog.png?responsive', () => ({
+vi.mock('../assets/images/menu-catalog.png', () => ({
   default: {src: '/mock-catalog.png'},
 }));
-vi.mock('../assets/images/menu-contact.jpeg?responsive', () => ({
+vi.mock('../assets/images/menu-contact.jpeg', () => ({
   default: {src: '/mock-contact.jpeg'},
 }));
-vi.mock('../assets/images/menu-home.png?responsive', () => ({
+vi.mock('../assets/images/menu-home.png', () => ({
   default: {src: '/mock-home.png'},
 }));
-vi.mock('../assets/images/menu-wholesale.webp?responsive', () => ({
+vi.mock('../assets/images/menu-wholesale.webp', () => ({
   default: {src: '/mock-wholesale.webp'},
 }));
 
@@ -159,7 +152,6 @@ function renderHeaderMenu(viewport: 'desktop' | 'mobile' = 'mobile') {
     <MemoryRouter>
       <HeaderMenu
         menu={mockHeader.menu}
-        viewport={viewport}
         primaryDomainUrl={mockHeader.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
         onClose={mockClose}

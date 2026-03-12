@@ -1,5 +1,5 @@
-import {Suspense, useState} from 'react';
-import {Await, useLocation} from 'react-router';
+import {Suspense} from 'react';
+import {Await} from 'react-router';
 import {Aside} from '~/components/Aside';
 import {CartMain} from '~/components/CartMain';
 import {Footer} from '~/components/Footer';
@@ -13,23 +13,9 @@ interface PageLayoutProps {
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
   children?: React.ReactNode;
-  theme: string;
-  setTheme: (value: string | ((prev: string) => string)) => void;
 }
 
-export function PageLayout({
-  cart,
-  children = null,
-  footer,
-  header,
-  isLoggedIn,
-  publicStoreDomain,
-  theme,
-  setTheme,
-}: PageLayoutProps) {
-  const location = useLocation();
-  const isHome = location.pathname === '/';
-
+export function PageLayout({cart, children = null, footer, header, isLoggedIn, publicStoreDomain}: PageLayoutProps) {
   return (
     <Aside.Provider>
       {/* Skip link for accessibility */}
@@ -50,32 +36,17 @@ export function PageLayout({
           Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
       {/* Footer reveal: main needs z-index > footer (0 or 1) and background color to cover footer. */}
 
-      {isHome ? (
-        <>
-          {/* <div id="smooth-wrapper" className="relative z-10">
-          <div id="smooth-content" className="relative"> */}
-          <main id="main-content" className="relative z-10 bg-black">
-            {children}
-          </main>
-          <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
-          {/* </div>
-        </div> */}
-        </>
-      ) : (
-        <>
-          <main id="main-content" className="relative overflow-hidden z-10 bg-black">
-            {children}
-          </main>
-          <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
-        </>
-      )}
+      <main id="main-content" className="relative overflow-hidden z-10 bg-black">
+        {children}
+      </main>
+      <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
     </Aside.Provider>
   );
 }
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
-    <Aside type="cart" heading="CART">
+    <Aside type="cart">
       <Suspense fallback={<p>Loading cart ...</p>}>
         <Await resolve={cart}>
           {(cart) => {

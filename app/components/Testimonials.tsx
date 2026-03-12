@@ -1,8 +1,7 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
-import DripImage from '~/assets/images/slider-dip.png?responsive';
-import {Picture} from '~/components/Picture';
+import DripImage from '~/assets/images/slider-dip.png';
 import {VideoCard} from '~/components/VideoCard';
 import {testimonialsData} from '~/content/testimonials';
 import {useIsDesktop} from '~/hooks/use-is-desktop';
@@ -133,7 +132,7 @@ export const TestimonialsSection = () => {
       </div>
 
       <div className={styles['drip-background-image-wrapper']}>
-        <Picture src={DripImage} loading="lazy" alt="" className={styles['drip-background-image']} />
+        <img src={DripImage} loading="lazy" alt="" className={styles['drip-background-image']} />
       </div>
     </div>
   );

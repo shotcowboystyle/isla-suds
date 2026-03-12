@@ -19,7 +19,7 @@
   display: flex;
   height: 40vh;
   place-self: center;
-  /* margin-top: 14vh; */
+  margin-top: 14vh;
 }
 @media (min-width: 480px) {
   .image-wrapper {

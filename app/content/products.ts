@@ -1,9 +1,9 @@
-import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp?responsive';
-import LavenderElementsImage from '~/assets/images/lavender-elements.webp?responsive';
-import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp?responsive';
-import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp?responsive';
-import MintElementsImage from '~/assets/images/mint-elements.webp?responsive';
-import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp?responsive';
+import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp';
+import LavenderElementsImage from '~/assets/images/lavender-elements.webp';
+import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp';
+import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp';
+import MintElementsImage from '~/assets/images/mint-elements.webp';
+import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp';
 
 /**
  * Product Content Layer - Centralized content management with Shopify metafield fallbacks

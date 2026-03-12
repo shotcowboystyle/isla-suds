@@ -1,8 +1,4 @@
 import {createContext, type ReactNode, useContext, useEffect, useState} from 'react';
-import {NavLink} from 'react-router';
-import GoatLogo from '~/assets/images/goat-logo.png?responsive';
-import {Picture} from '~/components/Picture';
-import {ThemeSwitcher} from '~/components/ThemeSwitcher';
 
 type AsideType = 'search' | 'cart' | 'mobile' | 'closed';
 type AsideContextValue = {
@@ -21,15 +17,7 @@ type AsideContextValue = {
  * </Aside>
  * ```
  */
-export function Aside({
-  children,
-  heading,
-  type,
-}: {
-  children?: React.ReactNode;
-  type: AsideType;
-  heading: React.ReactNode;
-}) {
+export function Aside({children, type}: {children?: React.ReactNode; type: AsideType}) {
   const {type: activeType, close} = useAside();
   const expanded = type === activeType;
 
@@ -50,155 +38,7 @@ export function Aside({
     return () => abortController.abort();
   }, [close, expanded]);
 
-  // just to hard bypass cart drawer temporarily
-  if (type === 'cart') return;
-
-  return (
-    <div aria-modal className={`overlay ${expanded ? 'expanded' : ''} !w-full`} role="dialog">
-      <button className="close-outside" onClick={close} />
-      <aside className="flex flex-col min-h-[100dvh]">
-        <header>
-          <div className="w-full h-24 p-5 flex items-center justify-between relative">
-            <ThemeSwitcher theme="light" setTheme={() => {}} />
-
-            {/* <h3>{heading}</h3> */}
-            <button
-              onClick={close}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-            >
-              <Picture loading="lazy" src={GoatLogo} alt="Isla Suds Logo" className="w-[16.06rem] h-[3.44rem]" />
-            </button>
-
-            <button className="close reset" onClick={close} aria-label="Close">
-              &times;
-            </button>
-          </div>
-        </header>
-
-        <main>{children}</main>
-
-        {/* footer duplicate */}
-        <div>
-          <div className="p-10 grid grid-cols-5 gap-5 items-start">
-            <div className="grid gap-2">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                Contact
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                FAQ
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                Product care
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                Size guides
-              </NavLink>
-            </div>
-
-            <div className="grid gap-2">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                locate stores
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                archive
-              </NavLink>
-            </div>
-
-            <div className="grid gap-2">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                facebook
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                instagram
-              </NavLink>
-            </div>
-
-            <div className="grid gap-2">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                privacy policy
-              </NavLink>
-
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                terms & conditions
-              </NavLink>
-            </div>
-
-            <div className="grid gap-2">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="inline-block uppercase text-xs text-neutral-400 hover:text-black transition"
-              >
-                SELECT STORE
-              </NavLink>
-
-              <div className="inline-block uppercase text-xs text-neutral-400 ">
-                © {new Date().getFullYear()} ISLA SUDS
-              </div>
-
-              <ThemeSwitcher theme="light" setTheme={() => {}} />
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  );
+  return <></>;
 }
 
 const AsideContext = createContext<AsideContextValue | null>(null);

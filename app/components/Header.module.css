@@ -14,7 +14,7 @@
   height: 80px;
   margin-bottom: -80px;
   padding-block: 2vw;
-  padding-inline: 8px;
+  padding-inline: 16px;
   display: flex;
   position: relative;
   top: 0;
@@ -54,6 +54,11 @@
   .navbar-logo-link.ab.is-current {
     position: absolute;
   }
+}
+
+.navbar-logo-link-open {
+  transform: scale(1.2) rotate(-2deg);
+  filter: drop-shadow(var(--drop-shadow-lg));
 }
 
 .navbar-logo {

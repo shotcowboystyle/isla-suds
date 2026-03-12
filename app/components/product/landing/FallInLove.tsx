@@ -157,8 +157,8 @@ export function FallInLove({color}: FallInLoveProps) {
 
   return (
     <div className={styles['section-wrapper']}>
-      <div className="lg-circle-section cir-top">
-        <div className="lg-circle cir-top bg-secondary"></div>
+      <div className="lg-circle-section cir-top -z-10">
+        <div className="lg-circle cir-top bg-milk -z-10"></div>
       </div>
       <div ref={sectionCircle} className={styles['section-circle']}>
         {/* <svg
@@ -180,7 +180,7 @@ export function FallInLove({color}: FallInLoveProps) {
               className={cn(styles['circle-content-wrapper'], styles['is-title'], 'text-center')}
             >
               <div>
-                <h2>
+                <h2 className={styles['circle-content-heading']}>
                   Why you&apos;ll love
                   <br />
                   to use our soap
