@@ -1,11 +1,8 @@
 import {lazy, Suspense, useEffect, useRef, useState} from 'react';
-// import {Await, NavLink, useAsyncValue, useLocation, useNavigate, useRouteLoaderData} from 'react-router';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
 import {ShoppingBag, User} from 'lucide-react';
-// import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
-// import {useHomeScroll} from '~/contexts/home-scroll-context';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -14,7 +11,6 @@ import type gsap from 'gsap';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 const LazyHeaderMenu = lazy(() => import('./HeaderMenu'));
-// import type {RootLoader} from '~/root';
 
 function useMenuToggle() {
   const [open, setOpen] = useState(false);
@@ -37,34 +33,27 @@ interface HeaderProps {
 }
 
 export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProps) {
-  // const location = useLocation();
   const {shop, menu} = header;
-  // const isPathNotShowCloseButton = ['/'].includes(location.pathname) || location.pathname.startsWith('/products');
-  // const navigate = useNavigate();
 
   const {open, toggleMenu} = useMenuToggle();
   const {isMobile} = useIsMobile();
 
   // Story 2.5: Scroll-aware header on home page only
-  // const isHomePage = location.pathname === '/';
-  // const homeScroll = useHomeScroll();
   // const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [, setPrefersReducedMotion] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
-  const mobkleLine1Ref = useRef<HTMLDivElement>(null);
-  const mobkleLine2Ref = useRef<HTMLDivElement>(null);
   const tlButton = useRef<gsap.core.Timeline | null>(null);
 
-  const [hasOpened, setHasOpened] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (open && !hasOpened) {
-      setHasOpened(true);
+    if (open && !isMenuOpen) {
+      setIsMenuOpen(true);
     }
-  }, [open, hasOpened]);
+  }, [open, isMenuOpen]);
 
   useEffect(() => {
     // Check for prefers-reduced-motion preference
@@ -80,10 +69,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, []);
-
-  // On home page: hide header when at hero (isPastHero = false)
-  // On other pages: always show header
-  // const shouldShowHeader = !isHomePage || homeScroll?.isPastHero;
 
   useEffect(() => {
     if (!buttonRef.current || !line1Ref.current || !line2Ref.current) {
@@ -214,18 +199,9 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   }, []);
 
   return (
-    <header
-      className={styles['navigation-menu']}
-      // style={
-      //   isHomePage && !shouldShowHeader && !prefersReducedMotion
-      //     ? {
-      //         transform: 'translateY(-100%)',
-      //       }
-      //     : undefined
-      // }
-    >
+    <header className={styles['navigation-menu']}>
       <>
-        {hasOpened && (
+        {isMenuOpen && (
           <Suspense fallback={null}>
             <LazyHeaderMenu
               menu={menu}
@@ -239,7 +215,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       </>
 
       <div className={styles['navbar']}>
-        <NavLink prefetch="intent" to="/" style={activeLinkStyle} end className={styles['navbar-logo-link']}>
+        <NavLink
+          prefetch="intent"
+          to="/"
+          style={activeLinkStyle}
+          end
+          className={cn(styles['navbar-logo-link'], isMenuOpen && styles['navbar-logo-link-open'])}
+        >
           <Logo className={styles['navbar-logo']} />
           <strong className="sr-only">{shop.name}</strong>
         </NavLink>
@@ -306,7 +288,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
   return (
     <nav className="header-ctas flex" role="navigation" aria-label="Header CTAs">
-      {/* <HeaderMenuMobileToggle /> */}
       <NavLink
         prefetch="intent"
         to="/account"
@@ -317,7 +298,6 @@ function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
             <User className={styles['navbar-icon-button-icon']} />
-            {/* <span className="sr-only">{(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}</span> */}
           </Await>
         </Suspense>
       </NavLink>

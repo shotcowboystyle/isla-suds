@@ -23,8 +23,8 @@ export const BenefitsSection = () => {
         trigger: containerRef.current,
         // start: isMobile ? 'top 80%' : 'top 60%',
         start: 'top 80%',
-        // end: isMobile ? '+=80%' : '+=700px',
-        end: '+=1000',
+        end: isMobile ? '+=300' : '+=1000',
+        // end: '+=1000',
         scrub: 1,
       },
     });

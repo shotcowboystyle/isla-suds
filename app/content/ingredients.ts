@@ -35,8 +35,8 @@ export const INGREDIENTS: IngredientItem[] = [
     icon: Palmtree,
     startingPositionsMobile: {
       top: 'auto',
-      bottom: '19.5vw',
-      left: '26.5vw',
+      bottom: '-10.5vw',
+      left: '33.5vw',
     },
     startingPositions: {
       top: 'auto',
@@ -55,7 +55,7 @@ export const INGREDIENTS: IngredientItem[] = [
     icon: Leaf,
     startingPositionsMobile: {
       top: 'auto',
-      bottom: '42.5vw',
+      bottom: '20.5vw',
       left: '22.5vw',
     },
     startingPositions: {
@@ -74,9 +74,9 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Droplet,
     startingPositionsMobile: {
-      top: '-6vw',
+      top: '-16vw',
       left: 'auto',
-      right: '64vw',
+      right: '19vw',
     },
     startingPositions: {
       top: '25vw',
@@ -94,9 +94,9 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Circle,
     startingPositionsMobile: {
-      top: '4vw',
+      top: '5vw',
       left: 'auto',
-      right: '24.5vw',
+      right: '22.5vw',
     },
     startingPositions: {
       top: '37vw',
@@ -114,8 +114,8 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 1,
     icon: Sparkles,
     startingPositionsMobile: {
-      top: '21vw',
-      left: '50.5vw',
+      top: '-6vw',
+      left: '46.5vw',
     },
     startingPositions: {
       top: '32vw',
@@ -132,7 +132,7 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 1,
     icon: Milk,
     startingPositionsMobile: {
-      top: '47vw',
+      top: '23vw',
       left: '42vw',
     },
     startingPositions: {
@@ -150,9 +150,9 @@ export const INGREDIENTS: IngredientItem[] = [
     iconOrder: 2,
     icon: Flower,
     startingPositionsMobile: {
-      bottom: '40vw',
+      bottom: '22vw',
       left: 'auto',
-      right: '24.5vw',
+      right: '38.5vw',
     },
     startingPositions: {
       top: '23vw',

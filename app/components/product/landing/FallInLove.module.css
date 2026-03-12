@@ -12,6 +12,7 @@
 .section-circle {
   overflow: hidden;
   height: auto;
+  z-index: 10;
 }
 .section-circle:before {
   content: '';
@@ -21,6 +22,7 @@
   width: 100%;
   height: calc(100% - 6vw - 30px);
   position: absolute;
+  z-index: -1;
 }
 @media screen and (min-width: 601px) {
   .section-circle {
@@ -36,6 +38,7 @@
   transform-origin: 0 100%;
   transform: scaleY(0);
   position: absolute;
+  z-index: -1;
 }
 
 .inner-circle {
@@ -43,6 +46,7 @@
   height: auto;
   border-radius: 100%;
   position: relative;
+  z-index: 10;
 }
 @media screen and (min-width: 601px) {
   .inner-circle {
@@ -62,6 +66,7 @@
   text-align: center;
   position: relative;
   margin: calc(-2 * 2.7vw) 0 0;
+  z-index: 10;
 }
 @media screen and (min-width: 601px) {
   .circle {
@@ -86,16 +91,19 @@
 }
 
 .circle-content-wrapper {
+  min-height: 60vw;
   height: auto;
   justify-content: center;
   align-items: center;
   display: flex;
+  z-index: 10;
 }
 .is-title {
-  padding: 125px 0 75px;
+  padding: 35px 0 75px;
 }
 @media screen and (min-width: 601px) {
   .circle-content-wrapper {
+    min-height: 0;
     height: 100vh;
   }
   .is-title {
@@ -103,10 +111,19 @@
   }
 }
 
+.circle-content-heading {
+  font-size: 13vw;
+  z-index: 10;
+}
+@media screen and (min-width: 992px) {
+  .circle-content-heading {
+    font-size: 7.7vw;
+  }
+}
+
 .circle-content-card {
-  width: var(--space-4);
   text-align: center;
-  width: 32vw;
+  width: 90%;
 }
 @media screen and (min-width: 768px) {
   .circle-content-card {

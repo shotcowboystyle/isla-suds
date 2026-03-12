@@ -2,13 +2,12 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-import ingredientsImage from '~/assets/images/ingredients-section-bg.png?responsive';
-import ingredientsDripImage from '~/assets/images/slider-dip.png?responsive';
+import ingredientsImage from '~/assets/images/ingredients-section-bg.png';
+import ingredientsDripImage from '~/assets/images/slider-dip.png';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './Ingredients.module.css';
 import {IngredientsTable} from '../IngredientsTable';
-import {Picture} from '../Picture';
 
 export function IngredientsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -34,7 +33,7 @@ export function IngredientsSection() {
       const contentTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: isMobile ? 'top 70%' : 'top center',
+          start: isMobile ? 'top 85%' : 'top center',
         },
       });
 
@@ -72,7 +71,7 @@ export function IngredientsSection() {
   return (
     <section ref={sectionRef}>
       <div className={styles['ingredients-section-wrapper']}>
-        <Picture
+        <img
           src={ingredientsDripImage}
           alt="ingredients drip bg"
           className={cn(styles['ingredients-drip-image'], 'w-full object-cover z-1')}
@@ -95,7 +94,7 @@ export function IngredientsSection() {
           </p>
         </div>
 
-        <Picture src={ingredientsImage} alt="ingredients background" className={styles['ingredients-section-image']} />
+        <img src={ingredientsImage} alt="ingredients background" className={styles['ingredients-section-image']} />
 
         <IngredientsTable className="mt-10" />
       </div>

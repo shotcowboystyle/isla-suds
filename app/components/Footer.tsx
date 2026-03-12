@@ -1,13 +1,12 @@
-import {Suspense, useEffect, useRef, useState} from 'react';
+// import {Suspense, useEffect, useRef, useState} from 'react';
+import {Suspense} from 'react';
 import {useNavigate, useLocation, Await, NavLink} from 'react-router';
-import {AnimatedBubbles} from '~/components/AnimatedBubbles';
+// import {AnimatedBubbles} from '~/components/AnimatedBubbles';
 import {cn} from '~/utils/cn';
-// import {Picture} from './Picture';
 import styles from './Footer.module.css';
-import {FooterLogo} from './FooterLogo';
+// import {FooterLogo} from './FooterLogo';
 import {NewsletterSignup} from './ui/NewsletterSignup';
 import {SocialLinks} from './ui/SocialLinks';
-// import SliderDipImage from '../assets/images/slider-dip.png?responsive';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
 interface FooterProps {
@@ -27,8 +26,6 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}: Foote
           <Await resolve={footerPromise}>
             {(footer) => (
               <footer className={cn(styles['footer'], `${styles.footer}`)}>
-                {/* <Picture src={SliderDipImage} alt="Slider Dip" loading="lazy" /> */}
-
                 <div className={styles['footer-content-container']}>
                   <h2 className={styles['heading-teg-wrapper']}>
                     <div className={styles['header-tag']}>#SOAP_IS_DOPE</div>

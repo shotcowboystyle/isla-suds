@@ -8,12 +8,16 @@
   display: flex;
   align-items: center;
   padding: 24px 16px;
+  margin-block: 6vw;
+  min-height: 60vw;
 }
 @media screen and (min-width: 768px) {
   .brand-core-card {
     padding-block: 2vw;
     padding-inline: 1vw;
     height: 24vw;
+    margin-block: 0;
+    min-height: 0;
   }
 }
 

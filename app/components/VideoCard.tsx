@@ -1,8 +1,6 @@
 import {useRef} from 'react';
-import {Picture} from './Picture';
 import styles from './VideoCard.module.css';
 import {cn} from '../utils/cn';
-import type {ImageData} from '@responsive-image/core';
 
 interface VideoCardProps {
   cardData: {
@@ -10,7 +8,7 @@ interface VideoCardProps {
     poster: string;
     rotation: string;
     name: string;
-    img: ImageData;
+    img: string;
   };
   index: number;
 }
@@ -26,7 +24,7 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
     // <div className={cn(styles['video-card'], `animated-video-card ${cardData.translation} ${cardData.rotation}`)}>
     <div className={cn(styles['video-card'], styles[`card-${index + 1}`], `animated-video-card ${cardData.rotation}`)}>
       <div className={styles['media-cart-info-wrapper']}>
-        <Picture src={cardData.img} loading="lazy" alt="" className={styles['avatar']} />
+        <img src={cardData.src} loading="lazy" alt="" className={styles['avatar']} />
         <div>{cardData.name}</div>
       </div>
 

@@ -2,14 +2,12 @@ import {useEffect, useRef, useState, useCallback} from 'react';
 import {NavLink, useLocation} from 'react-router';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-// import {Image} from '@shopify/hydrogen';
-import AboutUsImage from '~/assets/images/menu-about-us.webp?responsive';
-import ContactImage from '~/assets/images/menu-catalog.png?responsive';
-import CatalogImage from '~/assets/images/menu-contact.jpeg?responsive';
-import HomeImage from '~/assets/images/menu-home.png?responsive';
-import PoliciesImage from '~/assets/images/menu-policies.webp?responsive';
-import WholesaleImage from '~/assets/images/menu-wholesale.webp?responsive';
-import {Picture} from '~/components/Picture';
+import AboutUsImage from '~/assets/images/menu-about-us.webp';
+import ContactImage from '~/assets/images/menu-catalog.png';
+import CatalogImage from '~/assets/images/menu-contact.jpeg';
+import HomeImage from '~/assets/images/menu-home.png';
+import PoliciesImage from '~/assets/images/menu-policies.webp';
+import WholesaleImage from '~/assets/images/menu-wholesale.webp';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
 function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
@@ -90,8 +88,6 @@ const SOCIAL_LINKS = [
   {label: 'Instagram', href: 'https://www.instagram.com/islasuds/'},
   {label: 'TikTok', href: 'https://www.tiktok.com'},
 ];
-
-type Viewport = 'desktop' | 'mobile';
 
 interface HeaderMenuProps {
   menu: HeaderQuery['menu'];
@@ -267,19 +263,12 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
         </div>
 
         <div className="hidden lg:flex w-[57%] lg:w-1/2 h-full pointer-events-none">
-          <Picture
+          <img
             loading="lazy"
             src={FALLBACK_HEADER_MENU.items[activeMenu].image}
             alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
             className="w-full h-screen! object-cover transition-opacity duration-500"
           />
-          {/* <Image
-            alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
-              aspectRatio="5/3"
-              data={FALLBACK_HEADER_MENU.items[activeMenu].image}
-              // loading={loading}
-            className="w-full h-screen! object-cover transition-opacity duration-500"
-            /> */}
         </div>
       </div>
     </div>
