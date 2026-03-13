@@ -12,10 +12,9 @@ import type {
   RegularSearchQuery,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Search'});
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const url = new URL(request.url);

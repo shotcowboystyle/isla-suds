@@ -3,12 +3,11 @@ import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import type {Route} from './+types/blogs._index';
 import type {BlogsQuery} from 'storefrontapi.generated';
+import {createMeta} from '~/utils/meta';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Blogs`}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Blogs'});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

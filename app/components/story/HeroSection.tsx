@@ -1,13 +1,6 @@
 import {forwardRef, useRef, useEffect} from 'react';
-import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {SplitText} from 'gsap/SplitText';
-if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
-}
 import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.webp';
-import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.png';
+import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.webp';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {HERO_CONTENT, HERO_TAGLINE_START, HERO_TAGLINE_END} from '~/content/story';
@@ -38,96 +31,101 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
     vid.pause();
   };
 
-  useGSAP(
-    () => {
-      if (!containerRef.current) {
-        return;
-      }
+  // Lazy-load GSAP for scroll parallax — keeps GSAP out of the critical bundle
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        })
-        .to(containerRef.current, {
-          rotate: 7,
-          scale: 0.9,
-          yPercent: 30,
-          ease: 'power1.inOut',
+    let cancelled = false;
+    let ctx: {revert(): void} | undefined;
+
+    void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
+      ([{default: gsap}, {ScrollTrigger}]) => {
+        if (cancelled) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        ctx = gsap.context(() => {
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: container,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+              },
+            })
+            .to(container, {
+              rotate: 7,
+              scale: 0.9,
+              yPercent: 30,
+              ease: 'power1.inOut',
+            });
         });
-    },
-    {dependencies: [containerRef]},
-  );
+      },
+    );
 
-  useGSAP(
-    () => {
-      if (!text1Ref.current || !clippedBox1Ref.current || !preloaderComplete || !videoRef.current) {
-        return;
-      }
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
+  }, []);
 
-      // Hide container for entrance animation — the Preloader overlay covers this
-      // so users won't see a flash. CSS defaults to opacity: 1 for SSR paint (FCP/LCP).
-      // gsap.set(containerRef.current, {autoAlpha: 0});
+  // Lazy-load GSAP for entrance animations (waits for preloader)
+  useEffect(() => {
+    const text1 = text1Ref.current;
+    const clippedBox1 = clippedBox1Ref.current;
+    const paragraph = paragraphRef.current;
+    const button = buttonRef.current;
+    const video = videoRef.current;
+    if (!text1 || !clippedBox1 || !preloaderComplete || !video) return;
 
-      const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
+    let cancelled = false;
+    let ctx: {revert(): void} | undefined;
 
-      videoRef.current.play().catch(() => {
+    void Promise.all([import('gsap'), import('gsap/SplitText')]).then(([{default: gsap}, {SplitText}]) => {
+      if (cancelled) return;
+      gsap.registerPlugin(SplitText);
+
+      video.play().catch(() => {
         // Safe to continue: autoplay may be blocked by browser policy
       });
 
-      const tl = gsap.timeline();
+      ctx = gsap.context(() => {
+        const titleSplit = SplitText.create(text1, {type: 'chars'});
 
-      tl
-        // .to(containerRef.current, {
-        //   autoAlpha: 1,
-        //   ease: 'power1.inOut',
-        // })
-        .from(
-          clippedBox1Ref.current,
-          {
+        gsap
+          .timeline()
+          .from(clippedBox1, {
             opacity: 0,
             duration: 0.5,
             width: 0,
             ease: 'circ.out',
-          },
-          // '-=0.5',
-        )
-        .from(
-          titleSplit.chars,
-          {
+          })
+          .from(titleSplit.chars, {
             yPercent: 200,
             stagger: 0.02,
             ease: 'power2.out',
-          },
-          // '-=0.5',
-        )
-        .from(
-          paragraphRef.current,
-          {
+          })
+          .from(paragraph, {
             y: 20,
             opacity: 0,
             duration: 0.6,
             ease: 'power2.out',
-          },
-          // '-=0.3',
-        )
-        .from(
-          buttonRef.current,
-          {
+          })
+          .from(button, {
             opacity: 0,
             y: 20,
             duration: 0.6,
             ease: 'power2.out',
-          },
-          // '-=0.4',
-        );
-    },
-    {dependencies: [containerRef, text1Ref, clippedBox1Ref, paragraphRef, buttonRef, preloaderComplete]},
-  );
+          });
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
+  }, [preloaderComplete]);
 
   return (
     <section

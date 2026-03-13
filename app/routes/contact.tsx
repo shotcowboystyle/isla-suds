@@ -3,29 +3,25 @@ import {ContactForm} from '~/components/contact/ContactForm';
 import {ContactHeader} from '~/components/contact/ContactHeader';
 import {CONTACT_PAGE} from '~/content/contact';
 import {sendContactFormEmail} from '~/lib/email.server';
-import {isValidEmail} from '~/utils/validation';
+import {extractFields, emailValidator} from '~/utils/form-validation';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/contact';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: CONTACT_PAGE.meta.title}, {name: 'description', content: CONTACT_PAGE.meta.description}];
-};
+export const meta: Route.MetaFunction = createMeta(CONTACT_PAGE.meta);
 
 export async function action({request, context}: Route.ActionArgs) {
   const formData = await request.formData();
-  const name = String(formData.get('name') || '');
-  const email = String(formData.get('email') || '');
-  const subject = String(formData.get('subject') || '');
-  const orderNumber = String(formData.get('orderNumber') || '');
-  const message = String(formData.get('message') || '');
+  const {name, email, subject, orderNumber, message} = extractFields(
+    formData, 'name', 'email', 'subject', 'orderNumber', 'message',
+  );
 
-  // Validation - required fields
   if (!name || !email || !subject || !message) {
     return data({error: 'Please fill in all required fields'}, {status: 400});
   }
 
-  // Email format validation
-  if (!isValidEmail(email)) {
-    return data({fieldErrors: {email: 'Please enter a valid email address'}}, {status: 400});
+  const emailError = emailValidator(email);
+  if (emailError) {
+    return data({fieldErrors: {email: emailError}}, {status: 400});
   }
 
   const founderEmail = context.env.FOUNDER_EMAIL;

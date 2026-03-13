@@ -3,13 +3,9 @@ import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import type {Route} from './+types/collections._index';
 import type {CollectionFragment} from 'storefrontapi.generated';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'Collections | Isla Suds'},
-    {name: 'description', content: 'Browse our collections of gentle goat milk soap and skincare products.'},
-  ];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Collections | Isla Suds', description: 'Browse our collections of gentle goat milk soap and skincare products.'});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

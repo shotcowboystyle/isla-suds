@@ -7,6 +7,7 @@ import {
 import type {Route} from './+types/account.addresses';
 import type {CustomerAddressInput} from '@shopify/hydrogen/customer-account-api-types';
 import type {AddressFragment, CustomerFragment} from 'customer-accountapi.generated';
+import {createMeta} from '~/utils/meta';
 
 export type ActionResponse = {
   addressId?: string | null;
@@ -17,9 +18,7 @@ export type ActionResponse = {
   updatedAddress?: AddressFragment;
 };
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Addresses'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Addresses'});
 
 export async function loader({context}: Route.LoaderArgs) {
   context.customerAccount.handleAuthStatus();

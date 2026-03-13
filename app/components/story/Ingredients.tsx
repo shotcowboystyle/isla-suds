@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import gsap from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-import ingredientsImage from '~/assets/images/ingredients-section-bg.png';
+import ingredientsImage from '~/assets/images/ingredients-section-bg.webp';
 import ingredientsDripImage from '~/assets/images/slider-dip.png';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';

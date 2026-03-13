@@ -4,10 +4,9 @@ import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 import {getB2BCompany} from '~/lib/wholesale';
 import type {Route} from './+types/wholesale.login';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Wholesale Partner Login | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Wholesale Partner Login | Isla Suds'});
 
 export async function loader({request, context}: Route.LoaderArgs) {
   // Parse error messages from query params (from callback failures)

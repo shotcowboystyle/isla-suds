@@ -5,10 +5,9 @@ import {ProductCard} from '~/components/ProductCard';
 import {MONEY_FRAGMENT} from '~/lib/fragments';
 import type {Route} from './+types/collections.all';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Products`}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Products'});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

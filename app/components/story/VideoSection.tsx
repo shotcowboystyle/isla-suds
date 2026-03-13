@@ -92,54 +92,54 @@ export const VideoSection = () => {
 
   return (
     <div ref={stickyCircleWrapper}>
-      {!isLoading && !isMobile && (
-        <div className={styles['effect-wrapper']} data-speed="auto">
-          <div className={styles['effect-wrapper-inner']}>
-            <div className={styles['cursor-wrapper']}>
-              <div ref={cursorElement} className={styles['cursor']}>
-                <div
-                  ref={stickyCircleElement}
-                  style={{clipPath: 'circle(6% at 50% 50%)'}}
-                  className={styles['cursor-image']}
-                >
-                  <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">
-                    <div className={styles['chug-club-lightbox-button']}>
-                      <img
-                        src={LightboxButtonImage}
-                        loading="lazy"
-                        alt=""
-                        width={151}
-                        height={151}
-                        className={cn(styles['lightbox-button-image'], 'spin-circle')}
-                      />
-
-                      <div className={styles['lightbox-static-image-wrapper']}>
-                        <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
-                      </div>
-                    </div>
-                  </button>
-
-                  <div ref={stickyCircleVideoWrapper} className={cn(styles['background-video-wrapper'], 'size-full')}>
-                    <video
-                      ref={desktopVideoRef}
-                      playsInline
-                      muted
-                      loop
-                      preload="none"
-                      poster={PinVideoPoster}
-                      src={PinVideo}
-                      width={1920}
-                      height={1080}
-                      data-object-fit="cover"
-                      className="absolute object-cover size-full -inset-full"
+      {/* CSS handles mobile/desktop visibility via .effect-wrapper media queries.
+         Always render to avoid layout shift from JS hydration toggle. */}
+      <div className={styles['effect-wrapper']} data-speed="auto">
+        <div className={styles['effect-wrapper-inner']}>
+          <div className={styles['cursor-wrapper']}>
+            <div ref={cursorElement} className={styles['cursor']}>
+              <div
+                ref={stickyCircleElement}
+                style={{clipPath: 'circle(6% at 50% 50%)'}}
+                className={styles['cursor-image']}
+              >
+                <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">
+                  <div className={styles['chug-club-lightbox-button']}>
+                    <img
+                      src={LightboxButtonImage}
+                      loading="lazy"
+                      alt=""
+                      width={151}
+                      height={151}
+                      className={cn(styles['lightbox-button-image'], 'spin-circle')}
                     />
+
+                    <div className={styles['lightbox-static-image-wrapper']}>
+                      <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
+                    </div>
                   </div>
+                </button>
+
+                <div ref={stickyCircleVideoWrapper} className={cn(styles['background-video-wrapper'], 'size-full')}>
+                  <video
+                    ref={desktopVideoRef}
+                    playsInline
+                    muted
+                    loop
+                    preload="none"
+                    poster={PinVideoPoster}
+                    src={PinVideo}
+                    width={1920}
+                    height={1080}
+                    data-object-fit="cover"
+                    className="absolute object-cover size-full -inset-full"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       <div className={cn(styles['cursor-image'], styles['cursor-image-mobile'])}>
         <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">

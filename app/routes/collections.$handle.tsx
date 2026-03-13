@@ -8,7 +8,7 @@ import {LocalStores} from '~/components/LocalStores';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductCard} from '~/components/ProductCard';
 import {TestimonialsSection} from '~/components/Testimonials';
-import {MONEY_FRAGMENT} from '~/lib/fragments';
+import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';
 import type {ProductItemFragment} from 'storefrontapi.generated';
@@ -156,45 +156,6 @@ export default function Collection() {
     </div>
   );
 }
-
-const PRODUCT_ITEM_FRAGMENT = `#graphql
-  ${MONEY_FRAGMENT}
-  fragment ProductItem on Product {
-    id
-    handle
-    title
-    availableForSale
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    priceRange {
-      minVariantPrice {
-        ...Money
-      }
-      maxVariantPrice {
-        ...Money
-      }
-    }
-    variants(first: 1) {
-      nodes {
-        id
-        title
-        availableForSale
-        price {
-          ...Money
-        }
-        selectedOptions {
-          name
-          value
-        }
-      }
-    }
-  }
-` as const;
 
 // NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
 const COLLECTION_QUERY = `#graphql

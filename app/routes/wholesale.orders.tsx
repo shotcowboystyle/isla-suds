@@ -2,12 +2,11 @@ import {useLoaderData} from 'react-router';
 import {OrderHistoryList} from '~/components/wholesale/OrderHistoryList';
 import {GET_ORDER_HISTORY_QUERY} from '~/graphql/customer-account/GetOrderHistory';
 import {requireWholesaleSession} from '~/lib/wholesale';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/wholesale.orders';
 import type {OrdersResponse} from '~/types/wholesale';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Order History | Wholesale | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Order History | Wholesale | Isla Suds'});
 
 export async function loader({request, context}: Route.LoaderArgs) {
   await requireWholesaleSession(context);

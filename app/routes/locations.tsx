@@ -1,58 +1,22 @@
-import {useSearchParams, useLoaderData} from 'react-router';
+import {useLoaderData} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {LocationsPage} from '~/components/locations/LocationsPage';
 import {LOCATIONS_PAGE} from '~/content/stores';
-import {MONEY_FRAGMENT} from '~/lib/fragments';
-import {cn} from '~/utils/cn';
+import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/locations';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: LOCATIONS_PAGE.meta.title}, {name: 'description', content: LOCATIONS_PAGE.meta.description}];
-};
-
-const LOCATION_PRODUCT_FRAGMENT = `#graphql
-  ${MONEY_FRAGMENT}
-  fragment LocationProduct on Product {
-    id
-    handle
-    title
-    availableForSale
-    variants(first: 1) {
-      nodes {
-        id
-        availableForSale
-        price {
-          ...Money
-        }
-      }
-    }
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    priceRange {
-      minVariantPrice {
-        ...Money
-      }
-      maxVariantPrice {
-        ...Money
-      }
-    }
-  }
-` as const;
+export const meta: Route.MetaFunction = createMeta(LOCATIONS_PAGE.meta);
 
 const CATALOG_QUERY = `#graphql
   query LocationsCatalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
     products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
       nodes {
-        ...LocationProduct
+        ...ProductItem
       }
     }
   }
-  ${LOCATION_PRODUCT_FRAGMENT}
+  ${PRODUCT_ITEM_FRAGMENT}
 ` as const;
 
 export async function loader({context, request}: Route.LoaderArgs) {

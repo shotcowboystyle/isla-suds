@@ -9,10 +9,9 @@ import {GET_ORDER_FOR_REORDER_QUERY} from '~/graphql/customer-account/GetOrderFo
 import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 import {getB2BCompany} from '~/lib/wholesale';
 import type {Route} from './+types/wholesale._index';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Wholesale Dashboard | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Wholesale Dashboard | Isla Suds'});
 
 interface ReorderActionResponse {
   success: boolean;

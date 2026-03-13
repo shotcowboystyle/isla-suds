@@ -3,15 +3,14 @@ import {CUSTOMER_UPDATE_MUTATION} from '~/graphql/customer-account/CustomerUpdat
 import type {Route} from './+types/account.profile';
 import type {CustomerUpdateInput} from '@shopify/hydrogen/customer-account-api-types';
 import type {CustomerFragment} from 'customer-accountapi.generated';
+import {createMeta} from '~/utils/meta';
 
 export type ActionResponse = {
   error: string | null;
   customer: CustomerFragment | null;
 };
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Profile'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Profile'});
 
 export async function loader({context}: Route.LoaderArgs) {
   context.customerAccount.handleAuthStatus();

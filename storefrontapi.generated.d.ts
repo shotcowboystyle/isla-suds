@@ -379,6 +379,32 @@ export type MoneyFragment = Pick<
   'currencyCode' | 'amount'
 >;
 
+export type ProductItemFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'handle' | 'title' | 'availableForSale'
+> & {
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+  >;
+  priceRange: {
+    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+  };
+  variants: {
+    nodes: Array<
+      Pick<
+        StorefrontAPI.ProductVariant,
+        'id' | 'title' | 'availableForSale'
+      > & {
+        price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+        selectedOptions: Array<
+          Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+        >;
+      }
+    >;
+  };
+};
+
 export type CartLineFragment = Pick<
   StorefrontAPI.CartLine,
   'id' | 'quantity'
@@ -785,32 +811,6 @@ export type BlogsQuery = {
   };
 };
 
-export type ProductItemFragment = Pick<
-  StorefrontAPI.Product,
-  'id' | 'handle' | 'title' | 'availableForSale'
-> & {
-  featuredImage?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
-  >;
-  priceRange: {
-    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-    maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-  };
-  variants: {
-    nodes: Array<
-      Pick<
-        StorefrontAPI.ProductVariant,
-        'id' | 'title' | 'availableForSale'
-      > & {
-        price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-        selectedOptions: Array<
-          Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
-        >;
-      }
-    >;
-  };
-};
-
 export type CollectionQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -973,26 +973,6 @@ export type CatalogQuery = {
   };
 };
 
-export type LocationProductFragment = Pick<
-  StorefrontAPI.Product,
-  'id' | 'handle' | 'title' | 'availableForSale'
-> & {
-  variants: {
-    nodes: Array<
-      Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
-        price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-      }
-    >;
-  };
-  featuredImage?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
-  >;
-  priceRange: {
-    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-    maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-  };
-};
-
 export type LocationsCatalogQueryVariables = StorefrontAPI.Exact<{
   first?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Int']['input']>;
   last?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Int']['input']>;
@@ -1011,13 +991,6 @@ export type LocationsCatalogQuery = {
         StorefrontAPI.Product,
         'id' | 'handle' | 'title' | 'availableForSale'
       > & {
-        variants: {
-          nodes: Array<
-            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
-              price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
-            }
-          >;
-        };
         featuredImage?: StorefrontAPI.Maybe<
           Pick<
             StorefrontAPI.Image,
@@ -1032,6 +1005,19 @@ export type LocationsCatalogQuery = {
           maxVariantPrice: Pick<
             StorefrontAPI.MoneyV2,
             'currencyCode' | 'amount'
+          >;
+        };
+        variants: {
+          nodes: Array<
+            Pick<
+              StorefrontAPI.ProductVariant,
+              'id' | 'title' | 'availableForSale'
+            > & {
+              price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+              selectedOptions: Array<
+                Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+              >;
+            }
           >;
         };
       }
@@ -1487,7 +1473,7 @@ interface GeneratedQueryTypes {
     return: CatalogQuery;
     variables: CatalogQueryVariables;
   };
-  '#graphql\n  query LocationsCatalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {\n    products(first: $first, last: $last, before: $startCursor, after: $endCursor) {\n      nodes {\n        ...LocationProduct\n      }\n    }\n  }\n  #graphql\n  #graphql\n  fragment Money on MoneyV2 {\n    currencyCode\n    amount\n  }\n\n  fragment LocationProduct on Product {\n    id\n    handle\n    title\n    availableForSale\n    variants(first: 1) {\n      nodes {\n        id\n        availableForSale\n        price {\n          ...Money\n        }\n      }\n    }\n    featuredImage {\n      id\n      altText\n      url\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        ...Money\n      }\n      maxVariantPrice {\n        ...Money\n      }\n    }\n  }\n\n': {
+  '#graphql\n  query LocationsCatalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {\n    products(first: $first, last: $last, before: $startCursor, after: $endCursor) {\n      nodes {\n        ...ProductItem\n      }\n    }\n  }\n  #graphql\n  #graphql\n  fragment Money on MoneyV2 {\n    currencyCode\n    amount\n  }\n\n  fragment ProductItem on Product {\n    id\n    handle\n    title\n    availableForSale\n    featuredImage {\n      id\n      altText\n      url\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        ...Money\n      }\n      maxVariantPrice {\n        ...Money\n      }\n    }\n    variants(first: 1) {\n      nodes {\n        id\n        title\n        availableForSale\n        price {\n          ...Money\n        }\n        selectedOptions {\n          name\n          value\n        }\n      }\n    }\n  }\n\n': {
     return: LocationsCatalogQuery;
     variables: LocationsCatalogQueryVariables;
   };

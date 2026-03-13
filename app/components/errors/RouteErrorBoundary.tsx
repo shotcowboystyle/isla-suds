@@ -1,4 +1,5 @@
 import {Component} from 'react';
+import {logBoundaryError} from './log-boundary-error';
 import {RouteErrorFallback} from './RouteErrorFallback';
 import type {ErrorInfo, ReactNode} from 'react';
 
@@ -42,14 +43,7 @@ export class RouteErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error details to console for debugging
-    console.error('RouteErrorBoundary caught error:', {
-      error: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack,
-      timestamp: new Date().toISOString(),
-      boundaryType: 'route',
-    });
+    logBoundaryError('RouteErrorBoundary', 'route', error, errorInfo);
   }
 
   render(): ReactNode {
