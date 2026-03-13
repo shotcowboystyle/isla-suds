@@ -99,10 +99,11 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
         {/* Only pre-load Shopify Images if productImageUrl from the CMS list isn't present, or fallback to it */}
         {productImageUrl ? (
           <img
-            // ref={subjectRef}
             loading={loading}
             src={productImageUrl}
             alt={product.title}
+            width={574}
+            height={387}
             className={styles['card-soap-bar']}
           />
         ) : (
@@ -113,16 +114,18 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
               aspectRatio="5/3"
               data={product.featuredImage}
               loading={loading}
+              width={574}
               className={styles['card-soap-bar']}
             />
           )
         )}
 
         <img
-          // ref={elementsRef}
           loading={loading}
           src={particlesUrl}
-          alt="particles"
+          alt=""
+          width={946}
+          height={621}
           className={styles['card-additional']}
         />
 

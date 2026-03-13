@@ -20,20 +20,23 @@ export const VideoSection = () => {
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const videoEl = isMobile ? mobileVideoRef.current : desktopVideoRef.current;
-    if (!videoEl) return;
+    const videos = [desktopVideoRef.current, mobileVideoRef.current].filter(Boolean) as HTMLVideoElement[];
+    if (!videos.length) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          void videoEl.play();
-        } else {
-          videoEl.pause();
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            void video.play();
+          } else {
+            video.pause();
+          }
+        });
       },
       {threshold: 0.25},
     );
-    observer.observe(videoEl);
+    videos.forEach((v) => observer.observe(v));
     return () => observer.disconnect();
   }, [isMobile, isLoading]);
 
@@ -105,11 +108,13 @@ export const VideoSection = () => {
                         src={LightboxButtonImage}
                         loading="lazy"
                         alt=""
+                        width={151}
+                        height={151}
                         className={cn(styles['lightbox-button-image'], 'spin-circle')}
                       />
 
                       <div className={styles['lightbox-static-image-wrapper']}>
-                        <img src={PlayIcon} loading="lazy" alt="" className={styles['lightbox-static-image']} />
+                        <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
                       </div>
                     </div>
                   </button>
@@ -136,34 +141,32 @@ export const VideoSection = () => {
         </div>
       )}
 
-      {!isLoading && isMobile && (
-        <div className={cn(styles['cursor-image'], styles['cursor-image-mobile'])}>
-          <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">
-            <div className={styles['chug-club-lightbox-button']}>
-              <img src={LightboxButtonImage} loading="lazy" alt="" className={styles['lightbox-button-image']} />
-              <div className={styles['lightbox-static-image-wrapper']}>
-                <img src={PlayIcon} loading="lazy" alt="" className={styles['lightbox-static-image']} />
-              </div>
+      <div className={cn(styles['cursor-image'], styles['cursor-image-mobile'])}>
+        <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">
+          <div className={styles['chug-club-lightbox-button']}>
+            <img src={LightboxButtonImage} loading="lazy" alt="" width={151} height={151} className={styles['lightbox-button-image']} />
+            <div className={styles['lightbox-static-image-wrapper']}>
+              <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
             </div>
-          </button>
-
-          <div className={cn(styles['background-video-wrapper'], 'size-full')}>
-            <video
-              ref={mobileVideoRef}
-              loop
-              muted
-              playsInline
-              preload="none"
-              poster={PinVideoPoster}
-              data-object-fit="cover"
-              src={PinVideo}
-              width={1920}
-              height={1080}
-              className="absolute inset-0 object-cover size-full"
-            />
           </div>
+        </button>
+
+        <div className={cn(styles['background-video-wrapper'], 'size-full')}>
+          <video
+            ref={mobileVideoRef}
+            loop
+            muted
+            playsInline
+            preload="none"
+            poster={PinVideoPoster}
+            data-object-fit="cover"
+            src={PinVideo}
+            width={1920}
+            height={1080}
+            className="absolute inset-0 object-cover size-full"
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 };

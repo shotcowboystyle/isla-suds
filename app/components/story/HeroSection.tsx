@@ -6,7 +6,7 @@ import {SplitText} from 'gsap/SplitText';
 if (typeof document !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
-import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.png';
+import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.webp';
 import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.png';
 import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
 import {LiquidButton} from '~/components/ui/LiquidButton';
@@ -164,6 +164,8 @@ export const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(function He
           // @ts-ignore
           fetchpriority="high"
           alt=""
+          width={1296}
+          height={928}
           className="hero-image-mobile"
         />
         {/* eslint-enable react/no-unknown-property */}
