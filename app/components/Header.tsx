@@ -193,7 +193,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
                 Find in stores
               </a>
 
-              <HeaderCtas isLoggedIn={isLoggedIn} />
+              <HeaderCtas />
 
               <Suspense fallback={<CartIconButton itemCount={0} />}>
                 <Await resolve={cart}>
@@ -225,7 +225,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   );
 }
 
-function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
+function HeaderCtas() {
   return (
     <nav className="header-ctas flex" role="navigation" aria-label="Header CTAs">
       <NavLink
@@ -235,11 +235,8 @@ function HeaderCtas({isLoggedIn}: Pick<HeaderProps, 'isLoggedIn'>) {
         className={cn(styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
         aria-label="Account"
       >
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            <User className={styles['navbar-icon-button-icon']} />
-          </Await>
-        </Suspense>
+        {/* Always render the icon to avoid CLS from Suspense text→icon swap */}
+        <User className={styles['navbar-icon-button-icon']} />
       </NavLink>
     </nav>
   );

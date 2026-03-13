@@ -1,4 +1,5 @@
 import {Component} from 'react';
+import {logBoundaryError} from './log-boundary-error';
 import type {ErrorInfo, ReactNode} from 'react';
 
 interface ComponentErrorBoundaryProps {
@@ -47,19 +48,8 @@ export class ComponentErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error details to console for debugging
-    console.error('ComponentErrorBoundary caught error:', {
-      error: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack,
-      timestamp: new Date().toISOString(),
-      boundaryType: 'component',
-    });
-
-    // Call optional error callback
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
-    }
+    logBoundaryError('ComponentErrorBoundary', 'component', error, errorInfo);
+    this.props.onError?.(error, errorInfo);
   }
 
   render(): ReactNode {

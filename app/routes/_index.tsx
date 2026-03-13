@@ -7,6 +7,7 @@ import {
   FEATURED_COLLECTION_QUERY,
   RECOMMENDED_PRODUCTS_QUERY,
 } from '~/graphql/product/ProductList';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/_index';
 
 const MessageSection = lazy(() =>
@@ -23,16 +24,11 @@ const TestimonialsSection = lazy(() =>
 );
 const LocalStores = lazy(() => import('~/components/LocalStores').then((m) => ({default: m.LocalStores})));
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin'},
-    {
-      name: 'description',
-      content:
-        'Isla Suds crafts gentle, unscented goat milk soap for sensitive and reactive skin. 100% clean, natural ingredients — no dyes, no fragrances, just nourishing care.',
-    },
-  ];
-};
+export const meta: Route.MetaFunction = createMeta({
+  title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin',
+  description:
+    'Isla Suds crafts gentle, unscented goat milk soap for sensitive and reactive skin. 100% clean, natural ingredients — no dyes, no fragrances, just nourishing care.',
+});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

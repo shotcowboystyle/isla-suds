@@ -5,6 +5,17 @@ interface UseMediaQueryReturn {
   isLoading: boolean;
 }
 
+/**
+ * Factory for creating named media-query hooks with consistent shape.
+ * Avoids duplicating the useMediaQuery wrapper in each hook file.
+ */
+export function createMediaQueryHook(
+  query: string,
+  uaKeywords?: string[],
+): () => UseMediaQueryReturn {
+  return () => useMediaQuery(query, uaKeywords);
+}
+
 export function useMediaQuery(
   query: string,
   uaKeywords?: string[],

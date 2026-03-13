@@ -1,7 +1,8 @@
-import {useMediaQuery} from './use-media-query';
+import {createMediaQueryHook} from './use-media-query';
 
-// const DESKTOP_QUERY = '(min-width: 992px) and (hover: hover) and (pointer: fine)';
 const DESKTOP_QUERY = '(min-width: 992px)';
+
+const useDesktopQuery = createMediaQueryHook(DESKTOP_QUERY);
 
 interface UseIsDesktopReturn {
   isDesktop: boolean;
@@ -9,6 +10,6 @@ interface UseIsDesktopReturn {
 }
 
 export const useIsDesktop = (): UseIsDesktopReturn => {
-  const {matches, isLoading} = useMediaQuery(DESKTOP_QUERY);
+  const {matches, isLoading} = useDesktopQuery();
   return {isDesktop: matches, isLoading};
 };

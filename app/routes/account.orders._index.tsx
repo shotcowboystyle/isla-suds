@@ -9,6 +9,7 @@ import {
   ORDER_FILTER_FIELDS,
   type OrderFilterParams,
 } from '~/lib/orderFilters';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/account.orders._index';
 import type {CustomerOrdersFragment, OrderItemFragment} from 'customer-accountapi.generated';
 
@@ -17,9 +18,7 @@ type OrdersLoaderData = {
   filters: OrderFilterParams;
 };
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Orders'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Orders'});
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const {customerAccount} = context;

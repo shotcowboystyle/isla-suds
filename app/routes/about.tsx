@@ -1,13 +1,9 @@
 import {ABOUT_PAGE} from '~/content/about';
 import {cn} from '~/utils/cn';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/about';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: ABOUT_PAGE.meta.title},
-    {name: 'description', content: ABOUT_PAGE.meta.description},
-  ];
-};
+export const meta: Route.MetaFunction = createMeta(ABOUT_PAGE.meta);
 
 export default function AboutPage() {
   return (

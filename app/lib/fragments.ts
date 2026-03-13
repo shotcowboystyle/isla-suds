@@ -5,6 +5,50 @@ export const MONEY_FRAGMENT = `#graphql
   }
 ` as const;
 
+/**
+ * Shared product card fragment — used by collections, locations, and other
+ * listing pages. Superset of the fields each consumer needs; individual pages
+ * simply ignore unused fields.
+ */
+export const PRODUCT_ITEM_FRAGMENT = `#graphql
+  ${MONEY_FRAGMENT}
+  fragment ProductItem on Product {
+    id
+    handle
+    title
+    availableForSale
+    featuredImage {
+      id
+      altText
+      url
+      width
+      height
+    }
+    priceRange {
+      minVariantPrice {
+        ...Money
+      }
+      maxVariantPrice {
+        ...Money
+      }
+    }
+    variants(first: 1) {
+      nodes {
+        id
+        title
+        availableForSale
+        price {
+          ...Money
+        }
+        selectedOptions {
+          name
+          value
+        }
+      }
+    }
+  }
+` as const;
+
 // NOTE: https://shopify.dev/docs/api/storefront/latest/queries/cart
 export const CART_QUERY_FRAGMENT = `#graphql
   fragment Money on MoneyV2 {

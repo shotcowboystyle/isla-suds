@@ -5,12 +5,11 @@ import {PartnersApplicationForm} from '~/components/partners/register/PartnersAp
 // import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 // import {getB2BCompany} from '~/lib/wholesale';
 import {submitToShopify} from '~/lib/shopify-admin.server';
-import {isValidEmail} from '~/utils/validation';
+import {extractFields, validateFields, emailValidator} from '~/utils/form-validation';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/partners.register';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Apply to be a Wholesale Partner | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Apply to be a Wholesale Partner | Isla Suds'});
 
 // export async function loader({context}: Route.LoaderArgs) {
 //   const customerId = await context.session.get('customerId');
@@ -34,30 +33,23 @@ export const meta: Route.MetaFunction = () => {
 
 export async function action({request, context}: Route.ActionArgs) {
   const formData = await request.formData();
-  const name = String(formData.get('name') || '');
-  const email = String(formData.get('email') || '');
-  const phone = String(formData.get('phone') || '');
-  const businessName = String(formData.get('businessName') || '');
-  const instagram = String(formData.get('instagram') || '');
-  const website = String(formData.get('website') || '');
-  const message = String(formData.get('message') || '');
+  const fields = extractFields(
+    formData, 'name', 'email', 'phone', 'businessName', 'instagram', 'website', 'message',
+  );
 
-  // Basic validation
-  const fieldErrors: Record<string, string> = {};
-  if (!name) fieldErrors.name = 'Name is required';
-  if (!email) fieldErrors.email = 'Email is required';
-  else if (!isValidEmail(email)) fieldErrors.email = 'Invalid email address';
-  if (!phone) fieldErrors.phone = 'Phone is required';
-  if (!businessName) fieldErrors.businessName = 'Business Name is required';
-  if (!message) fieldErrors.message = 'Please tell us about your shop';
+  const {fieldErrors, hasErrors} = validateFields(fields, [
+    {name: 'name', required: true},
+    {name: 'email', required: true, validate: emailValidator},
+    {name: 'phone', required: true},
+    {name: 'businessName', required: 'Business Name is required'},
+    {name: 'message', required: 'Please tell us about your shop'},
+  ]);
 
-  if (Object.keys(fieldErrors).length > 0) {
-    return {
-      success: false,
-      fieldErrors,
-      error: 'Please fix the errors above.',
-    };
+  if (hasErrors) {
+    return {success: false, fieldErrors, error: 'Please fix the errors above.'};
   }
+
+  const {name, email, phone, businessName, instagram, website, message} = fields;
 
   const note = [
     'Wholesale Partner Application',

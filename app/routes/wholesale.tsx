@@ -5,10 +5,9 @@ import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCust
 import {getB2BCompany} from '~/lib/wholesale';
 import {cn} from '~/utils/cn';
 import type {Route} from './+types/wholesale';
+import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Wholesale Portal | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Wholesale Portal | Isla Suds'});
 
 export async function loader({context, request}: Route.LoaderArgs) {
   const url = new URL(request.url);

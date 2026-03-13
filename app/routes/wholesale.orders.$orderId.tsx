@@ -9,12 +9,11 @@ import {requireWholesaleSession} from '~/lib/wholesale';
 import {cn} from '~/utils/cn';
 import {formatDate} from '~/utils/format-date';
 import {formatMoney, getCurrencyLabel} from '~/utils/format-money';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/wholesale.orders.$orderId';
 import type {OrderDetailsResponse} from '~/types/wholesale';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Order Details | Wholesale | Isla Suds'}];
-};
+export const meta: Route.MetaFunction = createMeta({title: 'Order Details | Wholesale | Isla Suds'});
 
 export async function loader({params, context}: Route.LoaderArgs) {
   await requireWholesaleSession(context);

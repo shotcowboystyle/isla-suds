@@ -4,11 +4,10 @@ import {OrderProductCard} from '~/components/wholesale/OrderProductCard';
 import {OrderSummary} from '~/components/wholesale/OrderSummary';
 import {wholesaleContent} from '~/content/wholesale';
 import {cn} from '~/utils/cn';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/wholesale.order';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `${wholesaleContent.order.pageTitle} | Isla Suds`}];
-};
+export const meta: Route.MetaFunction = createMeta({title: `${wholesaleContent.order.pageTitle} | Isla Suds`});
 
 const WHOLESALE_PRODUCT_FRAGMENT = `#graphql
   fragment WholesaleProductFields on Product {
