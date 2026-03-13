@@ -132,7 +132,7 @@ export const TestimonialsSection = () => {
       </div>
 
       <div className={styles['drip-background-image-wrapper']}>
-        <img src={DripImage} loading="lazy" alt="" className={styles['drip-background-image']} />
+        <img src={DripImage} loading="lazy" alt="" width={1920} height={292} className={styles['drip-background-image']} />
       </div>
     </div>
   );

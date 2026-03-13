@@ -3,7 +3,6 @@ import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
 import {ShoppingBag, User} from 'lucide-react';
 import {Logo} from '~/components/Logo';
-import {useIsMobile} from '~/hooks/use-is-mobile';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import styles from './Header.module.css';
@@ -36,16 +35,12 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   const {shop, menu} = header;
 
   const {open, toggleMenu} = useMenuToggle();
-  const {isMobile} = useIsMobile();
 
   // Story 2.5: Scroll-aware header on home page only
   // const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [, setPrefersReducedMotion] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const line1Ref = useRef<HTMLDivElement>(null);
-  const line2Ref = useRef<HTMLDivElement>(null);
-  const tlButton = useRef<gsap.core.Timeline | null>(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -71,43 +66,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
   }, []);
 
   useEffect(() => {
-    if (!buttonRef.current || !line1Ref.current || !line2Ref.current) {
-      return;
-    }
-
-    let cancelled = false;
-    const btn = buttonRef.current;
-    const line1 = line1Ref.current;
-    const line2 = line2Ref.current;
-
-    void import('gsap').then(({default: gsap}) => {
-      if (cancelled) return;
-
-      gsap.set(line1, {y: -4, rotate: 0});
-      gsap.set(line2, {y: 4, rotate: 0});
-      gsap.set(btn, {
-        cursor: 'pointer',
-        borderRadius: '9999px',
-      });
-
-      tlButton.current = gsap.timeline({paused: true});
-
-      tlButton.current
-        .to(btn, {
-          borderRadius: '9999px',
-          duration: 0.35,
-          ease: 'power3.out',
-        })
-        .to(line1, {y: 0, rotate: 45, duration: 0.35, ease: 'power3.out'}, 0)
-        .to(line2, {y: 0, rotate: -45, duration: 0.35, ease: 'power3.out'}, 0);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && open) {
         toggleMenu();
@@ -119,18 +77,6 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [open, toggleMenu]);
-
-  useEffect(() => {
-    if (!tlButton.current) {
-      return;
-    }
-
-    if (open) {
-      tlButton.current.play();
-    } else {
-      tlButton.current.reverse();
-    }
-  }, [open]);
 
   useEffect(() => {
     if (!buttonRef.current) {
@@ -226,21 +172,19 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           <strong className="sr-only">{shop.name}</strong>
         </NavLink>
 
-        {!isMobile && (
-          <div className={styles['menu-button-wrapper']}>
-            <button
-              ref={buttonRef}
-              onClick={toggleMenu}
-              className={styles['menu-button']}
-              aria-expanded={open}
-              aria-label="Toggle menu"
-            >
-              <div ref={line1Ref} className={styles['menu-button-line']} />
-              <div ref={line2Ref} className={cn(styles['menu-button-line'], styles['menu-button-line-2'])} />
-              <span className="sr-only">Menu</span>
-            </button>
-          </div>
-        )}
+        <div className={styles['menu-button-wrapper']}>
+          <button
+            ref={buttonRef}
+            onClick={toggleMenu}
+            className={styles['menu-button']}
+            aria-expanded={open}
+            aria-label="Toggle menu"
+          >
+            <div className={styles['menu-button-line']} />
+            <div className={cn(styles['menu-button-line'], styles['menu-button-line-2'])} />
+            <span className="sr-only">Menu</span>
+          </button>
+        </div>
 
         <div className={styles['menu-cta-buttons-wrapper']}>
           <div className={styles['cta-buttons']}>
@@ -259,26 +203,22 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
             </div>
           </div>
 
-          {isMobile && (
-            <button
-              ref={buttonRef}
-              onClick={toggleMenu}
-              className={cn(styles['menu-button-mobile'], styles['menu-button-abs'])}
-              aria-expanded={open}
-              aria-label="Toggle menu"
-            >
-              <div ref={line1Ref} className={cn(styles['menu-button-line'], styles['menu-button-line-mobile'])} />
-              <div
-                ref={line2Ref}
-                className={cn(
-                  styles['menu-button-line'],
-                  styles['menu-button-line-2'],
-                  styles['menu-button-line-mobile'],
-                  styles['menu-button-line-2-mobile'],
-                )}
-              />
-            </button>
-          )}
+          <button
+            onClick={toggleMenu}
+            className={cn(styles['menu-button-mobile'], styles['menu-button-abs'])}
+            aria-expanded={open}
+            aria-label="Toggle menu"
+          >
+            <div className={cn(styles['menu-button-line'], styles['menu-button-line-mobile'])} />
+            <div
+              className={cn(
+                styles['menu-button-line'],
+                styles['menu-button-line-2'],
+                styles['menu-button-line-mobile'],
+                styles['menu-button-line-2-mobile'],
+              )}
+            />
+          </button>
         </div>
       </div>
     </header>

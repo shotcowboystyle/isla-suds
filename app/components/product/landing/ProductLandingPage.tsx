@@ -2,10 +2,9 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {useOptimisticVariant, getAdjacentAndFirstAvailableVariants, Image, getProductOptions} from '@shopify/hydrogen';
 import {gsap} from 'gsap';
-import {Flip} from 'gsap/Flip';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, Flip, useGSAP);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 import {JumboMarquee} from '~/components/JumboMarquee';
 import {LocalStores} from '~/components/LocalStores';
