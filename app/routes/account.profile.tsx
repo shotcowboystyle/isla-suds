@@ -1,9 +1,9 @@
 import {data, Form, useActionData, useNavigation, useOutletContext} from 'react-router';
 import {CUSTOMER_UPDATE_MUTATION} from '~/graphql/customer-account/CustomerUpdateMutation';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/account.profile';
 import type {CustomerUpdateInput} from '@shopify/hydrogen/customer-account-api-types';
 import type {CustomerFragment} from 'customer-accountapi.generated';
-import {createMeta} from '~/utils/meta';
 
 export type ActionResponse = {
   error: string | null;
@@ -13,7 +13,7 @@ export type ActionResponse = {
 export const meta: Route.MetaFunction = createMeta({title: 'Profile'});
 
 export async function loader({context}: Route.LoaderArgs) {
-  context.customerAccount.handleAuthStatus();
+  await context.customerAccount.handleAuthStatus();
 
   return {};
 }

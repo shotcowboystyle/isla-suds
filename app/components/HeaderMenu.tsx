@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState, useCallback} from 'react';
 import {NavLink, useLocation} from 'react-router';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import AboutUsImage from '~/assets/images/menu-about-us.webp';
 import ContactImage from '~/assets/images/menu-catalog.png';
@@ -76,9 +76,7 @@ const FALLBACK_HEADER_MENU = {
   ],
 };
 
-const SOCIAL_LINKS = [
-  {label: 'Instagram', href: 'https://www.instagram.com/islasuds/'},
-];
+const SOCIAL_LINKS = [{label: 'Instagram', href: 'https://www.instagram.com/islasuds/'}];
 
 interface HeaderMenuProps {
   menu: HeaderQuery['menu'];
@@ -124,22 +122,22 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
   }, [open, resetActiveMenu]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const ctx = GSAP.context(() => {
       // Create SPLIT TEXT
-      const splits = gsap.utils.toArray<HTMLElement>('.menu-item-text').map((el) => {
+      const splits = GSAP.utils.toArray<HTMLElement>('.menu-item-text').map((el) => {
         return new SplitText(el, {type: 'chars'});
       });
 
       // Set initial state for all characters
-      gsap.set(
+      GSAP.set(
         splits.flatMap((s) => s.chars),
         {yPercent: 100},
       );
 
       // Set initial state for the container itself
-      gsap.set(containerRef.current, {yPercent: -100});
+      GSAP.set(containerRef.current, {yPercent: -100});
 
-      tlRef.current = gsap.timeline({paused: true});
+      tlRef.current = GSAP.timeline({paused: true});
 
       // Animate the container first
       tlRef.current.to(
@@ -167,8 +165,8 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
       });
 
       // Animate social links
-      const socialLinks = gsap.utils.toArray<HTMLElement>('.social-link');
-      gsap.set(socialLinks, {opacity: 0, y: 20});
+      const socialLinks = GSAP.utils.toArray<HTMLElement>('.social-link');
+      GSAP.set(socialLinks, {opacity: 0, y: 20});
 
       tlRef.current!.to(
         socialLinks,
@@ -204,7 +202,18 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
         aria-label="Close menu"
         className="absolute top-6 right-6 z-[201] flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-white transition-colors"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>

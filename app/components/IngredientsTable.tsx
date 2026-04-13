@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
@@ -8,7 +8,7 @@ import styles from './IngredientsTable.module.css';
 import {INGREDIENTS} from '../content/ingredients';
 
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 interface IngredientsTableProps {
@@ -26,32 +26,30 @@ export const IngredientsTable = ({className}: IngredientsTableProps) => {
         return;
       }
 
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: isMobile ? 'top 90%' : 'top 60%',
-            end: '+=1000',
-          },
-        })
-        .from('.animated-ingredient-item', {
-          x: (index, target) => {
-            const container = target.closest(`.${styles['ingredient-group']}`);
-            if (!container) return 0;
-            const cRect = container.getBoundingClientRect();
-            const tRect = target.getBoundingClientRect();
-            return cRect.left + cRect.width / 2 - (tRect.left + tRect.width / 2);
-          },
-          y: (index, target) => {
-            const container = target.closest(`.${styles['ingredient-group']}`);
-            if (!container) return 0;
-            const cRect = container.getBoundingClientRect();
-            const tRect = target.getBoundingClientRect();
-            return cRect.top + cRect.height / 2 - (tRect.top + tRect.height / 2);
-          },
-          ease: 'power3.out',
-          stagger: 0.05,
-        });
+      GSAP.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: isMobile ? 'top 90%' : 'top 60%',
+          end: '+=1000',
+        },
+      }).from('.animated-ingredient-item', {
+        x: (index, target) => {
+          const container = target.closest(`.${styles['ingredient-group']}`);
+          if (!container) return 0;
+          const cRect = container.getBoundingClientRect();
+          const tRect = target.getBoundingClientRect();
+          return cRect.left + cRect.width / 2 - (tRect.left + tRect.width / 2);
+        },
+        y: (index, target) => {
+          const container = target.closest(`.${styles['ingredient-group']}`);
+          if (!container) return 0;
+          const cRect = container.getBoundingClientRect();
+          const tRect = target.getBoundingClientRect();
+          return cRect.top + cRect.height / 2 - (tRect.top + tRect.height / 2);
+        },
+        ease: 'power3.out',
+        stagger: 0.05,
+      });
     },
     {scope: containerRef, dependencies: [containerRef, isLoading, isMobile]},
   );

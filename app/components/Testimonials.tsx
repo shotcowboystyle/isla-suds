@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import DripImage from '~/assets/images/slider-dip.png';
 import {VideoCard} from '~/components/VideoCard';
 import {testimonialsData} from '~/content/testimonials';
@@ -23,11 +23,11 @@ export const TestimonialsSection = () => {
         return;
       }
 
-      gsap.set(scrollContainerRef.current, {
+      GSAP.set(scrollContainerRef.current, {
         marginTop: 0,
       });
 
-      const headingTl = gsap.timeline({
+      const headingTl = GSAP.timeline({
         scrollTrigger: {
           trigger: scrollContainerRef.current,
           start: 'top bottom',
@@ -64,7 +64,7 @@ export const TestimonialsSection = () => {
         return;
       }
 
-      const cardsTl = gsap.timeline({
+      const cardsTl = GSAP.timeline({
         scrollTrigger: {
           trigger: scrollContainerRef.current,
           start: '10% top',
@@ -132,7 +132,14 @@ export const TestimonialsSection = () => {
       </div>
 
       <div className={styles['drip-background-image-wrapper']}>
-        <img src={DripImage} loading="lazy" alt="" width={1920} height={292} className={styles['drip-background-image']} />
+        <img
+          src={DripImage}
+          loading="lazy"
+          alt=""
+          width={1920}
+          height={292}
+          className={styles['drip-background-image']}
+        />
       </div>
     </div>
   );

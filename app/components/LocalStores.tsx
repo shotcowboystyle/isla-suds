@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import StoreMap from '~/assets/images/store-map.svg';
 import {LiquidButton} from '~/components/ui/LiquidButton';
@@ -24,7 +24,7 @@ export function LocalStores() {
       const heading1Split = SplitText.create(heading1Ref.current, {type: 'chars'});
       const paragraphSplit = SplitText.create(paragraphRef.current, {type: 'words', aria: 'none'});
 
-      const contentTl = gsap.timeline({
+      const contentTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 70%' : 'top center',
@@ -86,7 +86,14 @@ export function LocalStores() {
           <LiquidButton href="/locations" text="Find a Store" />
         </div>
 
-        <img src={StoreMap} loading="lazy" width="1840" height="775" alt="Store Map" className={styles['background-image']} />
+        <img
+          src={StoreMap}
+          loading="lazy"
+          width="1840"
+          height="775"
+          alt="Store Map"
+          className={styles['background-image']}
+        />
       </div>
     </section>
   );

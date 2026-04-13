@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
@@ -38,7 +38,7 @@ export const MessageSection = () => {
         aria: 'none',
       });
 
-      const masterTl = gsap.timeline({
+      const masterTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 90%',

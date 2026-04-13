@@ -1,11 +1,14 @@
 import {useLoaderData, Link} from 'react-router';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/collections._index';
 import type {CollectionFragment} from 'storefrontapi.generated';
-import {createMeta} from '~/utils/meta';
 
-export const meta: Route.MetaFunction = createMeta({title: 'Collections | Isla Suds', description: 'Browse our collections of gentle goat milk soap and skincare products.'});
+export const meta: Route.MetaFunction = createMeta({
+  title: 'Collections | Isla Suds',
+  description: 'Browse our collections of gentle goat milk soap and skincare products.',
+});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -51,36 +54,16 @@ export default function Collections() {
   return (
     <div className="collections">
       <h1>Collections</h1>
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
-          />
-        )}
+      <PaginatedResourceSection<CollectionFragment> connection={collections} resourcesClassName="collections-grid">
+        {({node: collection, index}) => <CollectionItem key={collection.id} collection={collection} index={index} />}
       </PaginatedResourceSection>
     </div>
   );
 }
 
-function CollectionItem({
-  collection,
-  index,
-}: {
-  collection: CollectionFragment;
-  index: number;
-}) {
+function CollectionItem({collection, index}: {collection: CollectionFragment; index: number}) {
   return (
-    <Link
-      className="collection-item"
-      key={collection.id}
-      to={`/collections/${collection.handle}`}
-      prefetch="intent"
-    >
+    <Link className="collection-item" key={collection.id} to={`/collections/${collection.handle}`} prefetch="intent">
       {collection?.image && (
         <Image
           alt={collection.image.altText || collection.title}

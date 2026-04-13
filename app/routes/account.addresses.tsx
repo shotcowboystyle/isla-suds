@@ -4,10 +4,10 @@ import {
   DELETE_ADDRESS_MUTATION,
   CREATE_ADDRESS_MUTATION,
 } from '~/graphql/customer-account/CustomerAddressMutations';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/account.addresses';
 import type {CustomerAddressInput} from '@shopify/hydrogen/customer-account-api-types';
 import type {AddressFragment, CustomerFragment} from 'customer-accountapi.generated';
-import {createMeta} from '~/utils/meta';
 
 export type ActionResponse = {
   addressId?: string | null;
@@ -21,7 +21,7 @@ export type ActionResponse = {
 export const meta: Route.MetaFunction = createMeta({title: 'Addresses'});
 
 export async function loader({context}: Route.LoaderArgs) {
-  context.customerAccount.handleAuthStatus();
+  await context.customerAccount.handleAuthStatus();
 
   return {};
 }

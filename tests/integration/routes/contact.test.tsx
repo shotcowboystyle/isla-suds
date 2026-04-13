@@ -73,9 +73,7 @@ describe('Contact Page', () => {
 
     render(<RouterProvider router={router} />);
 
-    expect(
-      screen.getByText(/24-48 hours|within 24-48 hours/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/24-48 hours|within 24-48 hours/i)).toBeInTheDocument();
   });
 
   it('renders form with all required fields', () => {
@@ -103,9 +101,7 @@ describe('Contact Page', () => {
     expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
 
     // Should have Submit button
-    expect(
-      screen.getByRole('button', {name: /send message/i}),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: /send message/i})).toBeInTheDocument();
   });
 
   it('renders form inputs with proper semantic HTML', () => {
@@ -209,7 +205,7 @@ describe('Contact Page - Form Submission', () => {
       request,
       context: {} as any,
       params: {},
-    });
+    } as any);
 
     // data() returns DataWithResponseInit with {data, init} structure
     expect(response.init.status).toBe(400);
@@ -232,13 +228,11 @@ describe('Contact Page - Form Submission', () => {
       request,
       context: {} as any,
       params: {},
-    });
+    } as any);
 
     // data() returns DataWithResponseInit with {data, init} structure
     expect(response.init.status).toBe(400);
     expect(response.data.fieldErrors?.email).toBeDefined();
-    expect(response.data.fieldErrors.email).toBe(
-      'Please enter a valid email address',
-    );
+    expect(response.data.fieldErrors.email).toBe('Please enter a valid email address');
   });
 });

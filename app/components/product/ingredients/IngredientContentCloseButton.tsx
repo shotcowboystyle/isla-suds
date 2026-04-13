@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {cn} from '~/utils/cn';
 import styles from './IngredientContentCloseButton.module.css';
 
@@ -16,14 +16,14 @@ export function IngredientContentCloseButton({isActive, onClick}: IngredientCont
     if (!btnRef.current) return;
 
     if (isActive) {
-      gsap.to(btnRef.current, {
+      GSAP.to(btnRef.current, {
         scale: 1,
         autoAlpha: 1,
         duration: 0.5,
         ease: 'back.out(1.5)',
       });
     } else {
-      gsap.to(btnRef.current, {
+      GSAP.to(btnRef.current, {
         scale: 0,
         autoAlpha: 0,
         duration: 0.4,

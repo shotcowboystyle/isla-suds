@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Link, useFetcher} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {
   CART_QUANTITY_UPDATE_ERROR_MESSAGE,
   CART_QUANTITY_INVENTORY_ERROR_MESSAGE,
@@ -203,7 +203,7 @@ export function CartLineItem({
         // Safe to continue: error state handled via fetcher.data
         setIsRemoving(false);
         if (!reducedMotion && liRef.current) {
-          gsap.set(liRef.current, {opacity: 1, scale: 1});
+          GSAP.set(liRef.current, {opacity: 1, scale: 1});
         }
       });
   };
@@ -213,7 +213,7 @@ export function CartLineItem({
     if (reducedMotion || !liRef.current) {
       performRemove();
     } else {
-      gsap.to(liRef.current, {
+      GSAP.to(liRef.current, {
         opacity: 0,
         scale: 0.95,
         duration: 0.3,

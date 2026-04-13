@@ -1,11 +1,11 @@
 import React, {useMemo, useRef, Fragment} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {cn} from '~/utils/cn';
 import styles from './JumboMarquee.module.css';
 
-gsap.registerPlugin(ScrollTrigger);
+GSAP.registerPlugin(ScrollTrigger);
 
 interface JumboMarqueeProps {
   text: string;
@@ -21,11 +21,11 @@ export function JumboMarquee({text, color, className = ''}: JumboMarqueeProps) {
 
   useGSAP(
     () => {
-      const oddLines = gsap.utils.toArray<HTMLElement>(`.js-marq-odd .${styles['big-marq-text']}`);
-      const evenLines = gsap.utils.toArray<HTMLElement>(`.js-marq-even .${styles['big-marq-text']}`);
+      const oddLines = GSAP.utils.toArray<HTMLElement>(`.js-marq-odd .${styles['big-marq-text']}`);
+      const evenLines = GSAP.utils.toArray<HTMLElement>(`.js-marq-even .${styles['big-marq-text']}`);
 
       // Odd rows: left-to-right (Start far left at -5%, animate to 0)
-      gsap.fromTo(
+      GSAP.fromTo(
         oddLines,
         {xPercent: -5},
         {
@@ -41,7 +41,7 @@ export function JumboMarquee({text, color, className = ''}: JumboMarqueeProps) {
       );
 
       // Even rows: right-to-left (Start at 0, animate far left to -5%)
-      gsap.fromTo(
+      GSAP.fromTo(
         evenLines,
         {xPercent: 10},
         {

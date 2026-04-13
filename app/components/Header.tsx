@@ -6,7 +6,7 @@ import {Logo} from '~/components/Logo';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import styles from './Header.module.css';
-import type gsap from 'gsap';
+import type GSAP from 'gsap';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
 const LazyHeaderMenu = lazy(() => import('./HeaderMenu'));
@@ -84,13 +84,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
     }
 
     const button = buttonRef.current;
-    let gsapModule: typeof gsap | null = null;
+    let gsapModule: typeof GSAP | null = null;
 
     // Pre-load gsap on first interaction
     const loadGsap = () => {
       if (!gsapModule) {
-        void import('gsap').then(({default: gsap}) => {
-          gsapModule = gsap;
+        void import('gsap').then(({default: GSAP}) => {
+          gsapModule = GSAP;
         });
       }
     };

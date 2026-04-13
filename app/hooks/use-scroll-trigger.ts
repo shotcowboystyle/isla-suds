@@ -1,10 +1,10 @@
 import {type MutableRefObject} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
 // Register ScrollTrigger to ensure it's available
-gsap.registerPlugin(ScrollTrigger);
+GSAP.registerPlugin(ScrollTrigger);
 
 /**
  * Custom hook to control GSAP animations based on scroll position.

@@ -1,10 +1,10 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
 import {SimpleCard} from '~/components/ui/SimpleCard';
 import {useIsDesktop} from '~/hooks/use-is-desktop';
@@ -113,7 +113,7 @@ export function FallInLove({color}: FallInLoveProps) {
 
       const windowWidth = window.innerWidth;
 
-      gsap.to(sectionArc.current, {
+      GSAP.to(sectionArc.current, {
         scaleY: 1,
         ease: 'none',
         scrollTrigger: {
@@ -136,7 +136,7 @@ export function FallInLove({color}: FallInLoveProps) {
 
       const windowInnerWidth = window.innerWidth;
 
-      const horizontalScrollTl = gsap.timeline({
+      const horizontalScrollTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionCircle.current,
           start: 'top +=200',

@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {INGREDIENTS, type IngredientItem} from '~/content/ingredients';
 import {cn} from '~/utils/cn';
 import {FloatingIngredientButton} from './FloatingIngredientButton';
@@ -30,7 +30,7 @@ export function ProductIngredients() {
         return;
       }
 
-      const revealTl = gsap.timeline({
+      const revealTl = GSAP.timeline({
         delay: 0.5,
         scrollTrigger: {
           trigger: sectionRef.current,

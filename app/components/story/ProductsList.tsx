@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import {ProductCard} from '~/components/ProductCard';
 import {LiquidButton} from '~/components/ui/LiquidButton';
@@ -34,7 +34,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
         type: ' chars',
       });
 
-      const headingTl = gsap.timeline({
+      const headingTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 75%' : 'top 35%',
@@ -86,7 +86,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
       const pinWrapWidth = sliderRef.current?.scrollWidth ?? 0;
       const scrollAmount = pinWrapWidth - window.innerWidth;
 
-      const horizontalScrollTl = gsap.timeline({
+      const horizontalScrollTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',

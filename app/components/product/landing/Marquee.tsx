@@ -1,9 +1,9 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
+GSAP.registerPlugin(ScrollTrigger);
 
 interface MarqueeProps {
   text: string;
@@ -23,7 +23,7 @@ export function Marquee({text, direction = 'left', className = ''}: MarqueeProps
       const distance = el.offsetWidth / 2; // Assuming duplicated text for seamless loop
 
       // Simple continuous scroll
-      gsap.to(el, {
+      GSAP.to(el, {
         x: direction === 'left' ? -distance : distance,
         duration: 20,
         ease: 'none',

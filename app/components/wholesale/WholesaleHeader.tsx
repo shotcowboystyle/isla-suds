@@ -47,6 +47,7 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
 
     // Auto-focus confirm button when dialog opens
     confirmButtonRef.current?.focus();
+    const logoutBtn = logoutButtonRef.current;
 
     // Handle Escape key to close dialog
     const handleEscape = (e: KeyboardEvent) => {
@@ -60,7 +61,9 @@ export function WholesaleHeader({customerName}: WholesaleHeaderProps) {
     // Cleanup and restore focus to logout button
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      logoutButtonRef.current?.focus();
+      if (logoutBtn) {
+        logoutBtn.focus();
+      }
     };
   }, [showLogoutConfirm]);
 

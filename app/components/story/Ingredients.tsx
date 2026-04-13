@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import ingredientsImage from '~/assets/images/ingredients-section-bg.webp';
 import ingredientsDripImage from '~/assets/images/slider-dip.png';
@@ -30,7 +30,7 @@ export function IngredientsSection() {
         aria: 'none',
       });
 
-      const contentTl = gsap.timeline({
+      const contentTl = GSAP.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: isMobile ? 'top 85%' : 'top center',

@@ -1,7 +1,7 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Image, Money} from '@shopify/hydrogen';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import LavenderElementsImage from '~/assets/images/lavender-elements.webp';
 import {productsList} from '~/content/products';
 import {useIsMobile} from '~/hooks/use-is-mobile';
@@ -54,18 +54,18 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
         return;
       }
 
-      gsap.set(cardRef.current, {perspective: 650});
+      GSAP.set(cardRef.current, {perspective: 650});
 
-      const outerRX = gsap.quickTo(elementsRef.current, 'rotationX', {ease: 'power3'});
-      const outerRY = gsap.quickTo(elementsRef.current, 'rotationY', {ease: 'power3'});
-      const innerX = gsap.quickTo(subjectRef.current, 'x', {ease: 'power3'});
-      const innerY = gsap.quickTo(subjectRef.current, 'y', {ease: 'power3'});
+      const outerRX = GSAP.quickTo(elementsRef.current, 'rotationX', {ease: 'power3'});
+      const outerRY = GSAP.quickTo(elementsRef.current, 'rotationY', {ease: 'power3'});
+      const innerX = GSAP.quickTo(subjectRef.current, 'x', {ease: 'power3'});
+      const innerY = GSAP.quickTo(subjectRef.current, 'y', {ease: 'power3'});
 
       const onPointerMove = (e: PointerEvent) => {
-        outerRX(gsap.utils.interpolate(15, -15, e.y / window.innerHeight));
-        outerRY(gsap.utils.interpolate(-15, 15, e.x / window.innerWidth));
-        innerX(gsap.utils.interpolate(-30, 30, e.x / window.innerWidth));
-        innerY(gsap.utils.interpolate(-30, 30, e.y / window.innerHeight));
+        outerRX(GSAP.utils.interpolate(15, -15, e.y / window.innerHeight));
+        outerRY(GSAP.utils.interpolate(-15, 15, e.x / window.innerWidth));
+        innerX(GSAP.utils.interpolate(-30, 30, e.x / window.innerWidth));
+        innerY(GSAP.utils.interpolate(-30, 30, e.y / window.innerHeight));
       };
 
       const onPointerLeave = () => {

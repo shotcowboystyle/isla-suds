@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {ClippedTextBox} from '../ClippedTextBox';
 import styles from './Benefits.module.css';
@@ -17,7 +17,7 @@ export const BenefitsSection = () => {
 
     const children = Array.from(containerRef.current?.children || []);
 
-    const tl = gsap.timeline({
+    const tl = GSAP.timeline({
       // delay: isMobile ? 0 : 1.3,
       scrollTrigger: {
         trigger: containerRef.current,

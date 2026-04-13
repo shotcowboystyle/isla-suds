@@ -3,9 +3,9 @@ import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductCard} from '~/components/ProductCard';
 import {MONEY_FRAGMENT} from '~/lib/fragments';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/collections.all';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
-import {createMeta} from '~/utils/meta';
 
 export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Products'});
 
