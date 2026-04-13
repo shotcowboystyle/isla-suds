@@ -10,13 +10,6 @@ import PoliciesImage from '~/assets/images/menu-policies.webp';
 import WholesaleImage from '~/assets/images/menu-wholesale.webp';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
-function activeLinkStyle({isActive, isPending}: {isActive: boolean; isPending: boolean}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'var(--text-muted)' : 'var(--text-primary)',
-  };
-}
-
 const FALLBACK_HEADER_MENU = {
   id: 'gid://shopify/Menu/199655587896',
   items: [
@@ -84,9 +77,7 @@ const FALLBACK_HEADER_MENU = {
 };
 
 const SOCIAL_LINKS = [
-  {label: 'YouTube', href: 'https://www.youtube.com'},
   {label: 'Instagram', href: 'https://www.instagram.com/islasuds/'},
-  {label: 'TikTok', href: 'https://www.tiktok.com'},
 ];
 
 interface HeaderMenuProps {
@@ -207,11 +198,21 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
 
   return (
     <div ref={containerRef} className="fixed inset-0 w-full h-dvh bg-secondary z-200">
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close menu"
+        className="absolute top-6 right-6 z-[201] flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-white transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
       <div className="flex items-center h-full">
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 h-full">
           <nav className="flex flex-col items-center" role="navigation" onMouseLeave={resetActiveMenu}>
-            {/* {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => { */}
-            {FALLBACK_HEADER_MENU.items.map((item, index) => {
+            {(menu || FALLBACK_HEADER_MENU).items.map((item, index) => {
               if (!item.url) {
                 return null;
               }
@@ -232,7 +233,6 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
                   onClick={onClose}
                   prefetch="intent"
                   onMouseEnter={() => setActiveMenu(index)}
-                  style={activeLinkStyle}
                   to={url}
                 >
                   <span className="text-[12.5vw] md:text-[9vh] leading-[105%] size-auto block overflow-hidden">
@@ -256,6 +256,7 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
                   className="text-[5vw] md:text-[3vw] lg:text-[1vw] leading-[115%] decoration-none hover:decoration-none static"
                 >
                   {link.label}
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </li>
             ))}
@@ -264,9 +265,8 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
 
         <div className="hidden lg:flex w-[57%] lg:w-1/2 h-full pointer-events-none">
           <img
-            loading="lazy"
-            src={FALLBACK_HEADER_MENU.items[activeMenu].image}
-            alt={FALLBACK_HEADER_MENU.items[activeMenu].title}
+            src={FALLBACK_HEADER_MENU.items[activeMenu]?.image ?? HomeImage}
+            alt={FALLBACK_HEADER_MENU.items[activeMenu]?.title ?? ''}
             className="w-full h-screen! object-cover transition-opacity duration-500"
           />
         </div>
