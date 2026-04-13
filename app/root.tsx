@@ -232,7 +232,7 @@ export default function App() {
   }
 
   const layoutContent = (
-    <PageLayout {...data} theme="light" setTheme={() => {}} header={data.header}>
+    <PageLayout {...data} header={data.header}>
       <Outlet context={isHome ? {heroRef} : undefined} />
     </PageLayout>
   );

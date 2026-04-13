@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {redirect, useLoaderData} from 'react-router';
 import {useGSAP} from '@gsap/react';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {LocalStores} from '~/components/LocalStores';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
@@ -13,7 +13,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 
-gsap.registerPlugin(ScrollTrigger);
+GSAP.registerPlugin(ScrollTrigger);
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
@@ -88,7 +88,7 @@ export default function Collection() {
       const distance = el.offsetWidth / 2; // Assuming duplicated text for seamless loop
 
       // Simple continuous scroll
-      gsap.to(el, {
+      GSAP.to(el, {
         x: -distance,
         duration: 20,
         ease: 'none',

@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {useIsMobile} from '~/hooks/use-is-mobile';
 import {cn} from '~/utils/cn';
 import styles from './FloatingIngredientButton.module.css';
@@ -30,14 +30,14 @@ export function FloatingIngredientButton({
     if (!itemRef.current) return;
 
     if (isAnyActive && !isActive) {
-      gsap.to(itemRef.current, {
+      GSAP.to(itemRef.current, {
         autoAlpha: 0,
         scale: 0.5,
         duration: 0.4,
         ease: 'power2.inOut',
       });
     } else {
-      gsap.to(itemRef.current, {
+      GSAP.to(itemRef.current, {
         autoAlpha: 1,
         scale: 1,
         duration: 0.5,

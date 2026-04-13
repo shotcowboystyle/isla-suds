@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
 import {INGREDIENTS} from '~/content/ingredients';
 import {cn} from '~/utils/cn';
@@ -32,7 +32,7 @@ export function IngredientContent({activeIngredientId}: IngredientContentProps) 
         type: 'words',
       });
 
-      const masterTl = gsap.timeline({
+      const masterTl = GSAP.timeline({
         scrollTrigger: {
           trigger: headingText.current,
           start: 'top 80%',
@@ -58,7 +58,7 @@ export function IngredientContent({activeIngredientId}: IngredientContentProps) 
 
       if (isActive) {
         // Hide default headings
-        gsap.to(['.js-heading-wrap', '.js-cir-text-wrap'], {
+        GSAP.to(['.js-heading-wrap', '.js-cir-text-wrap'], {
           autoAlpha: 0,
           scale: 0.8,
           duration: 0.4,
@@ -66,7 +66,7 @@ export function IngredientContent({activeIngredientId}: IngredientContentProps) 
         });
         // Show content and center circle
         // gsap.to(['.js-ingredient-center-circle', '.js-ingredient-content-wrap'], {
-        gsap.to(['.js-ingredient-center-circle'], {
+        GSAP.to(['.js-ingredient-center-circle'], {
           autoAlpha: 1,
           scale: 1,
           duration: 0.5,
@@ -77,14 +77,14 @@ export function IngredientContent({activeIngredientId}: IngredientContentProps) 
       } else {
         // Hide content
         // gsap.to(['.js-ingredient-center-circle', '.js-ingredient-content-wrap'], {
-        gsap.to(['.js-ingredient-center-circle'], {
+        GSAP.to(['.js-ingredient-center-circle'], {
           autoAlpha: 0,
           scale: 0,
           duration: 0.4,
           ease: 'power2.inOut',
         });
         // Show default headings
-        gsap.to(['.js-heading-wrap', '.js-cir-text-wrap'], {
+        GSAP.to(['.js-heading-wrap', '.js-cir-text-wrap'], {
           autoAlpha: 1,
           scale: 1,
           duration: 0.5,
@@ -101,8 +101,8 @@ export function IngredientContent({activeIngredientId}: IngredientContentProps) 
     () => {
       if (!circleWrapRef.current) return;
 
-      const xTo = gsap.quickTo(circleWrapRef.current, 'x', {duration: 0.8, ease: 'power3.out'});
-      const yTo = gsap.quickTo(circleWrapRef.current, 'y', {duration: 0.8, ease: 'power3.out'});
+      const xTo = GSAP.quickTo(circleWrapRef.current, 'x', {duration: 0.8, ease: 'power3.out'});
+      const yTo = GSAP.quickTo(circleWrapRef.current, 'y', {duration: 0.8, ease: 'power3.out'});
 
       const handleMouseMove = (e: MouseEvent) => {
         const {innerWidth, innerHeight} = window;

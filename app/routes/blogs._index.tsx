@@ -1,9 +1,9 @@
 import {Link, useLoaderData} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/blogs._index';
 import type {BlogsQuery} from 'storefrontapi.generated';
-import {createMeta} from '~/utils/meta';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
@@ -58,12 +58,7 @@ export default function Blogs() {
       <div className="blogs-grid">
         <PaginatedResourceSection<BlogNode> connection={blogs}>
           {({node: blog}) => (
-            <Link
-              className="blog"
-              key={blog.handle}
-              prefetch="intent"
-              to={`/blogs/${blog.handle}`}
-            >
+            <Link className="blog" key={blog.handle} prefetch="intent" to={`/blogs/${blog.handle}`}>
               <h2>{blog.title}</h2>
             </Link>
           )}

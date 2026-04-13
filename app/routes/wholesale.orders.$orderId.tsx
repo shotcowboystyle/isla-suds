@@ -21,10 +21,9 @@ export async function loader({params, context}: Route.LoaderArgs) {
   const {orderId} = params;
 
   try {
-    const orderData = (await context.customerAccount.query(
-      GET_ORDER_DETAILS_QUERY,
-      {variables: {query: orderId}},
-    )) as OrderDetailsResponse;
+    const orderData = (await context.customerAccount.query(GET_ORDER_DETAILS_QUERY, {
+      variables: {query: orderId},
+    })) as OrderDetailsResponse;
 
     if (!orderData?.data?.order) {
       throw new Response('Order not found', {status: 404});
@@ -51,10 +50,9 @@ export async function action({request, params, context}: Route.ActionArgs) {
 
   try {
     // Get order details
-    const orderData = (await context.customerAccount.query(
-      GET_ORDER_DETAILS_QUERY,
-      {variables: {query: orderId}},
-    )) as OrderDetailsResponse;
+    const orderData = (await context.customerAccount.query(GET_ORDER_DETAILS_QUERY, {
+      variables: {query: orderId},
+    })) as OrderDetailsResponse;
 
     const order = orderData?.data?.order;
 
@@ -66,8 +64,7 @@ export async function action({request, params, context}: Route.ActionArgs) {
     }
 
     // Get customer details
-    const customerData =
-      await context.customerAccount.query(GET_CUSTOMER_QUERY);
+    const customerData = await context.customerAccount.query(GET_CUSTOMER_QUERY);
 
     const customer = customerData?.data?.customer;
 
@@ -131,17 +128,12 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     try {
       const storedData = sessionStorage.getItem(INVOICE_STORAGE_KEY);
-      const invoiceRequests = storedData
-        ? (JSON.parse(storedData) as Record<string, boolean>)
-        : {};
+      const invoiceRequests = storedData ? (JSON.parse(storedData) as Record<string, boolean>) : {};
 
       if (fetcher.data?.success) {
         // Add this order to the requests object
         invoiceRequests[order.id] = true;
-        sessionStorage.setItem(
-          INVOICE_STORAGE_KEY,
-          JSON.stringify(invoiceRequests),
-        );
+        sessionStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(invoiceRequests));
         setInvoiceRequested(true);
       } else {
         // Check if this order was previously requested
@@ -156,19 +148,13 @@ export default function OrderDetailsPage() {
     <div className={cn('space-y-6')}>
       {/* Order header */}
       <div>
-        <h1 className={cn('text-2xl font-semibold')}>
-          Order #{order.orderNumber}
-        </h1>
-        <p className={cn('text-sm text-text-muted')}>
-          {formatDate(order.processedAt)}
-        </p>
+        <h1 className={cn('text-2xl font-semibold')}>Order #{order.orderNumber}</h1>
+        <p className={cn('text-sm text-text-muted')}>{formatDate(order.processedAt)}</p>
         <div className={cn('mt-2')}>
           <span
             className={cn(
               'inline-block px-3 py-1 rounded-full text-sm',
-              order.fulfillmentStatus === 'FULFILLED'
-                ? 'bg-green-100 text-green-800'
-                : 'bg-yellow-100 text-yellow-800',
+              order.fulfillmentStatus === 'FULFILLED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800',
             )}
           >
             {order.fulfillmentStatus}
@@ -183,11 +169,7 @@ export default function OrderDetailsPage() {
           {order.lineItems.edges.map(({node}) => (
             <div
               key={node.id}
-              className={cn(
-                'flex items-center gap-4 p-4',
-                'rounded-lg bg-canvas-elevated',
-                'border border-gray-200',
-              )}
+              className={cn('flex items-center gap-4 p-4', 'rounded-lg bg-canvas-elevated', 'border border-gray-200')}
             >
               {/* Product image */}
               {node.variant?.image && (
@@ -200,17 +182,11 @@ export default function OrderDetailsPage() {
 
               {/* Product info */}
               <div className={cn('flex-1')}>
-                <p className={cn('font-medium text-text-primary')}>
-                  {node.title}
-                </p>
+                <p className={cn('font-medium text-text-primary')}>{node.title}</p>
                 <p className={cn('text-sm text-text-muted')}>
-                  {node.variant?.title && node.variant.title !== 'Default'
-                    ? node.variant.title
-                    : ''}
+                  {node.variant?.title && node.variant.title !== 'Default' ? node.variant.title : ''}
                 </p>
-                <p className={cn('text-sm text-text-muted mt-1')}>
-                  Qty: {node.quantity}
-                </p>
+                <p className={cn('text-sm text-text-muted mt-1')}>Qty: {node.quantity}</p>
               </div>
 
               {/* Price */}
@@ -221,8 +197,7 @@ export default function OrderDetailsPage() {
                 >
                   {formatMoney(node.discountedTotalPrice)}
                 </p>
-                {node.originalTotalPrice.amount !==
-                  node.discountedTotalPrice.amount && (
+                {node.originalTotalPrice.amount !== node.discountedTotalPrice.amount && (
                   <p
                     className={cn('text-sm text-text-muted line-through')}
                     aria-label={`Original price: ${getCurrencyLabel(node.originalTotalPrice)}`}
@@ -242,31 +217,19 @@ export default function OrderDetailsPage() {
         <div className={cn('space-y-2')}>
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Subtotal</span>
-            <span aria-label={getCurrencyLabel(order.subtotalPrice)}>
-              {formatMoney(order.subtotalPrice)}
-            </span>
+            <span aria-label={getCurrencyLabel(order.subtotalPrice)}>{formatMoney(order.subtotalPrice)}</span>
           </div>
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Shipping</span>
-            <span aria-label={getCurrencyLabel(order.shippingCost)}>
-              {formatMoney(order.shippingCost)}
-            </span>
+            <span aria-label={getCurrencyLabel(order.shippingCost)}>{formatMoney(order.shippingCost)}</span>
           </div>
           <div className={cn('flex justify-between text-text-muted')}>
             <span>Tax</span>
-            <span aria-label={getCurrencyLabel(order.totalTax)}>
-              {formatMoney(order.totalTax)}
-            </span>
+            <span aria-label={getCurrencyLabel(order.totalTax)}>{formatMoney(order.totalTax)}</span>
           </div>
-          <div
-            className={cn(
-              'flex justify-between text-lg font-semibold text-text-primary pt-2 border-t',
-            )}
-          >
+          <div className={cn('flex justify-between text-lg font-semibold text-text-primary pt-2 border-t')}>
             <span>Total</span>
-            <span aria-label={getCurrencyLabel(order.currentTotalPrice)}>
-              {formatMoney(order.currentTotalPrice)}
-            </span>
+            <span aria-label={getCurrencyLabel(order.currentTotalPrice)}>{formatMoney(order.currentTotalPrice)}</span>
           </div>
         </div>
       </div>
@@ -293,22 +256,14 @@ export default function OrderDetailsPage() {
 
         {/* Confirmation message */}
         {fetcher.data?.success && (
-          <p
-            className={cn('mt-2 text-sm text-green-600')}
-            role="status"
-            aria-live="polite"
-          >
+          <p className={cn('mt-2 text-sm text-green-600')} role="status" aria-live="polite">
             {fetcher.data.message}
           </p>
         )}
 
         {/* Error message */}
         {fetcher.data?.error && (
-          <p
-            className={cn('mt-2 text-sm text-red-600')}
-            role="alert"
-            aria-live="assertive"
-          >
+          <p className={cn('mt-2 text-sm text-red-600')} role="alert" aria-live="assertive">
             {fetcher.data.error}
           </p>
         )}
@@ -319,8 +274,8 @@ export default function OrderDetailsPage() {
         <div>
           <h2 className={cn('text-lg font-semibold mb-2')}>Shipping Address</h2>
           <address className={cn('not-italic text-text-muted')}>
-            {order.shippingAddress.formatted.map((line, index) => (
-              <div key={index}>{line}</div>
+            {order.shippingAddress.formatted.map((line) => (
+              <div key={line}>{line}</div>
             ))}
           </address>
         </div>

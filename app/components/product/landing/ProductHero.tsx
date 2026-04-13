@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {AddToCartButton} from '~/components/cart/AddToCartButton';
 // import {StickyAddToCart} from '~/components/product/landing/StickyAddToCart';
 import {ProductForm} from '~/components/ProductForm';
@@ -23,7 +23,7 @@ export function ProductHero({product, productOptions, selectedVariant}: ProductH
 
   useGSAP(
     () => {
-      const tl = gsap.timeline();
+      const tl = GSAP.timeline();
 
       tl.from(titleRef.current, {
         y: 100,

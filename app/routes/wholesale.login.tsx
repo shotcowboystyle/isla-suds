@@ -3,8 +3,8 @@ import {wholesaleContent} from '~/content/wholesale';
 import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 import {getB2BCompany} from '~/lib/wholesale';
-import type {Route} from './+types/wholesale.login';
 import {createMeta} from '~/utils/meta';
+import type {Route} from './+types/wholesale.login';
 
 export const meta: Route.MetaFunction = createMeta({title: 'Wholesale Partner Login | Isla Suds'});
 
@@ -100,9 +100,7 @@ export default function WholesaleLogin({loaderData}: Route.ComponentProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="max-w-md w-full px-6">
-        <h1 className="text-2xl font-semibold mb-2">
-          {wholesaleContent.auth.loginTitle}
-        </h1>
+        <h1 className="text-2xl font-semibold mb-2">{wholesaleContent.auth.loginTitle}</h1>
 
         {error ? (
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded">

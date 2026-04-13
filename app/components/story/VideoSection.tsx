@@ -1,6 +1,6 @@
 import {useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import PinVideoPoster from '~/assets/images/pin-video-poster.webp';
 import LightboxButtonImage from '~/assets/images/play.svg';
 import PlayIcon from '~/assets/images/polygon-3.svg';
@@ -53,16 +53,15 @@ export const VideoSection = () => {
         return;
       }
 
-      const videoTl = gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: stickyCircleWrapper.current,
-            scrub: true,
-            start: 'top top',
-            end: '+=300%',
-            pin: true,
-          },
-        })
+      const videoTl = GSAP.timeline({
+        scrollTrigger: {
+          trigger: stickyCircleWrapper.current,
+          scrub: true,
+          start: 'top top',
+          end: '+=300%',
+          pin: true,
+        },
+      })
         .to(
           stickyCircleElement.current,
           {
@@ -115,7 +114,14 @@ export const VideoSection = () => {
                     />
 
                     <div className={styles['lightbox-static-image-wrapper']}>
-                      <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
+                      <img
+                        src={PlayIcon}
+                        loading="lazy"
+                        alt=""
+                        width={25}
+                        height={28}
+                        className={styles['lightbox-static-image']}
+                      />
                     </div>
                   </div>
                 </button>
@@ -144,9 +150,23 @@ export const VideoSection = () => {
       <div className={cn(styles['cursor-image'], styles['cursor-image-mobile'])}>
         <button className={styles['lightbox-link']} aria-label="open lightbox" aria-haspopup="dialog">
           <div className={styles['chug-club-lightbox-button']}>
-            <img src={LightboxButtonImage} loading="lazy" alt="" width={151} height={151} className={styles['lightbox-button-image']} />
+            <img
+              src={LightboxButtonImage}
+              loading="lazy"
+              alt=""
+              width={151}
+              height={151}
+              className={styles['lightbox-button-image']}
+            />
             <div className={styles['lightbox-static-image-wrapper']}>
-              <img src={PlayIcon} loading="lazy" alt="" width={25} height={28} className={styles['lightbox-static-image']} />
+              <img
+                src={PlayIcon}
+                loading="lazy"
+                alt=""
+                width={25}
+                height={28}
+                className={styles['lightbox-static-image']}
+              />
             </div>
           </div>
         </button>

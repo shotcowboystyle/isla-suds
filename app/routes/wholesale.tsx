@@ -4,8 +4,8 @@ import {WHOLESALE_ROUTES} from '~/content/wholesale-routes';
 import {WHOLESALE_CUSTOMER_QUERY} from '~/graphql/customer-account/WholesaleCustomer';
 import {getB2BCompany} from '~/lib/wholesale';
 import {cn} from '~/utils/cn';
-import type {Route} from './+types/wholesale';
 import {createMeta} from '~/utils/meta';
+import type {Route} from './+types/wholesale';
 
 export const meta: Route.MetaFunction = createMeta({title: 'Wholesale Portal | Isla Suds'});
 

@@ -1,13 +1,13 @@
 import {forwardRef, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 import WholesaleHeroBackgroundJpeg from '~/assets/images/wholesale-hero-background.jpeg';
 import WholesaleHeroBackgroundWebp from '~/assets/images/wholesale-hero-background.webp';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
 import {cn} from '~/utils/cn';
 import styles from './Hero.module.css';
@@ -27,7 +27,7 @@ export function Hero() {
 
       const titleSplit = SplitText.create(text1Ref.current, {type: 'chars'});
 
-      const tl = gsap.timeline({
+      const tl = GSAP.timeline({
         delay: 2,
       });
 
@@ -75,7 +75,7 @@ export function Hero() {
           '-=0.4',
         );
 
-      const heroTl = gsap.timeline({
+      const heroTl = GSAP.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',

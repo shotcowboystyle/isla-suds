@@ -1,18 +1,15 @@
 import {useLoaderData, data, type HeadersFunction} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
-import {createMeta} from '~/utils/meta';
 
 export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Cart'});
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
 
-export async function action({
-  request,
-  context,
-}: Route.ActionArgs): Promise<Response> {
+export async function action({request, context}: Route.ActionArgs): Promise<Response> {
   const {cart} = context;
 
   const formData = await request.formData();
@@ -40,9 +37,7 @@ export async function action({
       const formDiscountCode = inputs.discountCode;
 
       // User inputted discount code
-      const discountCodes = (
-        formDiscountCode ? [formDiscountCode] : []
-      ) as string[];
+      const discountCodes = (formDiscountCode ? [formDiscountCode] : []) as string[];
 
       // Combine discount codes already applied on cart
       discountCodes.push(...inputs.discountCodes);
@@ -54,9 +49,7 @@ export async function action({
       const formGiftCardCode = inputs.giftCardCode;
 
       // User inputted gift card code
-      const giftCardCodes = (
-        formGiftCardCode ? [formGiftCardCode] : []
-      ) as string[];
+      const giftCardCodes = (formGiftCardCode ? [formGiftCardCode] : []) as string[];
 
       // Combine gift card codes already applied on cart
       giftCardCodes.push(...inputs.giftCardCodes);

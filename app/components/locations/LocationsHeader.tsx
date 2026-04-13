@@ -1,10 +1,10 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
 import styles from './LocationsHeader.module.css';
 
@@ -21,7 +21,7 @@ export function LocationsHeader() {
 
       const titleSplit = SplitText.create(headingRef.current, {type: 'chars'});
 
-      const tl = gsap.timeline({
+      const tl = GSAP.timeline({
         delay: 2,
       });
 
@@ -50,7 +50,7 @@ export function LocationsHeader() {
           '-=0.5',
         );
 
-      const heroTl = gsap.timeline({
+      const heroTl = GSAP.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',

@@ -1,6 +1,6 @@
 import {forwardRef, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import gsap from 'gsap';
+import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 import {LiquidButton} from '~/components/ui/LiquidButton';
@@ -9,7 +9,7 @@ import {cn} from '~/utils/cn';
 import styles from './PerksSection.module.css';
 
 if (typeof document !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
 
 export function PerksSection() {
@@ -109,7 +109,7 @@ export function PerksSection() {
 
       const titleSplit = SplitText.create(titleRef.current, {type: 'chars'});
 
-      const tl = gsap.timeline({
+      const tl = GSAP.timeline({
         delay: 2,
       });
 
