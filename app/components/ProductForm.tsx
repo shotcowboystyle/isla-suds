@@ -1,6 +1,6 @@
 import {Link, useNavigate} from 'react-router';
 import {type MappedProductOptions} from '@shopify/hydrogen';
-import {useAside} from './Aside';
+import {useExplorationStore} from '~/stores/exploration';
 import {AddToCartButton} from './cart/AddToCartButton';
 import type {Maybe, ProductOptionValueSwatch} from '@shopify/hydrogen/storefront-api-types';
 import type {ProductFragment} from 'storefrontapi.generated';
@@ -15,7 +15,7 @@ export function ProductForm({
   hideAddToCart?: boolean;
 }) {
   const navigate = useNavigate();
-  const {open} = useAside();
+  const setCartDrawerOpen = useExplorationStore((state) => state.setCartDrawerOpen);
   return (
     <div className="product-form">
       {productOptions.map((option) => {
@@ -46,6 +46,8 @@ export function ProductForm({
                         border: selected ? '1px solid black' : '1px solid transparent',
                         opacity: available ? 1 : 0.3,
                       }}
+                      title={!available ? `${name} — out of stock` : name}
+                      aria-label={!available ? `${name} — out of stock` : name}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
                     </Link>
@@ -65,6 +67,8 @@ export function ProductForm({
                         border: selected ? '1px solid black' : '1px solid transparent',
                         opacity: available ? 1 : 0.3,
                       }}
+                      title={!available ? `${name} — out of stock` : name}
+                      aria-label={!available ? `${name} — out of stock` : name}
                       disabled={!exists}
                       onClick={() => {
                         if (!selected) {
@@ -90,7 +94,7 @@ export function ProductForm({
         <AddToCartButton
           disabled={!selectedVariant || !selectedVariant.availableForSale}
           onClick={() => {
-            open('cart');
+            setCartDrawerOpen(true);
           }}
           lines={
             selectedVariant

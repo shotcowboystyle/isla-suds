@@ -1,4 +1,4 @@
-import {Link} from 'react-router';
+import {Link, NavLink} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
 
@@ -157,5 +157,12 @@ function SearchResultsProducts({
 }
 
 function SearchResultsEmpty() {
-  return <p>No results, try a different search.</p>;
+  return (
+    <div>
+      <p>No results, try a different search.</p>
+      <NavLink to="/collections/frontpage" prefetch="intent">
+        Browse all products →
+      </NavLink>
+    </div>
+  );
 }

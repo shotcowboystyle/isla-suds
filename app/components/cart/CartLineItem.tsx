@@ -174,8 +174,14 @@ export function CartLineItem({
   };
 
   const handleQuantityBlur = () => {
-    if (inputValue === '' || parseInt(inputValue, 10) < 1) {
-      setInputValue(String(quantity));
+    const parsed = parseInt(inputValue, 10);
+    if (inputValue === '' || isNaN(parsed) || parsed < 1) {
+      setErrorMessage('Minimum quantity is 1');
+      const timer = setTimeout(() => {
+        setErrorMessage(null);
+        setInputValue(String(quantity));
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   };
 

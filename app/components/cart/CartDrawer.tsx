@@ -38,7 +38,7 @@ export function CartDrawer() {
           )}
         >
           <React.Suspense fallback={<CartDrawerLoading />}>
-            <Await resolve={rootData?.cart}>
+            <Await resolve={rootData?.cart} errorElement={<CartDrawerError />}>
               {(cartData) => <CartDrawerContent originalCart={cartData as CartApiQueryFragment | null} />}
             </Await>
           </React.Suspense>
@@ -275,6 +275,45 @@ function CartDrawerLoading() {
           <div className="h-20 bg-neutral-200 rounded" />
           <div className="h-20 bg-neutral-200 rounded" />
         </div>
+      </div>
+    </>
+  );
+}
+
+function CartDrawerError() {
+  const {setCartDrawerOpen} = useExplorationStore();
+
+  return (
+    <>
+      <div className="flex items-center justify-between border-b border-neutral-200 p-4">
+        <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
+          Cart
+        </DialogPrimitive.Title>
+        <DialogPrimitive.Close
+          aria-label="Close cart"
+          onClick={() => setCartDrawerOpen(false)}
+          className={cn(
+            'h-11 w-11 rounded-full text-neutral-700',
+            'flex items-center justify-center',
+            'hover:bg-neutral-800 hover:text-neutral-100 cursor-pointer transition-colors',
+            'focus:outline-none focus:ring-2 focus:ring-accent',
+          )}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </DialogPrimitive.Close>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-3 p-8 text-center">
+        <p className="text-base text-neutral-600">Couldn&rsquo;t load your cart &mdash; try refreshing.</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="text-sm underline hover:no-underline text-accent"
+        >
+          Refresh page
+        </button>
       </div>
     </>
   );

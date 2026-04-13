@@ -189,9 +189,9 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
         <div className={styles['menu-cta-buttons-wrapper']}>
           <div className={styles['cta-buttons']}>
             <div className={cn(styles['menu-buttons-wrapper'], styles['menu-button-abs'])}>
-              <a href="/locations" className={cn(styles['navbar-button'], 'hidden sm:flex')}>
+              <NavLink to="/locations" prefetch="intent" className={cn(styles['navbar-button'], 'hidden sm:flex')}>
                 Find in stores
-              </a>
+              </NavLink>
 
               <HeaderCtas />
 
