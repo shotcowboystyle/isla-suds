@@ -58,12 +58,12 @@ export async function initLenis(): Promise<Lenis | null> {
       const {default: Lenis} = await import('lenis');
 
       lenisInstance = new Lenis({
-        lerp: 0.1,
-        wheelMultiplier: 0.8,
+        lerp: 0.05,
+        wheelMultiplier: 0.6,
         gestureOrientation: 'vertical',
-        duration: 1.2,
+        duration: 1.5,
+        smoothWheel: true,
         // easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        // smoothWheel: false,
       });
 
       // Start the requestAnimationFrame loop
