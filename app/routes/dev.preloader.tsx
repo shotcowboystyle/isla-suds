@@ -1,5 +1,9 @@
-import {useState, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import {createPortal} from 'react-dom';
 import {Preloader} from '~/components/Preloader';
+import type {Route} from './+types/dev.preloader';
+
+export const meta: Route.MetaFunction = () => [{title: 'Isla Suds — Preloader Scene'}];
 
 /**
  * Dev-only route for iterating on the Preloader animation.
@@ -9,17 +13,22 @@ import {Preloader} from '~/components/Preloader';
  * - "Replay" button restarts the full animation cycle
  * - "Freeze" checkbox prevents the pop/exit so you can study the float
  * - "Min Display" slider adjusts the minDisplayTime prop
+ *
+ * The whole page is portaled into <body> so the fixed overlay escapes the
+ * app-shell header's stacking context.
  */
 export default function DevPreloader() {
+  const [mounted, setMounted] = useState(false);
   const [key, setKey] = useState(0);
   const [freeze, setFreeze] = useState(false);
   const [minDisplay, setMinDisplay] = useState(2500);
-  const [status, setStatus] = useState('playing');
+  const [status, setStatus] = useState<'playing' | 'completed'>('playing');
+
+  // Portal only on the client to avoid an SSR/hydration mismatch.
+  useEffect(() => setMounted(true), []);
 
   const handleComplete = useCallback(() => {
-    if (!freeze) {
-      setStatus('completed');
-    }
+    if (!freeze) setStatus('completed');
   }, [freeze]);
 
   const replay = () => {
@@ -27,7 +36,9 @@ export default function DevPreloader() {
     setKey((k) => k + 1);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div style={{background: '#1a1a2e', color: '#fff', minHeight: '100vh', fontFamily: 'system-ui'}}>
       {/* Controls panel - always visible above the preloader */}
       <div
@@ -118,6 +129,7 @@ export default function DevPreloader() {
           If you can see this text, the preloader has completed or is not mounted.
         </p>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

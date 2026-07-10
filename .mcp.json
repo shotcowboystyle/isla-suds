@@ -6,13 +6,6 @@
         "-y",
         "@modelcontextprotocol/server-memory"
       ]
-    },
-    "ios-simulator": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "ios-simulator-mcp"
-      ]
     }
   }
 }
