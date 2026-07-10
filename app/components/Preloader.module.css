@@ -1,8 +1,8 @@
 /* ──────────────────────────────────────────────
-   Preloader — CSS-only (no GSAP dependency)
+   Preloader — Full SVG bathtub scene
    ────────────────────────────────────────────── */
 
-.overlay {
+.preloaderWrapper {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .popping {
@@ -23,99 +24,268 @@
   }
 }
 
-/* ── Logo SVG ── */
+/* ── SVG Container ── */
 
-.logo {
-  width: 85vw;
+.svg {
+  width: 90vw;
   height: auto;
+  max-height: 70vh;
+  z-index: 2;
+  /* Make sure it sits nicely above the floor line */
+  transform: translateY(-5%);
+  /* Allow the wide floor rect inside to extend past the SVG box edge-to-edge */
+  overflow: visible;
 }
 
-@media screen and (min-width: 992px) {
-  .logo {
-    width: 40vw;
+@media screen and (min-width: 768px) {
+  .svg {
+    width: 50vw;
   }
 }
 
-/* ── Individual letter paths ── */
+@media screen and (min-width: 1200px) {
+  .svg {
+    width: 35vw;
+  }
+}
 
-.letter {
-  fill: #fff;
-  stroke: transparent;
-  stroke-width: 0.8;
+/* ── Bathtub Bobbing Animation ── */
+
+.bathtub {
+  transform-origin: 150px 62.5px;
+}
+
+/* ── Bubbles Floating Animation ── */
+
+.bubble {
   transform-box: fill-box;
   transform-origin: center;
-  animation: float var(--float-dur, 2.8s) ease-in-out var(--float-del, 0s) infinite;
+  animation: float-bubble var(--float-dur, 3s) ease-in-out var(--float-del, 0s) infinite;
 }
 
-/* Staggered float: varied duration + delay for organic feel */
-.l1 { --float-del: 0s;    --float-dur: 2.6s; --pop-del: 0s; }
-.l2 { --float-del: 0.3s;  --float-dur: 2.9s; --pop-del: 0.05s; }
-.l3 { --float-del: 0.1s;  --float-dur: 3.1s; --pop-del: 0.1s; }
-.l4 { --float-del: 0.5s;  --float-dur: 2.7s; --pop-del: 0.15s; }
-.l5 { --float-del: 0.2s;  --float-dur: 3.0s; --pop-del: 0.2s; }
-.l6 { --float-del: 0.4s;  --float-dur: 2.5s; --pop-del: 0.25s; }
-.l7 { --float-del: 0.15s; --float-dur: 2.8s; --pop-del: 0.3s; }
-.l8 { --float-del: 0.35s; --float-dur: 3.2s; --pop-del: 0.35s; }
+/* Custom float behaviors for organic feel */
+.b1 { --float-del: 0s;    --float-dur: 3.2s; --pop-del: 0s;     --float-tx: -4px; --float-ty: -12px; }
+.b2 { --float-del: 0.4s;  --float-dur: 2.8s; --pop-del: 0.05s;  --float-tx: 6px;  --float-ty: -18px; }
+.b3 { --float-del: 0.8s;  --float-dur: 3.5s; --pop-del: 0.1s;   --float-tx: -8px; --float-ty: -15px; }
+.b4 { --float-del: 0.2s;  --float-dur: 3.0s; --pop-del: 0.15s;  --float-tx: 8px;  --float-ty: -14px; }
+.b5 { --float-del: 0.6s;  --float-dur: 3.3s; --pop-del: 0.2s;   --float-tx: -5px; --float-ty: -16px; }
+.b6 { --float-del: 1.0s;  --float-dur: 2.9s; --pop-del: 0.25s;  --float-tx: 7px;  --float-ty: -12px; }
+.b7 { --float-del: 0.3s;  --float-dur: 3.1s; --pop-del: 0.3s;   --float-tx: -6px; --float-ty: -18px; }
+.b8 { --float-del: 0.7s;  --float-dur: 3.4s; --pop-del: 0.35s;  --float-tx: 5px;  --float-ty: -15px; }
+.b9 { --float-del: 0.5s;  --float-dur: 2.7s; --pop-del: 0.22s;  --float-tx: -4px; --float-ty: -10px; }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
+@keyframes float-bubble {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(var(--float-tx, 3px), var(--float-ty, -10px)) scale(1.06);
+  }
 }
 
-/* ── Bubble-pop exit ── */
+/* ── Deco Circles Pulse ── */
 
-.popping .letter {
-  animation: bubble-pop 0.7s ease-out var(--pop-del, 0s) forwards;
+.deco {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse-deco var(--pulse-dur, 3s) ease-in-out var(--pulse-del, 0s) infinite;
 }
 
-@keyframes bubble-pop {
-  0% {
-    fill: #fff;
-    stroke: transparent;
-    stroke-dasharray: 20 0;
+.d1  { --pulse-del: 0s;    --pulse-dur: 4.0s; }
+.d2  { --pulse-del: 0.3s;  --pulse-dur: 3.5s; }
+.d3  { --pulse-del: 0.6s;  --pulse-dur: 4.2s; }
+.d4  { --pulse-del: 0.9s;  --pulse-dur: 3.8s; }
+.d5  { --pulse-del: 1.2s;  --pulse-dur: 4.5s; }
+.d6  { --pulse-del: 0.2s;  --pulse-dur: 3.7s; }
+.d7  { --pulse-del: 0.5s;  --pulse-dur: 4.1s; }
+.d8  { --pulse-del: 0.8s;  --pulse-dur: 3.9s; }
+.d9  { --pulse-del: 1.1s;  --pulse-dur: 4.3s; }
+.d10 { --pulse-del: 1.4s;  --pulse-dur: 4.6s; }
+
+@keyframes pulse-deco {
+  0%, 100% {
+    opacity: 0.2;
     transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* d4 is white, pulse opacity differently */
+.d4 {
+  animation: pulse-deco-white 3s ease-in-out infinite;
+}
+@keyframes pulse-deco-white {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
     opacity: 1;
+    transform: scale(1.3);
   }
-  25% {
-    fill: rgba(255, 255, 255, 0.1);
-    stroke: rgba(255, 255, 255, 0.9);
-    stroke-dasharray: 6 3;
-    transform: scale(1.04);
-    opacity: 1;
-  }
-  60% {
-    fill: transparent;
-    stroke: rgba(255, 255, 255, 0.5);
-    stroke-dasharray: 3 6;
-    transform: scale(1.1);
-    opacity: 0.6;
-  }
-  100% {
-    fill: transparent;
-    stroke: transparent;
-    stroke-dasharray: 1 12;
-    transform: scale(1.15);
+}
+
+/* ── Exit Animations (Popping State) ── */
+
+.popping .bathtub {
+  animation: tub-exit 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes tub-exit {
+  to {
+    transform: scale(0);
     opacity: 0;
   }
 }
 
-/* ── Reduced motion ── */
+.popping .bubble {
+  animation: bubble-pop 0.6s ease-out var(--pop-del, 0s) forwards;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  .letter {
-    animation: none;
+@keyframes bubble-pop {
+  0% {
+    transform: scale(1);
     opacity: 1;
   }
-
-  .popping .letter {
-    animation: simple-fade 0.4s ease-out var(--pop-del, 0s) forwards;
+  30% {
+    transform: scale(1.1);
+    opacity: 0.8;
+    stroke: rgba(255, 255, 255, 0.9);
   }
-
-  .popping {
-    animation: overlay-fade 0.3s ease-out 0.5s forwards;
+  100% {
+    transform: scale(0);
+    opacity: 0;
   }
 }
 
+.popping .deco {
+  animation: simple-fade 0.4s ease-out forwards;
+}
+
 @keyframes simple-fade {
-  to { opacity: 0; }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ── Floor (drawn inside the SVG so it aligns with the tub shadow) ── */
+
+.popping .floorRect {
+  animation: simple-fade 0.4s ease-out 0.7s forwards;
+}
+
+/* ── Logo Slide Up & Floating Animation ── */
+
+.logoGroup {
+  transform: translate(72.5px, -140px) scale(1.18); /* fallback / final state */
+  transform-origin: 77.5px 95px; /* Center of the logo paths in their coordinate system */
+  opacity: 0;
+  animation:
+    logo-slide-up 1s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards,
+    logo-float 4s ease-in-out 1.3s infinite;
+}
+
+.logoPath {
+  fill: url(#bubbleFoamGrad);
+  stroke: #ffffff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  paint-order: stroke markers fill;
+  filter: url(#bubbleFoamShadow);
+}
+
+@keyframes logo-slide-up {
+  0% {
+    transform: translate(72.5px, 20px) scale(1.18);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(72.5px, -140px) scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes logo-float {
+  0%, 100% {
+    transform: translate(72.5px, -140px) scale(1.18) rotate(0deg);
+  }
+  50% {
+    transform: translate(72.5px, -148px) scale(1.18) rotate(0.5deg);
+  }
+}
+
+/* ── Frame Scrubbing (dev only) ──
+   When .scrubbed is applied, every animated element is paused and its
+   effective animation-delay is shifted by --scrub-time. Each rule preserves
+   the element's natural per-instance delay via calc(), so the staggered
+   choreography is retained while the whole timeline is frozen at a point. */
+
+.scrubbed,
+.scrubbed .bubble,
+.scrubbed .deco,
+.scrubbed .d4,
+.scrubbed .logoGroup,
+.scrubbed .bathtub,
+.scrubbed .floorRect {
+  animation-play-state: paused !important;
+}
+
+.scrubbed .bubble {
+  animation-delay: calc(var(--float-del, 0s) - var(--scrub-time, 0s)) !important;
+}
+.scrubbed .deco {
+  animation-delay: calc(var(--pulse-del, 0s) - var(--scrub-time, 0s)) !important;
+}
+.scrubbed .d4 {
+  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+}
+.scrubbed .logoGroup {
+  animation-delay:
+    calc(0.3s - var(--scrub-time, 0s)),
+    calc(1.3s - var(--scrub-time, 0s)) !important;
+}
+
+/* When popping is also active, the .popping rules win — apply matching shifts. */
+.scrubbed.popping {
+  animation-delay: calc(0.7s - var(--scrub-time, 0s)) !important;
+}
+.scrubbed.popping .bathtub {
+  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+}
+.scrubbed.popping .bubble {
+  animation-delay: calc(var(--pop-del, 0s) - var(--scrub-time, 0s)) !important;
+}
+.scrubbed.popping .deco {
+  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+}
+.scrubbed.popping .floorRect {
+  animation-delay: calc(0.7s - var(--scrub-time, 0s)) !important;
+}
+
+/* ── Reduced Motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .bathtub,
+  .bubble,
+  .deco,
+  .d4,
+  .logoGroup {
+    animation: none !important;
+  }
+
+  .logoGroup {
+    transform: translate(72.5px, -140px) scale(1.18) !important;
+    opacity: 1 !important;
+  }
+
+  .popping .bathtub,
+  .popping .bubble,
+  .popping .deco,
+  .popping .floorRect {
+    animation: simple-fade 0.4s ease-out forwards !important;
+  }
 }
