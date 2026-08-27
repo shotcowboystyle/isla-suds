@@ -3,7 +3,9 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 interface MarqueeProps {
   text: string;

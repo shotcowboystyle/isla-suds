@@ -48,7 +48,7 @@ describe('EmptyCart', () => {
     ).toBeInTheDocument();
   });
 
-  it('button links to homepage', () => {
+  it('button links to the collection', () => {
     render(
       <BrowserRouter>
         <EmptyCart />
@@ -56,7 +56,7 @@ describe('EmptyCart', () => {
     );
 
     const button = screen.getByRole('link', {name: /Explore the Collection/i});
-    expect(button).toHaveAttribute('href', '/');
+    expect(button).toHaveAttribute('href', '/collections/all');
   });
 
   it('closes cart drawer when button is clicked', async () => {
@@ -84,7 +84,7 @@ describe('EmptyCart', () => {
     const message = screen.getByText(
       /Your cart is empty. Let's find something you'll love./i,
     );
-    expect(message).toHaveClass('text-[var(--text-primary)]');
+    expect(message).toHaveClass('text-(--text-primary)');
   });
 
   it('button has accessible label', () => {

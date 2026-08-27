@@ -13,7 +13,9 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];

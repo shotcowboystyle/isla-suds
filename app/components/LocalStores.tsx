@@ -15,7 +15,9 @@ import {
 } from '~/lib/motion/tokens';
 import styles from './LocalStores.module.css';
 
-GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 
 export function LocalStores() {
   const sectionRef = useRef<HTMLElement>(null);

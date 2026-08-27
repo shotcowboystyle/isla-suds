@@ -5,7 +5,9 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {cn} from '~/utils/cn';
 import styles from './JumboMarquee.module.css';
 
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 interface JumboMarqueeProps {
   text: string;

@@ -10,7 +10,9 @@ import {DESKTOP_QUERY, MOTION_QUERY, PIN_PRIORITY, SCRUB_PIN} from '~/lib/motion
 import {cn} from '~/utils/cn';
 import styles from './VideoSection.module.css';
 
-GSAP.registerPlugin(ScrollTrigger, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export const VideoSection = () => {
   const stickyCircleWrapper = useRef<HTMLDivElement>(null);

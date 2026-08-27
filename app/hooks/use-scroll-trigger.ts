@@ -4,7 +4,9 @@ import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
 // Register ScrollTrigger to ensure it's available
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 /**
  * Custom hook to control GSAP animations based on scroll position.

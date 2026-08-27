@@ -6,7 +6,9 @@ import {DESKTOP_QUERY, MOTION_QUERY, REVEAL_START, SCRUB_SCENE} from '~/lib/moti
 import {ClippedTextBox} from '../ClippedTextBox';
 import styles from './Benefits.module.css';
 
-GSAP.registerPlugin(ScrollTrigger, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export const BenefitsSection = () => {
   const rootRef = useRef<HTMLDivElement>(null);

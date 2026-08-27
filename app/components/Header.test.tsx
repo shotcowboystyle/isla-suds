@@ -209,10 +209,10 @@ describe('Header', () => {
   });
 
   describe('Navigation Links (AC1, AC4)', () => {
-    it('Shop link points to /collections', () => {
+    it('Shop link points to /collections/frontpage', () => {
       renderHeaderMenu('mobile');
       const shopLink = screen.getByRole('link', {name: /^shop$/i});
-      expect(shopLink).toHaveAttribute('href', '/collections');
+      expect(shopLink).toHaveAttribute('href', '/collections/frontpage');
     });
 
     it('Stores link points to /locations', () => {
@@ -309,8 +309,9 @@ describe('Header', () => {
       const user = userEvent.setup();
       renderHeader();
 
-      // Find toggle button and click it to open menu
-      const toggleButton = screen.getByLabelText('Toggle menu');
+      // The header renders a desktop and a mobile toggle; both carry the same
+      // label and drive the same state, so either one is a valid handle.
+      const [toggleButton] = screen.getAllByLabelText('Toggle menu');
       await user.click(toggleButton);
 
       // Verify menu is open by checking aria-expanded
