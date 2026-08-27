@@ -1,7 +1,9 @@
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 /**
  * Single refresh authority for ScrollTrigger.

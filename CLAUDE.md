@@ -68,6 +68,12 @@ This project includes BMAD (Build-Measure-Adapt-Deploy) AI agent framework in `_
 
 ## Important Notes
 
+- Never call `gsap.registerPlugin()` at a module's top level unguarded — always wrap it in
+  `if (typeof document !== 'undefined') { ... }`. `useGSAP` is a headless plugin, so gsap
+  registers it even when `window` is undefined and then starts its ticker's
+  `requestAnimationFrame`. Oxygen (workerd) forbids timers and async I/O in global scope, and
+  every route module plus everything it imports is evaluated there — an unguarded call fails
+  the deploy with `Disallowed operation called within global scope`.
 - Always run codegen after modifying GraphQL queries
 - Session secret must be set in environment
 - Customer Account API requires public domain setup (see README)

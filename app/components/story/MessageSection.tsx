@@ -7,7 +7,9 @@ import {MOTION_QUERY, REDUCED_MOTION_QUERY, REVEAL_START, WORD_STAGGER} from '~/
 import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
 
-GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 
 /** Colour the copy settles into as it reveals. */
 const INK = '#faeade';

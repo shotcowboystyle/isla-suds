@@ -2,7 +2,9 @@ import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import type Lenis from 'lenis';
 
-GSAP.registerPlugin(ScrollTrigger);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger);
+}
 
 // Keep track of the Lenis instance and its ticker callback globally
 let lenisInstance: Lenis | null = null;

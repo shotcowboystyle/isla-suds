@@ -1,9 +1,15 @@
 name: Deploy to Shopify Oxygen
 
+# Deploy runs *after* CI finishes, not alongside it. The previous `push` trigger
+# raced CI: a `verify-ci` job that listed only completed check runs saw an empty
+# list at that moment and passed vacuously, so a red build still shipped.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches:
       - main
+    types:
+      - completed
   workflow_dispatch: # Allow manual deployment
 
 permissions:
@@ -16,41 +22,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Verify all CI checks pass before deploying
-  verify-ci:
-    name: Verify CI Checks
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    steps:
-      - name: Check CI status
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: checkRuns } = await github.rest.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha,
-              status: 'completed'
-            });
-
-            const failedChecks = checkRuns.check_runs.filter(
-              check => check.conclusion !== 'success' && check.name !== 'Verify CI Checks'
-            );
-
-            if (failedChecks.length > 0) {
-              core.setFailed(
-                `Cannot deploy: ${failedChecks.length} CI check(s) failed:\n` +
-                failedChecks.map(c => `  - ${c.name}: ${c.conclusion}`).join('\n')
-              );
-            }
-
   deploy:
     name: Deploy to Oxygen
+    # workflow_dispatch has no workflow_run payload, so it deploys unconditionally.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: verify-ci
     steps:
+      # Build the exact commit CI validated, not whatever main points at now.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - uses: pnpm/action-setup@v4
         with:
@@ -97,8 +79,8 @@ jobs:
         if: success()
         run: |
           echo "✅ Deployment to Shopify Oxygen successful"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.event.workflow_run.head_branch || github.ref_name }}"
+          echo "Commit: ${{ github.event.workflow_run.head_sha || github.sha }}"
           echo "Deployed by: ${{ github.actor }}"
 
       - name: Notify deployment failure

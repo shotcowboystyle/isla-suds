@@ -14,7 +14,9 @@ import {CHAR_STAGGER, ENTER_EASE, MOTION_QUERY, SCRUB_SCENE} from '~/lib/motion/
 import {cn} from '~/utils/cn';
 import styles from './HeroSection.module.css';
 
-GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 
 interface HeroSectionProps {
   className?: string;

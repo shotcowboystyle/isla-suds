@@ -34,10 +34,13 @@ vi.mock('react-router', () => ({
       {children}
     </a>
   ),
+  // Suspend on a pending promise the way the real Await does, so the enclosing
+  // Suspense boundary renders its fallback. Settled values pass straight through.
   Await: ({resolve, children}: any) => {
-    const result =
-      typeof resolve === 'object' && resolve !== null && typeof resolve.then === 'function' ? null : resolve;
-    return children(result);
+    if (resolve !== null && typeof resolve?.then === 'function') {
+      throw resolve;
+    }
+    return children(resolve);
   },
 }));
 
@@ -194,8 +197,10 @@ describe('CartDrawer', () => {
       mockCartDrawerOpen = true;
     });
 
-    it('shows loading skeleton when cart is loading', () => {
-      mockCartData = null; // Simulate loading state
+    it('shows loading skeleton while the cart promise is pending', () => {
+      // A cart that never settles keeps the Suspense boundary on its
+      // CartDrawerLoading fallback, which is where the skeleton lives.
+      mockCartData = new Promise(() => {});
 
       render(<CartDrawer />);
 

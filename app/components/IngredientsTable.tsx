@@ -7,7 +7,9 @@ import {cn} from '~/utils/cn';
 import styles from './IngredientsTable.module.css';
 import {INGREDIENTS} from '../content/ingredients';
 
-GSAP.registerPlugin(ScrollTrigger, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 interface IngredientsTableProps {
   className?: string;

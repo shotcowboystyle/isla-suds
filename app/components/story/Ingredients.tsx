@@ -17,7 +17,9 @@ import {cn} from '~/utils/cn';
 import styles from './Ingredients.module.css';
 import {IngredientsTable} from '../IngredientsTable';
 
-GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+}
 
 export function IngredientsSection() {
   const sectionRef = useRef<HTMLElement>(null);

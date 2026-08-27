@@ -1,6 +1,6 @@
-import {describe, it, expect, vi, beforeAll} from 'vitest';
+import {describe, it, expect, beforeAll} from 'vitest';
 import {render, screen} from '@testing-library/react';
-import {MemoryRouter} from 'react-router';
+import {createMemoryRouter, RouterProvider} from 'react-router';
 import {Footer} from './Footer';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
@@ -31,13 +31,20 @@ const mockFooterData: FooterQuery = {
 
 const publicStoreDomain = 'isla-suds.myshopify.com';
 
-// Helper to render Footer with router context
-function renderFooter() {
-  return render(
-    <MemoryRouter>
-      <Footer footer={Promise.resolve(mockFooterData)} header={mockHeader} publicStoreDomain={publicStoreDomain} />
-    </MemoryRouter>,
-  );
+// Footer renders NewsletterSignup, which calls useFetcher(). That hook requires a
+// *data* router - under a plain MemoryRouter it throws "useFetcher must be used
+// within a data router" and takes the whole subtree down with it.
+function renderFooter(header: HeaderQuery = mockHeader) {
+  const router = createMemoryRouter([
+    {
+      path: '/',
+      element: (
+        <Footer footer={Promise.resolve(mockFooterData)} header={header} publicStoreDomain={publicStoreDomain} />
+      ),
+    },
+  ]);
+
+  return render(<RouterProvider router={router} />);
 }
 
 describe('Footer', () => {
@@ -163,15 +170,7 @@ describe('Footer', () => {
           },
         },
       };
-      render(
-        <MemoryRouter>
-          <Footer
-            footer={Promise.resolve(mockFooterData)}
-            header={headerWithDifferentDomain}
-            publicStoreDomain={publicStoreDomain}
-          />
-        </MemoryRouter>,
-      );
+      renderFooter(headerWithDifferentDomain);
       const homeLink = await screen.findByRole('link', {name: /home/i});
       const privacyLink = await screen.findByRole('link', {
         name: /privacy policy/i,
