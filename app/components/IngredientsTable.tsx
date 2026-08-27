@@ -2,14 +2,12 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {MOTION_QUERY, REVEAL_START, WORD_STAGGER} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './IngredientsTable.module.css';
 import {INGREDIENTS} from '../content/ingredients';
 
-if (typeof document !== 'undefined') {
-  GSAP.registerPlugin(ScrollTrigger, useGSAP);
-}
+GSAP.registerPlugin(ScrollTrigger, useGSAP);
 
 interface IngredientsTableProps {
   className?: string;
@@ -18,40 +16,42 @@ interface IngredientsTableProps {
 export const IngredientsTable = ({className}: IngredientsTableProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
-
   useGSAP(
     () => {
-      if (isLoading || !containerRef.current) {
-        return;
-      }
+      const container = containerRef.current;
+      if (!container) return;
 
-      GSAP.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: isMobile ? 'top 90%' : 'top 60%',
-          end: '+=1000',
-        },
-      }).from('.animated-ingredient-item', {
-        x: (index, target) => {
-          const container = target.closest(`.${styles['ingredient-group']}`);
-          if (!container) return 0;
-          const cRect = container.getBoundingClientRect();
-          const tRect = target.getBoundingClientRect();
-          return cRect.left + cRect.width / 2 - (tRect.left + tRect.width / 2);
-        },
-        y: (index, target) => {
-          const container = target.closest(`.${styles['ingredient-group']}`);
-          if (!container) return 0;
-          const cRect = container.getBoundingClientRect();
-          const tRect = target.getBoundingClientRect();
-          return cRect.top + cRect.height / 2 - (tRect.top + tRect.height / 2);
-        },
-        ease: 'power3.out',
-        stagger: 0.05,
+      const mm = GSAP.matchMedia();
+
+      mm.add(MOTION_QUERY, () => {
+        // Each item starts collapsed at the centre of its group and fans out.
+        const offsetToGroupCentre = (axis: 'x' | 'y') => (_index: number, target: Element) => {
+          const group = target.closest(`.${styles['ingredient-group']}`);
+          if (!group) return 0;
+          const groupRect = group.getBoundingClientRect();
+          const targetRect = target.getBoundingClientRect();
+          return axis === 'x'
+            ? groupRect.left + groupRect.width / 2 - (targetRect.left + targetRect.width / 2)
+            : groupRect.top + groupRect.height / 2 - (targetRect.top + targetRect.height / 2);
+        };
+
+        GSAP.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: REVEAL_START,
+            once: true,
+          },
+        }).from('.animated-ingredient-item', {
+          x: offsetToGroupCentre('x'),
+          y: offsetToGroupCentre('y'),
+          ease: 'power3.out',
+          stagger: WORD_STAGGER,
+        });
       });
+
+      return () => mm.revert();
     },
-    {scope: containerRef, dependencies: [containerRef, isLoading, isMobile]},
+    {scope: containerRef},
   );
 
   return (

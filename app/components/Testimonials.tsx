@@ -1,12 +1,15 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import DripImage from '~/assets/images/slider-dip.png';
 import {VideoCard} from '~/components/VideoCard';
 import {testimonialsData} from '~/content/testimonials';
-import {useIsDesktop} from '~/hooks/use-is-desktop';
+import {DESKTOP_QUERY, MOTION_QUERY, PIN_PRIORITY, SCRUB_PIN} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './Testimonials.module.css';
+
+GSAP.registerPlugin(ScrollTrigger, useGSAP);
 
 export const TestimonialsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -15,91 +18,75 @@ export const TestimonialsSection = () => {
   const text2Ref = useRef<HTMLHeadingElement>(null);
   const text3Ref = useRef<HTMLHeadingElement>(null);
 
-  const {isDesktop, isLoading} = useIsDesktop();
-
+  // Card stack and heading drift share one pinned timeline.
+  //
+  // They used to be two triggers on the same element, one of them pinning. The
+  // pin inserts a pin-spacer, which moves the positions the other trigger had
+  // already measured — so the headings drifted against a scroll span that no
+  // longer matched the pin. One timeline, one scroll space, no conflict.
   useGSAP(
     () => {
-      if (isLoading || !scrollContainerRef.current || !text1Ref.current || !text2Ref.current || !text3Ref.current) {
+      const container = scrollContainerRef.current;
+      const cards = cardsContainerRef.current;
+      const text1 = text1Ref.current;
+      const text2 = text2Ref.current;
+      const text3 = text3Ref.current;
+
+      if (!container || !cards || !text1 || !text2 || !text3) {
         return;
       }
 
-      GSAP.set(scrollContainerRef.current, {
-        marginTop: 0,
+      const mm = GSAP.matchMedia();
+
+      mm.add({isDesktop: DESKTOP_QUERY, allowMotion: MOTION_QUERY}, (context) => {
+        const {isDesktop, allowMotion} = context.conditions as {isDesktop: boolean; allowMotion: boolean};
+        if (!allowMotion) return;
+
+        const cardElements = GSAP.utils.toArray<HTMLElement>(cards.querySelectorAll('.animated-video-card'));
+
+        const sceneTl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: '+=200%',
+            scrub: SCRUB_PIN,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: PIN_PRIORITY.testimonials,
+          },
+        });
+
+        // Headings drift apart across the whole pinned span.
+        sceneTl
+          .to(text1, {xPercent: 70, ease: 'none', duration: 1}, 0)
+          .to(text2, {xPercent: 25, ease: 'none', duration: 1}, 0)
+          .to(text3, {xPercent: -50, ease: 'none', duration: 1}, 0);
+
+        // Cards settle into the stack one after another.
+        const cardDuration = 0.5;
+        const spacing = 0.3;
+
+        cardElements.forEach((card, index) => {
+          const translation = testimonialsData[index]?.translation;
+          if (!translation) return;
+
+          sceneTl.to(
+            card,
+            {
+              yPercent: translation.y,
+              ...(isDesktop && {xPercent: translation.x}),
+              duration: cardDuration,
+              ease: 'power4.inOut',
+            },
+            index * spacing,
+          );
+        });
       });
 
-      const headingTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: scrollContainerRef.current,
-          start: 'top bottom',
-          end: '+=200%',
-          scrub: true,
-        },
-      });
-
-      headingTl
-        .to(text1Ref.current, {
-          xPercent: 70,
-        })
-        .to(
-          text2Ref.current,
-          {
-            xPercent: 25,
-          },
-          '<',
-        )
-        .to(
-          text3Ref.current,
-          {
-            xPercent: -50,
-          },
-          '<',
-        );
+      return () => mm.revert();
     },
-    {dependencies: [scrollContainerRef, text1Ref, text2Ref, text3Ref, isLoading]},
-  );
-
-  useGSAP(
-    () => {
-      if (isLoading || !scrollContainerRef.current) {
-        return;
-      }
-
-      const cardsTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: scrollContainerRef.current,
-          start: '10% top',
-          end: '+=200%',
-          scrub: 1.5,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      // Animate each card sequentially with duration and spacing
-      const cardDuration = 0.5; // Duration for each card animation
-      const spacing = 0.3; // Gap between each card animation start
-
-      testimonialsData.forEach((testimonial, index) => {
-        cardsTl.to(
-          `.animated-video-card:nth-child(${index + 1})`,
-          {
-            yPercent: testimonial.translation.y,
-            ...(isDesktop && {xPercent: testimonial.translation.x}),
-            // stagger: 0.2,
-            duration: cardDuration,
-            ease: 'power4.inOut',
-          },
-          index * spacing,
-        );
-      });
-      // cardsTl.from('.animated-video-card', {
-      //   yPercent: 150,
-      //   stagger: 0.2,
-      //   duration: 0.5,
-      //   ease: 'power4.inOut',
-      // });
-    },
-    {dependencies: [scrollContainerRef, isLoading, isDesktop]},
+    {scope: scrollContainerRef},
   );
 
   return (

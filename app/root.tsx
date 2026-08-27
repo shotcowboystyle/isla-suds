@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect} from 'react';
 import {
   Outlet,
   useRouteError,
@@ -16,9 +16,10 @@ import {CartDrawer} from '~/components/cart/CartDrawer';
 import {Preloader} from '~/components/Preloader';
 import {PreloaderProvider, usePreloader} from '~/contexts/preloader-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
-import {usePastHero} from '~/hooks/use-past-hero';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
-import {initLenis, destroyLenis} from '~/lib/scroll';
+import {observeLayoutShifts, requestScrollRefresh} from '~/lib/motion/refresh';
+import {isB2BRoute} from '~/lib/motion-guard';
+import {initLenis, destroyLenis, getLenis} from '~/lib/scroll';
 import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
 import type {Route} from './+types/root';
@@ -62,6 +63,16 @@ export function links() {
     {
       rel: 'preconnect',
       href: 'https://shop.app',
+    },
+    // Antonio is font-display: swap and display headings are sized in vw, so a
+    // late swap reflows the tallest elements on the page and invalidates every
+    // ScrollTrigger measurement below the fold.
+    {
+      rel: 'preload',
+      href: '/fonts/Antonio-VariableFont_wght.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossOrigin: 'anonymous',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
@@ -165,53 +176,36 @@ export function Layout({children}: {children?: React.ReactNode}) {
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
   const location = useLocation();
-  const isHome = location.pathname === '/';
-  const heroRef = useRef<HTMLElement>(null);
-  const isPastHero = usePastHero(heroRef);
 
   // Initialize exploration session timestamp (SSR-safe)
   useInitializeSession();
 
-  // Initialize Lenis smooth scroll for desktop (≥1024px)
-  // SSR-safe, respects prefers-reduced-motion, graceful fallback
-  // B2B routes (/wholesale/*) should NOT use Lenis (native scroll only)
+  // Scroll engine — mounted once for the life of the app. Tearing Lenis down on
+  // every navigation would also drop its ScrollTrigger wiring and the GSAP
+  // ticker callback, so the engine outlives individual routes.
   useEffect(() => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
 
-    // Always scroll to top on navigation or refresh
-    window.scrollTo(0, 0);
-
-    // Check if current route is a B2B route - Lenis should not initialize for wholesale routes
-    const isWholesaleRoute = location.pathname.startsWith('/wholesale');
-    // const isHome = location.pathname === '/';
-
-    if (isWholesaleRoute) {
-      destroyLenis();
-      return;
-    }
-
-    // Initialize Lenis after hydration (client-side only) for B2C routes
     void initLenis();
+    const stopObserving = observeLayoutShifts();
 
-    // Debounced resize handler to avoid excessive calls during window resize
+    // Debounced resize handler to avoid excessive calls during window resize.
+    // Crossing the 1024px boundary needs a (re)init, and any resize needs a
+    // re-measure once the new layout has settled.
     let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
     const handleResize = () => {
       if (resizeTimeout) {
         clearTimeout(resizeTimeout);
       }
       resizeTimeout = setTimeout(() => {
-        const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-
-        void initLenis();
-        // if (isDesktop) {
-        //   // On desktop, ensure Lenis is initialized
-        //   void initLenis();
-        // } else {
-        //   // On mobile, ensure Lenis is destroyed
-        //   destroyLenis();
-        // }
+        if (window.matchMedia('(min-width: 1024px)').matches) {
+          void initLenis();
+        } else {
+          destroyLenis();
+        }
+        requestScrollRefresh();
       }, 150); // 150ms debounce
     };
 
@@ -223,8 +217,30 @@ export default function App() {
         clearTimeout(resizeTimeout);
       }
       window.removeEventListener('resize', handleResize);
+      stopObserving();
       destroyLenis();
     };
+  }, []);
+
+  // Per-navigation: reset scroll position, and keep Lenis off B2B routes
+  // (/wholesale/* use native scroll only).
+  useEffect(() => {
+    const lenis = getLenis();
+
+    if (isB2BRoute(location.pathname)) {
+      destroyLenis();
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (lenis) {
+      lenis.scrollTo(0, {immediate: true});
+    } else {
+      window.scrollTo(0, 0);
+      void initLenis();
+    }
+
+    requestScrollRefresh();
   }, [location.pathname]);
 
   if (!data) {
@@ -233,30 +249,20 @@ export default function App() {
 
   const layoutContent = (
     <PageLayout {...data} header={data.header}>
-      <Outlet context={isHome ? {heroRef} : undefined} />
+      <Outlet />
     </PageLayout>
   );
 
   return (
     <Analytics.Provider cart={data.cart} shop={data.shop} consent={data.consent}>
       <PreloaderProvider>
-        <AppContent isHome={isHome} heroRef={heroRef} isPastHero={isPastHero} layoutContent={layoutContent} />
+        <AppContent layoutContent={layoutContent} />
       </PreloaderProvider>
     </Analytics.Provider>
   );
 }
 
-function AppContent({
-  isHome,
-  heroRef,
-  isPastHero,
-  layoutContent,
-}: {
-  isHome: boolean;
-  heroRef: React.RefObject<HTMLElement>;
-  isPastHero: boolean;
-  layoutContent: React.ReactNode;
-}) {
+function AppContent({layoutContent}: {layoutContent: React.ReactNode}) {
   const {setPreloaderComplete} = usePreloader();
 
   return (

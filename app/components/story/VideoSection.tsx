@@ -1,17 +1,18 @@
 import {useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import PinVideoPoster from '~/assets/images/pin-video-poster.webp';
 import LightboxButtonImage from '~/assets/images/play.svg';
 import PlayIcon from '~/assets/images/polygon-3.svg';
 import PinVideo from '~/assets/video/pin-video.mp4';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {DESKTOP_QUERY, MOTION_QUERY, PIN_PRIORITY, SCRUB_PIN} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './VideoSection.module.css';
 
-export const VideoSection = () => {
-  const {isMobile, isLoading} = useIsMobile();
+GSAP.registerPlugin(ScrollTrigger, useGSAP);
 
+export const VideoSection = () => {
   const stickyCircleWrapper = useRef<HTMLDivElement>(null);
   const stickyCircleElement = useRef<HTMLDivElement>(null);
   const stickyCircleVideoWrapper = useRef<HTMLDivElement>(null);
@@ -19,6 +20,8 @@ export const VideoSection = () => {
   const desktopVideoRef = useRef<HTMLVideoElement>(null);
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
+  // Only the breakpoint's visible video ever intersects, so the hidden one
+  // never plays and — with preload="none" — never downloads.
   useEffect(() => {
     const videos = [desktopVideoRef.current, mobileVideoRef.current].filter(Boolean) as HTMLVideoElement[];
     if (!videos.length) return;
@@ -28,7 +31,9 @@ export const VideoSection = () => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
-            void video.play();
+            void video.play().catch(() => {
+              // Safe to continue: autoplay may be blocked by browser policy
+            });
           } else {
             video.pause();
           }
@@ -38,55 +43,41 @@ export const VideoSection = () => {
     );
     videos.forEach((v) => observer.observe(v));
     return () => observer.disconnect();
-  }, [isMobile, isLoading]);
+  }, []);
 
+  // Pinned scene: the circle opens out to full frame as the section holds.
   useGSAP(
     () => {
-      if (
-        isLoading ||
-        isMobile ||
-        !stickyCircleWrapper.current ||
-        !stickyCircleElement.current ||
-        !stickyCircleVideoWrapper.current ||
-        !cursorElement.current
-      ) {
+      const wrapper = stickyCircleWrapper.current;
+      const circle = stickyCircleElement.current;
+      const videoWrapper = stickyCircleVideoWrapper.current;
+
+      if (!wrapper || !circle || !videoWrapper) {
         return;
       }
 
-      const videoTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: stickyCircleWrapper.current,
-          scrub: true,
-          start: 'top top',
-          end: '+=300%',
-          pin: true,
-        },
-      })
-        .to(
-          stickyCircleElement.current,
-          {
-            clipPath: 'circle(100% at 50% 50%)',
+      const mm = GSAP.matchMedia();
+
+      mm.add(`${DESKTOP_QUERY} and ${MOTION_QUERY}`, () => {
+        GSAP.timeline({
+          scrollTrigger: {
+            trigger: wrapper,
+            start: 'top top',
+            end: '+=300%',
+            scrub: SCRUB_PIN,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: PIN_PRIORITY.videoSection,
           },
-          'sameTime',
-        )
-        .to(
-          stickyCircleVideoWrapper.current,
-          {
-            scale: 1,
-          },
-          'sameTime',
-        );
+        })
+          .to(circle, {clipPath: 'circle(100% at 50% 50%)', ease: 'none'}, 'sameTime')
+          .to(videoWrapper, {scale: 1, ease: 'none'}, 'sameTime');
+      });
+
+      return () => mm.revert();
     },
-    {
-      dependencies: [
-        stickyCircleWrapper,
-        stickyCircleElement,
-        stickyCircleVideoWrapper,
-        cursorElement,
-        isLoading,
-        isMobile,
-      ],
-    },
+    {scope: stickyCircleWrapper},
   );
 
   return (

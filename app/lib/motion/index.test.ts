@@ -1,5 +1,5 @@
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
-import {prefersReducedMotion} from './motion';
+import {prefersReducedMotion} from './index';
 
 describe('prefersReducedMotion', () => {
   const originalWindow = globalThis.window;

@@ -146,24 +146,14 @@
     --webkit-text-size-adjust: 100%;
   }
 
-  /* Story 2.2: scroll-snap on viewport for mobile (<1024px); viewport is the scroll container */
   @media (max-width: 480px) {
     html {
       background-attachment: scroll !important;
     }
   }
 
-  @media (max-width: 1023px) {
-    html {
-      scroll-snap-type: y proximity;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    html {
-      scroll-snap-type: none;
-    }
-  }
+  /* No scroll-snap. Snap points fight ScrollTrigger's pinned scenes (the
+     snap lands mid-pin and yanks the timeline) and Lenis' interpolation. */
 
   html.lenis {
     height: auto;

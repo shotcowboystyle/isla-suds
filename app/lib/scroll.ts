@@ -1,37 +1,42 @@
+import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import type Lenis from 'lenis';
 
-// Keep track of the Lenis instance and RAF ID globally
+GSAP.registerPlugin(ScrollTrigger);
+
+// Keep track of the Lenis instance and its ticker callback globally
 let lenisInstance: Lenis | null = null;
-let rafId: number | null = null;
+let tick: ((time: number) => void) | null = null;
 
 /**
  * SCROLL-LINKED ANIMATIONS POLICY (Story 2.2)
  *
- * ⚠️ IMPORTANT: All scroll-linked animations MUST use Intersection Observer, NOT scroll event listeners.
+ * ⚠️ IMPORTANT: All scroll-linked animations MUST use Intersection Observer or
+ * GSAP ScrollTrigger, NOT raw scroll event listeners.
  *
  * WHY:
  * - Scroll listeners run on the main thread and cause jank during scroll
  * - Intersection Observer runs off-main-thread and is more efficient
- * - Better performance for animations, visibility detection, and scroll-triggered behavior
- *
- * IMPLEMENTATION:
- * - Use IntersectionObserver for "in view" detection
- * - Use IntersectionObserver for triggering animations when elements enter/exit viewport
- * - Story 2.5 (Sticky Header) will use IO for "past hero" detection
- * - Story 4.1 (Story Fragments) will use IO for scroll-triggered content
+ * - ScrollTrigger batches its reads/writes against a single ticker
  *
  * DO NOT:
  * - window.addEventListener('scroll', ...) for animation/visibility logic
- * - Check scroll position in RAF loops for triggering UI changes
+ * - Run a second requestAnimationFrame loop alongside gsap.ticker
  *
  * EXCEPTIONS:
- * - Scroll position for Lenis itself (handled by Lenis library internally)
  * - Resize events (for responsive behavior, not animation)
  */
 
 /**
- * Initializes Lenis smooth scroll for desktop devices (≥1024px)
- * SSR-safe, respects prefers-reduced-motion, graceful fallback to native scroll
+ * Initializes Lenis smooth scroll for desktop devices (≥1024px) and drives it
+ * from `gsap.ticker`.
+ *
+ * Lenis interpolates away from the native scroll position, so ScrollTrigger
+ * must be told about the smoothed value (`lenis.on('scroll', ...)`) and both
+ * must advance on the same clock. Running Lenis on its own requestAnimationFrame
+ * leaves every scrubbed tween a frame behind the position the user sees.
+ *
+ * SSR-safe, respects prefers-reduced-motion, graceful fallback to native scroll.
  * Dynamically imports Lenis so mobile users don't pay the bundle cost.
  *
  * @returns Lenis instance if initialized successfully, null otherwise
@@ -42,10 +47,11 @@ export async function initLenis(): Promise<Lenis | null> {
     return null;
   }
 
-  // Desktop-only check (≥1024px breakpoint)
-  // if (!window.matchMedia('(min-width: 1024px)').matches) {
-  //   return null;
-  // }
+  // Desktop-only check (≥1024px breakpoint). Touch devices keep native
+  // momentum scrolling, which feels better than a wheel-tuned lerp.
+  if (!window.matchMedia('(min-width: 1024px)').matches) {
+    return null;
+  }
 
   // Accessibility: respect prefers-reduced-motion
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -57,21 +63,25 @@ export async function initLenis(): Promise<Lenis | null> {
     if (!lenisInstance) {
       const {default: Lenis} = await import('lenis');
 
+      // `lerp` and `duration` are mutually exclusive — passing both silently
+      // discards `duration`. Only `lerp` is set here.
       lenisInstance = new Lenis({
-        lerp: 0.05,
-        wheelMultiplier: 0.6,
+        lerp: 0.09,
+        wheelMultiplier: 0.9,
         gestureOrientation: 'vertical',
-        duration: 1.5,
         smoothWheel: true,
-        // easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
 
-      // Start the requestAnimationFrame loop
-      function raf(time: number) {
-        lenisInstance?.raf(time);
-        rafId = requestAnimationFrame(raf);
-      }
-      rafId = requestAnimationFrame(raf);
+      // Feed the smoothed scroll position to ScrollTrigger.
+      lenisInstance.on('scroll', ScrollTrigger.update);
+
+      // One clock for both. gsap.ticker takes seconds, Lenis takes milliseconds.
+      tick = (time: number) => lenisInstance?.raf(time * 1000);
+      GSAP.ticker.add(tick);
+
+      // Lag smoothing pauses the ticker after a long frame, which desyncs Lenis
+      // from ScrollTrigger for the frames that follow.
+      GSAP.ticker.lagSmoothing(0);
     }
 
     return lenisInstance;
@@ -82,14 +92,23 @@ export async function initLenis(): Promise<Lenis | null> {
 }
 
 /**
- * Destroys the Lenis instance and cancels the RAF loop
+ * Returns the live Lenis instance, or null when smooth scroll is not active
+ * (mobile, reduced motion, or before initialization).
+ */
+export function getLenis(): Lenis | null {
+  return lenisInstance;
+}
+
+/**
+ * Destroys the Lenis instance and detaches it from the GSAP ticker
  * Safe to call multiple times
  */
 export function destroyLenis(): void {
-  // Cancel the RAF loop
-  if (rafId !== null) {
-    cancelAnimationFrame(rafId);
-    rafId = null;
+  if (tick) {
+    GSAP.ticker.remove(tick);
+    tick = null;
+    // Restore GSAP's defaults now that nothing depends on a steady ticker.
+    GSAP.ticker.lagSmoothing(500, 33);
   }
 
   // Destroy the Lenis instance

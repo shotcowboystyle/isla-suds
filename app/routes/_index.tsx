@@ -1,28 +1,16 @@
-import {lazy, Suspense, useEffect} from 'react';
 import {useLoaderData} from 'react-router';
+import {LocalStores} from '~/components/LocalStores';
+import {BenefitsSection} from '~/components/story/Benefits';
 import {HeroSection} from '~/components/story/HeroSection';
+import {IngredientsSection} from '~/components/story/Ingredients';
+import {MessageSection} from '~/components/story/MessageSection';
+import {ProductsList} from '~/components/story/ProductsList';
+import {VideoSection} from '~/components/story/VideoSection';
+import {TestimonialsSection} from '~/components/Testimonials';
 import {productsListHandles} from '~/content/products';
-import {
-  PRODUCTS_LIST_QUERY,
-  FEATURED_COLLECTION_QUERY,
-  RECOMMENDED_PRODUCTS_QUERY,
-} from '~/graphql/product/ProductList';
+import {PRODUCTS_LIST_QUERY, FEATURED_COLLECTION_QUERY} from '~/graphql/product/ProductList';
 import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/_index';
-
-const MessageSection = lazy(() =>
-  import('~/components/story/MessageSection').then((m) => ({default: m.MessageSection})),
-);
-const ProductsList = lazy(() => import('~/components/story/ProductsList').then((m) => ({default: m.ProductsList})));
-const IngredientsSection = lazy(() =>
-  import('~/components/story/Ingredients').then((m) => ({default: m.IngredientsSection})),
-);
-const BenefitsSection = lazy(() => import('~/components/story/Benefits').then((m) => ({default: m.BenefitsSection})));
-const VideoSection = lazy(() => import('~/components/story/VideoSection').then((m) => ({default: m.VideoSection})));
-const TestimonialsSection = lazy(() =>
-  import('~/components/Testimonials').then((m) => ({default: m.TestimonialsSection})),
-);
-const LocalStores = lazy(() => import('~/components/LocalStores').then((m) => ({default: m.LocalStores})));
 
 export const meta: Route.MetaFunction = createMeta({
   title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin',
@@ -31,13 +19,7 @@ export const meta: Route.MetaFunction = createMeta({
 });
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
-
-  return {...deferredData, ...criticalData};
+  return loadCriticalData(args);
 }
 
 /**
@@ -63,68 +45,39 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
 }
 
 /**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
+ * Sections render eagerly rather than through `React.lazy`.
+ *
+ * The page is one continuous scroll score with three pinned scenes. Streaming
+ * sections in after hydration means ScrollTrigger measures a document that is
+ * one viewport tall, and every start/end below the hero is computed against a
+ * layout that does not exist yet. Rendering the whole story up front also lets
+ * the build extract each section's CSS module into a blocking stylesheet
+ * instead of injecting it when its chunk lands.
+ *
+ * The bundle cost is negligible: every section already imports gsap statically,
+ * so the `gsap` chunk was being pulled by the first lazy section regardless.
  */
-function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront.query(RECOMMENDED_PRODUCTS_QUERY).catch((_error: Error) => {
-    // Safe to continue: recommended products are non-critical below-fold content
-    return null;
-  });
-
-  return {
-    recommendedProducts,
-  };
-}
-
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
 
-  useEffect(() => {
-    let cancelled = false;
-
-    Promise.all([import('gsap'), import('gsap/ScrollTrigger'), import('@gsap/react')])
-      .then(([{default: gsap}, {ScrollTrigger}, {useGSAP}]) => {
-        if (cancelled) {
-          return;
-        }
-
-        gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-        // Refresh ScrollTrigger to ensure start/end positions are correct
-        ScrollTrigger.refresh();
-      })
-      .catch((_error: Error) => {
-        // Safe to continue: GSAP is a progressive enhancement, page works without it
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   return (
     <div className="home flex flex-col bg-transparent">
-      {/* <div className="block bg-black overflow-hidden"> */}
       <div className="block bg-black overflow-visible">
         <HeroSection />
       </div>
 
       <div className="z-2 overflow-visible relative">
-        <Suspense fallback={null}>
-          <MessageSection />
-          <ProductsList products={data.productsList} />
-          <IngredientsSection />
+        <MessageSection />
+        <ProductsList products={data.productsList} />
+        <IngredientsSection />
 
-          <div className="block bg-black relative">
-            <BenefitsSection />
-            <VideoSection />
-          </div>
+        <div className="block bg-black relative">
+          <BenefitsSection />
+          <VideoSection />
+        </div>
 
-          <TestimonialsSection />
-          <LocalStores />
-        </Suspense>
+        <TestimonialsSection />
+        <LocalStores />
       </div>
     </div>
   );
