@@ -6,76 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Isla Suds is a Shopify Hydrogen-based headless commerce storefront built with React Router 7, TypeScript, and Tailwind CSS. It uses Shopify's Storefront API and Customer Account API for data fetching and user management, deployed to Shopify Oxygen edge workers.
 
-## Core Commands
-
-### Development
-
-```bash
-# Start dev server with auto-codegen
-pnpm dev
-
-# Build for production with codegen
-pnpm build
-
-# Preview production build locally
-pnpm preview
-```
-
-### Code Quality
-
-```bash
-# Lint codebase
-pnpm lint
-
-# Type checking (includes React Router type generation)
-pnpm typecheck
-
-# Generate GraphQL types and React Router types
-pnpm codegen
-```
-
-### Testing
-
-```bash
-# Run all smoke tests
-pnpm test:smoke
-
-# Run individual smoke tests
-pnpm test:smoke:build      # Test production build
-pnpm test:smoke:typecheck  # Test type checking
-pnpm test:smoke:dev        # Test dev server startup
-```
-
 ## Architecture
-
-### Stack
-
-- **Framework**: React Router 7 (SSR-enabled) with Hydrogen preset
-- **Runtime**: Shopify Oxygen (Cloudflare Workers)
-- **API**: Shopify Storefront API (GraphQL) + Customer Account API
-- **Styling**: Tailwind CSS v4 with custom theme
-- **Build Tool**: Vite 6 with Hydrogen plugins
-
-### Directory Structure
-
-```
-app/
-  ├── routes/           # React Router file-based routing
-  ├── components/       # Reusable UI components
-  ├── lib/              # Core utilities and context
-  │   ├── context.ts    # Hydrogen context setup
-  │   ├── session.ts    # Custom session implementation
-  │   ├── fragments.ts  # Shared GraphQL fragments
-  │   ├── variant-url.ts # Shopify product variant URL helpers
-  │   └── variants.ts   # CVA component variants (type-safe styling)
-  ├── utils/            # Helper functions (cn.ts for classnames)
-  ├── graphql/          # GraphQL queries and customer account API
-  ├── styles/           # Global CSS and Tailwind
-  └── root.tsx          # Root layout with Analytics
-server.ts               # Oxygen worker entry point
-react-router.config.ts  # React Router + Hydrogen preset config
-vite.config.ts          # Vite + Hydrogen + Tailwind setup
-```
 
 ### Key Architectural Patterns
 
@@ -131,24 +62,9 @@ Root loader uses custom `shouldRevalidate` to avoid unnecessary refetches:
 
 The server.ts handles 404s by checking Shopify URL redirects via `storefrontRedirect()` before returning 404.
 
-## Development Workflow
-
-1. **Adding new routes**: Create files in `app/routes/` following React Router conventions
-2. **Adding components**: Place in `app/components/` (use PascalCase)
-3. **GraphQL queries**: Add to route files or `app/lib/fragments.ts` for shared queries
-4. **Styling**: Use Tailwind classes with `cn()` utility for conditional styles
-5. **Type safety**: Run `pnpm codegen` after GraphQL changes to regenerate types
-
 ## BMAD Integration
 
-This project includes BMAD (Build-Measure-Adapt-Deploy) AI agent framework in `_bmad/`:
-
-- `bmm/` - Build-Measure-Manage workflows and agents
-- `cis/` - Creative & Innovation Suite workflows
-- `core/` - Core BMAD functionality
-- Output artifacts stored in `_bmad-output/`
-
-BMAD provides workflows for development tasks, accessible via skills (see .mcp.json).
+This project includes BMAD (Build-Measure-Adapt-Deploy) AI agent framework in `_bmad/`, accessible via skills (see .mcp.json).
 
 ## Important Notes
 
