@@ -61,6 +61,53 @@ const LETTERS: ReadonlyArray<{id: string; d: string; transform: string}> = [
   },
 ];
 
+/**
+ * Foam circles participate in the landing follow-through. Larger circles carry
+ * more mass so they travel less, and the stagger radiates outward from the
+ * tub's centre line (x = 150).
+ */
+const foamAmplitude = (r: number) => (r <= 10 ? '-6px' : r <= 15 ? '-4.5px' : '-3px');
+const foamDelay = (cx: number) => `${Math.round(Math.abs(cx - 150) * 1.2)}ms`;
+
+const foamStyle = (cx: number, r: number) =>
+  ({'--foam-amp': foamAmplitude(r), '--foam-del': foamDelay(cx)}) as CSSProperties;
+
+const UNDER_RIM_FOAM: ReadonlyArray<{cx: number; cy: number; r: number}> = [
+  {cx: 166, cy: -14, r: 10},
+  {cx: 181, cy: -14, r: 10},
+  {cx: 134, cy: -14, r: 10},
+  {cx: 119, cy: -14, r: 10},
+];
+
+const OVER_RIM_FOAM: ReadonlyArray<{cx: number; cy: number; r: number}> = [
+  // Right cluster
+  {cx: 126, cy: -15, r: 10},
+  {cx: 143, cy: -20, r: 15},
+  {cx: 199, cy: -18, r: 10},
+  {cx: 221, cy: -22, r: 20},
+  {cx: 254, cy: -15, r: 20},
+  {cx: 269, cy: -35, r: 20},
+  {cx: 285, cy: -13, r: 20},
+  {cx: 261, cy: -22, r: 10},
+  // Left cluster
+  {cx: 174, cy: -15, r: 10},
+  {cx: 157, cy: -20, r: 15},
+  {cx: 101, cy: -18, r: 10},
+  {cx: 79, cy: -22, r: 20},
+  {cx: 46, cy: -15, r: 20},
+  {cx: 31, cy: -35, r: 20},
+  {cx: 15, cy: -13, r: 20},
+  {cx: 39, cy: -22, r: 10},
+];
+
+/** Hold before the portal opens — must match --enter-hold in the stylesheet. */
+const ENTER_HOLD_MS = 260;
+/** Everything after the hold: portal, launch, settle, wordmark. */
+const ENTER_BODY_MS = 1190;
+const ENTRANCE_MS = ENTER_HOLD_MS + ENTER_BODY_MS;
+/** Sink, portal close, burst, floor fade, overlay fade. */
+const EXIT_MS = 900;
+
 export function Preloader({
   minDisplayTime = 2500,
   onComplete,
@@ -70,10 +117,21 @@ export function Preloader({
   const isScrubMode = scrubMs !== undefined;
   const [isVisible, setIsVisible] = useState(true);
   const [autoPopping, setAutoPopping] = useState(false);
+  const [autoEntering, setAutoEntering] = useState(true);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
   const isPopping = isScrubMode ? Boolean(forcePopping) : autoPopping;
+  const isEntering = isScrubMode
+    ? !forcePopping && scrubMs < ENTRANCE_MS
+    : autoEntering;
+
+  useEffect(() => {
+    if (isScrubMode) return;
+
+    const timer = setTimeout(() => setAutoEntering(false), ENTRANCE_MS);
+    return () => clearTimeout(timer);
+  }, [isScrubMode]);
 
   useEffect(() => {
     if (isScrubMode) return;
@@ -81,7 +139,9 @@ export function Preloader({
 
     const triggerPop = () => {
       const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, minDisplayTime - elapsed);
+      // A fast load must still let the entrance play out — the exit is the
+      // entrance's counterpart, not a replacement for it.
+      const remaining = Math.max(0, minDisplayTime - elapsed, ENTRANCE_MS - elapsed);
 
       setTimeout(() => setAutoPopping(true), remaining);
     };
@@ -102,7 +162,7 @@ export function Preloader({
     const timer = setTimeout(() => {
       setIsVisible(false);
       onCompleteRef.current?.();
-    }, 1200);
+    }, EXIT_MS);
 
     return () => clearTimeout(timer);
   }, [autoPopping, isScrubMode]);
@@ -111,6 +171,7 @@ export function Preloader({
 
   const wrapperClass = [
     styles.preloaderWrapper,
+    isEntering && styles.entering,
     isPopping && styles.popping,
     isScrubMode && styles.scrubbed,
   ]
@@ -179,19 +240,40 @@ export function Preloader({
             <stop offset="0%" stopColor="#292934" />
             <stop offset="100%" stopColor="#ffffff" />
           </linearGradient>
+
+          {/* Dark water opening in the white floor */}
+          <radialGradient id="portalGrad" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#1b3d3e" />
+            <stop offset="70%" stopColor="#206060" />
+            <stop offset="100%" stopColor="#2c7b7c" />
+          </radialGradient>
+
+          {/* Everything above the floor line. Applied to the untransformed
+              .clipHost so the rect stays in scene space while the tub travels. */}
+          <clipPath id="portalClip" clipPathUnits="userSpaceOnUse">
+            <rect x="-3000" y="-240" width="6000" height="388" />
+          </clipPath>
         </defs>
 
         {/* 0. Floor (drawn very wide so overflow: visible carries it edge-to-edge) */}
-        <rect x="-3000" y="148" width="6000" height="500" fill="#ffffff" className={styles.floorRect} />
-        <rect x="-3000" y="144" width="6000" height="4" fill="url(#horizonGrad)" className={styles.floorRect} />
+        <rect x="-3000" y="110" width="6000" height="500" fill="#ffffff" className={styles.floorRect} />
+        <rect x="-3000" y="106" width="6000" height="4" fill="url(#horizonGrad)" className={styles.floorRect} />
 
-        {/* 1. Shadows (Background) */}
-        <ellipse cx="150" cy="148" rx="150" ry="31.7" fill="#eceff3" />
-        <ellipse cx="150" cy="148" rx="125" ry="21.1" fill="#d9dde6" />
-        <ellipse cx="78" cy="147" rx="20" ry="6.3" fill="#c8ccd4" />
-        <ellipse cx="218" cy="147" rx="20" ry="6.3" fill="#c8ccd4" />
+        {/* 1. Portal — opens before the tub arrives, closes behind it */}
+        <g className={styles.portal}>
+          <ellipse cx="150" cy="148" rx="150" ry="31.7" fill="url(#portalGrad)" />
+          <ellipse cx="150" cy="148" rx="138" ry="29.2" fill="#14494a" opacity="0.55" />
+        </g>
 
-        {/* 2. Deco circles */}
+        {/* 2. Shadows — fade in on impact, not before */}
+        <g className={styles.shadowGroup}>
+          <ellipse cx="150" cy="148" rx="150" ry="31.7" fill="#eceff3" />
+          <ellipse cx="150" cy="148" rx="125" ry="21.1" fill="#d9dde6" />
+          <ellipse cx="78" cy="147" rx="20" ry="6.3" fill="#c8ccd4" />
+          <ellipse cx="218" cy="147" rx="20" ry="6.3" fill="#c8ccd4" />
+        </g>
+
+        {/* 3. Deco circles */}
         <circle cx="-93" cy="75" r="5" fill="rgba(255, 255, 255, 0.2)" className={`${styles.deco} ${styles.d1}`} />
         <circle cx="-63" cy="-61" r="5" fill="rgba(255, 255, 255, 0.2)" className={`${styles.deco} ${styles.d2}`} />
         <circle cx="-115.5" cy="-132.5" r="7.5" fill="rgba(255, 255, 255, 0.2)" className={`${styles.deco} ${styles.d3}`} />
@@ -203,79 +285,132 @@ export function Preloader({
         <circle cx="421.5" cy="66.5" r="2.5" fill="rgba(255, 255, 255, 0.2)" className={`${styles.deco} ${styles.d9}`} />
         <circle cx="461.5" cy="-140.5" r="2.5" fill="rgba(255, 255, 255, 0.2)" className={`${styles.deco} ${styles.d10}`} />
 
-        {/* 3. Bathtub Group ( Bobbing/Floating ) */}
-        <g className={styles.bathtub}>
-          {/* Logo Group popping out from inside the bathtub */}
-          <g className={styles.logoGroup}>
-            {LETTERS.map(({id, d, transform}) => (
-              <path key={id} className={styles.logoPath} d={d} transform={transform} />
-            ))}
-          </g>
+        {/* 4. Bathtub — clipHost holds the portal clip in scene space,
+               launcher owns travel + squash, bathtub hosts the idle transform */}
+        <g className={styles.clipHost} clipPath="url(#portalClip)">
+          <g className={styles.launcher}>
+            <g className={styles.bathtub}>
+              {/* Logo Group popping out from inside the bathtub */}
+              <g className={styles.logoGroup}>
+                {LETTERS.map(({id, d, transform}) => (
+                  <path key={id} className={styles.logoPath} d={d} transform={transform} />
+                ))}
+              </g>
 
-          {/* Feet */}
-          <g transform="translate(70, 110) rotate(15, 12.5, 12.5)">
-            <rect x="0" y="0" width="25" height="25" fill="#c7eff7" />
-            <circle cx="12.5" cy="27.5" r="12.5" fill="#c7eff7" />
-          </g>
-          <g transform="translate(200, 110) rotate(-15, 12.5, 12.5)">
-            <rect x="0" y="0" width="25" height="25" fill="#bee6ee" />
-            <circle cx="12.5" cy="27.5" r="12.5" fill="#bee6ee" />
-          </g>
+              {/* Feet */}
+              <g transform="translate(70, 110) rotate(15, 12.5, 12.5)">
+                <rect x="0" y="0" width="25" height="25" fill="#c7eff7" />
+                <circle cx="12.5" cy="27.5" r="12.5" fill="#c7eff7" />
+              </g>
+              <g transform="translate(200, 110) rotate(-15, 12.5, 12.5)">
+                <rect x="0" y="0" width="25" height="25" fill="#bee6ee" />
+                <circle cx="12.5" cy="27.5" r="12.5" fill="#bee6ee" />
+              </g>
 
-          {/* Outer Tub */}
+              {/* Outer Tub */}
+              <path
+                d="M 0,0 H 300 V 37.5 A 105 87.5 0 0 1 195 125 H 105 A 105 87.5 0 0 1 0 37.5 V 0 Z"
+                fill="url(#tubGrad)"
+              />
+
+              {/* Inner Cutout (White) */}
+              <path
+                d="M 0,0 H 255 V 21.25 A 102 85 0 0 1 153 106.25 H 102 A 102 85 0 0 1 0 21.25 V 0 Z"
+                fill="#ffffff"
+              />
+
+              {/* Under-rim Foam */}
+              {UNDER_RIM_FOAM.map(({cx, cy, r}) => (
+                <circle
+                  key={`under-${cx}`}
+                  className={styles.foam}
+                  style={foamStyle(cx, r)}
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  filter="url(#foamShadow)"
+                  fill="url(#foamGrad)"
+                />
+              ))}
+
+              {/* Tub Rim Shadow & Rim */}
+              <rect x="-14" y="-13.5" width="324" height="20" rx="10" ry="10" fill="#c1dade" />
+              <rect x="-14" y="-15" width="324" height="20" rx="10" ry="10" fill="url(#rimGrad)" />
+
+              {/* Over-rim Foam */}
+              {OVER_RIM_FOAM.map(({cx, cy, r}) => (
+                <circle
+                  key={`over-${cx}`}
+                  className={styles.foam}
+                  style={foamStyle(cx, r)}
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  filter="url(#foamShadow)"
+                  fill="url(#foamGrad)"
+                />
+              ))}
+
+              {/* Rising Bubbles Left */}
+              <circle cx="10" cy="-30" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b1}`} />
+              <circle cx="25" cy="-60" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b2}`} />
+              <circle cx="-5" cy="-90" r="7.5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b3}`} />
+
+              {/* Rising Bubbles Right */}
+              <circle cx="270" cy="-30" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b4}`} />
+              <circle cx="290" cy="-65" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b5}`} />
+              <circle cx="255" cy="-100" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b6}`} />
+              <circle cx="280" cy="-135" r="7.5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b7}`} />
+              <circle cx="265" cy="-170" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b8}`} />
+              <circle cx="300" cy="-205" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.b9}`} />
+            </g>
+          </g>
+        </g>
+
+        {/* 5. Particle burst — authored centred on (150, 140) so each shape can
+               use transform-box: fill-box and translate relative to itself */}
+        <g className={styles.burst}>
           <path
-            d="M 0,0 H 300 V 37.5 A 105 87.5 0 0 1 195 125 H 105 A 105 87.5 0 0 1 0 37.5 V 0 Z"
-            fill="url(#tubGrad)"
-          />
-
-          {/* Inner Cutout (White) */}
-          <path
-            d="M 0,0 H 255 V 21.25 A 102 85 0 0 1 153 106.25 H 102 A 102 85 0 0 1 0 21.25 V 0 Z"
+            className={`${styles.particle} ${styles.p1}`}
             fill="#ffffff"
+            d="M150 135.5 L151.111 138.471 L154.28 138.609 L151.798 140.584 L152.645 143.641 L150 141.89 L147.355 143.641 L148.202 140.584 L145.72 138.609 L148.889 138.471 Z"
           />
-
-          {/* Under-rim Foam */}
-          <circle cx="166" cy="-14" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="181" cy="-14" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="134" cy="-14" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="119" cy="-14" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-
-          {/* Tub Rim Shadow & Rim */}
-          <rect x="-14" y="-13.5" width="324" height="20" rx="10" ry="10" fill="#c1dade" />
-          <rect x="-14" y="-15" width="324" height="20" rx="10" ry="10" fill="url(#rimGrad)" />
-
-          {/* Over-rim Foam (right cluster) */}
-          <circle cx="126" cy="-15" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="143" cy="-20" r="15" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="199" cy="-18" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="221" cy="-22" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="254" cy="-15" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="269" cy="-35" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="285" cy="-13" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="261" cy="-22" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-
-          {/* Over-rim Foam (left cluster) */}
-          <circle cx="174" cy="-15" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="157" cy="-20" r="15" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="101" cy="-18" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="79" cy="-22" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="46" cy="-15" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="31" cy="-35" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="15" cy="-13" r="20" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-          <circle cx="39" cy="-22" r="10" filter="url(#foamShadow)" fill="url(#foamGrad)" />
-
-          {/* Rising Bubbles Left */}
-          <circle cx="10" cy="-30" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.left} ${styles.b1}`} />
-          <circle cx="25" cy="-60" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.left} ${styles.b2}`} />
-          <circle cx="-5" cy="-90" r="7.5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.left} ${styles.b3}`} />
-
-          {/* Rising Bubbles Right */}
-          <circle cx="270" cy="-30" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b4}`} />
-          <circle cx="290" cy="-65" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b5}`} />
-          <circle cx="255" cy="-100" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b6}`} />
-          <circle cx="280" cy="-135" r="7.5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b7}`} />
-          <circle cx="265" cy="-170" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b8}`} />
-          <circle cx="300" cy="-205" r="5" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" className={`${styles.bubble} ${styles.right} ${styles.b9}`} />
+          <circle className={`${styles.particle} ${styles.p2}`} cx="150" cy="140" r="4" fill="#c7eff7" />
+          <rect
+            className={`${styles.particle} ${styles.p3}`}
+            x="146"
+            y="136"
+            width="8"
+            height="8"
+            rx="2"
+            fill="#fed775"
+          />
+          <path
+            className={`${styles.particle} ${styles.p4}`}
+            fill="#e8a090"
+            d="M150 135.5 L154.5 140 L150 144.5 L145.5 140 Z"
+          />
+          <path
+            className={`${styles.particle} ${styles.p5}`}
+            fill="#ffffff"
+            d="M150 136.6 L150.839 138.845 L153.234 138.949 L151.358 140.441 L151.998 142.75 L150 141.428 L148.002 142.75 L148.642 140.441 L146.766 138.949 L149.161 138.845 Z"
+          />
+          <circle className={`${styles.particle} ${styles.p6}`} cx="150" cy="140" r="2.5" fill="#c7eff7" />
+          <path
+            className={`${styles.particle} ${styles.p7}`}
+            fill="#fed775"
+            d="M146 135.5 L154 140 L146 144.5 Z"
+          />
+          <path
+            className={`${styles.particle} ${styles.p8}`}
+            fill="#e8a090"
+            d="M150 135.5 L154.5 144.5 L145.5 144.5 Z"
+          />
+          <path
+            className={`${styles.particle} ${styles.p9}`}
+            fill="#ffffff"
+            d="M147.6 134 h4.8 v3.6 h3.6 v4.8 h-3.6 v3.6 h-4.8 v-3.6 h-3.6 v-4.8 h3.6 Z"
+          />
         </g>
       </svg>
     </div>

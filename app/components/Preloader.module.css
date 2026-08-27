@@ -1,8 +1,36 @@
 /* ──────────────────────────────────────────────
    Preloader — Full SVG bathtub scene
+
+   Timeline (t = mount):
+     0 → --enter-hold        empty stage, deco dots fade in
+     hold → hold+250         portal opens
+     hold → hold+400         particle burst out, then dies
+     hold+300 → hold+400     tub emerges through the portal (clipped at floor)
+     hold+250 → hold+430     portal closes
+     hold+400 → hold+500     apex, stretch relaxes
+     hold+500 → hold+750     landing squash + damped settle
+     hold+570 → hold+830     shadow catches up
+     hold+570 → hold+970     foam slosh follow-through
+     hold+640 → hold+1340    wordmark rises
+     hold+1040 →             idle loops take over
+     hold+1190               entrance complete
+
+   Exit (t = .popping applied):
+     0 → 110    wordmark drops back into the tub
+     60 → 160   anticipation stretch
+     160 → 330  portal opens
+     160 → 390  tub sinks and submerges
+     330 → 530  portal closes
+     360 → 830  particle burst
+     530 → 830  floor fades
+     700 → 900  overlay fades, component unmounts
    ────────────────────────────────────────────── */
 
 .preloaderWrapper {
+  /* The hold before the portal opens. Everything downstream is offset by it,
+     so shortening it on small screens shifts the whole entrance forward. */
+  --enter-hold: 260ms;
+
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -13,8 +41,14 @@
   overflow: hidden;
 }
 
+@media screen and (max-width: 480px) {
+  .preloaderWrapper {
+    --enter-hold: 160ms;
+  }
+}
+
 .popping {
-  animation: overlay-fade 0.4s ease-out 0.7s forwards;
+  animation: overlay-fade 0.2s ease-out 0.7s forwards;
 }
 
 @keyframes overlay-fade {
@@ -22,6 +56,12 @@
     opacity: 0;
     visibility: hidden;
   }
+}
+
+/* Promote only the two groups that move the most, and only while they move. */
+.entering .portal,
+.entering .launcher {
+  will-change: transform;
 }
 
 /* ── SVG Container ── */
@@ -49,10 +89,203 @@
   }
 }
 
-/* ── Bathtub Bobbing Animation ── */
+/* ── Portal ──
+   A flat perspective opening in the white floor. Uniform scale reads as an
+   ellipse widening because the ellipse itself is rx 150 / ry 31.7. */
+
+.portal {
+  transform-origin: 150px 148px;
+  animation: portal-enter 430ms var(--enter-hold) both;
+}
+
+@keyframes portal-enter {
+  0% {
+    transform: scale(0);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* 250ms — fully open */
+  58.14% {
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
+  }
+  /* 430ms — closed again, 50ms before the tub finishes emerging */
+  100% {
+    transform: scale(0);
+  }
+}
+
+/* ── Launcher ──
+   Owns vertical travel and squash/stretch. Pivots on the floor line so the
+   squash compresses against the point of contact, not the tub's midsection. */
+
+.launcher {
+  transform-origin: 150px 148px;
+  animation: launcher-enter 1190ms var(--enter-hold) both;
+}
+
+@keyframes launcher-enter {
+  /* Fully below the floor line, stretched tall, waiting on the portal. */
+  0% {
+    transform: translateY(236px) scaleX(0.88) scaleY(1.16);
+    animation-timing-function: linear;
+  }
+  /* 300ms — crown reaches the floor line */
+  25.21% {
+    transform: translateY(236px) scaleX(0.88) scaleY(1.16);
+    animation-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  /* 400ms — clear of the portal, still stretched */
+  33.61% {
+    transform: translateY(-14px) scaleX(0.88) scaleY(1.16);
+    animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1);
+  }
+  /* 500ms — apex, stretch relaxed */
+  42.02% {
+    transform: translateY(-26px) scaleX(1) scaleY(1);
+    animation-timing-function: linear;
+  }
+  /* 570ms — impact squash */
+  47.9% {
+    transform: translateY(0) scaleX(1.09) scaleY(0.92);
+  }
+  /* 640ms — rebound */
+  53.78% {
+    transform: translateY(-9px) scaleX(0.97) scaleY(1.04);
+  }
+  /* 690ms — second, smaller squash */
+  57.98% {
+    transform: translateY(-2px) scaleX(1.03) scaleY(0.98);
+  }
+  /* 750ms — at rest */
+  63.03%,
+  100% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+  }
+}
+
+/* ── Portal clip ──
+   Lives on an untransformed parent so the clip rect stays in the scene's user
+   space instead of travelling with the launcher. clip-path is not
+   interpolable, so the stops are adjacent and the flip is effectively instant. */
+
+.clipHost {
+  animation: clip-enter 1190ms var(--enter-hold) both;
+}
+
+@keyframes clip-enter {
+  0%,
+  33.5% {
+    clip-path: url(#portalClip);
+  }
+  /* 400ms — tub is clear of the portal */
+  33.7%,
+  100% {
+    clip-path: none;
+  }
+}
+
+/* ── Tub group (idle transform host) ── */
 
 .bathtub {
   transform-origin: 150px 62.5px;
+}
+
+/* ── Shadow ──
+   Appears on impact rather than before it; that is what sells the landing. */
+
+.shadowGroup {
+  transform-origin: 150px 148px;
+  animation: shadow-in 260ms ease-out calc(var(--enter-hold) + 570ms) both;
+}
+
+@keyframes shadow-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Foam slosh ──
+   Secondary motion on landing. Amplitude is inversely proportional to the
+   circle's radius, delay grows with distance from the tub's centre. */
+
+.foam {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: foam-slosh 400ms cubic-bezier(0.33, 1, 0.68, 1)
+    calc(var(--enter-hold) + 570ms + var(--foam-del, 0ms)) both;
+}
+
+@keyframes foam-slosh {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(var(--foam-amp, -6px));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ── Particle burst ── */
+
+.particle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation:
+    burst-move 400ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--enter-hold) + var(--burst-del, 0ms)) both,
+    burst-fade 400ms linear calc(var(--enter-hold) + var(--burst-del, 0ms)) both;
+}
+
+/* Radii sweep -90deg to +90deg off vertical, irregular so the arc never reads
+   as a ring. Scales are large because the shapes are authored at 3–9 user
+   units against a 620-unit viewBox — at 1x they vanish next to the tub. */
+.p1 { --burst-dx: -108px;   --burst-dy: 0px;      --burst-rot: 45deg;  --burst-scale: 2.8;  --burst-del: 0ms; }
+.p2 { --burst-dx: -133.1px; --burst-dy: -55.1px;  --burst-rot: -62deg; --burst-scale: 2.38; --burst-del: 18ms; }
+.p3 { --burst-dx: -61.5px;  --burst-dy: -61.5px;  --burst-rot: 28deg;  --burst-scale: 3.22; --burst-del: 8ms; }
+.p4 { --burst-dx: -63.2px;  --burst-dy: -152.4px; --burst-rot: -70deg; --burst-scale: 2.1;  --burst-del: 26ms; }
+.p5 { --burst-dx: 0px;      --burst-dy: -126px;   --burst-rot: 52deg;  --burst-scale: 3.64; --burst-del: 4ms; }
+.p6 { --burst-dx: 38px;     --burst-dy: -91.5px;  --burst-rot: -38deg; --burst-scale: 2.52; --burst-del: 22ms; }
+.p7 { --burst-dx: 110.3px;  --burst-dy: -110.3px; --burst-rot: 66deg;  --burst-scale: 2.94; --burst-del: 12ms; }
+.p8 { --burst-dx: 108.2px;  --burst-dy: -44.7px;  --burst-rot: -25deg; --burst-scale: 3.36; --burst-del: 30ms; }
+.p9 { --burst-dx: 93px;     --burst-dy: 0px;      --burst-rot: 58deg;  --burst-scale: 2.24; --burst-del: 16ms; }
+
+@keyframes burst-move {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* 170ms — out on the arc at full size */
+  42.5% {
+    transform: translate(var(--burst-dx), var(--burst-dy)) scale(var(--burst-scale))
+      rotate(calc(var(--burst-rot) * 0.7));
+    animation-timing-function: ease-in;
+  }
+  /* Drifts a further 25% while shrinking to nothing. No gravity. */
+  100% {
+    transform: translate(calc(var(--burst-dx) * 1.25), calc(var(--burst-dy) * 1.25)) scale(0)
+      rotate(var(--burst-rot));
+  }
+}
+
+@keyframes burst-fade {
+  /* Backwards fill holds 0%, so the cluster is invisible during the hold. */
+  0% {
+    opacity: 0;
+  }
+  1%,
+  42.5% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ── Bubbles Floating Animation ── */
@@ -60,7 +293,8 @@
 .bubble {
   transform-box: fill-box;
   transform-origin: center;
-  animation: float-bubble var(--float-dur, 3s) ease-in-out var(--float-del, 0s) infinite;
+  animation: float-bubble var(--float-dur, 3s) ease-in-out
+    calc(var(--enter-hold) + 1040ms + var(--float-del, 0s)) infinite;
 }
 
 /* Custom float behaviors for organic feel */
@@ -83,24 +317,36 @@
   }
 }
 
-/* ── Deco Circles Pulse ── */
+/* ── Deco Circles: fade in during the hold, then pulse ── */
 
 .deco {
   transform-box: fill-box;
   transform-origin: center;
-  animation: pulse-deco var(--pulse-dur, 3s) ease-in-out var(--pulse-del, 0s) infinite;
+  animation:
+    deco-in 260ms ease-out var(--deco-in-del, 0ms) both,
+    pulse-deco var(--pulse-dur, 3s) ease-in-out
+      calc(var(--enter-hold) + 1040ms + var(--pulse-del, 0s)) infinite;
 }
 
-.d1  { --pulse-del: 0s;    --pulse-dur: 4.0s; }
-.d2  { --pulse-del: 0.3s;  --pulse-dur: 3.5s; }
-.d3  { --pulse-del: 0.6s;  --pulse-dur: 4.2s; }
-.d4  { --pulse-del: 0.9s;  --pulse-dur: 3.8s; }
-.d5  { --pulse-del: 1.2s;  --pulse-dur: 4.5s; }
-.d6  { --pulse-del: 0.2s;  --pulse-dur: 3.7s; }
-.d7  { --pulse-del: 0.5s;  --pulse-dur: 4.1s; }
-.d8  { --pulse-del: 0.8s;  --pulse-dur: 3.9s; }
-.d9  { --pulse-del: 1.1s;  --pulse-dur: 4.3s; }
-.d10 { --pulse-del: 1.4s;  --pulse-dur: 4.6s; }
+.d1  { --pulse-del: 0s;    --pulse-dur: 4.0s; --deco-in-del: 0ms; }
+.d2  { --pulse-del: 0.3s;  --pulse-dur: 3.5s; --deco-in-del: 12ms; }
+.d3  { --pulse-del: 0.6s;  --pulse-dur: 4.2s; --deco-in-del: 24ms; }
+.d4  { --pulse-del: 0.9s;  --pulse-dur: 3.8s; --deco-in-del: 36ms; }
+.d5  { --pulse-del: 1.2s;  --pulse-dur: 4.5s; --deco-in-del: 48ms; }
+.d6  { --pulse-del: 0.2s;  --pulse-dur: 3.7s; --deco-in-del: 60ms; }
+.d7  { --pulse-del: 0.5s;  --pulse-dur: 4.1s; --deco-in-del: 72ms; }
+.d8  { --pulse-del: 0.8s;  --pulse-dur: 3.9s; --deco-in-del: 84ms; }
+.d9  { --pulse-del: 1.1s;  --pulse-dur: 4.3s; --deco-in-del: 96ms; }
+.d10 { --pulse-del: 1.4s;  --pulse-dur: 4.6s; --deco-in-del: 108ms; }
+
+@keyframes deco-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
 
 @keyframes pulse-deco {
   0%, 100% {
@@ -113,10 +359,23 @@
   }
 }
 
-/* d4 is white, pulse opacity differently */
+/* d4 is white, so it fades and pulses to a higher opacity */
 .d4 {
-  animation: pulse-deco-white 3s ease-in-out infinite;
+  animation:
+    deco-in-white 260ms ease-out var(--deco-in-del, 0ms) both,
+    pulse-deco-white 3s ease-in-out calc(var(--enter-hold) + 1040ms + var(--pulse-del, 0s))
+      infinite;
 }
+
+@keyframes deco-in-white {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
 @keyframes pulse-deco-white {
   0%, 100% {
     opacity: 0.8;
@@ -128,64 +387,16 @@
   }
 }
 
-/* ── Exit Animations (Popping State) ── */
-
-.popping .bathtub {
-  animation: tub-exit 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes tub-exit {
-  to {
-    transform: scale(0);
-    opacity: 0;
-  }
-}
-
-.popping .bubble {
-  animation: bubble-pop 0.6s ease-out var(--pop-del, 0s) forwards;
-}
-
-@keyframes bubble-pop {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  30% {
-    transform: scale(1.1);
-    opacity: 0.8;
-    stroke: rgba(255, 255, 255, 0.9);
-  }
-  100% {
-    transform: scale(0);
-    opacity: 0;
-  }
-}
-
-.popping .deco {
-  animation: simple-fade 0.4s ease-out forwards;
-}
-
-@keyframes simple-fade {
-  to {
-    opacity: 0;
-  }
-}
-
-/* ── Floor (drawn inside the SVG so it aligns with the tub shadow) ── */
-
-.popping .floorRect {
-  animation: simple-fade 0.4s ease-out 0.7s forwards;
-}
-
-/* ── Logo Slide Up & Floating Animation ── */
+/* ── Logo Slide Up & Floating Animation ──
+   Rises only after the tub has landed, never during the launch. */
 
 .logoGroup {
   transform: translate(72.5px, -140px) scale(1.18); /* fallback / final state */
   transform-origin: 77.5px 95px; /* Center of the logo paths in their coordinate system */
   opacity: 0;
   animation:
-    logo-slide-up 1s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards,
-    logo-float 4s ease-in-out 1.3s infinite;
+    logo-slide-up 700ms cubic-bezier(0.25, 1, 0.5, 1) calc(var(--enter-hold) + 640ms) forwards,
+    logo-float 4s ease-in-out calc(var(--enter-hold) + 1340ms) infinite;
 }
 
 .logoPath {
@@ -218,58 +429,275 @@
   }
 }
 
-/* ── Frame Scrubbing (dev only) ──
+/* ──────────────────────────────────────────────
+   Exit (Popping State)
+   The exit is the entrance played as a fall, not a rewind: 900ms against the
+   entrance's 1450ms, and no settle at the end.
+   ────────────────────────────────────────────── */
+
+/* Freeze the idle loops where they are so the exit starts without a snap. */
+.popping .bubble,
+.popping .deco,
+.popping .d4 {
+  animation-play-state: paused;
+}
+
+/* Wordmark drops back into the tub before anything else moves. */
+.popping .logoGroup {
+  animation: logo-drop 110ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes logo-drop {
+  0% {
+    transform: translate(72.5px, -140px) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(72.5px, 10px) scale(1.18);
+    opacity: 0;
+  }
+}
+
+.popping .launcher {
+  animation: launcher-exit 390ms both;
+}
+
+@keyframes launcher-exit {
+  0% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+    animation-timing-function: linear;
+  }
+  /* 60ms — anticipation begins */
+  15.38% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+    animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1);
+  }
+  /* 160ms — stretched tall, portal opens under it */
+  41.03% {
+    transform: translateY(-10px) scaleX(0.93) scaleY(1.1);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.4);
+  }
+  /* 390ms — fully below the floor line. Never faded, only clipped. */
+  100% {
+    transform: translateY(232px) scaleX(0.93) scaleY(1.1);
+  }
+}
+
+.popping .clipHost {
+  animation: clip-exit 390ms both;
+}
+
+@keyframes clip-exit {
+  0%,
+  40.9% {
+    clip-path: none;
+  }
+  /* 160ms — clip on for the whole descent */
+  41.1%,
+  100% {
+    clip-path: url(#portalClip);
+  }
+}
+
+.popping .portal {
+  transform-origin: 150px 148px;
+  animation: portal-exit 530ms both;
+}
+
+@keyframes portal-exit {
+  0%,
+  30.1% {
+    transform: scale(0);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* 330ms — fully open */
+  62.26% {
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
+  }
+  /* 530ms — closed while the particles are still expanding */
+  100% {
+    transform: scale(0);
+  }
+}
+
+/* Shadow shrinks into the portal with the tub. */
+.popping .shadowGroup {
+  animation: shadow-out 390ms ease-in forwards;
+}
+
+@keyframes shadow-out {
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.popping .foam {
+  animation: none;
+}
+
+.popping .bubble {
+  animation: bubble-pop 300ms ease-out var(--pop-del, 0s) forwards;
+}
+
+@keyframes bubble-pop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1.1);
+    opacity: 0.8;
+    stroke: rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.popping .deco,
+.popping .d4 {
+  animation: simple-fade 240ms ease-out forwards;
+}
+
+@keyframes simple-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+/* The splash of the tub going under — 200ms after the portal opened. */
+.popping .particle {
+  animation:
+    burst-move-exit 470ms cubic-bezier(0.22, 1, 0.36, 1) calc(360ms + var(--burst-del, 0ms)) both,
+    burst-fade 470ms linear calc(360ms + var(--burst-del, 0ms)) both;
+}
+
+@keyframes burst-move-exit {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* 200ms — out on the arc, 15% further than the entrance burst */
+  42.55% {
+    transform: translate(calc(var(--burst-dx) * 1.15), calc(var(--burst-dy) * 1.15))
+      scale(var(--burst-scale)) rotate(calc(var(--burst-rot) * 0.7));
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: translate(calc(var(--burst-dx) * 1.44), calc(var(--burst-dy) * 1.44)) scale(0)
+      rotate(var(--burst-rot));
+  }
+}
+
+/* Floor leaves the instant the portal has finished closing. */
+.popping .floorRect {
+  animation: simple-fade 300ms ease-out 530ms forwards;
+}
+
+/* ──────────────────────────────────────────────
+   Frame Scrubbing (dev only)
+
    When .scrubbed is applied, every animated element is paused and its
-   effective animation-delay is shifted by --scrub-time. Each rule preserves
-   the element's natural per-instance delay via calc(), so the staggered
-   choreography is retained while the whole timeline is frozen at a point. */
+   effective animation-delay is shifted by --scrub-time. Each rule reproduces
+   the element's natural delay expression so the staggered choreography is
+   retained while the whole timeline is frozen at a point.
+
+   Elements with two animations need two comma-separated delays.
+   ────────────────────────────────────────────── */
 
 .scrubbed,
+.scrubbed .portal,
+.scrubbed .launcher,
+.scrubbed .clipHost,
+.scrubbed .shadowGroup,
+.scrubbed .foam,
+.scrubbed .particle,
 .scrubbed .bubble,
 .scrubbed .deco,
 .scrubbed .d4,
 .scrubbed .logoGroup,
-.scrubbed .bathtub,
 .scrubbed .floorRect {
   animation-play-state: paused !important;
 }
 
+.scrubbed .portal,
+.scrubbed .launcher,
+.scrubbed .clipHost {
+  animation-delay: calc(var(--enter-hold) - var(--scrub-time, 0ms)) !important;
+}
+.scrubbed .shadowGroup {
+  animation-delay: calc(var(--enter-hold) + 570ms - var(--scrub-time, 0ms)) !important;
+}
+.scrubbed .foam {
+  animation-delay: calc(
+    var(--enter-hold) + 570ms + var(--foam-del, 0ms) - var(--scrub-time, 0ms)
+  ) !important;
+}
+.scrubbed .particle {
+  animation-delay:
+    calc(var(--enter-hold) + var(--burst-del, 0ms) - var(--scrub-time, 0ms)),
+    calc(var(--enter-hold) + var(--burst-del, 0ms) - var(--scrub-time, 0ms)) !important;
+}
 .scrubbed .bubble {
-  animation-delay: calc(var(--float-del, 0s) - var(--scrub-time, 0s)) !important;
+  animation-delay: calc(
+    var(--enter-hold) + 1040ms + var(--float-del, 0s) - var(--scrub-time, 0ms)
+  ) !important;
 }
-.scrubbed .deco {
-  animation-delay: calc(var(--pulse-del, 0s) - var(--scrub-time, 0s)) !important;
-}
+.scrubbed .deco,
 .scrubbed .d4 {
-  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+  animation-delay:
+    calc(var(--deco-in-del, 0ms) - var(--scrub-time, 0ms)),
+    calc(var(--enter-hold) + 1040ms + var(--pulse-del, 0s) - var(--scrub-time, 0ms)) !important;
 }
 .scrubbed .logoGroup {
   animation-delay:
-    calc(0.3s - var(--scrub-time, 0s)),
-    calc(1.3s - var(--scrub-time, 0s)) !important;
+    calc(var(--enter-hold) + 640ms - var(--scrub-time, 0ms)),
+    calc(var(--enter-hold) + 1340ms - var(--scrub-time, 0ms)) !important;
 }
 
-/* When popping is also active, the .popping rules win — apply matching shifts. */
+/* When popping is also active the .popping rules win — match their delays. */
 .scrubbed.popping {
-  animation-delay: calc(0.7s - var(--scrub-time, 0s)) !important;
+  animation-delay: calc(700ms - var(--scrub-time, 0ms)) !important;
 }
-.scrubbed.popping .bathtub {
-  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+.scrubbed.popping .launcher,
+.scrubbed.popping .clipHost,
+.scrubbed.popping .portal,
+.scrubbed.popping .shadowGroup,
+.scrubbed.popping .logoGroup,
+.scrubbed.popping .deco,
+.scrubbed.popping .d4 {
+  animation-delay: calc(0ms - var(--scrub-time, 0ms)) !important;
 }
 .scrubbed.popping .bubble {
-  animation-delay: calc(var(--pop-del, 0s) - var(--scrub-time, 0s)) !important;
+  animation-delay: calc(var(--pop-del, 0s) - var(--scrub-time, 0ms)) !important;
 }
-.scrubbed.popping .deco {
-  animation-delay: calc(0s - var(--scrub-time, 0s)) !important;
+.scrubbed.popping .particle {
+  animation-delay:
+    calc(360ms + var(--burst-del, 0ms) - var(--scrub-time, 0ms)),
+    calc(360ms + var(--burst-del, 0ms) - var(--scrub-time, 0ms)) !important;
 }
 .scrubbed.popping .floorRect {
-  animation-delay: calc(0.7s - var(--scrub-time, 0s)) !important;
+  animation-delay: calc(530ms - var(--scrub-time, 0ms)) !important;
 }
 
-/* ── Reduced Motion ── */
+/* ── Reduced Motion ──
+   No portal, no burst, no travel, no squash. The scene appears at rest with a
+   single fade and leaves with a single fade. */
 
 @media (prefers-reduced-motion: reduce) {
+  .portal,
+  .burst {
+    display: none !important;
+  }
+
+  .launcher,
+  .clipHost,
   .bathtub,
+  .shadowGroup,
+  .foam,
   .bubble,
   .deco,
   .d4,
@@ -277,15 +705,52 @@
     animation: none !important;
   }
 
+  .clipHost {
+    clip-path: none !important;
+  }
+
+  .launcher,
+  .shadowGroup,
+  .foam {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
   .logoGroup {
     transform: translate(72.5px, -140px) scale(1.18) !important;
     opacity: 1 !important;
   }
 
-  .popping .bathtub,
+  .d4 {
+    opacity: 0.8 !important;
+  }
+
+  /* Fade the scene, not the overlay — the dark backdrop must cover the page
+     from the first paint, and the wrapper's animation is paused in scrub mode. */
+  .svg {
+    animation: scene-fade-in 200ms ease-out both;
+  }
+
+  .popping {
+    animation: overlay-fade 200ms ease-out forwards !important;
+  }
+
   .popping .bubble,
   .popping .deco,
-  .popping .floorRect {
-    animation: simple-fade 0.4s ease-out forwards !important;
+  .popping .d4,
+  .popping .floorRect,
+  .popping .launcher,
+  .popping .shadowGroup,
+  .popping .logoGroup {
+    animation: none !important;
+  }
+}
+
+@keyframes scene-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
