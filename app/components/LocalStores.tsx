@@ -1,66 +1,91 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 import StoreMap from '~/assets/images/store-map.svg';
 import {LiquidButton} from '~/components/ui/LiquidButton';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {
+  CHAR_STAGGER,
+  ENTER_EASE,
+  MOTION_QUERY,
+  REDUCED_MOTION_QUERY,
+  REVEAL_START,
+  WORD_STAGGER,
+} from '~/lib/motion/tokens';
 import styles from './LocalStores.module.css';
 
+GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+
 export function LocalStores() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
-
   useGSAP(
     () => {
-      if (isLoading || !sectionRef.current || !heading1Ref.current || !clippedBoxRef.current || !paragraphRef.current) {
+      const section = sectionRef.current;
+      const heading1 = heading1Ref.current;
+      const clippedBox = clippedBoxRef.current;
+      const paragraph = paragraphRef.current;
+
+      if (!section || !heading1 || !clippedBox || !paragraph) {
         return;
       }
 
-      const heading1Split = SplitText.create(heading1Ref.current, {type: 'chars'});
-      const paragraphSplit = SplitText.create(paragraphRef.current, {type: 'words', aria: 'none'});
+      const mm = GSAP.matchMedia();
 
-      const contentTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: isMobile ? 'top 70%' : 'top center',
-          end: isMobile ? '+=50%' : '+=500',
-        },
+      mm.add(MOTION_QUERY, () => {
+        const heading1Split = SplitText.create(heading1, {type: 'chars', mask: 'chars', autoSplit: true});
+        const paragraphSplit = SplitText.create(paragraph, {type: 'words', aria: 'none', autoSplit: true});
+
+        const contentTl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: REVEAL_START,
+            once: true,
+          },
+        });
+
+        contentTl
+          .fromTo(
+            heading1Split.chars,
+            {yPercent: 100},
+            {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE},
+          )
+          .fromTo(
+            clippedBox,
+            {opacity: 0, width: 0},
+            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+            '-=0.5',
+          )
+          .fromTo(
+            paragraphSplit.words,
+            {yPercent: 300, rotate: 3},
+            {
+              yPercent: 0,
+              rotate: 0,
+              ease: 'power1.inOut',
+              duration: 1,
+              stagger: WORD_STAGGER * 0.2,
+            },
+            '-=0.5',
+          );
+
+        return () => {
+          heading1Split.revert();
+          paragraphSplit.revert();
+        };
       });
 
-      contentTl
-        .from(heading1Split.chars, {
-          yPercent: 100,
-          stagger: 0.02,
-          ease: 'power2.out',
-        })
-        .from(
-          clippedBoxRef.current,
-          {
-            opacity: 0,
-            duration: 0.5,
-            width: 0,
-            ease: 'circ.out',
-          },
-          '-=0.5',
-        )
-        .from(
-          paragraphSplit.words,
-          {
-            yPercent: 300,
-            rotate: 3,
-            ease: 'power1.inOut',
-            duration: 1,
-            stagger: 0.01,
-          },
-          '-=0.5',
-        );
+      mm.add(REDUCED_MOTION_QUERY, () => {
+        GSAP.set(clippedBox, {opacity: 1, width: 'auto'});
+      });
+
+      return () => mm.revert();
     },
-    {dependencies: [sectionRef, heading1Ref, clippedBoxRef, paragraphRef, isLoading, isMobile]},
+    {scope: sectionRef},
   );
 
   return (

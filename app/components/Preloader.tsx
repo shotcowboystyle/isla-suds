@@ -1,4 +1,6 @@
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
+import {requestScrollRefresh} from '~/lib/motion/refresh';
+import {getLenis} from '~/lib/scroll';
 import styles from './Preloader.module.css';
 
 interface PreloaderProps {
@@ -107,6 +109,12 @@ const ENTER_BODY_MS = 1190;
 const ENTRANCE_MS = ENTER_HOLD_MS + ENTER_BODY_MS;
 /** Sink, portal close, burst, floor fade, overlay fade. */
 const EXIT_MS = 900;
+/**
+ * Ceiling on the wait for `window.load`. That event waits on every image and
+ * video on the page, so on a slow connection it can hold the overlay long past
+ * the point where the content behind it is usable.
+ */
+const MAX_LOAD_WAIT_MS = 5000;
 
 export function Preloader({
   minDisplayTime = 2500,
@@ -136,24 +144,55 @@ export function Preloader({
   useEffect(() => {
     if (isScrubMode) return;
     const startTime = Date.now();
+    const timers: Array<ReturnType<typeof setTimeout>> = [];
+    let popped = false;
 
     const triggerPop = () => {
+      if (popped) return;
+      popped = true;
+
       const elapsed = Date.now() - startTime;
       // A fast load must still let the entrance play out — the exit is the
       // entrance's counterpart, not a replacement for it.
       const remaining = Math.max(0, minDisplayTime - elapsed, ENTRANCE_MS - elapsed);
 
-      setTimeout(() => setAutoPopping(true), remaining);
+      timers.push(setTimeout(() => setAutoPopping(true), remaining));
     };
 
     if (document.readyState === 'complete') {
       triggerPop();
     } else {
-      const handleLoad = () => triggerPop();
-      window.addEventListener('load', handleLoad);
-      return () => window.removeEventListener('load', handleLoad);
+      window.addEventListener('load', triggerPop);
+      timers.push(setTimeout(triggerPop, MAX_LOAD_WAIT_MS));
     }
+
+    return () => {
+      window.removeEventListener('load', triggerPop);
+      timers.forEach(clearTimeout);
+    };
   }, [minDisplayTime, isScrubMode]);
+
+  // The overlay is a fixed layer, not a scroll lock — without this the page
+  // scrolls freely behind it and the hero is already gone when it lifts.
+  //
+  // `overflow: hidden` on the root also collapses the scrollable height to
+  // zero, which clamps every ScrollTrigger start to 0. So the re-measure has to
+  // happen here, in the cleanup, strictly after the overflow is restored — not
+  // alongside the unmount, where it would race the style change and re-measure
+  // a page that is still locked.
+  useEffect(() => {
+    if (isScrubMode || !isVisible) return;
+
+    getLenis()?.stop();
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+      getLenis()?.start();
+      requestScrollRefresh();
+    };
+  }, [isScrubMode, isVisible]);
 
   useEffect(() => {
     if (isScrubMode) return;

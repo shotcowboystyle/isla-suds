@@ -1,9 +1,16 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
+import {MOTION_QUERY, REDUCED_MOTION_QUERY, REVEAL_START, WORD_STAGGER} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
+
+GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+
+/** Colour the copy settles into as it reveals. */
+const INK = '#faeade';
 
 export const MessageSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -14,75 +21,79 @@ export const MessageSection = () => {
 
   useGSAP(
     () => {
-      if (
-        !sectionRef.current ||
-        !text1Ref.current ||
-        !clippedBox1Ref.current ||
-        !text2Ref.current ||
-        !paragraphRef.current
-      ) {
+      const section = sectionRef.current;
+      const text1 = text1Ref.current;
+      const clippedBox1 = clippedBox1Ref.current;
+      const text2 = text2Ref.current;
+      const paragraph = paragraphRef.current;
+
+      if (!section || !text1 || !clippedBox1 || !text2 || !paragraph) {
         return;
       }
 
-      const text1Splitted = SplitText.create(text1Ref.current, {
-        type: 'words',
-      });
+      const mm = GSAP.matchMedia();
 
-      const text2Splitted = SplitText.create(text2Ref.current, {
-        type: 'words',
-      });
+      mm.add(MOTION_QUERY, () => {
+        const text1Splitted = SplitText.create(text1, {type: 'words', autoSplit: true});
+        const text2Splitted = SplitText.create(text2, {type: 'words', autoSplit: true});
+        const splittedParagraph = SplitText.create(paragraph, {
+          type: 'words, lines',
+          linesClass: 'paragraph-line',
+          aria: 'none',
+          autoSplit: true,
+        });
 
-      const splittedParagraph = SplitText.create(paragraphRef.current, {
-        type: 'words, lines',
-        linesClass: 'paragraph-line',
-        aria: 'none',
-      });
-
-      const masterTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 90%',
-          // scrub: 1,
-        },
-      });
-
-      masterTl
-        .to(text1Splitted.words, {
-          color: '#faeade',
-          ease: 'power1.in',
-          stagger: 0.15,
-        })
-        .from(
-          clippedBox1Ref.current,
-          {
-            duration: 0.5,
-            opacity: 0,
-            width: 0,
-            ease: 'circ.out',
+        const masterTl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: REVEAL_START,
+            once: true,
           },
-          '-=0.3',
-        )
-        .to(
-          text2Splitted.words,
-          {
-            color: '#faeade',
+        });
+
+        masterTl
+          .to(text1Splitted.words, {
+            color: INK,
             ease: 'power1.in',
-            stagger: 0.15,
-          },
-          '-=0.5',
-        )
-        .from(
-          splittedParagraph.words,
-          {
-            yPercent: 300,
-            rotate: 3,
-            ease: 'power1.inOut',
-            stagger: 0.03,
-          },
-          '-=0.5',
-        );
+            stagger: WORD_STAGGER * 3,
+          })
+          .fromTo(
+            clippedBox1,
+            {opacity: 0, width: 0},
+            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+            '-=0.3',
+          )
+          .to(
+            text2Splitted.words,
+            {
+              color: INK,
+              ease: 'power1.in',
+              stagger: WORD_STAGGER * 3,
+            },
+            '-=0.5',
+          )
+          .fromTo(
+            splittedParagraph.words,
+            {yPercent: 300, rotate: 3},
+            {yPercent: 0, rotate: 0, ease: 'power1.inOut', stagger: WORD_STAGGER * 0.6},
+            '-=0.5',
+          );
+
+        return () => {
+          text1Splitted.revert();
+          text2Splitted.revert();
+          splittedParagraph.revert();
+        };
+      });
+
+      mm.add(REDUCED_MOTION_QUERY, () => {
+        GSAP.set([text1, text2], {color: INK});
+        GSAP.set(clippedBox1, {opacity: 1, width: 'auto'});
+      });
+
+      return () => mm.revert();
     },
-    {dependencies: [sectionRef, text1Ref, clippedBox1Ref, text2Ref, paragraphRef]},
+    {scope: sectionRef},
   );
 
   return (

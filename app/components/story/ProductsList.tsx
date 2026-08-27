@@ -1,112 +1,136 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
 import {ProductCard} from '~/components/ProductCard';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {productsList} from '~/content/products';
-import {useIsDesktop} from '~/hooks/use-is-desktop';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {
+  CHAR_STAGGER,
+  DESKTOP_QUERY,
+  ENTER_EASE,
+  MOTION_QUERY,
+  PIN_PRIORITY,
+  REDUCED_MOTION_QUERY,
+  REVEAL_START,
+  SCRUB_PIN,
+} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './ProductsList.module.css';
 import type {ProductsListQuery} from 'storefrontapi.generated';
 
+GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+
 export const ProductsList = ({products}: {products: ProductsListQuery['products']['nodes']}) => {
+  const outerRef = useRef<HTMLElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
   const text1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBox1Ref = useRef<HTMLDivElement>(null);
   const text2Ref = useRef<HTMLHeadingElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
-  const {isDesktop, isLoading: isLoadingDesktop} = useIsDesktop();
-
+  // Heading reveal.
+  //
+  // Triggers on the outer <section>, not on the element the horizontal scene
+  // pins. A pinned trigger gets wrapped in a pin-spacer, which moves the very
+  // positions this timeline measured — the reveal then fires inside the pin.
   useGSAP(
     () => {
-      if (isLoading || !sectionRef.current || !text1Ref.current || !clippedBox1Ref.current || !text2Ref.current) {
+      const outer = outerRef.current;
+      const text1 = text1Ref.current;
+      const clippedBox1 = clippedBox1Ref.current;
+      const text2 = text2Ref.current;
+
+      if (!outer || !text1 || !clippedBox1 || !text2) {
         return;
       }
 
-      const splittedText1 = SplitText.create(text1Ref.current, {
-        type: ' chars',
-      });
-      const splittedText2 = SplitText.create(text2Ref.current, {
-        type: ' chars',
+      const mm = GSAP.matchMedia();
+
+      mm.add(MOTION_QUERY, () => {
+        const splittedText1 = SplitText.create(text1, {type: 'chars', mask: 'chars', autoSplit: true});
+        const splittedText2 = SplitText.create(text2, {type: 'chars', mask: 'chars', autoSplit: true});
+
+        const headingTl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: outer,
+            start: REVEAL_START,
+            once: true,
+          },
+        });
+
+        headingTl
+          .fromTo(
+            splittedText1.chars,
+            {yPercent: 120, opacity: 0},
+            {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
+          )
+          .fromTo(
+            clippedBox1,
+            {opacity: 0, width: 0},
+            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+            '-=0.25',
+          )
+          .fromTo(
+            splittedText2.chars,
+            {yPercent: 120, opacity: 0},
+            {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
+            '-=0.5',
+          );
+
+        return () => {
+          splittedText1.revert();
+          splittedText2.revert();
+        };
       });
 
-      const headingTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: isMobile ? 'top 75%' : 'top 35%',
-          // end: isMobile ? 'top bottom' : '70% top',
-          end: '+=700px',
-          toggleActions: 'play none none reverse',
-        },
+      mm.add(REDUCED_MOTION_QUERY, () => {
+        GSAP.set(clippedBox1, {opacity: 1, width: 'auto'});
       });
 
-      headingTl
-        .from(splittedText1.chars, {
-          yPercent: 200,
-          opacity: 0,
-          stagger: 0.03,
-          duration: 0.5,
-          ease: 'power2.out',
-        })
-        .from(
-          clippedBox1Ref.current,
-          {
-            opacity: 0,
-            duration: 0.5,
-            width: 0,
-            ease: 'circ.out',
-          },
-          '-=0.25',
-        )
-        .from(
-          splittedText2.chars,
-          {
-            yPercent: 200,
-            opacity: 0,
-            stagger: 0.03,
-            duration: 0.5,
-            ease: 'power2.out',
-          },
-          '-=0.5',
-        );
+      return () => mm.revert();
     },
-    {dependencies: [isLoading, isMobile, sectionRef, text1Ref, clippedBox1Ref, text2Ref]},
+    {scope: outerRef},
   );
 
+  // Horizontal scene — the track pins and the slider travels sideways.
   useGSAP(
     () => {
-      if (!isDesktop || isLoadingDesktop || !sectionRef.current || !sliderRef.current) {
-        return;
-      }
+      const section = sectionRef.current;
+      const slider = sliderRef.current;
+      if (!section || !slider) return;
 
-      const pinWrapWidth = sliderRef.current?.scrollWidth ?? 0;
-      const scrollAmount = pinWrapWidth - window.innerWidth;
+      const mm = GSAP.matchMedia();
 
-      const horizontalScrollTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: `+=${scrollAmount}px `,
-          scrub: 1.5,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
+      mm.add(`${DESKTOP_QUERY} and ${MOTION_QUERY}`, () => {
+        // Measured through functions so `invalidateOnRefresh` actually
+        // re-reads them; a baked-in string would keep the stale distance.
+        const distance = () => Math.max(0, slider.scrollWidth - window.innerWidth);
+
+        GSAP.to(slider, {
+          x: () => -distance(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: () => `+=${distance()}`,
+            scrub: SCRUB_PIN,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: PIN_PRIORITY.productsList,
+          },
+        });
       });
 
-      horizontalScrollTl.to(sliderRef.current, {
-        x: `-${scrollAmount}px`,
-        ease: 'none',
-      });
+      return () => mm.revert();
     },
-    {dependencies: [isLoadingDesktop, isDesktop, sectionRef, sliderRef]},
+    {scope: sectionRef},
   );
 
   return (
-    <section>
+    <section ref={outerRef}>
       <div ref={sectionRef} className={cn(styles['track'], 'relative', 'md:overflow-hidden')}>
         <div className={styles['camera']}>
           <div className={styles['frame']}>

@@ -32,11 +32,12 @@ export function PageLayout({cart, children = null, footer, header, isLoggedIn, p
 
       {header && <Header header={header} cart={cart} isLoggedIn={isLoggedIn} publicStoreDomain={publicStoreDomain} />}
 
-      {/* Story 2.2: scroll-snap-type is on html (app.css) for mobile—viewport is scroll container.
-          Sections (hero, featured, etc.) use snap-start. Desktop: Lenis handles scroll. */}
       {/* Footer reveal: main needs z-index > footer (0 or 1) and background color to cover footer. */}
+      {/* `overflow-x: clip` contains horizontal bleed without creating a scroll
+          container — `overflow: hidden` here clips ScrollTrigger's pin-spacers
+          and changes how it resolves pinType for the three pinned scenes. */}
 
-      <main id="main-content" className="relative overflow-hidden z-10 bg-black">
+      <main id="main-content" className="relative overflow-x-clip z-10 bg-black">
         {children}
       </main>
       <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />

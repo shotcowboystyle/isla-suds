@@ -1,16 +1,31 @@
+import GSAP from 'gsap';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
-import {initLenis, destroyLenis} from './scroll';
+import {initLenis, destroyLenis, getLenis} from './scroll';
 
 // Mock Lenis with proper constructor
 vi.mock('lenis', () => {
   const MockLenis = vi.fn(function (this: any) {
     this.raf = vi.fn();
     this.destroy = vi.fn();
+    this.on = vi.fn();
   });
   return {
     default: MockLenis,
   };
 });
+
+/** matchMedia stub: desktop + motion allowed unless overridden. */
+function stubMatchMedia({desktop = true, reduceMotion = false} = {}) {
+  window.matchMedia = vi.fn().mockImplementation((query: string) => {
+    if (query === '(min-width: 1024px)') {
+      return {matches: desktop} as MediaQueryList;
+    }
+    if (query === '(prefers-reduced-motion: reduce)') {
+      return {matches: reduceMotion} as MediaQueryList;
+    }
+    return {matches: false} as MediaQueryList;
+  });
+}
 
 describe('initLenis', () => {
   const originalWindow = globalThis.window;
@@ -38,15 +53,7 @@ describe('initLenis', () => {
   });
 
   it('should return null on mobile viewport (<1024px)', async () => {
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: false} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
+    stubMatchMedia({desktop: false});
 
     const result = await initLenis();
 
@@ -54,15 +61,7 @@ describe('initLenis', () => {
   });
 
   it('should return null when prefers-reduced-motion is set', async () => {
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: true} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
+    stubMatchMedia({reduceMotion: true});
 
     const result = await initLenis();
 
@@ -70,65 +69,64 @@ describe('initLenis', () => {
   });
 
   it('should initialize Lenis on desktop viewport (≥1024px)', async () => {
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
-
-    // Mock requestAnimationFrame - don't call callback to avoid infinite recursion
-    const rafSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(() => {
-        return 1;
-      });
+    stubMatchMedia();
 
     const result = await initLenis();
 
     expect(result).not.toBeNull();
-    expect(rafSpy).toHaveBeenCalled();
+    expect(getLenis()).toBe(result);
+  });
+
+  it('should drive Lenis from the GSAP ticker, not a private RAF loop', async () => {
+    stubMatchMedia();
+
+    const tickerSpy = vi.spyOn(GSAP.ticker, 'add');
+    const lagSmoothingSpy = vi.spyOn(GSAP.ticker, 'lagSmoothing');
+    const rafSpy = vi.spyOn(window, 'requestAnimationFrame');
+
+    const instance = await initLenis();
+
+    expect(tickerSpy).toHaveBeenCalledTimes(1);
+    // Lag smoothing must be off so Lenis and ScrollTrigger never diverge.
+    expect(lagSmoothingSpy).toHaveBeenCalledWith(0);
+    expect(rafSpy).not.toHaveBeenCalled();
+
+    // gsap.ticker passes seconds; Lenis expects milliseconds.
+    const tick = tickerSpy.mock.calls[0][0] as (time: number) => void;
+    tick(2);
+    expect(instance?.raf).toHaveBeenCalledWith(2000);
+
+    tickerSpy.mockRestore();
+    lagSmoothingSpy.mockRestore();
+    rafSpy.mockRestore();
+  });
+
+  it('should forward smoothed scroll position to ScrollTrigger', async () => {
+    stubMatchMedia();
+
+    const instance = await initLenis();
+
+    expect(instance?.on).toHaveBeenCalledWith('scroll', expect.any(Function));
   });
 
   it('should not re-initialize if Lenis instance already exists', async () => {
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
+    stubMatchMedia();
 
-    const rafSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(() => {
-        return 1;
-      });
+    const tickerSpy = vi.spyOn(GSAP.ticker, 'add');
 
     const firstCall = await initLenis();
     const secondCall = await initLenis();
 
     // Should return same instance
     expect(firstCall).toBe(secondCall);
-    // RAF should only be set up once (first call only)
-    expect(rafSpy).toHaveBeenCalledTimes(1);
+    // Ticker callback should only be registered once (first call only)
+    expect(tickerSpy).toHaveBeenCalledTimes(1);
+
+    tickerSpy.mockRestore();
   });
 
   it('should handle initialization errors gracefully', async () => {
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
+    stubMatchMedia();
 
     // Mock Lenis to throw an error
     const Lenis = await import('lenis');
@@ -153,53 +151,27 @@ describe('destroyLenis', () => {
     expect(() => destroyLenis()).not.toThrow();
   });
 
-  it('should cancel requestAnimationFrame and destroy instance', async () => {
-    // Setup: Initialize Lenis first
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
+  it('should detach the ticker callback and destroy the instance', async () => {
+    stubMatchMedia();
 
-    const cancelRafSpy = vi
-      .spyOn(window, 'cancelAnimationFrame')
-      .mockImplementation(() => {});
+    const tickerRemoveSpy = vi.spyOn(GSAP.ticker, 'remove');
+    const lagSmoothingSpy = vi.spyOn(GSAP.ticker, 'lagSmoothing');
 
-    const rafSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(() => {
-        return 123; // Mock RAF ID
-      });
-
-    await initLenis();
+    const instance = await initLenis();
     destroyLenis();
 
-    expect(cancelRafSpy).toHaveBeenCalled();
-    cancelRafSpy.mockRestore();
-    rafSpy.mockRestore();
+    expect(tickerRemoveSpy).toHaveBeenCalled();
+    expect(instance?.destroy).toHaveBeenCalled();
+    // GSAP's lag-smoothing defaults are restored once Lenis is gone.
+    expect(lagSmoothingSpy).toHaveBeenLastCalledWith(500, 33);
+    expect(getLenis()).toBeNull();
+
+    tickerRemoveSpy.mockRestore();
+    lagSmoothingSpy.mockRestore();
   });
 
   it('should handle destroy errors gracefully', async () => {
-    // Setup: Initialize Lenis first
-    window.matchMedia = vi.fn().mockImplementation((query: string) => {
-      if (query === '(min-width: 1024px)') {
-        return {matches: true} as MediaQueryList;
-      }
-      if (query === '(prefers-reduced-motion: reduce)') {
-        return {matches: false} as MediaQueryList;
-      }
-      return {matches: false} as MediaQueryList;
-    });
-
-    const rafSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(() => {
-        return 1;
-      });
+    stubMatchMedia();
 
     const instance = await initLenis();
 
@@ -212,8 +184,7 @@ describe('destroyLenis', () => {
 
     // Should not throw
     expect(() => destroyLenis()).not.toThrow();
-
-    rafSpy.mockRestore();
+    expect(getLenis()).toBeNull();
   });
 
   it('should be safe to call multiple times', () => {

@@ -8,6 +8,30 @@
   overflow: hidden;
 }
 
+/* Entrance gate.
+   The hero copy is server-rendered in its final position, so without this it
+   paints, then snaps back to the timeline's start state the moment GSAP takes
+   over — a visible flash of finished text. The section ships as
+   data-hero-state="pending" and the entrance effect flips it to "ready" only
+   after the start states are committed.
+
+   The failsafe animation is the no-JS path: if the entrance never runs, the
+   copy reveals itself anyway. It never fires in the normal case because the
+   attribute changes long before the delay elapses. */
+.hero-section[data-hero-state='pending'] .hero-text,
+.hero-section[data-hero-state='pending'] .clipped-text-box,
+.hero-section[data-hero-state='pending'] .paragraph,
+.hero-section[data-hero-state='pending'] .cta {
+  visibility: hidden;
+  animation: hero-entrance-failsafe 0s linear 6s forwards;
+}
+
+@keyframes hero-entrance-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+
 .hero-section-container {
   flex-flow: column;
   width: 100%;
@@ -144,6 +168,11 @@
     font-size: 7.8vw;
     line-height: 9vw;
   }
+}
+
+/* Marker class for the entrance gate — layout lives in the utility classes. */
+.cta {
+  position: relative;
 }
 
 .paragraph {

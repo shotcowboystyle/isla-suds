@@ -1,47 +1,59 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {DESKTOP_QUERY, MOTION_QUERY, REVEAL_START, SCRUB_SCENE} from '~/lib/motion/tokens';
 import {ClippedTextBox} from '../ClippedTextBox';
 import styles from './Benefits.module.css';
 
+GSAP.registerPlugin(ScrollTrigger, useGSAP);
+
 export const BenefitsSection = () => {
+  const rootRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
+  useGSAP(
+    () => {
+      const container = containerRef.current;
+      if (!container) return;
 
-  useGSAP(() => {
-    if (isLoading || !containerRef.current) {
-      return;
-    }
+      const mm = GSAP.matchMedia();
 
-    const children = Array.from(containerRef.current?.children || []);
+      mm.add({isDesktop: DESKTOP_QUERY, allowMotion: MOTION_QUERY}, (context) => {
+        const {isDesktop, allowMotion} = context.conditions as {isDesktop: boolean; allowMotion: boolean};
+        if (!allowMotion) return;
 
-    const tl = GSAP.timeline({
-      // delay: isMobile ? 0 : 1.3,
-      scrollTrigger: {
-        trigger: containerRef.current,
-        // start: isMobile ? 'top 80%' : 'top 60%',
-        start: 'top 80%',
-        end: isMobile ? '+=300' : '+=1000',
-        // end: '+=1000',
-        scrub: 1,
-      },
-    });
+        const boxes = Array.from(container.children)
+          .map((box) => (box as HTMLElement).dataset.animationId)
+          .filter(Boolean)
+          .map((id) => `#${id}`);
 
-    children.forEach((box) => {
-      tl.from(`#${(box as HTMLElement).dataset.animationId}`, {
-        opacity: 0,
-        duration: 5,
-        stagger: 0.5,
-        width: 0,
-        ease: 'circ.out',
+        const tl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: REVEAL_START,
+            end: isDesktop ? '+=1000' : '+=300',
+            scrub: SCRUB_SCENE,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        boxes.forEach((selector) => {
+          tl.fromTo(
+            selector,
+            {opacity: 0, width: 0},
+            {opacity: 1, width: 'auto', duration: 5, ease: 'circ.out'},
+          );
+        });
       });
-    });
-  }, [isLoading, isMobile, containerRef]);
+
+      return () => mm.revert();
+    },
+    {scope: rootRef},
+  );
 
   return (
-    <div className="relative">
+    <div ref={rootRef} className="relative">
       <div className={styles['benefits-section']}>
         <p id="paragraph-text-start" className={styles['paragraph-text-start']}>
           Unlock the Advantages:
