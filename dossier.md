@@ -1,6 +1,6 @@
 # Repository Dossier — `isla-suds`
 
-**Generated:** 2026-09-03 · **Ref:** `main` @ `2dd2b3d` · **Scope:** static read of the working tree (dependencies were not installed, so no build, lint, typecheck, or test run backs the claims below — everything here is read from source).
+**Generated:** 2026-09-03 · **Ref:** `main` @ `2dd2b3d` · **Scope:** static read of the working tree. Dependencies were not installed locally, so every claim below is read from source rather than from a local build. CI has since run lint, typecheck, Vitest, and a production build on this commit and passed all four — see §4 for what it did *not* run.
 
 ---
 
@@ -138,7 +138,9 @@ lint (ESLint) → typecheck (tsc) → test (Vitest) → bundle-size (build + gzi
 playwright-verify (config existence only) ← lint
 ```
 
-The `check-storefront-secrets` job reads `secrets.PUBLIC_STOREFRONT_API_TOKEN` and **skips Lighthouse, axe, and smoke tests when it's absent**, emitting a `::notice::`. Sensible for forks; it also means those three gates are silently inert on any repo without the Shopify custom-app integration. Verify they actually run before trusting them.
+The `check-storefront-secrets` job reads `secrets.PUBLIC_STOREFRONT_API_TOKEN` and **skips Lighthouse, axe, and smoke tests when it's absent**, emitting a `::notice::`. Sensible for forks; it also means those three gates are silently inert on any repo without the Shopify custom-app integration.
+
+**This is not hypothetical — it is the current state.** The CI run for the PR carrying this dossier ([run 33807559019](https://github.com/shotcowboystyle/isla-suds/actions/runs/33807559019)) reported `Check Storefront Credentials: success` and then `Lighthouse CI: skipped`, `Accessibility (axe-core): skipped`, `Smoke Tests (Full Journey): skipped`. The gate job "succeeds" by design whether or not the secret exists; it only sets an output. The PR went green with lint, typecheck, Vitest, and bundle size as the only checks that actually executed. **Your Lighthouse budget, your WCAG gate, and your critical-path smoke tests have not run on any PR since the secret went missing.**
 
 ### Deploy (`.github/workflows/deploy.yml`)
 
@@ -232,6 +234,6 @@ Highest value per hour, in order:
 4. Finish the `getB2BCompany` → `isWholesaleCustomer` migration and delete the shim.
 5. Rewrite `README.md` from `CLAUDE.md` + `.env.example`. Fold `docs/` runbooks into it by link.
 6. Pick one GraphQL convention — `app/graphql/` or inline — and move the 13 stragglers.
-7. Confirm the secret-gated CI jobs actually execute. If `PUBLIC_STOREFRONT_API_TOKEN` isn't set, your Lighthouse, axe, and smoke gates are decoration.
+7. **Set `PUBLIC_STOREFRONT_API_TOKEN` (plus `SESSION_SECRET`, `PUBLIC_STORE_DOMAIN`, `PUBLIC_STOREFRONT_ID`) as repo secrets.** Confirmed skipped as of this run — Lighthouse, axe, and smoke are currently decoration. Consider failing CI loudly instead of `::notice::`-ing on `main`, so this can't rot silently again.
 
 **What not to touch without reading the comments first:** the eager-render decision in `_index.tsx`, the `gsap.ticker`-driven Lenis loop in `lib/scroll.ts`, the font preload in `root.tsx`, and the `workflow_run` trigger in `deploy.yml`. Each is a non-obvious fix for a specific failure, and each is documented at the site. They look like things worth "simplifying." They aren't.
