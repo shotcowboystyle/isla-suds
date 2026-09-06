@@ -1,5 +1,6 @@
 {
   "enabledPlugins": {
-    "shopify-developer@wookstar-claude-plugins": true
+    "shopify-developer@wookstar-claude-plugins": true,
+    "nateherk-design@nateherk": true
   }
 }

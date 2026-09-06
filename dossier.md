@@ -23,7 +23,7 @@ It is not a generic storefront. Two things dominate the codebase:
 | Playwright specs | 25 |
 | Commits / authors | 50 / 1 (Curtis Blanton), squash-merged PRs up to #110 |
 | Active period | 2026-02-13 → 2026-08-27 |
-| Package manager | pnpm 10.30.2 (`packageManager` pinned) |
+| Package manager | pnpm 12.3.4 (`packageManager` pinned) |
 
 ---
 

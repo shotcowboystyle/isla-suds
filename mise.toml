@@ -1,0 +1,4 @@
+[tools]
+node = "25"
+rust = "1.98.0"
+"github:pnpm/pnpm" = "12.3.4"
