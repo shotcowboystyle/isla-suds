@@ -1,4 +1,5 @@
 import {useLoaderData} from 'react-router';
+import sanitizeHtml from 'sanitize-html';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/pages.$handle';
 
@@ -62,7 +63,7 @@ export default function Page() {
       <header>
         <h1>{page.title}</h1>
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      <main dangerouslySetInnerHTML={{__html: sanitizeHtml(page.body)}} />
     </div>
   );
 }
