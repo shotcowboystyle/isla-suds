@@ -47,6 +47,10 @@ export default [
       '**/*.test.tsx',
       '**/*.spec.ts',
       '**/*.spec.tsx',
+      // Vendored verbatim from the scroll-craft skill. Never edited per-project,
+      // so never linted to this project's rules either.
+      'public/scrollcraft/',
+      'scrollcraft/',
     ],
   },
   ...fixupConfigRules(
