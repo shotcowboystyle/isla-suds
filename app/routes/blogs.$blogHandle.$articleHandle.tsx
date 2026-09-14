@@ -1,6 +1,7 @@
 import {useLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {sanitizeStorefrontHtml} from '~/lib/sanitize';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -85,7 +86,7 @@ export default function Article() {
       </h1>
 
       {image && <Image data={image} sizes="90vw" loading="eager" />}
-      <div className="article" dangerouslySetInnerHTML={{__html: contentHtml}} />
+      <div className="article" dangerouslySetInnerHTML={{__html: sanitizeStorefrontHtml(contentHtml)}} />
     </div>
   );
 }
