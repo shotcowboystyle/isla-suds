@@ -1,5 +1,6 @@
 import {Link, useLoaderData} from 'react-router';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
+import {sanitizeStorefrontHtml} from '~/lib/sanitize';
 import type {Route} from './+types/policies.$handle';
 
 type SelectedPolicies = keyof Pick<Shop, 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy'>;
@@ -49,7 +50,7 @@ export default function Policy() {
       </div>
       <br />
       <h1>{policy.title}</h1>
-      <div dangerouslySetInnerHTML={{__html: policy.body}} />
+      <div dangerouslySetInnerHTML={{__html: sanitizeStorefrontHtml(policy.body)}} />
     </div>
   );
 }
