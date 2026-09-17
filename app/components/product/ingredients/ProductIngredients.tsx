@@ -1,6 +1,12 @@
 import {useState, useEffect, useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+// Guarded: an unguarded registerPlugin starts a rAF ticker in Oxygen's global
+// scope and fails the deploy. See CLAUDE.md.
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
+}
 import {INGREDIENTS, type IngredientItem} from '~/content/ingredients';
 import {cn} from '~/utils/cn';
 import {FloatingIngredientButton} from './FloatingIngredientButton';

@@ -2,15 +2,19 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {SplitText} from 'gsap/SplitText';
 if (typeof document !== 'undefined') {
-  GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
 }
 import {SimpleCard} from '~/components/ui/SimpleCard';
-import {useIsDesktop} from '~/hooks/use-is-desktop';
-import {useIsMobile} from '~/hooks/use-is-mobile';
+import {MOTION_QUERY, PIN_PRIORITY, SCRUB_PIN} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './FallInLove.module.css';
+
+/**
+ * This section's own breakpoint, not the page-wide `DESKTOP_QUERY`. Below it
+ * the CSS lays the cards out as a plain stack, which needs no pin.
+ */
+const CIRCLE_QUERY = '(min-width: 992px)';
 
 interface FallInLoveProps {
   color: string;
@@ -90,95 +94,62 @@ export function FallInLove({color}: FallInLoveProps) {
     },
   ];
 
+  const sectionWrapper = useRef<HTMLDivElement>(null);
   const sectionCircle = useRef<HTMLDivElement>(null);
-  const sectionArc = useRef<SVGSVGElement>(null);
-  const circleContentWrapper = useRef<HTMLDivElement>(null);
   const innerCircle = useRef<HTMLDivElement>(null);
 
-  const {isMobile, isLoading} = useIsMobile();
-  const {isDesktop, isLoading: isLoadingDesktop} = useIsDesktop();
-
   useGSAP(
     () => {
-      if (
-        isMobile ||
-        isLoading ||
-        !sectionCircle.current ||
-        !sectionArc.current ||
-        !circleContentWrapper.current ||
-        !innerCircle.current
-      ) {
+      const wrapper = sectionWrapper.current;
+      const circle = sectionCircle.current;
+      const inner = innerCircle.current;
+
+      if (!wrapper || !circle || !inner) {
         return;
       }
 
-      const windowWidth = window.innerWidth;
+      const mm = GSAP.matchMedia();
 
-      GSAP.to(sectionArc.current, {
-        scaleY: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionCircle.current,
-          // start: 'top bottom-=' + 0.06 * windowWidth,
-          start: 'top bottom-=' + 0.06 * windowWidth,
-          end: '+=500',
-          scrub: !0,
-        },
+      mm.add({isCircle: CIRCLE_QUERY, allowMotion: MOTION_QUERY}, (context) => {
+        const {isCircle, allowMotion} = context.conditions as {isCircle: boolean; allowMotion: boolean};
+        if (!isCircle || !allowMotion) return;
+
+        const rotationTl = GSAP.timeline({
+          scrollTrigger: {
+            trigger: circle,
+            start: 'top +=200',
+            // Viewport-HEIGHT relative. The old `innerWidth * 3` made the pin
+            // 5+ viewports long on a wide monitor and worse on ultrawide, which
+            // reads as dead scroll — the rotation finishes long before the pin does.
+            end: '+=250%',
+            scrub: SCRUB_PIN,
+            // The curved milk cap is a sibling of `circle`, absolutely positioned
+            // against the wrapper. Pinning the wrapper carries both; pinning
+            // `circle` alone leaves the cap behind to scroll away on its own.
+            pin: wrapper,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: PIN_PRIORITY.fallInLove,
+          },
+        });
+
+        rotationTl.to(inner, {rotation: -130, ease: 'none'});
       });
+
+      return () => mm.revert();
     },
-    {dependencies: [isMobile, isLoading, sectionCircle, sectionArc, circleContentWrapper, innerCircle]},
-  );
-
-  useGSAP(
-    () => {
-      if (!isDesktop || isLoadingDesktop || !sectionCircle.current || !innerCircle.current) {
-        return;
-      }
-
-      const windowInnerWidth = window.innerWidth;
-
-      const horizontalScrollTl = GSAP.timeline({
-        scrollTrigger: {
-          trigger: sectionCircle.current,
-          start: 'top +=200',
-          end: `+=${windowInnerWidth * 3}`,
-          scrub: 1.5,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      horizontalScrollTl.to(innerCircle.current, {
-        rotation: -130,
-        ease: 'power1.inOut',
-      });
-    },
-    {dependencies: [isLoadingDesktop, isDesktop, sectionCircle, innerCircle]},
+    {scope: sectionWrapper},
   );
 
   return (
-    <div className={styles['section-wrapper']}>
+    <div ref={sectionWrapper} className={styles['section-wrapper']}>
       <div className="lg-circle-section cir-top -z-10">
         <div className="lg-circle cir-top bg-milk -z-10"></div>
       </div>
       <div ref={sectionCircle} className={styles['section-circle']}>
-        {/* <svg
-          ref={sectionArc}
-          className={styles['arc']}
-          width="1517"
-          height="93"
-          viewBox="0 0 1517 93"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M0 92.0674C528.5 -28.9327 977.5 -32.4328 1516.5 92.0674H0Z" className="fill-milk"></path>
-        </svg> */}
-
         <div ref={innerCircle} className={styles['inner-circle']}>
           <div className={styles['circle']}>
-            <div
-              ref={circleContentWrapper}
-              className={cn(styles['circle-content-wrapper'], styles['is-title'], 'text-center')}
-            >
+            <div className={cn(styles['circle-content-wrapper'], styles['is-title'], 'text-center')}>
               <div>
                 <h2 className={styles['circle-content-heading']}>
                   Why you&apos;ll love

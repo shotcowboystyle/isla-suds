@@ -30,17 +30,6 @@
   }
 }
 
-.arc {
-  width: 100%;
-  height: auto;
-  top: 30px;
-  left: 0;
-  transform-origin: 0 100%;
-  transform: scaleY(0);
-  position: absolute;
-  z-index: -1;
-}
-
 .inner-circle {
   width: 100%;
   height: auto;
@@ -166,4 +155,39 @@
   height: auto;
   transform: translate(20%, -50%);
   position: absolute;
+}
+
+/*
+ * Without the pin there is nothing to rotate the wheel, and the six absolutely
+ * positioned `.circle` children would pile on top of each other inside a 100vh
+ * overflow-hidden box. Fall back to the same stacked layout mobile already uses.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .section-circle {
+    height: auto;
+  }
+
+  .inner-circle {
+    width: 100%;
+    height: auto;
+    top: auto;
+    left: auto;
+    position: relative;
+  }
+
+  .circle,
+  .circle:nth-child(2),
+  .circle:nth-child(3),
+  .circle:nth-child(4),
+  .circle:nth-child(5),
+  .circle:nth-child(6) {
+    position: relative;
+    transform: none;
+    margin: calc(-2 * 2.7vw) 0 0;
+  }
+
+  .circle-content-wrapper {
+    min-height: 60vw;
+    height: auto;
+  }
 }

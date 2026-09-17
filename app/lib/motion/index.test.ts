@@ -1,5 +1,30 @@
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import {prefersReducedMotion} from './index';
+import {PIN_PRIORITY} from './tokens';
+
+describe('PIN_PRIORITY', () => {
+  /**
+   * ScrollTrigger measures higher priorities first. On the PDP, FallInLove pins
+   * for several viewports and Testimonials sits below it. If Testimonials is
+   * measured first it computes `start: 'top top'` against a document with no
+   * FallInLove pin-spacer in it, fires that many viewports early, and pins
+   * behind the FallInLove circle while the visitor is still reading it.
+   */
+  it('measures FallInLove before the sections beneath it on the PDP', () => {
+    expect(PIN_PRIORITY.fallInLove).toBeGreaterThan(PIN_PRIORITY.testimonials);
+  });
+
+  it('descends by page position', () => {
+    const order = [
+      PIN_PRIORITY.fallInLove,
+      PIN_PRIORITY.productsList,
+      PIN_PRIORITY.videoSection,
+      PIN_PRIORITY.testimonials,
+    ];
+    expect(order).toEqual([...order].sort((a, b) => b - a));
+    expect(new Set(order).size).toBe(order.length);
+  });
+});
 
 describe('prefersReducedMotion', () => {
   const originalWindow = globalThis.window;
