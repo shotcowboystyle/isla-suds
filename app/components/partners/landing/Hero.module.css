@@ -1,5 +1,7 @@
+/* Sticky hero: every following section must paint over it, so it sits at the
+   bottom of the stack. Raising this above 0 re-breaks the scroll overlap. */
 .hero-section {
-  z-index: 1;
+  z-index: 0;
   width: auto;
   height: 100vh;
   display: flex;
