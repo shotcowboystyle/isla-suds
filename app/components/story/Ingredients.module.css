@@ -31,7 +31,7 @@
     /* flex-flow: column; */
     /* width: auto; */
     /* display: flex; */
-    height: 120vh;
+    height: 150vh;
     padding-inline: 0;
   }
 }
@@ -75,7 +75,7 @@
     align-self: center;
     margin-top: 0;
     position: absolute;
-    inset: 20vw auto auto 2vw;
+    inset: 32vw auto auto 2vw;
   }
 }
 
@@ -100,8 +100,7 @@
 @media screen and (min-width: 992px) {
   .section-heading {
     font-size: 7.9vw;
-    /* text-align: left;
-    line-height: normal; */
+    margin-bottom: 0;
   }
 }
 

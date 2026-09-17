@@ -13,8 +13,8 @@ import {
   MOTION_QUERY,
   PIN_PRIORITY,
   REDUCED_MOTION_QUERY,
-  REVEAL_START,
   SCRUB_PIN,
+  SCRUB_REVEAL,
 } from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './ProductsList.module.css';
@@ -37,6 +37,11 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
   // Triggers on the outer <section>, not on the element the horizontal scene
   // pins. A pinned trigger gets wrapped in a pin-spacer, which moves the very
   // positions this timeline measured — the reveal then fires inside the pin.
+  //
+  // `end: 'top top'` is the important half: the horizontal scene pins at
+  // `top top`, so the reveal now lands its last character exactly as the pin
+  // engages. With a bare `start` + `once` it finished ~18vh before the section
+  // was even parked, which read as the heading animating "too early".
   useGSAP(
     () => {
       const outer = outerRef.current;
@@ -51,39 +56,68 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
       const mm = GSAP.matchMedia();
 
       mm.add(MOTION_QUERY, () => {
-        const splittedText1 = SplitText.create(text1, {type: 'chars', mask: 'chars', autoSplit: true});
-        const splittedText2 = SplitText.create(text2, {type: 'chars', mask: 'chars', autoSplit: true});
+        // `autoSplit` re-splits on font load and on resize. Rebuild the timeline
+        // when that happens so the scrubbed trigger never points at dead nodes.
+        const splits: {heading1?: SplitText; heading2?: SplitText} = {};
+        let headingTl: gsap.core.Timeline | undefined;
 
-        const headingTl = GSAP.timeline({
-          scrollTrigger: {
-            trigger: outer,
-            start: REVEAL_START,
-            once: true,
-          },
+        const build = () => {
+          const {heading1: splittedText1, heading2: splittedText2} = splits;
+          if (!splittedText1 || !splittedText2) return;
+
+          headingTl?.scrollTrigger?.kill();
+          headingTl?.kill();
+
+          headingTl = GSAP.timeline({
+            scrollTrigger: {
+              trigger: outer,
+              start: 'top 80%',
+              end: 'top top',
+              scrub: SCRUB_REVEAL,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          headingTl
+            .fromTo(
+              splittedText1.chars,
+              {yPercent: 120, opacity: 0},
+              {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
+            )
+            .fromTo(
+              clippedBox1,
+              {opacity: 0, width: 0},
+              {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+              '-=0.25',
+            )
+            .fromTo(
+              splittedText2.chars,
+              {yPercent: 120, opacity: 0},
+              {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
+              '-=0.5',
+            );
+        };
+
+        splits.heading1 = SplitText.create(text1, {
+          type: 'chars',
+          mask: 'chars',
+          autoSplit: true,
+          onSplit: build,
+        });
+        splits.heading2 = SplitText.create(text2, {
+          type: 'chars',
+          mask: 'chars',
+          autoSplit: true,
+          onSplit: build,
         });
 
-        headingTl
-          .fromTo(
-            splittedText1.chars,
-            {yPercent: 120, opacity: 0},
-            {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
-          )
-          .fromTo(
-            clippedBox1,
-            {opacity: 0, width: 0},
-            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
-            '-=0.25',
-          )
-          .fromTo(
-            splittedText2.chars,
-            {yPercent: 120, opacity: 0},
-            {yPercent: 0, opacity: 1, stagger: CHAR_STAGGER, duration: 0.5, ease: ENTER_EASE},
-            '-=0.5',
-          );
+        build();
 
         return () => {
-          splittedText1.revert();
-          splittedText2.revert();
+          headingTl?.scrollTrigger?.kill();
+          headingTl?.kill();
+          splits.heading1?.revert();
+          splits.heading2?.revert();
         };
       });
 

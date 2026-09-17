@@ -42,7 +42,8 @@
 }
 @media screen and (min-width: 992px) {
   .text-wrapper {
-    padding-block: 6vw;
+    /* padding-block: 6vw; */
+    padding-block: 13.5vw 12vw;
   }
 }
 

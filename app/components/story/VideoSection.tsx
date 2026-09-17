@@ -86,7 +86,7 @@ export const VideoSection = () => {
     <div ref={stickyCircleWrapper}>
       {/* CSS handles mobile/desktop visibility via .effect-wrapper media queries.
          Always render to avoid layout shift from JS hydration toggle. */}
-      <div className={styles['effect-wrapper']} data-speed="auto">
+      <div className={styles['effect-wrapper']}>
         <div className={styles['effect-wrapper-inner']}>
           <div className={styles['cursor-wrapper']}>
             <div ref={cursorElement} className={styles['cursor']}>

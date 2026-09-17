@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {MOTION_QUERY, REVEAL_START, WORD_STAGGER} from '~/lib/motion/tokens';
+import {MOTION_QUERY, REVEAL_END, REVEAL_START, SCRUB_REVEAL, WORD_STAGGER} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './IngredientsTable.module.css';
 import {INGREDIENTS} from '../content/ingredients';
@@ -41,7 +41,11 @@ export const IngredientsTable = ({className}: IngredientsTableProps) => {
           scrollTrigger: {
             trigger: container,
             start: REVEAL_START,
-            once: true,
+            end: REVEAL_END,
+            scrub: SCRUB_REVEAL,
+            // The start offsets are measured from live rects, so they must be
+            // re-read whenever the layout moves.
+            invalidateOnRefresh: true,
           },
         }).from('.animated-ingredient-item', {
           x: offsetToGroupCentre('x'),
