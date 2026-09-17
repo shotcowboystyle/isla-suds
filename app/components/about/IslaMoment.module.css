@@ -1,0 +1,192 @@
+/**
+ * Acts 5 and 6 — the peak, then the close.
+ *
+ * Act 5 is the quietest and the longest act on the page. Everything else has
+ * been uppercase, loud and moving; here the type goes to sentence case, the
+ * colour goes warm, and one sentence gets a screen to itself. Act 6 resolves
+ * it in the home page's voice so the visitor lands somewhere, rather than
+ * fading into the footer.
+ */
+
+/* ------------------------------------------------------------------ act 5 */
+
+.isla {
+  background-color: var(--color-sea-salt);
+  padding-block: clamp(7rem, 22vh, 18rem) clamp(8rem, 26vh, 22rem);
+  padding-inline: 6vw;
+}
+
+.isla-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.isla-heading {
+  color: var(--color-red);
+  text-align: left;
+  font-size: clamp(1.5rem, 3vw, 2.6rem);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  opacity: 0.6;
+  margin-block-end: clamp(2rem, 5vw, 4rem);
+}
+
+.isla-body {
+  display: grid;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  max-width: 62ch;
+}
+
+.isla-body p {
+  color: var(--color-dark-brown);
+  font-family: var(--font-paragraph);
+  font-size: clamp(1.05rem, 1.3vw, 1.35rem);
+  line-height: 1.65;
+}
+
+/* The silence before the peak. Nothing lives in this gap on purpose. */
+.quote {
+  margin: clamp(5rem, 18vh, 14rem) 0 0;
+  padding: 0;
+}
+
+/**
+ * The measure lives on the paragraph, not the blockquote. A `ch` cap on the
+ * blockquote is computed against the blockquote's own 16px, which collapses
+ * this to one word per line.
+ */
+.quote p {
+  color: var(--color-red);
+  font-family: var(--font-sans);
+  font-size: 10vw;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  max-width: min(100%, 68rem);
+  /* Sentence case, against every other heading on the page. */
+  text-transform: none;
+}
+
+@media screen and (min-width: 992px) {
+  .quote p {
+    font-size: 6vw;
+  }
+}
+
+/* ------------------------------------------------------------------ act 6 */
+
+.close {
+  background-color: var(--color-accent);
+  padding-block: clamp(6rem, 18vh, 14rem);
+  padding-inline: 6vw;
+  text-align: center;
+}
+
+.close-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.close-heading {
+  color: var(--color-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.12em 0.22em;
+  font-size: 13vw;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+@media screen and (min-width: 992px) {
+  .close-heading {
+    font-size: 8vw;
+  }
+}
+
+/* The same stamp the hero opens with, so the page closes where it started. */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.16em 0.1em;
+  color: var(--color-accent);
+  background-color: var(--color-secondary);
+  outline: 0.5vw solid var(--color-red);
+  outline-offset: 0;
+  transform: rotate(2.2deg);
+}
+
+.close-body {
+  color: var(--color-secondary);
+  font-family: var(--font-paragraph);
+  /* Large-text sizing is what carries this over 4.5:1 on the coral ground. */
+  font-size: clamp(1.3rem, 1.75vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.5;
+  max-width: 34ch;
+  margin-block: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media screen and (min-width: 480px) {
+  .actions {
+    flex-direction: row;
+  }
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.85em 1.9em 0.95em;
+  border-radius: 100vw;
+  border: 2px solid var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.1vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    background-color var(--duration-micro) var(--ease-out-expo),
+    color var(--duration-micro) var(--ease-out-expo);
+}
+
+.cta-primary {
+  color: var(--color-red);
+  background-color: var(--color-secondary);
+}
+
+.cta-primary:hover,
+.cta-primary:focus-visible {
+  background-color: var(--color-milk-yellow);
+}
+
+.cta-secondary {
+  color: var(--color-secondary);
+  background-color: transparent;
+}
+
+.cta-secondary:hover,
+.cta-secondary:focus-visible {
+  color: var(--color-red);
+  background-color: var(--color-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    transform: none;
+  }
+}

@@ -1,93 +1,35 @@
+import {ChapterInheritance, ChapterTurn} from '~/components/about/AboutChapters';
+import {AboutHero} from '~/components/about/AboutHero';
+import {CureScene} from '~/components/about/CureScene';
+import {AboutClose, IslaMoment} from '~/components/about/IslaMoment';
 import {ABOUT_PAGE} from '~/content/about';
-import {cn} from '~/utils/cn';
 import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/about';
 
 export const meta: Route.MetaFunction = createMeta(ABOUT_PAGE.meta);
 
+/**
+ * The story is told in time order, not in the order the copy file lists it.
+ *
+ * The grandmother's Depression-era recipe is the oldest thing here, so it opens
+ * the argument; the corporate-desk turn is what happens to it; the cure is how
+ * it is made now; and the reason for all of it lands last, on its own screen.
+ *
+ * Six acts, six different devices, none repeated back to back: a layered hero,
+ * ink that arrives word by word, a heading dragged sideways, the pinned cure
+ * (the one bespoke move on the site), the quiet peak, and a close that stops.
+ * Every section renders eagerly, for the same reason the home page does:
+ * ScrollTrigger has to measure a document that already exists.
+ */
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <article className="px-6 sm:px-10 py-12 sm:py-20 max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <header className="mb-16 sm:mb-24 max-w-3xl">
-          <h1 className="text-fluid-display mb-4 text-(--text-primary)">{ABOUT_PAGE.hero.title}</h1>
-          <p className="text-fluid-heading text-(--text-muted)">{ABOUT_PAGE.hero.subtitle}</p>
-        </header>
-
-        {/* Founder Story Section */}
-        <section className={cn('mb-16 sm:mb-20 max-w-3xl')}>
-          <h2 className="text-fluid-heading mb-6 text-(--text-primary)">{ABOUT_PAGE.founderStory.heading}</h2>
-          {ABOUT_PAGE.founderStory.content.map((paragraph, i) => (
-            <p key={i} className="text-fluid-body text-(--text-primary) mb-4 leading-relaxed">
-              {paragraph}
-            </p>
-          ))}
-        </section>
-
-        {/* Placeholder for founder image */}
-        <div className="mb-16 sm:mb-20 max-w-md ml-auto">
-          <div
-            className="aspect-3/4 bg-(--canvas-elevated) rounded-sm flex items-center justify-center"
-            role="img"
-            aria-label={ABOUT_PAGE.images.founder.alt}
-          >
-            <span className="text-fluid-small text-(--text-muted)">Photo coming soon</span>
-          </div>
-        </div>
-
-        {/* Isla's Namesake Section */}
-        <section className={cn('mb-16 sm:mb-20 max-w-2xl mx-auto')}>
-          <h2 className="text-fluid-heading mb-6 text-(--text-primary)">{ABOUT_PAGE.islaNameSake.heading}</h2>
-          {ABOUT_PAGE.islaNameSake.content.map((paragraph, i) => (
-            <p key={i} className="text-fluid-body text-(--text-primary) mb-4 leading-relaxed">
-              {paragraph}
-            </p>
-          ))}
-        </section>
-
-        {/* Placeholder for workshop image */}
-        <div className="mb-16 sm:mb-20 max-w-xl">
-          <div
-            className="aspect-video bg-(--canvas-elevated) rounded-sm flex items-center justify-center"
-            role="img"
-            aria-label={ABOUT_PAGE.images.workshop.alt}
-          >
-            <span className="text-fluid-small text-(--text-muted)">Photo coming soon</span>
-          </div>
-        </div>
-
-        {/* Recipe Heritage Section */}
-        <section className={cn('mb-16 sm:mb-20 max-w-3xl ml-auto')}>
-          <h2 className="text-fluid-heading mb-6 text-(--text-primary)">{ABOUT_PAGE.recipeHeritage.heading}</h2>
-          {ABOUT_PAGE.recipeHeritage.content.map((paragraph, i) => (
-            <p key={i} className="text-fluid-body text-(--text-primary) mb-4 leading-relaxed">
-              {paragraph}
-            </p>
-          ))}
-        </section>
-
-        {/* Craftsmanship Section */}
-        <section className={cn('mb-16 sm:mb-20 max-w-3xl')}>
-          <h2 className="text-fluid-heading mb-6 text-(--text-primary)">{ABOUT_PAGE.craftsmanship.heading}</h2>
-          {ABOUT_PAGE.craftsmanship.content.map((paragraph, i) => (
-            <p key={i} className="text-fluid-body text-(--text-primary) mb-4 leading-relaxed">
-              {paragraph}
-            </p>
-          ))}
-        </section>
-
-        {/* Placeholder for market booth image */}
-        <div className="max-w-xl ml-auto">
-          <div
-            className="aspect-video bg-(--canvas-elevated) rounded-sm flex items-center justify-center"
-            role="img"
-            aria-label={ABOUT_PAGE.images.market.alt}
-          >
-            <span className="text-fluid-small text-(--text-muted)">Photo coming soon</span>
-          </div>
-        </div>
-      </article>
-    </div>
+    <article>
+      <AboutHero />
+      <ChapterInheritance />
+      <ChapterTurn />
+      <CureScene />
+      <IslaMoment />
+      <AboutClose />
+    </article>
   );
 }

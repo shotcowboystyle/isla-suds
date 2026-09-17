@@ -1,0 +1,159 @@
+/**
+ * Act 4 — the cure. The page's signature move.
+ *
+ * The section's own copy says a bar cures for six weeks and only then goes
+ * hard. So the scroll IS the cure: the bar starts soft, wet and slumped, and
+ * the wheel hardens it. Nothing else on the site does this, and nothing else
+ * on this page pins.
+ */
+
+.cure {
+  background-color: var(--color-black);
+  color: var(--color-milk);
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: clamp(5rem, 12vh, 9rem);
+  padding-inline: 6vw;
+  overflow: hidden;
+}
+
+/**
+ * Phone order is heading, bar, steps: the bar has to be on screen while it
+ * cures, and on a 390px column that only happens if it sits between the
+ * heading and the copy. Desktop puts it back beside them.
+ */
+.grid {
+  display: grid;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  width: 100%;
+  max-width: 1500px;
+  margin-inline: auto;
+}
+
+@media screen and (min-width: 992px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    grid-template-areas:
+      'heading bar'
+      'steps bar';
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    row-gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .heading {
+    grid-area: heading;
+  }
+
+  .steps {
+    grid-area: steps;
+  }
+
+  .bar {
+    grid-area: bar;
+    align-self: center;
+  }
+}
+
+.heading {
+  color: var(--color-milk);
+  text-align: left;
+  font-size: 12vw;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  max-width: 11ch;
+}
+
+@media screen and (min-width: 992px) {
+  .heading {
+    font-size: 6.2vw;
+  }
+}
+
+.steps {
+  display: grid;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  max-width: 54ch;
+}
+
+.steps p {
+  color: var(--color-milk);
+  font-family: var(--font-paragraph);
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------- the bar */
+
+.bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  margin: 0;
+}
+
+.bar img {
+  width: clamp(200px, 34vw, 440px);
+  height: auto;
+  /* Kept as one function list so the scrub can interpolate it end to end.
+     The starting values are set by the timeline, not here, so no-JS and
+     reduced-motion both land on a fully cured bar. */
+  filter: blur(0px) saturate(100%) drop-shadow(0 1.1vh 1.6vh rgba(0, 0, 0, 0.45));
+  will-change: filter, transform;
+}
+
+.week {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  color: var(--color-light-yellow);
+  font-family: var(--font-sans);
+  font-size: clamp(0.8rem, 1.05vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.week-number {
+  font-size: clamp(2.2rem, 4.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- the rail */
+
+.rail {
+  position: absolute;
+  inset: clamp(5rem, 12vh, 9rem) auto clamp(5rem, 12vh, 9rem) 2vw;
+  width: 2px;
+  background-color: #ffffff1f;
+}
+
+.rail-fill {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-light-yellow);
+  transform-origin: top center;
+}
+
+@media screen and (max-width: 767px) {
+  .rail {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar img {
+    will-change: auto;
+  }
+}
