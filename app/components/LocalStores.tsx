@@ -10,7 +10,9 @@ import {
   ENTER_EASE,
   MOTION_QUERY,
   REDUCED_MOTION_QUERY,
+  REVEAL_END,
   REVEAL_START,
+  SCRUB_REVEAL,
   WORD_STAGGER,
 } from '~/lib/motion/tokens';
 import styles from './LocalStores.module.css';
@@ -39,45 +41,74 @@ export function LocalStores() {
       const mm = GSAP.matchMedia();
 
       mm.add(MOTION_QUERY, () => {
-        const heading1Split = SplitText.create(heading1, {type: 'chars', mask: 'chars', autoSplit: true});
-        const paragraphSplit = SplitText.create(paragraph, {type: 'words', aria: 'none', autoSplit: true});
+        // `autoSplit` re-splits on font load and on resize. Rebuild the timeline
+        // when that happens so the scrubbed trigger never points at dead nodes.
+        const splits: {heading?: SplitText; paragraph?: SplitText} = {};
+        let contentTl: gsap.core.Timeline | undefined;
 
-        const contentTl = GSAP.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: REVEAL_START,
-            once: true,
-          },
+        const build = () => {
+          const {heading: heading1Split, paragraph: paragraphSplit} = splits;
+          if (!heading1Split || !paragraphSplit) return;
+
+          contentTl?.scrollTrigger?.kill();
+          contentTl?.kill();
+
+          contentTl = GSAP.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: REVEAL_START,
+              end: REVEAL_END,
+              scrub: SCRUB_REVEAL,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          contentTl
+            .fromTo(
+              heading1Split.chars,
+              {yPercent: 100},
+              {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE},
+            )
+            .fromTo(
+              clippedBox,
+              {opacity: 0, width: 0},
+              {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+              '-=0.5',
+            )
+            .fromTo(
+              paragraphSplit.words,
+              {yPercent: 300, rotate: 3},
+              {
+                yPercent: 0,
+                rotate: 0,
+                ease: 'power1.inOut',
+                duration: 1,
+                stagger: WORD_STAGGER * 0.2,
+              },
+              '-=0.5',
+            );
+        };
+
+        splits.heading = SplitText.create(heading1, {
+          type: 'chars',
+          mask: 'chars',
+          autoSplit: true,
+          onSplit: build,
+        });
+        splits.paragraph = SplitText.create(paragraph, {
+          type: 'words',
+          aria: 'none',
+          autoSplit: true,
+          onSplit: build,
         });
 
-        contentTl
-          .fromTo(
-            heading1Split.chars,
-            {yPercent: 100},
-            {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE},
-          )
-          .fromTo(
-            clippedBox,
-            {opacity: 0, width: 0},
-            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
-            '-=0.5',
-          )
-          .fromTo(
-            paragraphSplit.words,
-            {yPercent: 300, rotate: 3},
-            {
-              yPercent: 0,
-              rotate: 0,
-              ease: 'power1.inOut',
-              duration: 1,
-              stagger: WORD_STAGGER * 0.2,
-            },
-            '-=0.5',
-          );
+        build();
 
         return () => {
-          heading1Split.revert();
-          paragraphSplit.revert();
+          contentTl?.scrollTrigger?.kill();
+          contentTl?.kill();
+          splits.heading?.revert();
+          splits.paragraph?.revert();
         };
       });
 

@@ -3,7 +3,7 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
-import {MOTION_QUERY, REDUCED_MOTION_QUERY, REVEAL_START, WORD_STAGGER} from '~/lib/motion/tokens';
+import {MOTION_QUERY, REDUCED_MOTION_QUERY, REVEAL_START, SCRUB_REVEAL, WORD_STAGGER} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './MessageSection.module.css';
 
@@ -36,55 +36,91 @@ export const MessageSection = () => {
       const mm = GSAP.matchMedia();
 
       mm.add(MOTION_QUERY, () => {
-        const text1Splitted = SplitText.create(text1, {type: 'words', autoSplit: true});
-        const text2Splitted = SplitText.create(text2, {type: 'words', autoSplit: true});
-        const splittedParagraph = SplitText.create(paragraph, {
+        // `autoSplit` re-splits on font load and on resize, which throws away the
+        // nodes the timeline is tweening. Rebuild the timeline whenever any of
+        // the three splits re-runs, killing the previous one and its
+        // ScrollTrigger so we don't leak a trigger pointing at dead elements.
+        const splits: {heading1?: SplitText; heading2?: SplitText; paragraph?: SplitText} = {};
+        let masterTl: gsap.core.Timeline | undefined;
+
+        const build = () => {
+          const {heading1: text1Splitted, heading2: text2Splitted, paragraph: splittedParagraph} = splits;
+          if (!text1Splitted || !text2Splitted || !splittedParagraph) return;
+
+          masterTl?.scrollTrigger?.kill();
+          masterTl?.kill();
+
+          // Scrubbed, not `once`. The copy advances with the wheel and holds
+          // still when the wheel does. The START→END span is what paces it, so
+          // the values below only set the *relative* rhythm of the beats.
+          //
+          // `end` is measured off the section's BOTTOM, not the shared
+          // REVEAL_END (`top 25%`). This section's copy fills its whole 1183px
+          // height, so a top-relative end finished the timeline after 513px of
+          // scroll — with the closing paragraph still ~240px below the fold.
+          // `bottom 75%` paces it across 1246px instead, landing each beat as
+          // its own line crosses the screen. Sections whose copy sits in the top
+          // third (Ingredients, LocalStores) must keep the shared REVEAL_END:
+          // a bottom-relative end there runs long and scrolls the copy off.
+          masterTl = GSAP.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: REVEAL_START,
+              end: 'bottom 75%',
+              scrub: SCRUB_REVEAL,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          masterTl
+            .to(text1Splitted.words, {
+              color: INK,
+              ease: 'power1.in',
+              stagger: WORD_STAGGER * 3,
+            })
+            .fromTo(
+              clippedBox1,
+              {opacity: 0, width: 0},
+              {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+              '-=0.3',
+            )
+            .to(
+              text2Splitted.words,
+              {
+                color: INK,
+                ease: 'power1.in',
+                stagger: WORD_STAGGER * 3,
+              },
+              '-=0.5',
+            )
+            .fromTo(
+              splittedParagraph.words,
+              {yPercent: 300, rotate: 3},
+              {yPercent: 0, rotate: 0, ease: 'power1.inOut', stagger: WORD_STAGGER * 0.6},
+              '-=0.5',
+            );
+        };
+
+        splits.heading1 = SplitText.create(text1, {type: 'words', autoSplit: true, onSplit: build});
+        splits.heading2 = SplitText.create(text2, {type: 'words', autoSplit: true, onSplit: build});
+        splits.paragraph = SplitText.create(paragraph, {
           type: 'words, lines',
           linesClass: 'paragraph-line',
           aria: 'none',
           autoSplit: true,
+          onSplit: build,
         });
 
-        const masterTl = GSAP.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: REVEAL_START,
-            once: true,
-          },
-        });
-
-        masterTl
-          .to(text1Splitted.words, {
-            color: INK,
-            ease: 'power1.in',
-            stagger: WORD_STAGGER * 3,
-          })
-          .fromTo(
-            clippedBox1,
-            {opacity: 0, width: 0},
-            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
-            '-=0.3',
-          )
-          .to(
-            text2Splitted.words,
-            {
-              color: INK,
-              ease: 'power1.in',
-              stagger: WORD_STAGGER * 3,
-            },
-            '-=0.5',
-          )
-          .fromTo(
-            splittedParagraph.words,
-            {yPercent: 300, rotate: 3},
-            {yPercent: 0, rotate: 0, ease: 'power1.inOut', stagger: WORD_STAGGER * 0.6},
-            '-=0.5',
-          );
+        // Each `create` fires `onSplit` synchronously, while the later splits
+        // don't exist yet and `build` bails. This is the call that builds it.
+        build();
 
         return () => {
-          text1Splitted.revert();
-          text2Splitted.revert();
-          splittedParagraph.revert();
+          masterTl?.scrollTrigger?.kill();
+          masterTl?.kill();
+          splits.heading1?.revert();
+          splits.heading2?.revert();
+          splits.paragraph?.revert();
         };
       });
 
@@ -99,9 +135,9 @@ export const MessageSection = () => {
   );
 
   return (
-    <section data-speed="0.5" data-lag="0.5">
+    <section>
       <div ref={sectionRef} className={styles['message-section-wrapper']}>
-        <div className={styles['text-wrapper']} data-lag="0.5">
+        <div className={styles['text-wrapper']}>
           <div className={styles['grid']}>
             <div className={styles['heading-text-wrapper']}>
               <h1 ref={text1Ref} className={cn(styles['heading-text'])}>

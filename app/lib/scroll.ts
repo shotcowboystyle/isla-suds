@@ -69,7 +69,7 @@ export async function initLenis(): Promise<Lenis | null> {
       // discards `duration`. Only `lerp` is set here.
       lenisInstance = new Lenis({
         lerp: 0.09,
-        wheelMultiplier: 0.9,
+        wheelMultiplier: 1,
         gestureOrientation: 'vertical',
         smoothWheel: true,
       });

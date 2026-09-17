@@ -56,6 +56,13 @@
   }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .navbar-logo-link:hover {
+    transform: scale(1.2) rotate(-2deg);
+    filter: drop-shadow(var(--drop-shadow-lg));
+  }
+}
+
 .navbar-logo-link-open {
   transform: scale(1.2) rotate(-2deg);
   filter: drop-shadow(var(--drop-shadow-lg));
@@ -114,6 +121,7 @@
   display: flex;
   position: relative;
   padding: 1vw;
+  cursor: pointer;
 }
 
 .menu-button:active {

@@ -35,7 +35,9 @@ export default defineConfig(({mode, isSsrBuild}) => ({
         plugins: [{name: 'removeViewBox'}, {name: 'sortAttrs'}],
       },
     }),
-    ...(process.env.ANALYZE ? [analyzer({openAnalyzer: true, analyzerMode: 'static'})] : []),
+    ...(process.env.ANALYZE
+      ? [analyzer({openAnalyzer: true, analyzerMode: 'static'})]
+      : []),
     // Skip React Router plugin in test mode to avoid processing test files
     ...(mode !== 'test' ? [reactRouter()] : react()),
   ],
@@ -52,13 +54,19 @@ export default defineConfig(({mode, isSsrBuild}) => ({
         manualChunks: isSsrBuild
           ? undefined
           : (id) => {
-              if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) {
+              if (
+                id.includes('node_modules/gsap') ||
+                id.includes('node_modules/@gsap')
+              ) {
                 return 'gsap';
               }
               if (id.includes('node_modules/@responsive-image')) {
                 return 'responsive-image';
               }
-              if (id.includes('node_modules/tailwind-merge') || id.includes('node_modules/clsx')) {
+              if (
+                id.includes('node_modules/tailwind-merge') ||
+                id.includes('node_modules/clsx')
+              ) {
                 return 'tw-utils';
               }
             },
@@ -113,7 +121,13 @@ export default defineConfig(({mode, isSsrBuild}) => ({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: ['resend', 'set-cookie-parser', 'cookie', 'react-router'],
+      include: [
+        'sanitize-html',
+        'resend',
+        'set-cookie-parser',
+        'cookie',
+        'react-router',
+      ],
       noExternals: ['@responsive-image/react'],
     },
   },
