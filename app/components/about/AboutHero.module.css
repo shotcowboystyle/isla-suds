@@ -1,0 +1,198 @@
+/**
+ * Act 1 — arrival.
+ *
+ * Four planes that move at four rates: a tinted sky, the splash plate, the
+ * headline, and a clipped copy of the splash's foam that sits IN FRONT of the
+ * headline. The two splash layers share one transform so they read as one
+ * object; the headline travels faster than both, which is what makes it sit in
+ * the scene rather than on top of it.
+ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 96svh;
+  overflow: hidden;
+  background-image: linear-gradient(180deg, #c3dee8 0%, #d5e8ef 46%, #dfeef2 100%);
+  /* The header is sticky with a negative margin, so it floats over this. */
+  padding-block: clamp(6rem, 16vw, 13rem) 0;
+}
+
+.sky {
+  position: absolute;
+  inset: -10% -10% 0;
+  z-index: 0;
+  background-image: radial-gradient(60% 55% at 50% 78%, #ffffffb0 0%, #ffffff00 70%);
+  pointer-events: none;
+}
+
+/**
+ * Both splash layers use this box, so the front copy lands exactly on top of
+ * the back one. Break the pairing and the foam stops looking like foam.
+ */
+.plate {
+  position: absolute;
+  inset: auto 0 -1vh;
+  height: clamp(320px, 62vh, 760px);
+  pointer-events: none;
+}
+
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 58%;
+}
+
+.plate-back {
+  z-index: 1;
+  /* Fades the plate's own pale-blue ground into the hero gradient. */
+  mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 100%);
+}
+
+/**
+ * The bottom of the same splash, lifted in front of the copy. The soft top edge
+ * is what sells the occlusion: a hard clip line reads as a rectangle.
+ */
+.plate-front {
+  z-index: 3;
+  clip-path: inset(70% 0 0 0);
+  mask-image: linear-gradient(180deg, transparent 70%, #000 80%, #000 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 70%, #000 80%, #000 100%);
+}
+
+/**
+ * Phone art direction: the splash moves ABOVE the copy instead of behind it,
+ * and the foreground plate is dropped. At 390px the headline needs the whole
+ * width, and a plane in front of it costs more legibility than the depth is
+ * worth. Depth still comes from the sky, the plate and the headline moving at
+ * three different rates.
+ */
+@media screen and (max-width: 767px) {
+  .plate {
+    inset: 15vh 0 auto;
+    height: 40vh;
+  }
+
+  .plate-back {
+    mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  }
+
+  .plate-front {
+    display: none;
+  }
+}
+
+/**
+ * The horizon into act 2. A wide, shallow ellipse of the next section's red,
+ * sitting inside the hero's own overflow so it reads as one continuous edge
+ * rather than two blocks meeting.
+ */
+.horizon {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 5;
+  height: clamp(22px, 3.2vw, 58px);
+  background-color: var(--color-red);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  pointer-events: none;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-inline: 5vw;
+  padding-block-end: clamp(5rem, 14vh, 11rem);
+}
+
+@media screen and (min-width: 992px) {
+  .copy {
+    padding-inline: 6vw;
+  }
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(6rem, 13vw, 10rem);
+  left: 5vw;
+  z-index: 6;
+  color: var(--color-red);
+  font-family: var(--font-sans);
+  font-size: clamp(0.75rem, 1.1vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+@media screen and (min-width: 992px) {
+  .eyebrow {
+    left: 6vw;
+  }
+}
+
+.title {
+  color: var(--color-red);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.06em;
+  margin: 0;
+  font-size: 15vw;
+  line-height: 0.92;
+}
+
+@media screen and (max-width: 767px) {
+  .title {
+    font-size: 12.5vw;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .title {
+    font-size: 12vw;
+    line-height: 0.9;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .title {
+    font-size: 8.6vw;
+    line-height: 0.88;
+  }
+}
+
+.line {
+  display: block;
+  padding-block-end: 0.06em;
+}
+
+.line-trail {
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* The home page's stamp: filled box, milk type, accent outline, slight tilt. */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 0.06em;
+  padding: 0 0.16em 0.1em;
+  color: var(--color-secondary);
+  background-color: var(--color-red);
+  outline: 0.5vw solid var(--color-accent);
+  outline-offset: 0;
+  transform: rotate(-2.4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    transform: none;
+  }
+}

@@ -154,3 +154,6 @@ test-results/.last-run.json
 
 .pnpm-store/
 .shopify
+
+# Scroll-position contact sheets from scripts/shoot-about.mjs
+lab/

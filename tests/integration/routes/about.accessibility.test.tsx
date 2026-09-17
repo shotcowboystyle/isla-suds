@@ -1,99 +1,61 @@
 import {describe, it, expect} from 'vitest';
 import {render} from '@testing-library/react';
+import {MemoryRouter} from 'react-router';
 import AboutPage from '~/routes/about';
+
+const renderPage = () =>
+  render(
+    <MemoryRouter>
+      <AboutPage />
+    </MemoryRouter>,
+  );
 
 describe('About Page Accessibility (WCAG 2.1 AA)', () => {
   it('has proper heading hierarchy (h1 → h2, no skipped levels)', () => {
-    const {container} = render(<AboutPage />);
+    const {container} = renderPage();
 
-    const h1 = container.querySelectorAll('h1');
-    const h2 = container.querySelectorAll('h2');
-    const h3 = container.querySelectorAll('h3');
-    const h4 = container.querySelectorAll('h4');
+    expect(container.querySelectorAll('h1')).toHaveLength(1);
+    expect(container.querySelectorAll('h2').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('h3')).toHaveLength(0);
+    expect(container.querySelectorAll('h4')).toHaveLength(0);
 
-    // Only one h1 on the page (WCAG 2.1 AA requirement)
-    expect(h1).toHaveLength(1);
-
-    // h2 sections exist
-    expect(h2.length).toBeGreaterThan(0);
-
-    // No h3 or h4 in current implementation (no skipped levels)
-    expect(h3).toHaveLength(0);
-    expect(h4).toHaveLength(0);
-
-    // Verify h1 comes before any h2
-    const firstH1Index = Array.from(
-      container.querySelectorAll('h1, h2'),
-    ).findIndex((el) => el.tagName === 'H1');
-    expect(firstH1Index).toBe(0);
-  });
-
-  it('has descriptive alt text for all image placeholders', () => {
-    const {container} = render(<AboutPage />);
-
-    const imagePlaceholders = container.querySelectorAll('[role="img"]');
-    expect(imagePlaceholders.length).toBeGreaterThan(0);
-
-    imagePlaceholders.forEach((placeholder) => {
-      const ariaLabel = placeholder.getAttribute('aria-label');
-      expect(ariaLabel).toBeTruthy();
-      expect(ariaLabel!.length).toBeGreaterThan(10); // Descriptive, not just "image"
-    });
+    const headings = Array.from(container.querySelectorAll('h1, h2'));
+    expect(headings.findIndex((el) => el.tagName === 'H1')).toBe(0);
   });
 
   it('uses semantic HTML elements for screen readers', () => {
-    const {container} = render(<AboutPage />);
+    const {container} = renderPage();
 
-    // Main landmark is provided by root PageLayout; route content uses article
-    const article = container.querySelector('article');
-    expect(article).toBeInTheDocument();
-
-    // Sections for content organization
-    const sections = container.querySelectorAll('section');
-    expect(sections.length).toBeGreaterThan(0);
-
-    // Header for page title
-    const header = container.querySelector('header');
-    expect(header).toBeInTheDocument();
+    // Main landmark comes from the root PageLayout; the route owns the article.
+    expect(container.querySelector('article')).toBeInTheDocument();
+    expect(container.querySelector('header')).toBeInTheDocument();
+    expect(container.querySelectorAll('section').length).toBeGreaterThanOrEqual(4);
   });
 
-  it('uses design tokens for color contrast compliance', () => {
-    const {container} = render(<AboutPage />);
+  /**
+   * Decorative planes must not be announced: the hero's two splash plates are
+   * the same photograph twice, and the week counter restates a sentence the
+   * copy beside it already makes.
+   */
+  it('hides decorative imagery and the cure counter from assistive tech', () => {
+    const {container} = renderPage();
 
-    // Verify CSS variables are used (design tokens ensure WCAG contrast)
-    const textElements = container.querySelectorAll('p, h1, h2');
-    expect(textElements.length).toBeGreaterThan(0);
-
-    textElements.forEach((el) => {
-      const colorStyle = el.getAttribute('class');
-      // Should use design token classes (--text-primary, --text-muted)
-      expect(colorStyle).toMatch(/text-\[var\(--text-/);
+    container.querySelectorAll('img').forEach((img) => {
+      const hidden = img.getAttribute('alt') === '' || img.closest('[aria-hidden="true"]') !== null;
+      const labelled = (img.getAttribute('alt') ?? '').length > 10;
+      expect(hidden || labelled).toBe(true);
     });
-  });
 
-  it('has proper document structure with landmarks', () => {
-    const {container} = render(<AboutPage />);
-
-    // Article landmark for main content (main is provided by root layout)
-    const article = container.querySelector('article');
-    expect(article).toBeInTheDocument();
-
-    // Multiple sections for content organization
-    const sections = container.querySelectorAll('section');
-    expect(sections.length).toBeGreaterThanOrEqual(4); // 4 main sections
+    expect(container.querySelector('figcaption')).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('provides keyboard-navigable content (no focus traps)', () => {
-    const {container} = render(<AboutPage />);
+    const {container} = renderPage();
 
-    // All interactive elements should be keyboard accessible
-    // In static About page, no interactive elements besides navigation
-    const interactiveElements = container.querySelectorAll(
-      'a, button, input, select, textarea',
-    );
+    const interactive = container.querySelectorAll('a, button, input, select, textarea');
+    expect(interactive.length).toBeGreaterThan(0);
 
-    // If any interactive elements exist, they should be keyboard accessible
-    interactiveElements.forEach((el) => {
+    interactive.forEach((el) => {
       const htmlEl = el as HTMLElement;
       expect(el.hasAttribute('tabindex') || htmlEl.tabIndex >= 0).toBe(true);
     });
