@@ -141,7 +141,7 @@ export function PerksSection() {
 
       <div className={styles['brand-core-cards']}>
         {PERKS.map((perk, index) => (
-          <SimpleCard key={perk.id} className={`card-${index + 1}`} {...perk} />
+          <SimpleCard key={perk.id} className={styles[`card-${index + 1}`]} {...perk} />
         ))}
       </div>
 

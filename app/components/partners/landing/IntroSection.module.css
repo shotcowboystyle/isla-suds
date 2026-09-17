@@ -1,4 +1,5 @@
 .section-wrapper {
+  z-index: 1;
   background-color: var(--color-milk);
   flex-flow: column;
   justify-content: space-between;

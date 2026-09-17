@@ -1,4 +1,6 @@
 .statement-section {
+  z-index: 2;
+  position: relative;
   background-color: var(--color-dark-brown);
   flex-flow: column;
   justify-content: center;
@@ -124,60 +126,46 @@
   }
 }
 @media screen and (min-width: 768px) {
+  /* Grid, not flex + absolute: 1fr columns make the three cards equal width
+     regardless of copy length. Rotation/offset stay on transform so they
+     cannot feed back into sizing. */
   .brand-core-cards {
-    flex-flow: row;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+    column-gap: 2vw;
+    padding-inline: 7vw;
 
-    .card-1 {
-      position: absolute;
-      inset: 0% auto auto 7vw;
-      transform: rotate(5deg);
-      outline-width: 0.4vw;
+    .card-1,
+    .card-2,
+    .card-3 {
       width: auto;
       height: 21vw;
-      padding-inline: 4vw;
-      margin-left: 0;
+      position: relative;
+      inset: auto;
+      margin-inline: 0;
+      outline-width: 0.4vw;
+      padding-block: 2vw;
+      padding-inline: 1.5vw;
+    }
+
+    .card-1 {
+      transform: rotate(5deg);
     }
 
     .card-2 {
-      outline-width: 0.4vw;
-      width: auto;
-      height: 21vw;
-      padding: 0;
+      top: 1vw;
       transform: rotate(-5deg);
     }
 
     .card-3 {
-      outline-width: 0.4vw;
-      width: auto;
-      position: absolute;
-      top: 0;
-      right: 7vw;
       transform: rotate(4deg);
-      padding: 0;
     }
   }
 }
 @media screen and (min-width: 992px) {
   .brand-core-cards {
     margin-top: 60px;
-
-    .card-1 {
-      height: 21vw;
-    }
-
-    .card-2 {
-      height: 21vw;
-    }
-
-    .card-3 {
-      height: 21vw;
-    }
-
-    .card-1,
-    .card-2,
-    .card-3 {
-      height: 21vw;
-    }
   }
 }
 
