@@ -1,7 +1,8 @@
-import React, {useMemo, useRef, Fragment} from 'react';
+import React, {useRef, Fragment} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {SCRUB_SCENE} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './JumboMarquee.module.css';
 
@@ -9,13 +10,41 @@ if (typeof document !== 'undefined') {
   GSAP.registerPlugin(ScrollTrigger);
 }
 
+const ROW_COUNT = 5;
+const TILES_PER_ROW = 4;
+
+/** Accents per repeated tile. Two keeps one in view on every row at once. */
+const ACCENTS_PER_TILE = 2;
+
+/**
+ * Which words in a row's tile get the accent colour.
+ *
+ * Two per tile, placed half a tile apart, so a row always has an accent on
+ * screen — one per tile is too sparse at this type size and leaves most rows
+ * plain. Strides of 2 (down the rows) and 3 (across the tiles) are co-prime with
+ * the five-word list, so every tile accents a different stretch of text and each
+ * row offsets the whole set: the accents read as a diagonal rather than as one
+ * word repeating in a vertical column.
+ *
+ * Deterministic on purpose. The previous version called `Math.random()` inside a
+ * `useMemo`, so the server and the client disagreed on every render, and it only
+ * generated six entries for eight rows — the last two rows had no accent at all.
+ */
+export function accentIndicesFor(row: number, tile: number, wordCount: number): number[] {
+  if (wordCount <= 0) return [];
+
+  const first = (row * 2 + tile * 3) % wordCount;
+  const step = Math.max(1, Math.round(wordCount / ACCENTS_PER_TILE));
+
+  return Array.from({length: Math.min(ACCENTS_PER_TILE, wordCount)}, (_, n) => (first + n * step) % wordCount);
+}
+
 interface JumboMarqueeProps {
   text: string;
-  color: string;
   className?: string;
 }
 
-export function JumboMarquee({text, color, className = ''}: JumboMarqueeProps) {
+export function JumboMarquee({text, className = ''}: JumboMarqueeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const words = text.split(',').filter(Boolean);
@@ -26,78 +55,30 @@ export function JumboMarquee({text, color, className = ''}: JumboMarqueeProps) {
       const oddLines = GSAP.utils.toArray<HTMLElement>(`.js-marq-odd .${styles['big-marq-text']}`);
       const evenLines = GSAP.utils.toArray<HTMLElement>(`.js-marq-even .${styles['big-marq-text']}`);
 
-      // Odd rows: left-to-right (Start far left at -5%, animate to 0)
-      GSAP.fromTo(
-        oddLines,
-        {xPercent: -5},
-        {
-          xPercent: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
+      // Equal and opposite, so the rows read as counter-drift rather than as two
+      // unrelated slides. Rows are tiled four times over, so there is plenty of
+      // width either side of the viewport to travel into.
+      const drift = {
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: SCRUB_SCENE,
         },
-      );
+      } as const;
 
-      // Even rows: right-to-left (Start at 0, animate far left to -5%)
-      GSAP.fromTo(
-        evenLines,
-        {xPercent: 10},
-        {
-          xPercent: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        },
-      );
+      GSAP.fromTo(oddLines, {xPercent: -6}, {xPercent: 3, ...drift});
+      GSAP.fromTo(evenLines, {xPercent: 6}, {xPercent: -3, ...drift});
     },
     {scope: containerRef},
   );
 
-  // Decide exactly 1 accented word per row. We have 6 rows.
-  // Generate a shuffled array of indices up to `wordCount`. If there are less than 6 words, we repeat the shuffle.
-  const rowAccents = useMemo(() => {
-    let pool: number[] = [];
-    const accents: number[] = [];
-
-    for (let i = 0; i < 6; i++) {
-      if (pool.length === 0) {
-        pool = Array.from({length: wordCount}).map((_, i) => i);
-        for (let j = pool.length - 1; j > 0; j--) {
-          const k = Math.floor(Math.random() * (j + 1));
-          [pool[j], pool[k]] = [pool[k], pool[j]];
-        }
-      }
-      accents.push(pool.pop()!);
-    }
-    return accents;
-  }, [wordCount]);
-
   return (
     <section ref={containerRef} className={cn(styles['behind-section'], className)}>
-      {/* <svg
-        // ref={sectionArc}
-        className={cn(styles['arc'], styles['arc-top'])}
-        width="1517"
-        height="93"
-        viewBox="0 0 1517 93"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M0 92.0674C528.5 -28.9327 977.5 -32.4328 1516.5 92.0674H0Z" className={`fill-${color}`}></path>
-      </svg> */}
-
       <div className={styles['big-marquee-block']}>
-        {Array.from({length: 8}).map((_, rowIndex) => {
+        {Array.from({length: ROW_COUNT}).map((_, rowIndex) => {
           const isOddRow = rowIndex % 2 === 0; // 0, 2, 4 map to 'is-odd' historically
-          const accentWordIndex = rowAccents[rowIndex];
 
           return (
             <div
@@ -106,29 +87,30 @@ export function JumboMarquee({text, color, className = ''}: JumboMarqueeProps) {
                 styles['big-marq-text-block'],
                 isOddRow ? styles['is-odd'] : styles['is-even'],
                 isOddRow ? 'js-marq-odd' : 'js-marq-even',
-                // Force flex-start so xPercent animations don't pull right-aligned text off screen on start
-                'justify-start!',
               )}
             >
               <div className={styles['big-marq-text']}>
-                {/* Tile horizontally 4 times */}
-                {Array.from({length: 4}).map((_, tileIndex) => (
-                  <span key={tileIndex} className={`pl-4 m4-2 left-${tileIndex * 3} inline-flex flex-nowrap shrink-0`}>
-                    {words.map((word, wordIndex) => (
-                      <Fragment key={wordIndex}>
-                        <span
-                          className={cn(
-                            'whitespace-pre pr-4 ml-2',
-                            wordIndex === accentWordIndex && cn(styles['span-text'], styles['text-orange']),
-                          )}
-                        >
-                          {word.trim()}
-                        </span>
-                        <span className="separator">{' • '}</span>
-                      </Fragment>
-                    ))}
-                  </span>
-                ))}
+                {Array.from({length: TILES_PER_ROW}).map((_, tileIndex) => {
+                  const accented = accentIndicesFor(rowIndex, tileIndex, wordCount);
+
+                  return (
+                    <span key={tileIndex} className="pl-4 inline-flex flex-nowrap shrink-0">
+                      {words.map((word, wordIndex) => (
+                        <Fragment key={wordIndex}>
+                          <span
+                            className={cn(
+                              'whitespace-pre pr-4 ml-2',
+                              accented.includes(wordIndex) && cn(styles['span-text'], styles['text-orange']),
+                            )}
+                          >
+                            {word.trim()}
+                          </span>
+                          <span aria-hidden="true">{' • '}</span>
+                        </Fragment>
+                      ))}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           );

@@ -21,18 +21,39 @@
   place-self: center;
   margin-top: 14vh;
 }
+/*
+ * Positioned with `top` only — never a centering `translateY(-50%)`. GSAP owns
+ * the `transform` on this element and would overwrite it on the first frame.
+ */
 @media (min-width: 480px) {
   .image-wrapper {
     position: fixed;
-    inset: 0;
-    /* top: 50%;
-    transform: translateY(-50%); */
+    top: calc(50% - 20vh);
+    left: 0;
+    right: 0;
+    bottom: auto;
     margin-top: 0;
+    z-index: 2;
+    will-change: transform;
   }
 }
 @media screen and (min-width: 992px) {
   .image-wrapper {
     height: 20vw;
+    top: calc(50% - 10vw);
+  }
+}
+
+/*
+ * Nothing moves the bar off the hero when the journey is gated off, and a fixed
+ * element with nothing to move it floats over every section below. Put it back
+ * in flow so it stays where it belongs.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .image-wrapper {
+    position: relative;
+    top: auto;
+    margin-top: 14vh;
   }
 }
 

@@ -67,6 +67,13 @@ export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
  * Descending by page position = top-down measurement.
  */
 export const PIN_PRIORITY = {
+  /**
+   * PDP only. Its pin-spacer is several viewports tall, so anything measured
+   * before it — Testimonials, which sits below it on the same page — lands its
+   * start that far too early and pins while the visitor is still in FallInLove.
+   * Above every home-page entry so the number holds on both pages.
+   */
+  fallInLove: 4,
   productsList: 3,
   videoSection: 2,
   testimonials: 1,

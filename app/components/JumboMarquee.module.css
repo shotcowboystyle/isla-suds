@@ -20,27 +20,17 @@
   }
 }
 
-.arc {
-  z-index: 10;
-  width: 90%;
-  height: auto;
-  /* top: 30px; */
-  /* left: 10%; */
-  /* transform-origin: 0 100%; */
-  /* transform: scaleY(0); */
-  position: absolute;
-}
-
-.arc-top {
-  top: -5px;
-  transform: rotate(180deg);
-}
-
 .big-marquee-block {
   z-index: 1;
   flex-flow: column;
+  gap: 4vw;
   display: flex;
   position: relative;
+}
+@media screen and (min-width: 992px) {
+  .big-marquee-block {
+    gap: 2.4vw;
+  }
 }
 
 .big-marq-text {
