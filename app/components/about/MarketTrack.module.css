@@ -1,0 +1,194 @@
+/* Default (phones, tablets, reduced motion): a native swipe strip. Desktop with
+   motion sets `data-panning` and the wheel drives the track instead. */
+.market {
+  position: relative;
+  background-color: var(--color-primary);
+  overflow: hidden;
+}
+.market[data-panning] {
+  height: calc(100svh + var(--travel, 0px));
+  overflow: visible;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 6svh;
+  padding: 12svh 0 10svh;
+}
+.market[data-panning] .stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  justify-content: center;
+  padding: 10svh 0 6svh;
+  overflow: hidden;
+}
+
+.heading {
+  align-self: flex-start;
+  margin-inline: 5vw;
+  padding: 0 0.15em 0.08em;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  outline: 3px solid var(--color-black);
+  transform: rotate(-2deg);
+  text-align: left;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 6vw;
+  margin: 0;
+  padding: 3svh 5vw 4svh;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.market[data-panning] .track {
+  width: max-content;
+  padding-right: 12vw;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.frame {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  width: 84vw;
+  scroll-snap-align: center;
+}
+@media screen and (min-width: 1024px) {
+  .frame {
+    width: min(52vw, 100svh);
+  }
+  .frame-shops {
+    width: min(40vw, 75svh);
+  }
+}
+.frame-one {
+  rotate: -2deg;
+}
+.frame-two {
+  rotate: 1.5deg;
+}
+.frame-shops {
+  rotate: -1deg;
+}
+
+.snapshot {
+  position: relative;
+  margin: 0;
+  padding: 3%;
+  background: var(--color-white);
+  box-shadow: 0 1.2vw 2.4vw rgb(20 60 60 / 0.25);
+}
+.snapshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.goat-sticker {
+  position: absolute;
+  right: 6%;
+  top: 8%;
+  max-width: 14em;
+  padding: 0.25em 0.6em 0.35em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(0.85rem, 1.1vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(8deg);
+}
+
+.line {
+  padding: 0.15em 0.5em 0.25em;
+  background: var(--color-black);
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(1.3rem, 2.2vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* ----------------------------------------------------------- the stores -- */
+.frame-stores {
+  width: min(84vw, 26rem);
+  gap: 22px;
+}
+.stores-lead {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.logos {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.logos img {
+  height: 64px;
+  width: auto;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--color-white);
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 1.4em;
+  border: 3px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 4px 0 var(--color-black);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.link:hover,
+.link:focus-visible {
+  transform: rotate(-3deg) scale(1.05);
+}
+.link:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
+}
+
+/* Reduced motion on a desktop: no pan and no sideways wheel to lean on, so the
+   snapshots simply wrap. */
+@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+  .track {
+    flex-wrap: wrap;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .frame {
+    width: calc(50% - 3vw);
+  }
+}

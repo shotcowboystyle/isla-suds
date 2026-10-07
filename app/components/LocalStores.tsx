@@ -3,6 +3,7 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
+import SliverImage from '~/assets/images/home/wear-4.webp';
 import StoreMap from '~/assets/images/store-map.svg';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {
@@ -21,7 +22,12 @@ if (typeof document !== 'undefined') {
   GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
 
-export function LocalStores() {
+interface LocalStoresProps {
+  /** Homepage only: the slot where the used-up bar (`UsedUpBar`) lands. */
+  withSliver?: boolean;
+}
+
+export function LocalStores({withSliver = false}: LocalStoresProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
@@ -64,11 +70,7 @@ export function LocalStores() {
           });
 
           contentTl
-            .fromTo(
-              heading1Split.chars,
-              {yPercent: 100},
-              {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE},
-            )
+            .fromTo(heading1Split.chars, {yPercent: 100}, {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE})
             .fromTo(
               clippedBox,
               {opacity: 0, width: 0},
@@ -122,7 +124,7 @@ export function LocalStores() {
   );
 
   return (
-    <section ref={sectionRef} className={styles['map-section-wrapper']}>
+    <section ref={sectionRef} data-wear-at="stores" className={styles['map-section-wrapper']}>
       <div className={styles['map-section-inner']}>
         <div className={styles['map-section-info']}>
           <div className={styles['heading-text-wrapper']}>
@@ -142,6 +144,17 @@ export function LocalStores() {
           </div>
 
           <LiquidButton href="/locations" text="Find a Store" />
+
+          {withSliver && (
+            <div className={styles['sliver']}>
+              <span data-sliver-slot className={styles['sliver-slot']}>
+                <img src={SliverImage} alt="" width={420} height={409} loading="lazy" decoding="async" />
+              </span>
+              <p className={styles['sliver-text']}>
+                Down to a sliver? <a href="/collections/frontpage">Grab a new bar</a>
+              </p>
+            </div>
+          )}
         </div>
 
         <img

@@ -34,17 +34,20 @@ export const BenefitsSection = () => {
           scrollTrigger: {
             trigger: container,
             start: REVEAL_START,
-            end: isDesktop ? '+=1000' : '+=300',
+            end: isDesktop ? '+=800' : '+=300',
             scrub: SCRUB_SCENE,
             invalidateOnRefresh: true,
           },
         });
 
-        boxes.forEach((selector) => {
+        // Each sticker slaps down from above the page: big, then pressed flat,
+        // with a little overshoot. The CSS tilt survives because GSAP folds the
+        // existing rotation into its own transform.
+        boxes.forEach((selector, index) => {
           tl.fromTo(
             selector,
-            {opacity: 0, width: 0},
-            {opacity: 1, width: 'auto', duration: 5, ease: 'circ.out'},
+            {opacity: 0, scale: 2.4, y: -60, rotation: index % 2 ? '-=14' : '+=14'},
+            {opacity: 1, scale: 1, y: 0, rotation: index % 2 ? '+=14' : '-=14', duration: 5, ease: 'back.out(2.4)'},
           );
         });
       });
@@ -58,9 +61,7 @@ export const BenefitsSection = () => {
     <div ref={rootRef} className="relative">
       <div className={styles['benefits-section']}>
         <p id="paragraph-text-start" className={styles['paragraph-text-start']}>
-          Unlock the Advantages:
-          <br />
-          Explore the Key Benefits of Choosing ISLA SUDS soap.
+          The short version:
         </p>
 
         <div ref={containerRef} className={styles['clipped-boxes-wrapper']}>
@@ -71,7 +72,12 @@ export const BenefitsSection = () => {
             index={1}
             textColor="secondary"
           />
-          <ClippedTextBox id="benefit-title-2" text="Fragrance-free" className={styles['wrapper-right']} index={2} />
+          <ClippedTextBox
+            id="benefit-title-2"
+            text="No added fragrance"
+            className={styles['wrapper-right']}
+            index={2}
+          />
           <ClippedTextBox
             id="benefit-title-3"
             text="Natural Ingredients"
@@ -81,10 +87,6 @@ export const BenefitsSection = () => {
           />
           <ClippedTextBox id="benefit-title-4" text="No Parabens" className={styles['wrapper-right']} index={4} />
         </div>
-
-        <p id="paragraph-text-end" className={styles['paragraph-text-end']}>
-          And much more...
-        </p>
       </div>
     </div>
   );

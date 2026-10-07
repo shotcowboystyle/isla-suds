@@ -1,0 +1,149 @@
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 16vw 5vw 18vw;
+  background-color: var(--color-dark-brown);
+  overflow: hidden;
+}
+@media screen and (min-width: 768px) {
+  .section {
+    padding: 8vw 5vw 10vw;
+  }
+}
+
+.title {
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-align: center;
+}
+
+/* The twine every tag hangs from, desktop only (tags stack on phones). */
+.string {
+  display: none;
+}
+@media screen and (min-width: 768px) {
+  .string {
+    display: block;
+    position: absolute;
+    left: -2vw;
+    right: -2vw;
+    top: calc(8vw + clamp(3rem, 8vw, 6.5rem) + 5vw);
+    height: 40px;
+    border-top: 3px dashed var(--color-light-brown);
+    border-radius: 50% / 100% 100% 0 0;
+    transform: scaleY(-1);
+  }
+}
+
+.tags {
+  display: grid;
+  gap: 28px;
+  margin-top: 10vw;
+  padding: 0;
+  list-style: none;
+}
+@media screen and (min-width: 768px) {
+  .tags {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4vw 3vw;
+    margin-top: 6vw;
+  }
+}
+
+.hanger {
+  display: flex;
+  justify-content: center;
+  /* On the parent: a filter on the tag itself would be cut off by its clip-path. */
+  filter: drop-shadow(0 8px 0 rgb(0 0 0 / 0.25));
+}
+
+/* A kraft price tag: notched top corners, a punched hole, hung from the hole. */
+.tag {
+  position: relative;
+  width: min(100%, 360px);
+  padding: 46px 26px 28px;
+  color: var(--color-dark-brown);
+  transform-origin: 50% 14px;
+  clip-path: polygon(22% 0, 78% 0, 100% 12%, 100% 100%, 0 100%, 0 12%);
+}
+.tag::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: var(--color-dark-brown);
+  box-shadow: inset 0 0 0 3px var(--color-light-brown);
+}
+.tone-0 {
+  background: #dcbf8c;
+}
+.tone-1 {
+  background: var(--color-accent-secondary);
+}
+.tone-2 {
+  background: var(--color-secondary);
+}
+
+.hanger:nth-child(3n + 1) .tag {
+  rotate: -3deg;
+}
+.hanger:nth-child(3n + 2) .tag {
+  rotate: 2deg;
+  margin-top: 2vw;
+}
+.hanger:nth-child(3n) .tag {
+  rotate: -1deg;
+}
+
+.tag-title {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-black);
+}
+.tag-price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+.tag-price del {
+  font-size: 1.6rem;
+  color: var(--color-red-brown);
+  text-decoration-thickness: 3px;
+}
+.tag-price ins {
+  font-size: 3.2rem;
+  text-decoration: none;
+  color: var(--color-black);
+}
+.tag-body {
+  margin-top: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 10vw;
+}
+@media screen and (min-width: 768px) {
+  .cta {
+    margin-top: 6vw;
+  }
+}

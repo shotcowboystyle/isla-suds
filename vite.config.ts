@@ -122,6 +122,7 @@ export default defineConfig(({mode, isSsrBuild}) => ({
        * @see https://vitejs.dev/config/dep-optimization-options
        */
       include: [
+        'expect-type',
         'sanitize-html',
         'resend',
         'set-cookie-parser',

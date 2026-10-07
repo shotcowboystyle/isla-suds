@@ -73,23 +73,23 @@ vi.mock('@shopify/hydrogen', () => ({
 }));
 
 // Mock image imports used by HeaderMenu
-vi.mock('../assets/images/menu-about-us.webp', () => ({
-  default: {src: '/mock-about-us.webp'},
+vi.mock('../assets/images/menu-home.webp', () => ({
+  default: {src: '/mock-home.webp'},
 }));
-vi.mock('../assets/images/menu-policies.webp', () => ({
-  default: {src: '/mock-policies.webp'},
+vi.mock('../assets/images/menu-shop.webp', () => ({
+  default: {src: '/mock-shop.webp'},
 }));
-vi.mock('../assets/images/menu-catalog.png', () => ({
-  default: {src: '/mock-catalog.png'},
-}));
-vi.mock('../assets/images/menu-contact.jpeg', () => ({
-  default: {src: '/mock-contact.jpeg'},
-}));
-vi.mock('../assets/images/menu-home.png', () => ({
-  default: {src: '/mock-home.png'},
+vi.mock('../assets/images/menu-stores.webp', () => ({
+  default: {src: '/mock-stores.webp'},
 }));
 vi.mock('../assets/images/menu-wholesale.webp', () => ({
   default: {src: '/mock-wholesale.webp'},
+}));
+vi.mock('../assets/images/menu-about.webp', () => ({
+  default: {src: '/mock-about.webp'},
+}));
+vi.mock('../assets/images/menu-contact.webp', () => ({
+  default: {src: '/mock-contact.webp'},
 }));
 
 // Mock lucide-react icons

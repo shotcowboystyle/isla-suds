@@ -1,0 +1,113 @@
+/* The rack: a soft aqua ground so the cream postcards pop. Scrolls up over the hero. */
+.rack {
+  position: relative;
+  z-index: 2;
+  padding: clamp(5rem, 9vw, 8rem) 6vw clamp(5rem, 9vw, 8rem);
+  background: #9fd8d5;
+  color: var(--color-black);
+}
+
+.head {
+  position: relative;
+  max-width: 1320px;
+  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+}
+
+/* Own size and tracking: the global h2 sets vw sizes and -0.35vw. */
+.heading-tilt {
+  display: inline-block;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 0;
+  transform: rotate(-2deg);
+}
+.heading {
+  display: inline-block;
+  padding: 0 0.15em 0.08em;
+  outline: 3px solid var(--color-black);
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 6px 6px 0 var(--color-black);
+}
+
+.aside-tilt {
+  display: inline-block;
+  margin: 1.2rem 0 0;
+  transform: rotate(4deg);
+}
+@media screen and (min-width: 768px) {
+  .aside-tilt {
+    margin: 0 0 0 1.5rem;
+    vertical-align: middle;
+  }
+}
+.aside {
+  display: inline-block;
+  padding: 0.35em 0.9em 0.45em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 3px 0 var(--color-black);
+}
+
+.layout {
+  display: grid;
+  gap: 2rem;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+@media screen and (min-width: 992px) {
+  .layout {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: 5vw;
+  }
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4.5rem, 8vw, 7rem);
+  margin: 0;
+  padding: 1.6rem 1rem 0 0;
+  list-style: none;
+}
+
+.slot {
+  /* Anchor target for map pins: land below the header and the phone's map strip. */
+  scroll-margin-top: 45svh;
+  transform: rotate(var(--tilt));
+}
+
+.label {
+  color: #b3302f;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+}
+
+/* The map rides along: a strip under the header on phones, a column on desktop. */
+.map-col {
+  position: sticky;
+  z-index: 3;
+  top: 76px;
+  order: -1;
+  height: 30svh;
+  min-height: 200px;
+}
+@media screen and (min-width: 992px) {
+  .map-col {
+    top: 110px;
+    order: 0;
+    height: calc(100svh - 150px);
+    max-height: 760px;
+  }
+}

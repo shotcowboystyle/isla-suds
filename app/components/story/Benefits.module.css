@@ -1,6 +1,6 @@
 .benefits-section {
   z-index: 2;
-  background-color: #222123;
+  background-color: var(--color-black);
   background-image: none;
   width: auto;
   height: auto;
@@ -20,11 +20,10 @@
 
 .paragraph-text-start {
   color: var(--color-secondary);
-  font-family:
-    Proxima Nova,
-    sans-serif;
-  font-size: 5vw;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  font-size: 7vw;
+  font-weight: 700;
   line-height: 120%;
   text-align: center;
   margin-block: 50px 0;
@@ -46,7 +45,7 @@
 }
 @media screen and (min-width: 992px) {
   .paragraph-text-start {
-    font-size: 1.04vw;
+    font-size: 2.2vw;
   }
 }
 
@@ -85,34 +84,4 @@
   align-items: center;
   width: 100%;
   display: flex;
-}
-
-.paragraph-text-end {
-  color: var(--color-secondary);
-  font-family:
-    Proxima Nova,
-    sans-serif;
-  font-size: 5vw;
-  font-weight: 400;
-  line-height: 120%;
-  text-align: center;
-  margin-block: 50px 100px;
-  margin-inline: 16px;
-  position: static;
-  inset: 3vw 0% auto;
-  z-index: 3;
-}
-@media screen and (min-width: 768px) {
-  .paragraph-text-end {
-    font-size: 3.1vw;
-    line-height: 105%;
-    margin-block: 9vw 2vw;
-  }
-}
-@media screen and (min-width: 992px) {
-  .paragraph-text-end {
-    font-size: 1.04vw;
-    line-height: 115%;
-    margin-block: 5vw;
-  }
 }

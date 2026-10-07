@@ -1,35 +1,40 @@
-import {ChapterInheritance, ChapterTurn} from '~/components/about/AboutChapters';
 import {AboutHero} from '~/components/about/AboutHero';
-import {CureScene} from '~/components/about/CureScene';
-import {AboutClose, IslaMoment} from '~/components/about/IslaMoment';
+import {FridgeClose} from '~/components/about/FridgeClose';
+import {Inspection} from '~/components/about/Inspection';
+import {MadeByHand} from '~/components/about/MadeByHand';
+import {MarketTrack} from '~/components/about/MarketTrack';
+import {RecipeAct} from '~/components/about/RecipeCard';
 import {ABOUT_PAGE} from '~/content/about';
 import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/about';
 
 export const meta: Route.MetaFunction = createMeta(ABOUT_PAGE.meta);
 
+/** The recipe card's two hands; preloaded so the writing never swaps font mid-stroke. */
+export const links: Route.LinksFunction = () =>
+  ['/fonts/HomemadeApple-latin.woff2', '/fonts/Caveat-latin.woff2'].map((href) => ({
+    rel: 'preload',
+    href,
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous' as const,
+  }));
+
 /**
- * The story is told in time order, not in the order the copy file lists it.
- *
- * The grandmother's Depression-era recipe is the oldest thing here, so it opens
- * the argument; the corporate-desk turn is what happens to it; the cure is how
- * it is made now; and the reason for all of it lands last, on its own screen.
- *
- * Six acts, six different devices, none repeated back to back: a layered hero,
- * ink that arrives word by word, a heading dragged sideways, the pinned cure
- * (the one bespoke move on the site), the quiet peak, and a close that stops.
- * Every section renders eagerly, for the same reason the home page does:
- * ScrollTrigger has to measure a document that already exists.
+ * The family scrapbook. Each act is one keepsake, in the order it happened:
+ * our kitchen, the family recipe card (written on by three generations), the
+ * polaroids of how it's made, the market snapshots, the inspection that every
+ * batch has to pass, and the fridge where the finished card ends up.
  */
 export default function AboutPage() {
   return (
     <article>
       <AboutHero />
-      <ChapterInheritance />
-      <ChapterTurn />
-      <CureScene />
-      <IslaMoment />
-      <AboutClose />
+      <RecipeAct />
+      <MadeByHand />
+      <MarketTrack />
+      <Inspection />
+      <FridgeClose />
     </article>
   );
 }

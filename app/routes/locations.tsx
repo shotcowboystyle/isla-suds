@@ -1,37 +1,23 @@
-import {useLoaderData} from 'react-router';
-import {getPaginationVariables} from '@shopify/hydrogen';
-import {LocationsPage} from '~/components/locations/LocationsPage';
+import {PostcardRack} from '~/components/locations/PostcardRack';
+import {StoresClose} from '~/components/locations/StoresClose';
+import {StoresHero} from '~/components/locations/StoresHero';
 import {LOCATIONS_PAGE} from '~/content/stores';
-import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
 import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/locations';
 
 export const meta: Route.MetaFunction = createMeta(LOCATIONS_PAGE.meta);
 
-const CATALOG_QUERY = `#graphql
-  query LocationsCatalog($first: Int, $last: Int, $startCursor: String, $endCursor: String) {
-    products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
-      nodes {
-        ...ProductItem
-      }
-    }
-  }
-  ${PRODUCT_ITEM_FRAGMENT}
-` as const;
-
-export async function loader({context, request}: Route.LoaderArgs) {
-  const {storefront} = context;
-  const paginationVariables = getPaginationVariables(request, {pageBy: 20});
-  const [{products}] = await Promise.all([
-    storefront.query(CATALOG_QUERY, {
-      variables: {...paginationVariables},
-    }),
-  ]);
-  return {products};
-}
+/** The goat's handwriting on every postcard; preloaded so notes never swap font. */
+export const links: Route.LinksFunction = () => [
+  {rel: 'preload', href: '/fonts/Caveat-latin.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous'},
+];
 
 export default function Locations() {
-  const {products} = useLoaderData<typeof loader>();
-
-  return <LocationsPage products={products} />;
+  return (
+    <>
+      <StoresHero />
+      <PostcardRack />
+      <StoresClose />
+    </>
+  );
 }

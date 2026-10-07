@@ -1,7 +1,8 @@
 import {describe, it, expect} from 'vitest';
-import {render, screen} from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
 import {ABOUT_PAGE} from '~/content/about';
+import {PreloaderProvider} from '~/contexts/preloader-context';
 import AboutPage from '~/routes/about';
 
 /**
@@ -11,12 +12,14 @@ import AboutPage from '~/routes/about';
  * navigation is covered at the layout/e2e level; the MemoryRouter here only
  * exists because the closing section links into the store.
  *
- * Scope: content rendering, the lifted pull quote, synchronous availability.
+ * Scope: content rendering, the card's text, the promise, synchronous availability.
  */
 const renderPage = () =>
   render(
     <MemoryRouter>
-      <AboutPage />
+      <PreloaderProvider>
+        <AboutPage />
+      </PreloaderProvider>
     </MemoryRouter>,
   );
 
@@ -25,34 +28,27 @@ describe('About Page Integration', () => {
     renderPage();
 
     expect(screen.getByRole('heading', {level: 1})).toHaveTextContent(/made in our kitchen/i);
-    expect(screen.getByText(/From Corporate Desk to Farmers Market/i)).toBeInTheDocument();
-    expect(screen.getByText(/Why Isla Suds\?/i)).toBeInTheDocument();
-    expect(screen.getByText(/A Family Recipe, Reimagined/i)).toBeInTheDocument();
-    expect(screen.getByText(/How We Make Each Bar/i)).toBeInTheDocument();
+    expect(screen.getByText(ABOUT_PAGE.recipe.heading)).toBeInTheDocument();
+    expect(screen.getByText(ABOUT_PAGE.made.heading)).toBeInTheDocument();
+    expect(screen.getByText(ABOUT_PAGE.market.heading)).toBeInTheDocument();
+    expect(screen.getByText(ABOUT_PAGE.isla.heading)).toBeInTheDocument();
   });
 
-  it('uses centralized content constants (no hardcoded strings)', () => {
-    const {container} = renderPage();
+  it('writes the recipe card as real text, not an image', () => {
+    renderPage();
 
-    expect(container.textContent).toContain('Sarah never intended');
-    expect(container.textContent).toContain('Isla is our daughter');
-    expect(container.textContent).toContain("Sarah's grandmother");
-    expect(container.textContent).toContain('Every batch starts in our kitchen');
+    // The fridge holds a second, aria-hidden copy; act 2's card is the first.
+    const card = screen.getAllByText(ABOUT_PAGE.recipe.card.title)[0].closest('[data-card]') as HTMLElement;
+    expect(within(card).getByText('+ goat milk')).toBeInTheDocument();
+    expect(within(card).getByText(/no added fragrance/i)).toBeInTheDocument();
   });
 
-  /**
-   * The peak line is lifted out of its paragraph so it can carry a screen on
-   * its own. Rendering it in both places would read it twice to a screen
-   * reader, so the paragraph must render without it.
-   */
-  it('renders the pull quote exactly once, as a blockquote', () => {
+  it('renders the inspection checklist and the promise exactly once', () => {
     const {container} = renderPage();
 
-    const quote = container.querySelector('blockquote');
-    expect(quote).toHaveTextContent(ABOUT_PAGE.islaNameSake.pullQuote);
-
-    const occurrences = container.textContent!.split(ABOUT_PAGE.islaNameSake.pullQuote).length - 1;
-    expect(occurrences).toBe(1);
+    ABOUT_PAGE.isla.checklist.forEach((item) => expect(screen.getByText(item)).toBeInTheDocument());
+    expect(container.querySelector('blockquote')).toHaveTextContent(ABOUT_PAGE.isla.quote);
+    expect(container.textContent!.split(ABOUT_PAGE.isla.quote).length - 1).toBe(1);
   });
 
   it('links out to the store and the store locator', () => {
@@ -62,10 +58,10 @@ describe('About Page Integration', () => {
       'href',
       ABOUT_PAGE.close.primary.href,
     );
-    expect(screen.getByRole('link', {name: ABOUT_PAGE.close.secondary.label})).toHaveAttribute(
-      'href',
-      ABOUT_PAGE.close.secondary.href,
-    );
+    // "Find a store" appears in the market act and the close; both go to the locator.
+    screen
+      .getAllByRole('link', {name: ABOUT_PAGE.close.secondary.label})
+      .forEach((link) => expect(link).toHaveAttribute('href', ABOUT_PAGE.close.secondary.href));
   });
 
   it('page content is immediately available (no async loading)', () => {

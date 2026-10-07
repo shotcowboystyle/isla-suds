@@ -1,78 +1,49 @@
 import {describe, it, expect} from 'vitest';
 import {ABOUT_PAGE} from './about';
 
+/** Every visible string in the copy file, flattened. */
+function allCopy(value: unknown): string[] {
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value)) return value.flatMap(allCopy);
+  if (value && typeof value === 'object') return Object.values(value).flatMap(allCopy);
+  return [];
+}
+
+const copy = allCopy(ABOUT_PAGE).join(' ');
+
 describe('ABOUT_PAGE content', () => {
-  it('has all required meta fields', () => {
-    expect(ABOUT_PAGE.meta.title).toBeDefined();
-    expect(ABOUT_PAGE.meta.description).toBeDefined();
+  it('has meta for the route', () => {
     expect(ABOUT_PAGE.meta.title).toContain('Isla Suds');
+    expect(ABOUT_PAGE.meta.description.length).toBeGreaterThan(50);
   });
 
-  it('has hero content', () => {
-    expect(ABOUT_PAGE.hero.title).toBeDefined();
-    expect(ABOUT_PAGE.hero.subtitle).toBeDefined();
+  it('reads the hero as one sentence pair', () => {
+    const {lead, stamp, trail} = ABOUT_PAGE.hero;
+    expect(`${lead} ${stamp} ${trail}`).toBe('Made in our kitchen. Named for our daughter.');
   });
 
-  it('has founder story section', () => {
-    expect(ABOUT_PAGE.founderStory.heading).toBeDefined();
-    expect(ABOUT_PAGE.founderStory.content).toBeInstanceOf(Array);
-    expect(ABOUT_PAGE.founderStory.content.length).toBeGreaterThan(0);
-    // Verify content is authentic and personal (contains specific details)
-    expect(ABOUT_PAGE.founderStory.content.join('')).toContain('Sarah');
-    expect(ABOUT_PAGE.founderStory.content.join('')).toContain('kitchen');
+  it('tells only the story the owner confirmed (2026-10-07)', () => {
+    // Not true: no founder named Sarah, no corporate exit, no Depression-era grandmother.
+    expect(copy).not.toMatch(/sarah|corporate|maternity|depression|grandmother|lard/i);
+    // Not ingredients.
+    expect(copy).not.toMatch(/honey|clay|botanical/i);
+    // True, and the page depends on them.
+    expect(copy).toMatch(/family recipe/i);
+    expect(copy).toMatch(/farmers market/i);
+    expect(copy).toMatch(/goat milk/i);
+    expect(ABOUT_PAGE.made.cureWeeks).toBe(6);
+    expect(ABOUT_PAGE.isla.quote).toBe("If we wouldn't use it on Isla's skin, we don't sell it.");
   });
 
-  it('has Isla namesake section with personal tone', () => {
-    expect(ABOUT_PAGE.islaNameSake.heading).toBeDefined();
-    expect(ABOUT_PAGE.islaNameSake.content).toBeInstanceOf(Array);
-    expect(ABOUT_PAGE.islaNameSake.content.length).toBeGreaterThan(0);
-    expect(ABOUT_PAGE.islaNameSake.content.join('')).toContain('Isla');
-    expect(ABOUT_PAGE.islaNameSake.content.join('')).toContain('daughter');
+  it('follows the fragrance and punctuation rules', () => {
+    expect(copy).toMatch(/no added fragrance/i);
+    expect(copy).not.toMatch(/unscented|fragrance-free/i);
+    expect(copy).not.toContain('—');
   });
 
-  it('has recipe heritage section', () => {
-    expect(ABOUT_PAGE.recipeHeritage.heading).toBeDefined();
-    expect(ABOUT_PAGE.recipeHeritage.content).toBeInstanceOf(Array);
-    expect(ABOUT_PAGE.recipeHeritage.content.length).toBeGreaterThan(0);
-  });
-
-  it('has craftsmanship section', () => {
-    expect(ABOUT_PAGE.craftsmanship.heading).toBeDefined();
-    expect(ABOUT_PAGE.craftsmanship.content).toBeInstanceOf(Array);
-    expect(ABOUT_PAGE.craftsmanship.content.length).toBeGreaterThan(0);
-    expect(ABOUT_PAGE.craftsmanship.content.join('')).toContain('kitchen');
-  });
-
-  it('has image placeholder data', () => {
-    expect(ABOUT_PAGE.images.founder).toBeDefined();
-    expect(ABOUT_PAGE.images.founder.alt).toBeDefined();
-    expect(ABOUT_PAGE.images.workshop).toBeDefined();
-    expect(ABOUT_PAGE.images.workshop.alt).toBeDefined();
-    expect(ABOUT_PAGE.images.market).toBeDefined();
-    expect(ABOUT_PAGE.images.market.alt).toBeDefined();
-  });
-
-  it('uses warm, authentic voice (not marketing copy)', () => {
-    const allContent = [
-      ...ABOUT_PAGE.founderStory.content,
-      ...ABOUT_PAGE.islaNameSake.content,
-      ...ABOUT_PAGE.recipeHeritage.content,
-      ...ABOUT_PAGE.craftsmanship.content,
-    ].join(' ');
-
-    // Should NOT contain vague marketing speak
-    expect(allContent).not.toMatch(/artisanal/i);
-    expect(allContent).not.toMatch(/curated/i);
-
-    // Should contain specific, authentic details
-    expect(allContent).toContain('farmers market');
-    expect(allContent).toMatch(/kitchen|family|daughter/i);
-  });
-
-  it('keeps sections concise (1-3 paragraphs each)', () => {
-    expect(ABOUT_PAGE.founderStory.content.length).toBeLessThanOrEqual(3);
-    expect(ABOUT_PAGE.islaNameSake.content.length).toBeLessThanOrEqual(3);
-    expect(ABOUT_PAGE.recipeHeritage.content.length).toBeLessThanOrEqual(3);
-    expect(ABOUT_PAGE.craftsmanship.content.length).toBeLessThanOrEqual(3);
+  it('gives every polaroid and market frame alt text', () => {
+    for (const item of [...ABOUT_PAGE.made.photos, ...ABOUT_PAGE.market.frames]) {
+      expect(item.alt.length).toBeGreaterThan(10);
+    }
   });
 });

@@ -1,12 +1,15 @@
 import {describe, it, expect} from 'vitest';
 import {render} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
+import {PreloaderProvider} from '~/contexts/preloader-context';
 import AboutPage from '~/routes/about';
 
 const renderPage = () =>
   render(
     <MemoryRouter>
-      <AboutPage />
+      <PreloaderProvider>
+        <AboutPage />
+      </PreloaderProvider>
     </MemoryRouter>,
   );
 
@@ -32,12 +35,8 @@ describe('About Page Accessibility (WCAG 2.1 AA)', () => {
     expect(container.querySelectorAll('section').length).toBeGreaterThanOrEqual(4);
   });
 
-  /**
-   * Decorative planes must not be announced: the hero's two splash plates are
-   * the same photograph twice, and the week counter restates a sentence the
-   * copy beside it already makes.
-   */
-  it('hides decorative imagery and the cure counter from assistive tech', () => {
+  /** Decorative planes must not be announced; every photo that carries story has real alt text. */
+  it('hides decorative imagery from assistive tech', () => {
     const {container} = renderPage();
 
     container.querySelectorAll('img').forEach((img) => {
@@ -46,7 +45,8 @@ describe('About Page Accessibility (WCAG 2.1 AA)', () => {
       expect(hidden || labelled).toBe(true);
     });
 
-    expect(container.querySelector('figcaption')).toHaveAttribute('aria-hidden', 'true');
+    // The fridge's copy of the recipe card repeats act 2, so it is hidden.
+    expect(container.querySelectorAll('[data-card]')[1]?.closest('[aria-hidden="true"]')).not.toBeNull();
   });
 
   it('provides keyboard-navigable content (no focus traps)', () => {

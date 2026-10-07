@@ -1,253 +1,137 @@
-import {useRef, useEffect} from 'react';
-import {Form, useNavigation} from 'react-router';
+import {useEffect, useRef} from 'react';
+import {useFetcher} from 'react-router';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {cn} from '~/utils/cn';
 import styles from './PartnersApplicationForm.module.css';
 
-interface PartnersApplicationFormProps {
-  actionData?: {
-    success: boolean;
-    error?: string;
-    fieldErrors?: {
-      name?: string;
-      email?: string;
-      phone?: string;
-      businessName?: string;
-      message?: string;
-    };
+export interface ApplicationResult {
+  success: boolean;
+  error?: string;
+  fieldErrors?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    businessName?: string;
+    message?: string;
   };
 }
 
-export function PartnersApplicationForm({actionData}: PartnersApplicationFormProps) {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
-  const formRef = useRef<HTMLFormElement>(null);
+interface PartnersApplicationFormProps {
+  /** No-JS fallback: the route's own action data after a full-page POST. */
+  actionData?: ApplicationResult;
+  /** The venue picked on the page, sent along as `shopType`. */
+  shopType: string;
+  placeholder: string;
+}
 
+const FIELDS: {
+  name: 'name' | 'businessName' | 'email' | 'phone' | 'instagram' | 'website';
+  label: string;
+  type: string;
+  required?: boolean;
+  wide?: boolean;
+}[] = [
+  {name: 'name', label: 'Contact name', type: 'text', required: true},
+  {name: 'businessName', label: 'Business name', type: 'text', required: true},
+  {name: 'email', label: 'Email', type: 'email', required: true, wide: true},
+  {name: 'phone', label: 'Phone', type: 'tel', required: true, wide: true},
+  {name: 'instagram', label: 'Instagram handle', type: 'text'},
+  {name: 'website', label: 'Website', type: 'url'},
+];
+
+/**
+ * The wholesale application. Posts to the /partners action through a fetcher,
+ * so the visitor stays on the page; without JS it falls back to a normal POST
+ * and the route hands its action data back in.
+ */
+export function PartnersApplicationForm({actionData, shopType, placeholder}: PartnersApplicationFormProps) {
+  const fetcher = useFetcher<ApplicationResult>();
+  const result = fetcher.data ?? actionData;
+  const isSubmitting = fetcher.state !== 'idle';
+  const successRef = useRef<HTMLHeadingElement>(null);
+
+  // The form disappears on success, so move focus to what replaced it.
   useEffect(() => {
-    if (actionData?.success) {
-      formRef.current?.reset();
-    }
-  }, [actionData?.success]);
+    if (result?.success) successRef.current?.focus();
+  }, [result?.success]);
 
-  if (actionData?.success) {
+  if (result?.success) {
     return (
-      <div className="w-full max-w-2xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-3xl md:text-4xl font-display text-primary mb-4">Application Received</h2>
-        <p className="text-lg text-muted-foreground mb-8">
-          Thank you for your interest in becoming a wholesale partner. We have received your application and will review
-          it shortly. You will hear from us within 1-2 business days.
+      <div role="status" className={styles['success']}>
+        <h3 ref={successRef} tabIndex={-1} className={styles['success-heading']}>
+          Application received
+        </h3>
+        <p className={styles['success-text']}>
+          Thanks for wanting to add some suds to your shelves. We&apos;ll get back to you within 1-2 business days.
         </p>
-        <div className="p-4 bg-green-50 text-green-800 rounded-lg inline-block">
-          Application submitted successfully.
-        </div>
       </div>
     );
   }
 
+  const errors = result?.fieldErrors;
+
   return (
-    <div className={styles['page-grid']}>
-      <div className={styles['intro-section']}>
-        <div className={styles['intro-start-wrapper']}>
-          <div className={styles['intro-heading-wrapper']}>
-            <h1 className={styles['heading-text']}>Become a</h1>
-          </div>
+    <fetcher.Form method="post" action="/partners" className={styles['onboarding-form']} noValidate>
+      <input type="hidden" name="shopType" value={shopType} />
 
-          <div className={styles['clipped-box']}>
-            <h1 className={styles['clipped-text']}>Suds Seller</h1>
-          </div>
-        </div>
-
-        <div className={styles['intro-end-wrapper']}>
-          <div>
-            <div className={styles['intro-end-heading']}>perks upon entry</div>
-          </div>
-
-          <div className={styles['intro-end-content-wrapper']}>
-            <div className={styles['cards-grid']}>
-              <div className={styles['card-1']}>
-                <div className={styles['card-number']}>01</div>
-                <h5 className={styles['card-heading']}>
-                  Join the Isla Suds
-                  <br />
-                  team
-                </h5>
-              </div>
-
-              <div className={styles['card-2']}>
-                <div className={styles['card-number']}>02</div>
-                <h5 className={styles['card-heading']}>Connect with Fanatics</h5>
-              </div>
-
-              <div className={styles['card-3']}>
-                <div className={styles['card-number']}>03</div>
-                <h5 className={styles['card-heading']}>
-                  Share and
-                  <br />
-                  Shine
-                </h5>
-              </div>
-              <div className={styles['card-grid-spacer']}></div>
-              <div className={styles['card-grid-spacer']}></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles['application-section']}>
-        <div className={styles['application-content']}>
-          <div className={styles['application-form-wrapper']}>
-            <Form method="post" ref={formRef} className={styles['onboarding-form']}>
-              <div className={styles['form-heading']}>Start your application</div>
-
-              <div className={styles['form-fieldset']}>
-                <div className={cn(styles['form-group'], 'col-span-1')}>
-                  <label htmlFor="name" className="sr-only">
-                    Contact Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.name && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Contact Name"
-                  />
-                  {actionData?.fieldErrors?.name && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.name}</p>
-                  )}
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-1')}>
-                  <label htmlFor="businessName" className="sr-only">
-                    Business Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="businessName"
-                    name="businessName"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.businessName && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Business Name"
-                  />
-                  {actionData?.fieldErrors?.businessName && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.businessName}</p>
-                  )}
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-2')}>
-                  <label htmlFor="email" className="sr-only">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.email && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Email"
-                  />
-                  {actionData?.fieldErrors?.email && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.email}</p>
-                  )}
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-2')}>
-                  <label htmlFor="phone" className="sr-only">
-                    Phone <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Phone"
-                  />
-                  {actionData?.fieldErrors?.phone && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.phone}</p>
-                  )}
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-2')}>
-                  <label htmlFor="instagram" className="sr-only">
-                    Instagram handle
-                  </label>
-                  <input
-                    type="text"
-                    id="instagram"
-                    name="instagram"
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Instagram Handle"
-                  />
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-2')}>
-                  <label htmlFor="website" className="sr-only">
-                    Website
-                  </label>
-                  <input
-                    type="url"
-                    id="website"
-                    name="website"
-                    className={cn(
-                      styles['form-input'],
-                      actionData?.fieldErrors?.phone && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="Website"
-                  />
-                </div>
-
-                <div className={cn(styles['form-group'], 'col-span-2')}>
-                  <label htmlFor="message" className="sr-only">
-                    Tell us about your shop <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={5}
-                    className={cn(
-                      styles['form-textarea'],
-                      actionData?.fieldErrors?.message && 'border-red-500 focus-visible:ring-red-500',
-                    )}
-                    placeholder="We are a boutique shop located in..."
-                  />
-                  {actionData?.fieldErrors?.message && (
-                    <p className="text-sm text-red-500">{actionData.fieldErrors.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {actionData?.error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">{actionData.error}</div>
+      <div className={styles['form-fieldset']}>
+        {FIELDS.map((field) => {
+          const error = (errors as Record<string, string | undefined> | undefined)?.[field.name];
+          return (
+            <div key={field.name} className={cn(styles['form-group'], field.wide && styles['form-group-wide'])}>
+              <label htmlFor={`apply-${field.name}`} className={styles['form-label']}>
+                {field.label}
+                {field.required && <span aria-hidden="true"> *</span>}
+              </label>
+              <input
+                type={field.type}
+                id={`apply-${field.name}`}
+                name={field.name}
+                required={field.required}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? `apply-${field.name}-error` : undefined}
+                className={cn(styles['form-input'], error && styles['is-invalid'])}
+              />
+              {error && (
+                <p id={`apply-${field.name}-error`} className={styles['form-error']}>
+                  {error}
+                </p>
               )}
+            </div>
+          );
+        })}
 
-              <div className={styles['submit-button-wrapper']}>
-                <LiquidButton
-                  type="submit"
-                  disabled={isSubmitting}
-                  text={isSubmitting ? 'Submitting...' : 'Submit Application'}
-                />
-              </div>
-            </Form>
-          </div>
+        <div className={cn(styles['form-group'], styles['form-group-wide'])}>
+          <label htmlFor="apply-message" className={styles['form-label']}>
+            Tell us about your shop<span aria-hidden="true"> *</span>
+          </label>
+          <textarea
+            id="apply-message"
+            name="message"
+            required
+            rows={5}
+            placeholder={placeholder}
+            aria-invalid={errors?.message ? true : undefined}
+            aria-describedby={errors?.message ? 'apply-message-error' : undefined}
+            className={cn(styles['form-textarea'], errors?.message && styles['is-invalid'])}
+          />
+          {errors?.message && (
+            <p id="apply-message-error" className={styles['form-error']}>
+              {errors.message}
+            </p>
+          )}
         </div>
       </div>
-    </div>
+
+      {result?.error && (
+        <p role="alert" className={styles['form-alert']}>
+          {result.error}
+        </p>
+      )}
+
+      <div className={styles['submit-button-wrapper']}>
+        <LiquidButton type="submit" disabled={isSubmitting} text={isSubmitting ? 'Sending...' : 'Send application'} />
+      </div>
+    </fetcher.Form>
   );
 }

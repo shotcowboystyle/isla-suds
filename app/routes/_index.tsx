@@ -5,6 +5,7 @@ import {HeroSection} from '~/components/story/HeroSection';
 import {IngredientsSection} from '~/components/story/Ingredients';
 import {MessageSection} from '~/components/story/MessageSection';
 import {ProductsList} from '~/components/story/ProductsList';
+import {UsedUpBar} from '~/components/story/UsedUpBar';
 import {VideoSection} from '~/components/story/VideoSection';
 import {TestimonialsSection} from '~/components/Testimonials';
 import {productsListHandles} from '~/content/products';
@@ -15,7 +16,7 @@ import type {Route} from './+types/_index';
 export const meta: Route.MetaFunction = createMeta({
   title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin',
   description:
-    'Isla Suds crafts gentle, unscented goat milk soap for sensitive and reactive skin. 100% clean, natural ingredients — no dyes, no fragrances, just nourishing care.',
+    'Isla Suds crafts gentle goat milk soap for sensitive and reactive skin. Essential oils, no added fragrance, no dyes, just nourishing care.',
 });
 
 export async function loader(args: Route.LoaderArgs) {
@@ -77,8 +78,10 @@ export default function Homepage() {
         </div>
 
         <TestimonialsSection />
-        <LocalStores />
+        <LocalStores withSliver />
       </div>
+
+      <UsedUpBar />
     </div>
   );
 }

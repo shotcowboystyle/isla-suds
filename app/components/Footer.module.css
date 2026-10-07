@@ -1,202 +1,206 @@
+/* Same ground as the preloader overlay, so the tub that opened the visit can
+   close it. Clips the tub's sideways bleed and its entrance from below. */
 .footer {
-  background-color: var(--color-black);
-  margin-top: 0;
-  padding-bottom: 40px;
-  display: block;
   position: relative;
-  bottom: auto;
-  overflow: hidden;
+  overflow: clip;
   width: 100%;
-}
-@media screen and (min-width: 480px) {
-  .footer {
-    padding-bottom: 3rem;
-  }
-}
-@media screen and (min-width: 768px) {
-  .footer {
-    padding-bottom: 0;
-    bottom: auto;
-  }
-}
-
-.footer-content-container {
-  z-index: 2;
-  padding-top: 60px;
-  position: static;
-  overflow: hidden;
-}
-
-.heading-teg-wrapper {
-  z-index: 3;
-  justify-content: center;
-  align-items: flex-start;
-  display: flex;
-  position: relative;
-  margin-block-start: 5vw;
-}
-
-.header-tag {
+  padding-top: clamp(4.5rem, 10vw, 10rem);
+  background-color: var(--color-black);
   color: var(--color-secondary);
-  letter-spacing: -0.35vw;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  line-height: 9vw;
-  font-size: 12vw;
-  line-height: 110%;
 }
-@media screen and (min-width: 768px) {
-  .header-tag {
-    font-size: unset;
-    line-height: 9vw;
+
+/* ---- Sign-off + newsletter -------------------------------------------- */
+
+.top {
+  display: grid;
+  gap: 3.5rem;
+  padding: 0 6vw 2rem;
+}
+@media screen and (min-width: 992px) {
+  .top {
+    grid-template-columns: 1fr minmax(22rem, 30rem);
+    align-items: end;
+    gap: 6vw;
   }
 }
 
-.footer-grid {
-  display: grid;
-  z-index: 5;
-  grid-template-columns: 1fr;
-  grid-auto-columns: 1fr;
-  grid-template-rows: auto auto auto auto;
-  grid-column-gap: 3.5vw;
-  grid-row-gap: 10vw;
-  margin-top: 15vw;
-  padding-bottom: 2vw;
-  padding-inline: 16px;
+.signoff {
   position: relative;
+  width: fit-content;
 }
-/* @media screen and (min-width: 480px) {
-  .footer-grid {
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: auto auto;
-    padding-inline: 2vw;
+
+/* Own size, leading and tracking: the global h2 sets vw sizes and -0.35vw. */
+.heading {
+  margin: 0;
+  text-align: left;
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(3.6rem, 10vw, 10rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.lead {
+  display: block;
+}
+
+/* Static tilts live on wrappers; GSAP owns the inner transform. */
+.sticker-tilt {
+  display: inline-block;
+  margin-top: 0.06em;
+  transform: rotate(-2deg);
+}
+
+.sticker {
+  display: inline-block;
+  padding: 0 0.15em 0.06em;
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  box-shadow: 0.06em 0.06em 0 var(--color-accent-secondary);
+}
+
+.hashtag-tilt {
+  display: inline-block;
+  margin: 1.25rem 0 0;
+  transform: rotate(7deg);
+}
+@media screen and (min-width: 768px) {
+  .hashtag-tilt {
+    position: absolute;
+    top: -1.6rem;
+    right: -2.5rem;
+    margin: 0;
   }
-} */
+}
+
+/* Mixed case on purpose: camel case is what makes a hashtag readable. */
+.hashtag {
+  display: inline-block;
+  padding: 0.25em 0.8em 0.32em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1.1rem, 1.6vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 3px 0 rgb(0 0 0 / 0.35);
+}
+
+/* ---- Links row -------------------------------------------------------- */
+
+/* One viewport tall, so the final scroll position lands on a whole frame (links
+   under the fixed header, the tub at the bottom edge) instead of half a headline. */
+.finale {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: clamp(5.5rem, 10vh, 7.5rem);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 0 6vw clamp(3rem, 6vw, 6rem);
+  padding-top: 2rem;
+  border-top: 2px dashed rgb(252 244 225 / 0.25);
+}
 @media screen and (min-width: 992px) {
-  .footer-grid {
-    margin-top: 8vw;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    padding-inline: 2vw;
-    grid-column-gap: 40vw;
-    grid-row-gap: 5vw;
+  .links {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 
 .links-grid {
   display: grid;
-  grid-auto-columns: 1fr;
-  z-index: 5;
-  grid-column-gap: 3.5vw;
-  grid-row-gap: 0;
-  grid-template-columns: auto auto auto;
-  padding-inline: 3vw;
-  padding-bottom: 2vw;
-  position: relative;
-  justify-content: space-between;
-  /* text-align: center; */
+  grid-template-columns: repeat(2, max-content);
+  gap: 0.25rem 2.5rem;
 }
-/* @media screen and (min-width: 480px) {
+@media screen and (min-width: 768px) {
   .links-grid {
-    grid-template-rows: auto auto auto auto;
-    text-align: left;
-  }
-} */
-@media screen and (min-width: 992px) {
-  .links-grid {
-    grid-template-columns: auto auto auto;
-    text-align: left;
-    padding-inline: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.4rem;
   }
 }
 
-.footer-link {
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--color-secondary);
-  margin-bottom: 12px;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 115%;
+  font-family: var(--font-sans);
+  font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
-  transition: all 0.2s;
+  text-transform: uppercase;
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.2s ease;
 }
-@media screen and (min-width: 768px) {
-  .footer-link {
-    font-size: 2.6vw;
-    line-height: 120%;
-  }
-}
-@media screen and (min-width: 992px) {
-  .footer-link {
-    margin-bottom: 0;
-    font-size: 1.04vw;
-  }
+.link:hover,
+.link:focus-visible {
+  color: var(--color-accent-secondary);
+  transform: rotate(-3deg) scale(1.05);
 }
 
-.copyright-wrapper {
-  justify-self: center;
-  order: 4;
-}
-@media screen and (min-width: 992px) {
-  .copyright-wrapper {
-    justify-self: flex-start;
-    order: 3;
-  }
+.active {
+  color: var(--color-accent-secondary);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 0.15em;
 }
 
-.copyright-text {
-  opacity: 0.7;
-  color: var(--color-secondary);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 115%;
-}
-@media screen and (min-width: 768px) {
-  .copyright-text {
-    font-size: 3.1vw;
-  }
-}
-@media screen and (min-width: 992px) {
-  .copyright-text {
-    font-size: 1.04vw;
-  }
-}
+/* ---- Legal line, printed on the tub's front panel ---------------------- */
 
-.policies-wrapper {
-  justify-self: center;
-  grid-gap: 16px;
-  flex-flow: row;
+.legal {
   display: flex;
-  order: 3;
-}
-@media screen and (min-width: 992px) {
-  .policies-wrapper {
-    justify-self: flex-end;
-    align-self: flex-end;
-    order: 4;
-  }
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.4rem;
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-paragraph);
+  font-size: clamp(0.85rem, 0.95vw, 1rem);
+  font-weight: 700;
+  line-height: 1.3;
 }
 
-.footer-link-muted {
-  color: var(--color-secondary);
-  margin-bottom: 12px;
-  margin-left: 2vw;
-  font-size: 16px;
+.legal-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.legal-link:hover {
+  color: var(--color-teal-dark);
+}
+.legal-link:focus-visible {
+  outline: 3px solid var(--color-teal-dark);
+  outline-offset: 2px;
+}
+
+.made-by {
+  flex-basis: 100%;
+  color: rgb(41 41 52 / 0.7);
   font-weight: 400;
-  line-height: 115%;
-  text-decoration: none;
-  transition: all 0.2s;
-  z-index: 99;
-  opacity: 0.7;
-  position: relative;
 }
-@media screen and (min-width: 768px) {
-  .footer-link-muted {
-    font-size: 3.1vw;
-    margin-bottom: 0.6vw;
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: color 0.2s ease;
   }
-}
-@media screen and (min-width: 992px) {
-  .footer-link-muted {
-    font-size: 1.04vw;
+  .link:hover,
+  .link:focus-visible {
+    transform: none;
   }
 }

@@ -68,6 +68,8 @@ This project includes BMAD (Build-Measure-Adapt-Deploy) AI agent framework in `_
 
 ## Important Notes
 
+- Read `DESIGN.md` before any storefront UI, copy or imagery work: it holds the design language,
+  the truth rules for copy, the image pipeline and the motion patterns.
 - Never call `gsap.registerPlugin()` at a module's top level unguarded — always wrap it in
   `if (typeof document !== 'undefined') { ... }`. `useGSAP` is a headless plugin, so gsap
   registers it even when `window` is undefined and then starts its ticker's

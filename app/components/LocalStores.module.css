@@ -213,3 +213,51 @@
     height: auto;
   }
 }
+
+/* Where the used-up bar lands. The static sliver shows when the moving bar
+   isn't running (reduced motion); UsedUpBar marks the slot live otherwise. */
+.sliver {
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+.sliver-slot {
+  flex: none;
+  width: 56px;
+  height: 56px;
+}
+.sliver-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sliver-slot[data-live] img {
+  opacity: 0;
+}
+.sliver-text {
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.sliver-text a {
+  color: var(--color-accent-secondary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.sliver-text a:hover {
+  color: var(--color-secondary);
+}
+@media screen and (min-width: 992px) {
+  .sliver-slot {
+    width: 72px;
+    height: 72px;
+  }
+  .sliver-text {
+    font-size: 1.4vw;
+  }
+}

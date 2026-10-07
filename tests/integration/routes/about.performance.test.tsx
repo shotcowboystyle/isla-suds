@@ -1,12 +1,15 @@
 import {describe, it, expect} from 'vitest';
 import {render} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
+import {PreloaderProvider} from '~/contexts/preloader-context';
 import AboutPage from '~/routes/about';
 
 const renderPage = () =>
   render(
     <MemoryRouter>
-      <AboutPage />
+      <PreloaderProvider>
+        <AboutPage />
+      </PreloaderProvider>
     </MemoryRouter>,
   );
 
@@ -32,7 +35,8 @@ describe('About Page Performance', () => {
     expect(container.querySelector('h1')?.textContent).toBeTruthy();
 
     container.querySelectorAll('p').forEach((p) => {
-      expect(p.textContent!.length).toBeGreaterThan(10);
+      // No empty placeholder paragraphs ("Then two." is the shortest real one).
+      expect(p.textContent!.trim().length).toBeGreaterThan(5);
     });
   });
 

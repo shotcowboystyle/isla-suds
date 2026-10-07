@@ -1,20 +1,23 @@
 import {Suspense, lazy} from 'react';
-import {LOCATIONS_PAGE} from '~/content/stores';
 import styles from './LocationsMap.module.css';
+import type {StorePostcard} from '~/content/stores';
 
+// Leaflet touches `window` on import, so the map only ever loads in the browser.
 const Map = lazy(() => import('~/components/Map.client').then((module) => ({default: module.Map})));
 
-export function LocationsMap() {
+interface LocationsMapProps {
+  stops: StorePostcard[];
+  active: number;
+  onPick: (index: number) => void;
+  interactive: boolean;
+  label: string;
+}
+
+export function LocationsMap({label, ...map}: LocationsMapProps) {
   return (
-    <div className={styles['location-map-wrapper']}>
-      <Suspense
-        fallback={
-          <div className="h-[400px] w-full bg-(--canvas-elevated) rounded-md animate-pulse flex items-center justify-center text-(--text-muted)">
-            Loading Map...
-          </div>
-        }
-      >
-        <Map stores={LOCATIONS_PAGE.stores} />
+    <div className={styles.map} role="region" aria-label={label}>
+      <Suspense fallback={<div className={styles.loading} />}>
+        <Map {...map} />
       </Suspense>
     </div>
   );

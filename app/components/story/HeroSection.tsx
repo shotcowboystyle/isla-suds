@@ -3,20 +3,53 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
-import HeroMobileBackgroundImage from '~/assets/images/hero-mobile-2.webp';
-import HeroVideoThumbnailUrl from '~/assets/images/hero-video-thumbnail.webp';
-import HeroVideo from '~/assets/video/soap-bar-blast.mp4';
+import BarEucalyptus from '~/assets/images/home/bar-eucalyptus.webp';
+import BarLavender from '~/assets/images/home/bar-lavender.webp';
+import BarLemongrass from '~/assets/images/home/bar-lemongrass.webp';
+import BarRosemary from '~/assets/images/home/bar-rosemary.webp';
+import HeroFoam from '~/assets/images/home/hero-foam.webp';
+import HeroPlateMobile from '~/assets/images/home/hero-plate-m.webp';
+import HeroPlate from '~/assets/images/home/hero-plate.webp';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {HERO_CONTENT, HERO_TAGLINE_START, HERO_TAGLINE_END} from '~/content/story';
 import {usePreloader} from '~/contexts/preloader-context';
 import {prefersReducedMotion} from '~/lib/motion';
-import {CHAR_STAGGER, ENTER_EASE, MOTION_QUERY, SCRUB_SCENE} from '~/lib/motion/tokens';
+import {useHeroLean, useHeroTravel} from '~/lib/motion/hero-planes';
+import {CHAR_STAGGER, ENTER_EASE} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './HeroSection.module.css';
 
 if (typeof document !== 'undefined') {
   GSAP.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 }
+
+type Depth = 'far' | 'mid' | 'near';
+
+/**
+ * The floating bars, back to front. `slot` names the CSS position; `depth`
+ * decides how far the bar travels on scroll and how hard it leans toward the
+ * pointer. Far bars sit behind the headline, mid and near bars in front of it.
+ */
+const BARS: {src: string; slot: string; depth: Depth; w: number; h: number}[] = [
+  {src: BarRosemary, slot: 'far-a', depth: 'far', w: 906, h: 1100},
+  {src: BarLemongrass, slot: 'far-b', depth: 'far', w: 932, h: 1100},
+  {src: BarEucalyptus, slot: 'far-c', depth: 'far', w: 1100, h: 875},
+  {src: BarLavender, slot: 'mid-a', depth: 'mid', w: 1037, h: 1100},
+  {src: BarLemongrass, slot: 'mid-b', depth: 'mid', w: 932, h: 1100},
+  {src: BarRosemary, slot: 'near', depth: 'near', w: 906, h: 1100},
+];
+
+/** Scroll travel per plane across the hero's exit, in viewport heights. */
+const SCROLL_TRAVEL: Record<Depth | 'plate' | 'foam', number> = {
+  plate: 10,
+  far: -8,
+  mid: -30,
+  foam: -22,
+  near: -70,
+};
+
+/** Pointer lean per plane, in px at the edge of the viewport. */
+const POINTER_LEAN: Record<Depth, number> = {far: 8, mid: 20, near: 38};
 
 interface HeroSectionProps {
   className?: string;
@@ -25,65 +58,27 @@ interface HeroSectionProps {
 export function HeroSection({className}: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const text1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBox1Ref = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const {preloaderComplete} = usePreloader();
 
-  // Ensure the video freezes at the final frame
-  const handleVideoEnd = () => {
-    const vid = videoRef.current;
-    if (!vid) {
-      return;
-    }
-
-    vid.pause();
-  };
-
-  // Scroll parallax — the hero recedes as the story begins.
-  useGSAP(
-    () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const mm = GSAP.matchMedia();
-
-      mm.add(MOTION_QUERY, () => {
-        GSAP.to(container, {
-          rotate: 4,
-          scale: 0.94,
-          yPercent: 18,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: container,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: SCRUB_SCENE,
-            invalidateOnRefresh: true,
-          },
-        });
-      });
-
-      return () => mm.revert();
-    },
-    {scope: sectionRef},
-  );
+  useHeroTravel(sectionRef, containerRef, SCROLL_TRAVEL);
+  useHeroLean(sectionRef, POINTER_LEAN);
 
   // Entrance choreography, handed off from the preloader.
   //
   // The markup ships as `data-hero-state="pending"`, which hides the animated
-  // copy in CSS. Nothing paints in its final position, so there is no flash of
-  // finished text before the timeline takes over. The attribute only flips to
-  // "ready" once the start states are set.
+  // copy and the bars in CSS. Nothing paints in its final position, so there is
+  // no flash of finished text before the timeline takes over. The attribute only
+  // flips to "ready" once the start states are set.
   useEffect(() => {
     const section = sectionRef.current;
     const text1 = text1Ref.current;
     const clippedBox1 = clippedBox1Ref.current;
     const paragraph = paragraphRef.current;
     const button = buttonRef.current;
-    const video = videoRef.current;
     if (!section || !text1 || !clippedBox1 || !paragraph || !button || !preloaderComplete) return;
 
     if (prefersReducedMotion()) {
@@ -99,10 +94,6 @@ export function HeroSection({className}: HeroSectionProps) {
     void document.fonts.ready.then(() => {
       if (cancelled) return;
 
-      video?.play().catch(() => {
-        // Safe to continue: autoplay may be blocked by browser policy
-      });
-
       ctx = GSAP.context(() => {
         const titleSplit = SplitText.create(text1, {
           type: 'chars',
@@ -110,20 +101,53 @@ export function HeroSection({className}: HeroSectionProps) {
           autoSplit: true,
         });
 
+        // The burst: every bar starts packed into the middle of the frame and
+        // flies out to its slot, like the bars just popped out of one box.
+        const bursts = Array.from(section.querySelectorAll<HTMLElement>('[data-burst]'));
+        const centreX = window.innerWidth / 2;
+        const centreY = window.innerHeight / 2;
+        const offsets = bursts.map((el) => {
+          const r = el.getBoundingClientRect();
+          return {x: centreX - (r.left + r.width / 2), y: centreY - (r.top + r.height / 2)};
+        });
+
         const tl = GSAP.timeline({paused: true});
 
         tl.fromTo(
-          clippedBox1,
-          {opacity: 0, width: 0},
-          {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+          bursts,
+          {
+            x: (i) => offsets[i].x,
+            y: (i) => offsets[i].y,
+            scale: 0.15,
+            rotation: () => GSAP.utils.random(-120, 120),
+            autoAlpha: 0,
+          },
+          {
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            autoAlpha: 1,
+            duration: 1.3,
+            ease: 'expo.out',
+            stagger: {each: 0.04, from: 'random'},
+          },
         )
+          .fromTo('[data-foam]', {yPercent: 60}, {yPercent: 0, duration: 1.2, ease: 'power3.out'}, 0.1)
+          .fromTo(
+            clippedBox1,
+            {opacity: 0, width: 0},
+            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+            0.25,
+          )
           .fromTo(
             titleSplit.chars,
             {yPercent: 120},
             {yPercent: 0, duration: 0.8, stagger: CHAR_STAGGER, ease: ENTER_EASE},
+            0.35,
           )
-          .fromTo(paragraph, {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: ENTER_EASE})
-          .fromTo(button, {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: ENTER_EASE});
+          .fromTo(paragraph, {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: ENTER_EASE}, '-=0.4')
+          .fromTo(button, {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: ENTER_EASE}, '-=0.4');
 
         // Start states are committed — safe to reveal, then play.
         section.dataset.heroState = 'ready';
@@ -137,6 +161,16 @@ export function HeroSection({className}: HeroSectionProps) {
     };
   }, [preloaderComplete]);
 
+  const renderBar = (bar: (typeof BARS)[number]) => (
+    <div key={bar.slot} data-travel={bar.depth} className={cn(styles['bar'], styles[`bar-${bar.slot}`])}>
+      <div data-lean={bar.depth} className={styles['bar-lean']}>
+        <div data-burst className={styles['bar-burst']}>
+          <img src={bar.src} alt="" width={bar.w} height={bar.h} decoding="async" className={styles['bar-img']} />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -146,6 +180,14 @@ export function HeroSection({className}: HeroSectionProps) {
       aria-label="Hero section"
     >
       <div ref={containerRef} className={styles['hero-section-container']}>
+        <div className={styles['scene-back']} aria-hidden="true">
+          <picture data-travel="plate" className={styles['plate']}>
+            <source media="(max-width: 767px)" srcSet={HeroPlateMobile} width={1080} height={1944} />
+            <img src={HeroPlate} alt="" width={2560} height={1430} />
+          </picture>
+          {BARS.filter((bar) => bar.depth === 'far').map(renderBar)}
+        </div>
+
         <div className={styles['hero-section-content']}>
           <div className={styles['letter-animation']}>
             <h1 ref={text1Ref} className={cn(styles['hero-text'], 'split-text')}>
@@ -166,37 +208,12 @@ export function HeroSection({className}: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Mobile hero — display:none from 992px up. `loading="lazy"` keeps
-            desktop from downloading an image it never paints; on mobile the
-            element is in the viewport so it still fetches during initial load,
-            and the preloader covers the page for long enough that the slightly
-            lower priority is never visible. */}
-        <img
-          src={HeroMobileBackgroundImage}
-          loading="lazy"
-          decoding="async"
-          alt=""
-          width={1296}
-          height={928}
-          className="hero-image-mobile"
-        />
-
-        <div id="home-hero-video" className="hero-video-wrapper">
-          {/* The poster carries the hero until the preloader hands off and
-              .play() runs, so there is nothing to gain from preloading. */}
-          <video
-            ref={videoRef}
-            src={HeroVideo}
-            autoPlay={false}
-            playsInline={true}
-            muted={true}
-            preload="none"
-            onEnded={handleVideoEnd}
-            poster={HeroVideoThumbnailUrl}
-            width={1920}
-            height={1080}
-            className="size-full object-cover"
-          />
+        <div className={styles['scene-front']} aria-hidden="true">
+          {BARS.filter((bar) => bar.depth === 'mid').map(renderBar)}
+          <div data-travel="foam" className={styles['foam']}>
+            <img data-foam src={HeroFoam} alt="" width={2400} height={858} decoding="async" />
+          </div>
+          {BARS.filter((bar) => bar.depth === 'near').map(renderBar)}
         </div>
       </div>
     </section>

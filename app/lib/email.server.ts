@@ -5,7 +5,7 @@
  * Requires RESEND_API_KEY and FOUNDER_EMAIL env vars.
  */
 
-import {Resend} from 'resend';
+import {Resend, type CreateEmailOptions} from 'resend';
 import {formatDate} from '~/utils/format-date';
 import {formatMoney} from '~/utils/format-money';
 import type {EmailOrder, EmailCustomer} from '~/types/wholesale';
@@ -14,6 +14,15 @@ const FROM_ADDRESS = 'Isla Suds <notifications@islasuds.com>';
 
 function getResend(apiKey: string): Resend {
   return new Resend(apiKey);
+}
+
+/**
+ * Resend reports a failed send in `error` instead of throwing. Throw it, so a
+ * caller can never show "sent" for an email that never left.
+ */
+async function send(resend: Resend, email: CreateEmailOptions): Promise<void> {
+  const {error} = await resend.emails.send(email);
+  if (error) throw new Error(`Resend: ${error.message}`);
 }
 
 // ── Contact Form ────────────────────────────────────────────────────────
@@ -39,7 +48,7 @@ export async function sendContactFormEmail({
 }: ContactFormParams): Promise<void> {
   const resend = getResend(apiKey);
 
-  await resend.emails.send({
+  await send(resend, {
     from: FROM_ADDRESS,
     to,
     replyTo: email,
@@ -72,7 +81,7 @@ export async function sendInvoiceRequestEmail({
 }: InvoiceRequestParams): Promise<void> {
   const resend = getResend(apiKey);
 
-  await resend.emails.send({
+  await send(resend, {
     from: FROM_ADDRESS,
     to: founderEmail,
     subject: `Invoice Request: Order #${order.orderNumber} from ${customer.company?.name || customer.firstName}`,
@@ -89,9 +98,7 @@ export async function sendInvoiceRequestEmail({
 
       <h3>Items</h3>
       <ul>
-        ${order.lineItems.edges
-          .map(({node}) => `<li>${node.quantity}x ${node.title}</li>`)
-          .join('')}
+        ${order.lineItems.edges.map(({node}) => `<li>${node.quantity}x ${node.title}</li>`).join('')}
       </ul>
 
       <p>Log in to Shopify admin to generate and send the invoice.</p>

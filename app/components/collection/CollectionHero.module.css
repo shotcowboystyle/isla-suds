@@ -1,0 +1,153 @@
+.hero {
+  position: relative;
+  /* Bottom room so the tilted ticker's corner isn't clipped. */
+  padding: max(110px, 14vh) 5vw 3vw;
+  overflow: hidden;
+}
+
+/* The four bars fanned out on the right, desktop only: far ones small and soft,
+   the near one big and sharp, each leaning toward the pointer by its depth. */
+.cluster {
+  display: none;
+}
+@media screen and (min-width: 992px) {
+  .cluster {
+    display: block;
+    position: absolute;
+    top: 9vh;
+    right: 3vw;
+    width: 44vw;
+    height: 38vw;
+    pointer-events: none;
+  }
+}
+.bar {
+  position: absolute;
+}
+.bar-img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 1.6vw 1.4vw rgb(30 40 40 / 0.3));
+  animation: cluster-bob 6s ease-in-out infinite alternate;
+}
+.bar-a {
+  left: 6%;
+  top: 4%;
+  width: 30%;
+  filter: blur(1.5px);
+}
+.bar-b {
+  right: 2%;
+  top: 0;
+  width: 28%;
+  filter: blur(1.5px);
+}
+.bar-b .bar-img {
+  animation-delay: -2s;
+}
+.bar-c {
+  left: 46%;
+  top: 30%;
+  width: 40%;
+}
+.bar-c .bar-img {
+  animation-delay: -4s;
+}
+.bar-d {
+  left: 4%;
+  top: 34%;
+  width: 52%;
+  z-index: 2;
+}
+.bar-d .bar-img {
+  animation-delay: -1s;
+}
+@keyframes cluster-bob {
+  from {
+    transform: translateY(-2%) rotate(-2deg);
+  }
+  to {
+    transform: translateY(2%) rotate(2deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-img {
+    animation: none;
+  }
+}
+
+.title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(3.4rem, 10vw, 8.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+.sticker {
+  margin-top: 8px;
+  padding: 0 0.15em 0.06em;
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  outline: 0.4vw solid var(--color-black);
+  transform: rotate(-2deg);
+  font-size: 0.62em;
+}
+
+.lede {
+  position: relative;
+  max-width: 36rem;
+  margin-top: 24px;
+  color: var(--color-dark-brown);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* A one-line ticker of names, sliding forever; still under reduced motion. */
+.band {
+  margin: 6vw -5vw 0;
+  padding: 14px 0;
+  border-block: 3px solid var(--color-black);
+  background: var(--color-accent-secondary);
+  transform: rotate(-1.5deg);
+  overflow: hidden;
+}
+.band-track {
+  display: flex;
+  width: max-content;
+  animation: band-slide 38s linear infinite;
+}
+.band-copy {
+  display: flex;
+  flex: none;
+}
+.band-word {
+  padding: 0 1.2rem;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.band-word::after {
+  content: '•';
+  margin-left: 2.4rem;
+  color: var(--color-accent);
+}
+@keyframes band-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band-track {
+    animation: none;
+  }
+}

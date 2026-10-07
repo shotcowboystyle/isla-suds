@@ -23,12 +23,9 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
   return (
     // <div className={cn(styles['video-card'], `animated-video-card ${cardData.translation} ${cardData.rotation}`)}>
     <div className={cn(styles['video-card'], styles[`card-${index + 1}`], `animated-video-card ${cardData.rotation}`)}>
-      <div className={styles['media-cart-info-wrapper']}>
-        <img src={cardData.src} loading="lazy" alt="" className={styles['avatar']} />
-        <div>{cardData.name}</div>
-      </div>
-
-      <button className={cn(styles['media-cart-lightbox'])} aria-label="open lightbox" aria-haspopup="dialog">
+      {/* These clips are generated skits, not customer reviews, so they carry
+          no names or quotes. Real reviews get their own treatment when they exist. */}
+      <div className={cn(styles['media-cart-lightbox'])}>
         <div className={styles['hover-video-wrapper']}>
           <div className={cn(styles['video'], 'embed-video')}>
             <div className={styles['hover-video-wrapper']}>
@@ -47,7 +44,7 @@ export const VideoCard = ({cardData, index}: VideoCardProps) => {
             </div>
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 };

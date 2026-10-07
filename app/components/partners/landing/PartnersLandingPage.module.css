@@ -1,0 +1,101 @@
+.apply {
+  position: relative;
+  background-color: var(--color-milk-yellow);
+  padding: 22vw 5vw 18vw;
+}
+@media screen and (min-width: 768px) {
+  .apply {
+    padding: 14vw 5vw 10vw;
+  }
+}
+
+/* The same drip the homepage uses between sections, poured from the act above. */
+.drip {
+  position: absolute;
+  inset: -1px 0 auto;
+  width: 100%;
+  height: auto;
+  transform: scaleY(-1);
+  filter: brightness(0.25);
+}
+
+.apply-inner {
+  position: relative;
+  display: grid;
+  gap: 28px;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+@media screen and (min-width: 992px) {
+  .apply-inner {
+    grid-template-columns: 0.8fr 1.2fr;
+    grid-template-areas:
+      'title card'
+      'lede card'
+      '. card';
+    align-items: start;
+    column-gap: 4vw;
+    row-gap: 24px;
+  }
+  .apply-title {
+    grid-area: title;
+  }
+  .apply-lede {
+    grid-area: lede;
+  }
+  .apply-card {
+    grid-area: card;
+  }
+}
+
+.apply-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.apply-title-line {
+  font-size: clamp(3.2rem, 9vw, 6rem);
+}
+.apply-sticker {
+  margin-top: 6px;
+  padding: 0 0.15em 0.08em;
+  background-color: var(--color-accent);
+  color: var(--color-secondary);
+  outline: 0.4vw solid var(--color-black);
+  transform: rotate(-3deg);
+  white-space: nowrap;
+  font-size: clamp(3.2rem, 9vw, 6rem);
+}
+
+.apply-lede {
+  max-width: 28rem;
+  color: var(--color-dark-brown);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.apply-card {
+  padding: 28px 22px;
+  border: 3px solid var(--color-black);
+  border-radius: 28px;
+  background-color: var(--color-white);
+  box-shadow: 0 10px 0 var(--color-black);
+}
+@media screen and (min-width: 768px) {
+  .apply-card {
+    padding: 40px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .apply-title-line,
+  .apply-sticker {
+    font-size: min(5vw, 5.5rem);
+  }
+}

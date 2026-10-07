@@ -166,7 +166,7 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
   );
 
   return (
-    <section ref={outerRef}>
+    <section ref={outerRef} data-wear-at="products">
       <div ref={sectionRef} className={cn(styles['track'], 'relative', 'md:overflow-hidden')}>
         <div className={styles['camera']}>
           <div className={styles['frame']}>

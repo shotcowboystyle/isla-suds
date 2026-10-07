@@ -1,13 +1,20 @@
-// import {Suspense, useEffect, useRef, useState} from 'react';
-import {Suspense} from 'react';
-import {useNavigate, useLocation, Await, NavLink} from 'react-router';
-// import {AnimatedBubbles} from '~/components/AnimatedBubbles';
+import {Suspense, useRef} from 'react';
+import {Await, NavLink, useLocation} from 'react-router';
+import {useGSAP} from '@gsap/react';
+import GSAP from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {FOOTER} from '~/content/footer';
+import {MOTION_QUERY, REVEAL_START} from '~/lib/motion/tokens';
 import {cn} from '~/utils/cn';
 import styles from './Footer.module.css';
-// import {FooterLogo} from './FooterLogo';
+import {FooterBath} from './FooterBath';
 import {NewsletterSignup} from './ui/NewsletterSignup';
 import {SocialLinks} from './ui/SocialLinks';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+
+if (typeof document !== 'undefined') {
+  GSAP.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -16,60 +23,110 @@ interface FooterProps {
 }
 
 export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  return (
+    <div id="footer-wrapper" className="relative w-full z-1">
+      <Suspense>
+        <Await resolve={footerPromise}>
+          {(footer) => (
+            <FooterBody
+              menu={footer?.menu}
+              primaryDomainUrl={header.shop.primaryDomain.url}
+              publicStoreDomain={publicStoreDomain}
+            />
+          )}
+        </Await>
+      </Suspense>
+    </div>
+  );
+}
+
+/**
+ * The close of every page. Lives inside `Await` so its `useGSAP` runs once the
+ * `<footer>` actually exists.
+ */
+function FooterBody({
+  menu,
+  primaryDomainUrl,
+  publicStoreDomain,
+}: {
+  menu: FooterQuery['menu'] | undefined;
+  primaryDomainUrl: string;
+  publicStoreDomain: string;
+}) {
+  const footerRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = GSAP.matchMedia();
+
+      // The sticker and the hashtag slap onto the sign-off. CSS holds the landed state.
+      mm.add(MOTION_QUERY, () => {
+        GSAP.fromTo(
+          '[data-slap]',
+          {scale: 1.6, opacity: 0, rotate: -8},
+          {
+            scale: 1,
+            opacity: 1,
+            rotate: 0,
+            duration: 0.55,
+            ease: 'back.out(2.4)',
+            stagger: 0.2,
+            scrollTrigger: {
+              trigger: '[data-signoff]',
+              start: `clamp(${REVEAL_START})`,
+              toggleActions: 'play none none reverse',
+            },
+          },
+        );
+      });
+
+      return () => mm.revert();
+    },
+    {scope: footerRef},
+  );
 
   return (
-    <>
-      <div id="footer-wrapper" className="relative w-full z-1">
-        <Suspense>
-          <Await resolve={footerPromise}>
-            {(footer) => (
-              <footer className={cn(styles['footer'], `${styles.footer}`)}>
-                <div className={styles['footer-content-container']}>
-                  <h2 className={styles['heading-teg-wrapper']}>
-                    <div className={styles['header-tag']}>#SOAP_IS_DOPE</div>
-                  </h2>
+    <footer ref={footerRef} className={styles.footer}>
+      <div className={styles.top}>
+        <div data-signoff className={styles.signoff}>
+          <h2 className={styles.heading}>
+            <span className={styles.lead}>{FOOTER.signoff.lead}</span>{' '}
+            <span className={styles['sticker-tilt']}>
+              <span data-slap className={styles.sticker}>
+                {FOOTER.signoff.sticker}
+              </span>
+            </span>
+          </h2>
+          <p className={styles['hashtag-tilt']}>
+            <span data-slap className={styles.hashtag}>
+              {FOOTER.hashtag}
+            </span>
+          </p>
+        </div>
 
-                  <SocialLinks />
-
-                  <div className={styles['footer-grid']}>
-                    <div className="w-full">
-                      <FooterMenu
-                        menu={footer?.menu}
-                        primaryDomainUrl={header.shop.primaryDomain.url}
-                        publicStoreDomain={publicStoreDomain}
-                      />
-                    </div>
-
-                    <NewsletterSignup />
-
-                    <div className={styles['policies-wrapper']}>
-                      {FALLBACK_FOOTER_POLICIES.items.map((item) => (
-                        <a href={item.url} className={styles['footer-link-muted']} key={item.id}>
-                          {item.title}
-                        </a>
-                      ))}
-                    </div>
-
-                    <div className={styles['copyright-wrapper']}>
-                      <p className={styles['copyright-text']}>
-                        © {new Date().getFullYear()} Isla Suds - All Rights Reserved
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* <div className="footer-logo-wrapper">
-                  <FooterLogo />
-                  <AnimatedBubbles />
-                </div> */}
-              </footer>
-            )}
-          </Await>
-        </Suspense>
+        <NewsletterSignup />
       </div>
-    </>
+
+      {/* The last screen of the visit: links up top, the tub landing at the bottom. */}
+      <div className={styles.finale}>
+        <div className={styles.links}>
+          <FooterMenu menu={menu} primaryDomainUrl={primaryDomainUrl} publicStoreDomain={publicStoreDomain} />
+          <SocialLinks />
+        </div>
+
+        <FooterBath>
+          <p className={styles.legal}>
+            <span>© {new Date().getFullYear()} Isla Suds</span>
+            {FALLBACK_FOOTER_POLICIES.items.map((item) => (
+              <a href={item.url} className={styles['legal-link']} key={item.id}>
+                {item.title}
+              </a>
+            ))}
+            <span className={styles['made-by']}>{FOOTER.madeBy}</span>
+          </p>
+        </FooterBath>
+      </div>
+    </footer>
   );
 }
 
@@ -78,12 +135,12 @@ function FooterMenu({
   primaryDomainUrl,
   publicStoreDomain,
 }: {
-  menu: FooterQuery['menu'];
-  primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
+  menu: FooterQuery['menu'] | undefined;
+  primaryDomainUrl: string;
   publicStoreDomain: string;
 }) {
   const classes =
-    'transition-colors inline-block text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-secondary)] focus-visible:ring-offset-2 transition duration-300';
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black';
   const location = useLocation();
 
   return (
@@ -117,20 +174,16 @@ function FooterMenu({
             key={item.id}
             rel="noopener noreferrer"
             target="_blank"
-            className={cn(styles['footer-link'], classes)}
+            className={cn(styles.link, classes)}
           >
             {item.title}
           </a>
         ) : (
           <NavLink
-            className={cn(styles['footer-link'], classes)}
+            className={cn(styles.link, classes, isActive && styles.active)}
             end
             key={item.id}
             prefetch="intent"
-            style={({isPending}) => ({
-              fontWeight: isActive ? 'bold' : undefined,
-              color: isPending ? 'var(--color-neutral-400)' : 'var(--color-secondary)',
-            })}
             to={url}
           >
             {item.title}

@@ -70,7 +70,7 @@ describe('Footer', () => {
       expect(contactLink).toHaveAttribute('href', '/contact');
     });
 
-    it('renders Wholesale link pointing to /wholesale', async () => {
+    it('renders Wholesale link pointing to /partners', async () => {
       renderFooter();
       const wholesaleLink = await screen.findByRole('link', {
         name: /wholesale/i,
@@ -150,11 +150,13 @@ describe('Footer', () => {
       expect(homeLink).not.toHaveAttribute('tabIndex', '-1');
     });
 
-    it('links have focus-visible styling with accent-secondary', async () => {
+    it('links have a focus ring in a colour that exists (butter accent)', async () => {
       renderFooter();
       const homeLink = await screen.findByRole('link', {name: /home/i});
       expect(homeLink).toHaveClass('focus-visible:ring-2');
-      expect(homeLink).toHaveClass('focus-visible:ring-[var(--accent-secondary)]');
+      // `--accent-secondary` was never defined, so the ring rendered with no colour.
+      expect(homeLink).not.toHaveClass('focus-visible:ring-[var(--accent-secondary)]');
+      expect(homeLink).toHaveClass('focus-visible:ring-[var(--color-accent-secondary)]');
     });
   });
 
@@ -194,6 +196,40 @@ describe('Footer', () => {
       // The semantic <footer> element is rendered after the promise resolves
       const footer = await screen.findByRole('contentinfo');
       expect(footer).toBeInTheDocument();
+    });
+  });
+
+  describe('Bath-time sign-off', () => {
+    it('says goodbye with the sign-off heading', async () => {
+      renderFooter();
+      expect(await screen.findByRole('heading', {level: 2, name: 'See you in the tub.'})).toBeInTheDocument();
+    });
+
+    it('writes the hashtag in readable camel case', async () => {
+      renderFooter();
+      expect(await screen.findByText('#SoapIsDope')).toBeInTheDocument();
+      expect(screen.queryByText(/SOAP_IS_DOPE/)).not.toBeInTheDocument();
+    });
+
+    it('prints the legal line on the tub, inside the footer landmark', async () => {
+      renderFooter();
+      const footer = await screen.findByRole('contentinfo');
+      const privacy = await screen.findByRole('link', {name: /privacy policy/i});
+      expect(footer).toContainElement(privacy);
+    });
+
+    it('keeps the tub and its poppable bubbles out of the accessibility tree', async () => {
+      renderFooter();
+      const footer = await screen.findByRole('contentinfo');
+      const svg = footer.querySelector('svg[aria-hidden="true"]');
+      expect(svg).toBeInTheDocument();
+      expect(footer.querySelector('[data-pill]')?.closest('[aria-hidden="true"]')).not.toBeNull();
+    });
+
+    it('labels the newsletter field and gives the button visible text', async () => {
+      renderFooter();
+      expect(await screen.findByLabelText(/email address/i)).toHaveAttribute('type', 'email');
+      expect(screen.getByRole('button', {name: /sign me up/i})).toBeInTheDocument();
     });
   });
 });

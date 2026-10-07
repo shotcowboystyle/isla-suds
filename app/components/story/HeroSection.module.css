@@ -21,7 +21,9 @@
 .hero-section[data-hero-state='pending'] .hero-text,
 .hero-section[data-hero-state='pending'] .clipped-text-box,
 .hero-section[data-hero-state='pending'] .paragraph,
-.hero-section[data-hero-state='pending'] .cta {
+.hero-section[data-hero-state='pending'] .cta,
+.hero-section[data-hero-state='pending'] .bar-burst,
+.hero-section[data-hero-state='pending'] .foam img {
   visibility: hidden;
   animation: hero-entrance-failsafe 0s linear 6s forwards;
 }
@@ -197,5 +199,174 @@
     font-size: 1.04vw;
     width: 28vw;
     line-height: 115%;
+  }
+}
+
+/* ------------------------------------------------------------------ scene --
+   Planes, back to front: sky plate, far bars, copy, mid bars, foam, near bar.
+   Each plane is moved independently on scroll (`data-travel`) and toward the
+   pointer (`data-lean`), so depth comes from different rates, not one image. */
+
+.scene-back,
+.scene-front {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.scene-back {
+  z-index: 1;
+}
+.scene-front {
+  z-index: 4;
+}
+
+.plate {
+  position: absolute;
+  inset: -6% -3% -12%;
+}
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bar {
+  position: absolute;
+}
+.bar-lean,
+.bar-burst {
+  width: 100%;
+}
+.bar-img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2.4vw 2.2vw rgb(31 72 74 / 0.28));
+  animation: bar-bob var(--bob-duration, 6s) ease-in-out infinite alternate;
+  animation-delay: var(--bob-delay, 0s);
+}
+
+@keyframes bar-bob {
+  from {
+    transform: translateY(-1.2%) rotate(-1.5deg);
+  }
+  to {
+    transform: translateY(1.2%) rotate(1.5deg);
+  }
+}
+
+/* Mobile slots first. The copy sits in the upper half on a phone, so the bars
+   gather around the CTA and the bottom edge instead of the sides. */
+.bar-far-a {
+  left: 9vw;
+  top: 52vh;
+  width: 13vw;
+  rotate: -18deg;
+  filter: blur(2px);
+  --bob-duration: 7s;
+}
+.bar-far-b {
+  right: 34vw;
+  top: 60vh;
+  width: 10vw;
+  rotate: 22deg;
+  filter: blur(2.5px);
+  --bob-duration: 8s;
+  --bob-delay: -3s;
+}
+.bar-far-c {
+  display: none;
+}
+.bar-mid-a {
+  left: -6vw;
+  bottom: 9vh;
+  width: 44vw;
+  /* The lavender art has its label running top to bottom; this turns the
+     label close to level so it reads. */
+  rotate: 122deg;
+  --bob-duration: 5.5s;
+  --bob-delay: -1s;
+}
+.bar-mid-b {
+  right: -4vw;
+  bottom: 13vh;
+  width: 36vw;
+  rotate: 18deg;
+  --bob-duration: 6.5s;
+  --bob-delay: -4s;
+}
+.bar-near {
+  right: -16vw;
+  top: 40vh;
+  width: 36vw;
+  rotate: -24deg;
+  filter: blur(4px);
+  --bob-duration: 7.5s;
+  --bob-delay: -2s;
+}
+
+.foam {
+  position: absolute;
+  left: -35vw;
+  width: 170vw;
+  /* The foam art is 2.8:1, so its rendered height is 0.357 × its width. Park
+     it so only the crest shows: about 14vh on a phone, 18vh on desktop. */
+  bottom: calc(14vh - 60.7vw);
+}
+.foam img {
+  width: 100%;
+  height: auto;
+}
+
+@media screen and (min-width: 768px) {
+  .bar-far-a {
+    left: 13vw;
+    top: 13vh;
+    width: 8vw;
+  }
+  .bar-far-b {
+    right: auto;
+    left: 61vw;
+    top: 9vh;
+    width: 6.5vw;
+  }
+  .bar-far-c {
+    display: block;
+    left: 77vw;
+    top: 24vh;
+    width: 8vw;
+    rotate: -10deg;
+    filter: blur(1.5px);
+    --bob-duration: 6s;
+    --bob-delay: -5s;
+  }
+  .bar-mid-a {
+    left: 2vw;
+    bottom: auto;
+    top: 50vh;
+    width: 21vw;
+    rotate: 112deg;
+  }
+  .bar-mid-b {
+    right: auto;
+    left: 63vw;
+    top: 63vh;
+    width: 14vw;
+  }
+  .bar-near {
+    right: -7vw;
+    top: 30vh;
+    width: 22vw;
+    filter: blur(5px);
+  }
+  .foam {
+    left: -15vw;
+    width: 130vw;
+    bottom: calc(18vh - 46.4vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-img {
+    animation: none;
   }
 }

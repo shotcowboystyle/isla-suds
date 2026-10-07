@@ -1,0 +1,245 @@
+/* Tall section, sticky stage: the scroll distance is the scene's length and
+   the largest on the page. */
+.scene {
+  position: relative;
+  z-index: 2;
+  height: 320svh;
+  background-color: var(--color-black);
+}
+@media screen and (min-width: 1024px) {
+  .scene {
+    height: 500svh;
+  }
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.doors {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.door {
+  position: absolute;
+  inset: 0;
+}
+.door img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.door-left {
+  clip-path: inset(0 50% 0 0);
+}
+.door-right {
+  clip-path: inset(0 0 0 50%);
+}
+
+/* Closed for the night: everything dark except the sign. */
+.lights {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: radial-gradient(ellipse at 50% 30%, rgb(10 12 20 / 0.55), rgb(10 12 20 / 0.82));
+  pointer-events: none;
+}
+
+.sign {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 800px;
+  pointer-events: none;
+}
+.sign-string {
+  width: 3px;
+  height: 18svh;
+  background: var(--color-light-brown);
+}
+.sign-inner {
+  position: relative;
+  display: grid;
+  transform-style: preserve-3d;
+}
+.sign-face {
+  grid-area: 1 / 1;
+  padding: 0.15em 0.6em 0.25em;
+  border: 4px solid var(--color-black);
+  border-radius: 14px;
+  backface-visibility: hidden;
+  font-family: var(--font-sans);
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  box-shadow: 0 0 40px rgb(234 93 93 / 0.35);
+}
+.sign-closed {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+}
+.sign-open {
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  transform: rotateY(180deg);
+  box-shadow: 0 0 40px rgb(252 202 117 / 0.4);
+}
+
+.order,
+.punchline {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  border: 3px solid var(--color-black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+  opacity: 0;
+}
+.order {
+  top: 16svh;
+  right: 5vw;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 18px 12px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  transform: rotate(4deg);
+}
+.order-label {
+  font-size: 0.95rem;
+  color: var(--color-red-brown);
+}
+.order-stack {
+  display: grid;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+}
+.order-variant {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.order-variant.is-active {
+  visibility: visible;
+}
+
+.punchline {
+  left: 5vw;
+  bottom: 13svh;
+  max-width: 88vw;
+  padding: 0.15em 0.4em 0.25em;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  transform: rotate(-3deg);
+}
+
+.watch {
+  position: absolute;
+  z-index: 2;
+  left: 5vw;
+  bottom: 5svh;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 2px solid var(--color-black);
+  border-radius: 9999px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.watch:hover {
+  background: var(--color-accent-secondary);
+}
+.watch:focus-visible,
+.full-cut-close:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 4px;
+}
+
+@media screen and (max-width: 767px) {
+  .order {
+    top: 12svh;
+    right: 4vw;
+  }
+  .punchline {
+    left: 4vw;
+    bottom: 16svh;
+  }
+  /* Top-left on phones: the venue chip owns the bottom edge. */
+  .watch {
+    left: 4vw;
+    top: 12svh;
+    bottom: auto;
+  }
+}
+
+/* Reduced motion: the finished scene, one screen tall, nothing to scrub. */
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    height: auto;
+  }
+  .doors,
+  .lights,
+  .sign {
+    display: none;
+  }
+  .order,
+  .punchline {
+    opacity: 1;
+  }
+}
+
+.full-cut {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: min(92vw, 1280px);
+  overflow: visible;
+}
+.full-cut::backdrop {
+  background: rgb(20 20 26 / 0.86);
+}
+.full-cut-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: var(--color-black);
+}
+.full-cut-close {
+  position: absolute;
+  top: -48px;
+  right: 0;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
