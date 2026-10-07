@@ -1,0 +1,144 @@
+.section {
+  position: relative;
+  padding: 16vw 5vw 14vw;
+  background: var(--color-primary);
+}
+@media screen and (min-width: 992px) {
+  .section {
+    padding: 8vw 5vw 7vw;
+  }
+}
+
+.title {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.shelf {
+  position: relative;
+  margin-top: 4vw;
+  aspect-ratio: 16 / 9;
+  border: 3px solid var(--color-black);
+  border-radius: 24px;
+  overflow: visible;
+}
+.plate {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 21px;
+}
+
+/* Four spots standing on the shelf line (62% down the art). */
+.slot {
+  position: absolute;
+  bottom: 36%;
+  width: 17%;
+  aspect-ratio: 1;
+}
+.sibling {
+  object-fit: contain;
+  filter: drop-shadow(0 1vw 1vw rgb(20 50 50 / 0.3));
+}
+.slot-0 {
+  left: 9%;
+}
+.slot-1 {
+  left: 31%;
+}
+.slot-2 {
+  left: 53%;
+}
+.slot-3 {
+  left: 75%;
+}
+/* Only the siblings tilt in CSS; the dock passes its tilt to the traveler. */
+.sibling.slot-0 {
+  rotate: calc(var(--bar-rot, 0deg) + -8deg);
+}
+.sibling.slot-1 {
+  rotate: calc(var(--bar-rot, 0deg) + 6deg);
+}
+.sibling.slot-2 {
+  rotate: calc(var(--bar-rot, 0deg) + -4deg);
+}
+.sibling.slot-3 {
+  rotate: calc(var(--bar-rot, 0deg) + 8deg);
+}
+
+.tags {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+  list-style: none;
+  padding: 0;
+}
+@media screen and (min-width: 768px) {
+  .tags {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3vw;
+    margin-top: 2vw;
+  }
+}
+.tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 2px solid var(--color-black);
+  border-radius: 16px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+}
+.tag small {
+  margin-top: 4px;
+  font-family:
+    Proxima Nova,
+    sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: none;
+  color: var(--color-dark-brown);
+}
+a.tag:hover {
+  background: var(--color-accent-secondary);
+}
+a.tag:focus-visible {
+  outline: 3px solid var(--color-black);
+  outline-offset: 3px;
+}
+.is-current {
+  background: var(--color-black);
+  color: var(--color-secondary);
+  transform: rotate(-2deg);
+}
+.is-current small {
+  color: var(--color-accent-secondary);
+}
+
+.all {
+  margin-top: 28px;
+  color: var(--color-black);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+.all a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.all a:hover {
+  color: var(--color-secondary);
+}

@@ -286,9 +286,9 @@ test.describe('Full B2C Journey - Smoke Tests', () => {
       {text: 'Home', href: '/'},
       {text: 'About', href: '/about'},
       {text: 'Contact', href: '/contact'},
-      {text: 'Wholesale', href: '/wholesale'},
-      {text: 'Privacy Policy', href: '/privacy'},
-      {text: 'Terms of Service', href: '/terms'},
+      {text: 'Wholesale', href: '/partners'},
+      {text: 'Privacy Policy', href: '/policies/privacy-policy'},
+      {text: 'Terms of Service', href: '/policies/terms-of-service'},
     ];
 
     for (const {text, href} of expectedLinks) {

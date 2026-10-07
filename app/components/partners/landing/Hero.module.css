@@ -1,169 +1,327 @@
-/* Sticky hero: every following section must paint over it, so it sits at the
-   bottom of the stack. Raising this above 0 re-breaks the scroll overlap. */
-.hero-section {
-  z-index: 0;
-  width: auto;
-  height: 100vh;
-  display: flex;
-  position: sticky;
-  top: 0;
-  overflow: hidden;
-}
-
-.hero-section-container {
-  background-color: transparent;
-  background-image: linear-gradient(180deg, #90cfd3 64%, #fcf4e1 100%);
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  display: flex;
+.hero {
   position: relative;
+  z-index: 1;
+  height: 100svh;
+  min-height: 640px;
   overflow: hidden;
-  border-radius: 0;
-  backface-visibility: hidden;
-  opacity: 0;
 }
 
-@media screen and (min-width: 992px) {
-  .hero-section-container {
-    justify-content: center;
+/* Entrance gate, same contract as the homepage hero: nothing animated paints
+   in its final spot before the timeline owns it. The failsafe reveals it
+   anyway if the entrance never runs (no JS). */
+.hero[data-hero-state='pending'] .title-line,
+.hero[data-hero-state='pending'] .sticker,
+.hero[data-hero-state='pending'] [data-hero-rest],
+.hero[data-hero-state='pending'] .bar-hop,
+.hero[data-hero-state='pending'] .bar-shadow {
+  visibility: hidden;
+  animation: hero-entrance-failsafe 0s linear 6s forwards;
+}
+@keyframes hero-entrance-failsafe {
+  to {
+    visibility: visible;
   }
 }
 
-.hero-section-content {
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-secondary);
+}
+
+/* ------------------------------------------------------------ the room --
+   The plate box has the art's own aspect ratio and covers the hero like
+   object-fit: cover would, so bars placed in % of the box stay glued to the
+   counter at every viewport. Desktop art is 16:9; phones get a centre crop. */
+.plate-travel {
+  position: absolute;
+  inset: -4% 0 -10%;
+  container-type: size;
+}
+.plate-box {
+  /* Centred with calc, not translate: GSAP folds the CSS translate property
+     into its own transform when it leans this box toward the pointer. */
+  --ratio: calc(1360 / 1520);
+  --w: max(100cqw, calc(100cqh * var(--ratio)));
+  --h: max(100cqh, calc(100cqw / var(--ratio)));
+  position: absolute;
+  width: var(--w);
+  height: var(--h);
+  left: calc((100cqw - var(--w)) / 2);
+  top: calc((100cqh - var(--h)) / 2);
+}
+@media screen and (min-width: 768px) {
+  .plate-box {
+    --ratio: calc(16 / 9);
+  }
+}
+
+.plate {
+  position: absolute;
+  inset: 0;
+}
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.counter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--counter);
+  height: 0;
   z-index: 3;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  position: relative;
+}
+
+.bar {
+  position: absolute;
+  bottom: 0;
+  width: 14%;
+}
+.bar-rosemary {
+  left: 30%;
+}
+.bar-lavender {
+  left: 42%;
+  z-index: 2;
+  bottom: -1%;
+}
+.bar-lemongrass {
+  left: 54%;
+}
+@media screen and (min-width: 768px) {
+  .bar {
+    width: 9.5%;
+  }
+  .bar-rosemary {
+    left: 56%;
+  }
+  .bar-lavender {
+    left: 62.5%;
+  }
+  .bar-lemongrass {
+    left: 69%;
+  }
+}
+
+.bar-hop {
+  transform-origin: 50% 100%;
+}
+.bar-hop img {
   width: 100%;
-  padding-top: 20%;
-}
-
-@media screen and (min-width: 480px) {
-  .hero-section-content {
-    padding-top: 10%;
-  }
-}
-
-@media screen and (min-width: 992px) {
-  .hero-section-content {
-    padding-top: 0;
-  }
-}
-
-.letter-animation {
-  margin-bottom: 2vw;
-}
-@media screen and (min-width: 992px) {
-  .letter-animation {
-    margin-bottom: 1vw;
-  }
-}
-
-.hero-text {
-  color: var(--color-black);
-  direction: ltr;
-  letter-spacing: -0.35vw;
-  text-indent: 0;
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  flex-flow: column;
-  justify-content: flex-start;
-  align-items: center;
-  font-family: var(--font-sans);
-  font-weight: 700;
+  height: auto;
   display: block;
-  font-size: 13vw;
-  line-height: 120%;
-  overflow: hidden;
+}
+.bar-shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -6%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(40 30 20 / 0.45), rgb(40 30 20 / 0));
+  transform-origin: 50% 50%;
 }
 
-@media screen and (min-width: 992px) {
-  .hero-text {
-    font-size: 7.8vw;
-    line-height: 9vw;
-  }
-}
-
-.clipped-box {
-  background-color: var(--color-accent-secondary);
-  outline-offset: 0px;
-  perspective: none;
-  perspective-origin: 0%;
-  transform-origin: 0%;
-  color: var(--color-dark-brown);
-  border: 0 solid var(--color-black);
-  outline: 0.5vw solid var(--color-teal-lighter);
-  justify-content: center;
-  align-items: center;
-  margin-top: 0;
-  margin-bottom: 24px;
-  width: auto;
-  opacity: 1;
-  padding: 0;
-  display: flex;
+/* ------------------------------------------------------------- the copy -- */
+.copy {
   position: relative;
-  top: auto;
-  overflow: hidden;
-  transform: rotate(-2deg);
+  z-index: 4;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding: max(88px, 11vh) 5vw 0;
 }
-
-@media screen and (min-width: 480px) {
-  .clipped-box {
-    margin-bottom: 2vw;
+@media screen and (min-width: 768px) {
+  .copy {
+    max-width: 50vw;
+    padding: 18vh 0 0 5vw;
+    gap: 22px;
   }
 }
 
-@media screen and (min-width: 992px) {
-  .clipped-box {
-    transform: rotate(-3deg);
-  }
+/* A soft wash of cream only behind the copy, so the headline reads over the
+   busiest rooms (restaurant tile, café pattern) without dimming the photo. */
+.copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -6vh -14vw -8vh -10vw;
+  background: radial-gradient(ellipse at 35% 45%, rgb(252 244 225 / 0.78), rgb(252 244 225 / 0) 68%);
+  pointer-events: none;
 }
 
-.heading-1 {
-  letter-spacing: -0.35vw;
-  flex-flow: row;
-  flex: none;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 0 1.2vw 1vw;
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--color-black);
   font-family: var(--font-sans);
   font-weight: 700;
-  display: flex;
-  font-size: 13vw;
-  line-height: 120%;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
-
-@media screen and (min-width: 992px) {
-  .heading-1 {
-    font-size: 7.8vw;
-    line-height: 9vw;
+.title-line {
+  font-size: 15vw;
+  overflow: hidden;
+}
+.sticker {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 0.5vw;
+  background-color: var(--color-accent-secondary);
+  outline: 0.5vw solid var(--color-teal-lighter);
+  transform: rotate(-3deg);
+  transform-origin: 0% 50%;
+}
+.sticker-text {
+  font-size: 11vw;
+  padding: 0 1.2vw 0.6vw;
+}
+@media screen and (min-width: 768px) {
+  .title-line {
+    font-size: 7.4vw;
+  }
+  .sticker-text {
+    font-size: 6.2vw;
   }
 }
 
-.paragraph {
-  text-align: center;
-  font-family:
-    Proxima Nova,
-    sans-serif;
-  font-weight: 400;
+.switcher {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  max-width: 100%;
+}
+.switcher-legend {
+  margin-bottom: 8px;
   color: var(--color-black);
-  margin-block: 0;
-  font-size: 16px;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
   font-weight: 700;
-  width: 80%;
-  line-height: 120%;
+  text-transform: uppercase;
 }
 
+/* A snap strip on phones, a wrapped row of stickers on desktop. */
+.chips {
+  display: flex;
+  gap: 8px;
+  max-width: 90vw;
+  padding: 6px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+@media screen and (min-width: 768px) {
+  .chips {
+    flex-wrap: wrap;
+    max-width: none;
+    overflow: visible;
+    mask-image: none;
+  }
+}
+
+.chip {
+  position: relative;
+  flex: none;
+  scroll-snap-align: center;
+}
+.chip-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.chip-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 2px solid var(--color-black);
+  border-radius: 9999px;
+  background-color: var(--color-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition:
+    background-color 0.2s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.chip:hover .chip-label {
+  background-color: var(--color-white);
+}
+.chip-input:checked + .chip-label {
+  background-color: var(--color-accent-secondary);
+  transform: rotate(-4deg) scale(1.06);
+  box-shadow: 0 4px 0 var(--color-black);
+}
+.chip-input:focus-visible + .chip-label {
+  outline: 3px solid var(--color-teal-dark);
+  outline-offset: 3px;
+}
+
+/* Every venue's line is stacked in one cell, so switching never changes the
+   hero's height. */
+.lines {
+  display: grid;
+  max-width: 34rem;
+}
+.line {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background-color: rgb(252 244 225 / 0.88);
+  color: var(--color-dark-brown);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.line-active {
+  visibility: visible;
+}
 @media screen and (min-width: 992px) {
-  .paragraph {
-    font-size: 1.04vw;
-    width: 28vw;
-    line-height: 115%;
+  .line {
+    font-size: 1.35rem;
+  }
+}
+
+/* ---------------------------------------------------------- foreground -- */
+.near {
+  position: absolute;
+  z-index: 5;
+  right: -18vw;
+  bottom: -6vh;
+  width: 46vw;
+  pointer-events: none;
+}
+.near img {
+  width: 100%;
+  height: auto;
+  rotate: -22deg;
+  filter: blur(5px) drop-shadow(0 2vw 2vw rgb(31 72 74 / 0.3));
+}
+@media screen and (min-width: 768px) {
+  .near {
+    right: -6vw;
+    bottom: -14vh;
+    width: 22vw;
   }
 }

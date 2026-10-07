@@ -1,10 +1,13 @@
 import {useFetcher} from 'react-router';
+import {FOOTER} from '~/content/footer';
 import styles from './NewsletterSignup.module.css';
 
 interface NewsletterResponse {
   success?: boolean;
   error?: string;
 }
+
+const COPY = FOOTER.newsletter;
 
 export const NewsletterSignup = () => {
   const fetcher = useFetcher<NewsletterResponse>();
@@ -13,65 +16,48 @@ export const NewsletterSignup = () => {
   const error = fetcher.data?.error;
 
   return (
-    <div className={styles['newsletter-signup-wrapper']}>
-      <p className={styles['paragraph']}>
-        Get exclusive early access and stay informed about product updates, events, and more!
-      </p>
+    <div className={styles.card}>
+      <h3 className={styles.heading}>{COPY.heading}</h3>
+      <p className={styles.body}>{COPY.body}</p>
 
-      <div className={styles['footer-form']}>
-        {!isSuccess ? (
-          <fetcher.Form
-            method="post"
-            action="/api/newsletter"
-            id="newsletter-form"
-            name="newsletter-form"
-            data-name="newsletter-form"
-            className={styles['footer-form']}
-            aria-label="Newsletter signup"
-          >
-            <input
-              className={styles['text-field']}
-              maxLength={256}
-              name="email"
-              placeholder="Enter your email"
-              type="email"
-              id="newsletter-email"
-              required={true}
-              disabled={isSubmitting}
-            />
+      {!isSuccess ? (
+        <fetcher.Form
+          method="post"
+          action="/api/newsletter"
+          id="newsletter-form"
+          name="newsletter-form"
+          className={styles.form}
+          aria-label="Newsletter signup"
+        >
+          <label htmlFor="newsletter-email" className="sr-only">
+            {COPY.label}
+          </label>
+          <input
+            className={styles.field}
+            maxLength={256}
+            name="email"
+            placeholder={COPY.placeholder}
+            type="email"
+            id="newsletter-email"
+            autoComplete="email"
+            required
+            disabled={isSubmitting}
+          />
+          <button type="submit" className={styles.submit} disabled={isSubmitting}>
+            {isSubmitting ? COPY.submitting : COPY.submit}
+          </button>
+        </fetcher.Form>
+      ) : (
+        <div className={styles.success} tabIndex={-1} role="region" aria-label="Newsletter signup success">
+          {COPY.success}
+        </div>
+      )}
 
-            <input
-              type="submit"
-              className={styles['submit-button']}
-              value=""
-              disabled={isSubmitting}
-              aria-label={isSubmitting ? 'Subscribing...' : 'Subscribe'}
-            />
-          </fetcher.Form>
-        ) : (
-          <div
-            className={styles['form-submit-success']}
-            tabIndex={-1}
-            role="region"
-            aria-label="Newsletter signup success"
-            style={{display: 'block'}}
-          >
-            <div>Thank you! Your submission has been received!</div>
-          </div>
-        )}
-
-        {error && (
-          <div
-            className={styles['form-submit-failure']}
-            tabIndex={-1}
-            role="alert"
-            aria-label="Newsletter signup failure"
-            style={{display: 'block'}}
-          >
-            <div>{error}</div>
-          </div>
-        )}
-      </div>
+      {error && (
+        <div className={styles.failure} tabIndex={-1} role="alert" aria-label="Newsletter signup failure">
+          {error}
+        </div>
+      )}
     </div>
   );
 };

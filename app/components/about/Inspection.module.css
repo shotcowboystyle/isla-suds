@@ -1,0 +1,366 @@
+.isla {
+  position: relative;
+  background-color: #14161d;
+}
+
+/* ------------------------------------------------------------ the why --
+   The quietest thing on the page, right before the loudest. */
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  max-width: 64rem;
+  padding: 18svh 5vw 10svh;
+}
+.heading {
+  padding: 0 0.15em 0.08em;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  outline: 3px solid var(--color-black);
+  transform: rotate(-2deg);
+  text-align: left;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+.body {
+  color: var(--color-secondary);
+  font-size: clamp(1.3rem, 2.2vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ----------------------------------------------------------- the scene -- */
+.scene {
+  position: relative;
+  height: 300svh;
+}
+@media screen and (min-width: 1024px) {
+  .scene {
+    height: 400svh;
+  }
+}
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  container-type: size;
+}
+
+/* Cover box with the plate's aspect, so the bar and the duck stay on the desk. */
+.frame {
+  --ratio: calc(1100 / 1530);
+  --w: max(100cqw, calc(100cqh * var(--ratio)));
+  --h: max(100cqh, calc(100cqw / var(--ratio)));
+  /* Measured off the art: where the bar and the duck stand in the pool of light. */
+  --bar-l: 24%;
+  --bar-w: 30%;
+  --duck-l: 56%;
+  --duck-w: 22%;
+  position: absolute;
+  width: var(--w);
+  height: var(--h);
+  left: calc((100cqw - var(--w)) / 2);
+  top: calc((100cqh - var(--h)) / 2);
+}
+@media screen and (min-width: 768px) {
+  .frame {
+    --ratio: calc(16 / 9);
+    --bar-l: 33%;
+    --bar-w: 14%;
+    --duck-l: 50%;
+    --duck-w: 10.5%;
+  }
+}
+
+.plate-dark,
+.plate-lit {
+  position: absolute;
+  inset: 0;
+}
+.plate-dark img,
+.plate-lit img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Lights off: the same photo, nearly black and cold. */
+.plate-dark img {
+  filter: brightness(0.16) saturate(0.6) hue-rotate(-12deg);
+}
+
+.bar {
+  position: absolute;
+  left: var(--bar-l);
+  width: var(--bar-w);
+  bottom: 12.5%;
+  container-type: inline-size;
+  filter: drop-shadow(0 1cqw 1.2cqw rgb(60 30 10 / 0.35));
+}
+.bar > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The duck's magnifying glass. Everything is in cqw of the bar, so the
+   magnified copy lines up with the bar under it wherever the lens is. */
+.lens {
+  --lx: 50;
+  --d: 46;
+  --cy: 40;
+  --m: 2.2;
+  position: absolute;
+  left: calc((var(--lx) - var(--d) / 2) * 1cqw);
+  top: calc((var(--cy) - var(--d) / 2) * 1cqw);
+  width: calc(var(--d) * 1cqw);
+  height: calc(var(--d) * 1cqw);
+  opacity: 0;
+}
+.glass {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 2.4cqw solid #b98a2e;
+  border-radius: 50%;
+  background: #f2efe6;
+  box-shadow:
+    inset 0 0 0 0.8cqw rgb(255 255 255 / 0.5),
+    0 1.4cqw 2.4cqw rgb(40 20 0 / 0.35);
+}
+.glass img {
+  position: absolute;
+  width: calc(100cqw * var(--m));
+  max-width: none;
+  left: calc((var(--d) / 2 - var(--lx) * var(--m)) * 1cqw - 2.4cqw);
+  top: calc((var(--d) / 2 - var(--cy) * var(--m)) * 1cqw - 2.4cqw);
+}
+/* The handle. */
+.lens::after {
+  content: '';
+  position: absolute;
+  left: 82%;
+  top: 82%;
+  width: 7cqw;
+  height: 30cqw;
+  border-radius: 3cqw;
+  background: linear-gradient(90deg, #6b3f1d, #9a6331, #6b3f1d);
+  transform: rotate(-45deg);
+  transform-origin: 50% 0;
+}
+
+.duck {
+  position: absolute;
+  left: var(--duck-l);
+  width: var(--duck-w);
+  bottom: 12%;
+  height: auto;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 0.6cqw 0.8cqw rgb(60 30 10 / 0.3));
+}
+
+.caption {
+  position: absolute;
+  left: calc(var(--duck-l) - 3%);
+  bottom: 39%;
+  max-width: 13em;
+  padding: 0.3em 0.7em 0.4em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(0.85rem, 1.05vw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(6deg);
+}
+@media screen and (min-width: 768px) {
+  .caption {
+    bottom: 38%;
+  }
+}
+
+.silence {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8vw;
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: clamp(1.8rem, 4vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------- the report + promise --
+   Phones stack them at the top, above the desk. On desktop each takes its own
+   corner of the wall: the report right, the promise between it and the lamp. */
+.board {
+  position: absolute;
+  top: max(80px, 10svh);
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+@media screen and (min-width: 1024px) {
+  .board {
+    display: contents;
+  }
+}
+
+.report {
+  position: relative;
+  padding: 16px 18px 4.2em;
+  border-radius: 6px;
+  background: #fffdf6;
+  box-shadow: 0 1vw 2vw rgb(10 20 30 / 0.3);
+  transform: rotate(-2deg);
+}
+@media screen and (min-width: 1024px) {
+  .report {
+    position: absolute;
+    top: 14svh;
+    right: 5vw;
+    width: min(27vw, 400px);
+    padding: 26px 28px 6.5em;
+  }
+}
+.report-title {
+  margin-bottom: 10px;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1.1rem, 1.6vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.checklist {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1f3fa8;
+  font-family: 'Caveat', cursive;
+  font-size: clamp(1.25rem, 1.7vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+.box {
+  flex: none;
+  width: 1.2em;
+  height: 1.2em;
+  overflow: visible;
+}
+.box rect {
+  fill: none;
+  stroke: var(--color-black);
+  stroke-width: 1.8;
+}
+.box path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+
+.ink {
+  position: absolute;
+  right: 8%;
+  bottom: 0.35em;
+  padding: 0.05em 0.3em 0.12em;
+  border: 0.12em solid var(--color-accent);
+  border-radius: 0.14em;
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-size: clamp(2.2rem, 4.4vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 0.9;
+  transform: rotate(-14deg);
+  mix-blend-mode: multiply;
+}
+.tool {
+  position: absolute;
+  right: 4%;
+  bottom: 4%;
+  width: 34%;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 1.4vw 1.6vw rgb(10 20 30 / 0.35));
+}
+
+.quote {
+  margin: 0;
+  transform-origin: 0 50%;
+  padding: 0.3em 0.5em 0.4em;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  outline: 3px solid var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1.6rem, 6.4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.04;
+  text-transform: uppercase;
+  transform: rotate(1.5deg);
+}
+.quote p {
+  font: inherit;
+  color: inherit;
+}
+@media screen and (min-width: 1024px) {
+  .quote {
+    position: absolute;
+    left: 33vw;
+    top: 12svh;
+    width: 33vw;
+    font-size: 3.5vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    height: auto;
+  }
+  .stage {
+    position: relative;
+    height: 100svh;
+    min-height: 640px;
+  }
+  .silence {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+
+/* Bar and duck share one wrapper, so the lamp can light them with the room. */
+.items {
+  position: absolute;
+  inset: 0;
+}

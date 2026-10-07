@@ -2,12 +2,13 @@ import {useEffect, useRef, useState, useCallback} from 'react';
 import {NavLink, useLocation} from 'react-router';
 import GSAP from 'gsap';
 import {SplitText} from 'gsap/SplitText';
-import AboutUsImage from '~/assets/images/menu-about-us.webp';
-import ContactImage from '~/assets/images/menu-catalog.png';
-import CatalogImage from '~/assets/images/menu-contact.jpeg';
-import HomeImage from '~/assets/images/menu-home.png';
-import PoliciesImage from '~/assets/images/menu-policies.webp';
+import AboutImage from '~/assets/images/menu-about.webp';
+import ContactImage from '~/assets/images/menu-contact.webp';
+import HomeImage from '~/assets/images/menu-home.webp';
+import ShopImage from '~/assets/images/menu-shop.webp';
+import StoresImage from '~/assets/images/menu-stores.webp';
 import WholesaleImage from '~/assets/images/menu-wholesale.webp';
+import {preloadImages} from '~/lib/shopify/preload';
 import type {HeaderQuery} from 'storefrontapi.generated';
 
 const FALLBACK_HEADER_MENU = {
@@ -31,7 +32,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/collections/frontpage',
       items: [],
-      image: CatalogImage,
+      image: ShopImage,
     },
     {
       id: 'gid://shopify/MenuItem/461609533496',
@@ -41,7 +42,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/locations',
       items: [],
-      image: PoliciesImage,
+      image: StoresImage,
     },
     {
       id: 'gid://shopify/MenuItem/wholesale-portal',
@@ -61,7 +62,7 @@ const FALLBACK_HEADER_MENU = {
       type: 'PAGE',
       url: '/about',
       items: [],
-      image: AboutUsImage,
+      image: AboutImage,
     },
     {
       id: 'gid://shopify/MenuItem/461609566264',
@@ -120,6 +121,14 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
       resetActiveMenu();
     }
   }, [open, resetActiveMenu]);
+
+  // The menu mounts when it opens; warm every link's image so the first hover doesn't flash.
+  useEffect(() => {
+    preloadImages(
+      FALLBACK_HEADER_MENU.items.map((item) => item.image),
+      {fetchpriority: 'low'},
+    );
+  }, []);
 
   useEffect(() => {
     const ctx = GSAP.context(() => {
@@ -273,9 +282,11 @@ export default function HeaderMenu({menu, primaryDomainUrl, publicStoreDomain, o
         </div>
 
         <div className="hidden lg:flex w-[57%] lg:w-1/2 h-full pointer-events-none">
+          {/* Decorative: it only illustrates the hovered link. */}
           <img
             src={FALLBACK_HEADER_MENU.items[activeMenu]?.image ?? HomeImage}
-            alt={FALLBACK_HEADER_MENU.items[activeMenu]?.title ?? ''}
+            alt=""
+            aria-hidden="true"
             className="w-full h-screen! object-cover transition-opacity duration-500"
           />
         </div>

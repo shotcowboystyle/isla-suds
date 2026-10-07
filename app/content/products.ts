@@ -1,9 +1,11 @@
-import EucalyptusBarImage from '~/assets/images/eucalyptus-soap-bar.webp';
-import LavenderElementsImage from '~/assets/images/lavender-elements.webp';
-import LavenderBarImage from '~/assets/images/lavender-soap-bar.webp';
-import LemongrassBarImage from '~/assets/images/lemongrass-soap-bar.webp';
-import MintElementsImage from '~/assets/images/mint-elements.webp';
-import RosemarySeaSaltBarImage from '~/assets/images/rosemary-sea-salt-soap-bar.webp';
+import EucalyptusBarImage from '~/assets/images/home/bar-eucalyptus.webp';
+import LavenderBarImage from '~/assets/images/home/bar-lavender.webp';
+import LemongrassBarImage from '~/assets/images/home/bar-lemongrass.webp';
+import RosemarySeaSaltBarImage from '~/assets/images/home/bar-rosemary.webp';
+import EucalyptusBotanicals from '~/assets/images/home/botanicals-eucalyptus.webp';
+import LavenderBotanicals from '~/assets/images/home/botanicals-lavender.webp';
+import LemongrassBotanicals from '~/assets/images/home/botanicals-lemongrass.webp';
+import RosemaryBotanicals from '~/assets/images/home/botanicals-rosemary.webp';
 
 /**
  * Product Content Layer - Centralized content management with Shopify metafield fallbacks
@@ -183,7 +185,7 @@ export const productsList = [
     toUrl: '/products/eucalyptus',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: EucalyptusBarImage,
-    particlesUrl: MintElementsImage,
+    particlesUrl: EucalyptusBotanicals,
   },
   {
     name: 'Lemongrass',
@@ -191,7 +193,7 @@ export const productsList = [
     toUrl: '/products/lemongrass',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: LemongrassBarImage,
-    particlesUrl: MintElementsImage,
+    particlesUrl: LemongrassBotanicals,
   },
   {
     name: 'Lavender',
@@ -199,7 +201,7 @@ export const productsList = [
     toUrl: '/products/lavender',
     rotation: 'md:rotate-[-8deg] rotate-0',
     productImageUrl: LavenderBarImage,
-    particlesUrl: LavenderElementsImage,
+    particlesUrl: LavenderBotanicals,
   },
   {
     name: 'Rosemary Sea Salt',
@@ -207,7 +209,7 @@ export const productsList = [
     toUrl: '/products/rosemary-sea-salt',
     rotation: 'md:rotate-[8deg] rotate-0',
     productImageUrl: RosemarySeaSaltBarImage,
-    particlesUrl: MintElementsImage,
+    particlesUrl: RosemaryBotanicals,
   },
 ];
 

@@ -135,7 +135,7 @@ export const MessageSection = () => {
   );
 
   return (
-    <section>
+    <section data-wear-at="message">
       <div ref={sectionRef} className={styles['message-section-wrapper']}>
         <div className={styles['text-wrapper']}>
           <div className={styles['grid']}>
@@ -163,8 +163,8 @@ export const MessageSection = () => {
           </div>
 
           <p ref={paragraphRef} className={cn(styles['paragraph'])}>
-            Unscented goat milk soap is a gentle, nourishing bar, thoughtfully crafted for your sensitive, reactive, and
-            fragrance-intolerant skin.
+            Goat milk soap with no added fragrance: a gentle, nourishing bar, thoughtfully crafted for your sensitive,
+            reactive skin.
           </p>
         </div>
       </div>

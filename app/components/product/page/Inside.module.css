@@ -1,0 +1,176 @@
+.section {
+  position: relative;
+  display: grid;
+  gap: 8vw;
+  padding: 16vw 5vw;
+  background: var(--scent);
+}
+@media screen and (min-width: 992px) {
+  .section {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4vw;
+    padding: 8vw 5vw;
+  }
+}
+
+/* Phones: the bar, then the ingredients as a wrapped row underneath. */
+.ring {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+}
+.dock {
+  position: relative;
+  width: 46vw;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+/* Desktop: the ingredients orbit the bar. */
+@media screen and (min-width: 992px) {
+  .ring {
+    display: block;
+    width: min(40vw, 620px);
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+  .dock {
+    position: absolute;
+    left: 31%;
+    top: 31%;
+    width: 38%;
+  }
+  .chips {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .slot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    --angle: calc(360deg / var(--count) * var(--i) - 90deg);
+    transform: rotate(var(--angle)) translateX(min(19vw, 300px)) rotate(calc(-1 * var(--angle))) translate(-50%, -50%);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 16px 6px 8px;
+  border: 2px solid var(--color-black);
+  border-radius: 9999px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-size: 1.05rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.2s ease;
+}
+.chip:hover {
+  background: var(--color-white);
+}
+.chip.is-active {
+  background: var(--color-accent-secondary);
+  transform: rotate(-4deg) scale(1.08);
+  box-shadow: 0 4px 0 var(--color-black);
+}
+.chip:focus-visible {
+  outline: 3px solid var(--color-black);
+  outline-offset: 3px;
+}
+.chip-icon {
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  border: 2px solid var(--color-black);
+  border-radius: 50%;
+  background: var(--color-white);
+}
+
+.copy {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+.title {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.aside {
+  display: block;
+  margin-top: 6px;
+  color: var(--color-secondary);
+  font-size: 0.5em;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 0.35);
+}
+
+.panel {
+  min-height: 11rem;
+  padding: 22px 24px;
+  border: 3px solid var(--color-black);
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: 0 8px 0 var(--color-black);
+}
+.panel-title {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.panel-body {
+  margin-top: 8px;
+  color: var(--color-dark-brown);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.panel-note {
+  margin-top: 10px;
+  color: var(--color-black);
+  font-weight: 700;
+}
+
+.benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+.benefit {
+  padding: 6px 14px;
+  border: 2px solid var(--color-black);
+  background: var(--color-black);
+  color: var(--color-secondary);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.benefit:nth-child(odd) {
+  rotate: -2deg;
+}
+.benefit:nth-child(even) {
+  rotate: 1.5deg;
+}

@@ -1,0 +1,288 @@
+@font-face {
+  font-family: 'Homemade Apple';
+  src: url('/fonts/HomemadeApple-latin.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/Caveat-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------- the card --
+   Everything on the card is sized in cqw of the card, so the writing sits on
+   the same spot of paper at every width. */
+.card {
+  position: relative;
+  --pitch: 8.4cqw;
+  aspect-ratio: 1600 / 971;
+  container-type: inline-size;
+  transform: rotate(-2deg);
+  filter: drop-shadow(0 1.2cqw 1.6cqw rgb(60 30 20 / 0.28));
+}
+.paper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.writing {
+  position: absolute;
+  inset: 8.5cqw 6cqw 6cqw 8cqw;
+  /* The faint blue rules of an index card, one per written line. */
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent calc(var(--pitch) - 1px),
+    rgb(80 120 190 / 0.28) calc(var(--pitch) - 1px),
+    rgb(80 120 190 / 0.28) var(--pitch)
+  );
+  background-position: 0 0.9cqw;
+}
+.writing::before {
+  /* The red top rule. */
+  content: '';
+  position: absolute;
+  left: -2cqw;
+  right: -2cqw;
+  top: calc(var(--pitch) + 0.4cqw);
+  height: 2px;
+  background: rgb(206 80 80 / 0.5);
+}
+
+.title,
+.older {
+  color: #3b2a22;
+  font-family: 'Homemade Apple', cursive;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.title {
+  font-size: 4.4cqw;
+  line-height: var(--pitch);
+  padding-left: 1cqw;
+}
+
+.lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.line {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 2cqw;
+  height: var(--pitch);
+  line-height: var(--pitch);
+}
+.older {
+  flex: none;
+  width: 47cqw;
+  font-size: 3.1cqw;
+  white-space: nowrap;
+}
+
+/* Our ballpoint: quick, slanted, blue. */
+.note {
+  display: inline-block;
+  color: #1f3fa8;
+  font-family: 'Caveat', cursive;
+  font-size: 4.6cqw;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transform: rotate(-4deg) translateY(-0.6cqw);
+}
+.line:nth-child(3) .note {
+  font-size: 2.95cqw;
+}
+
+.loop {
+  position: absolute;
+  right: 4cqw;
+  top: calc(8.5cqw + var(--pitch) * 4 - 1.5cqw);
+  width: 34cqw;
+  overflow: visible;
+  pointer-events: none;
+}
+.loop path,
+.arrow path {
+  fill: none;
+  stroke: #1f3fa8;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+
+/* --------------------------------------------------------- Isla's edit -- */
+.isla {
+  position: absolute;
+  right: 3cqw;
+  bottom: -6cqw;
+  width: 40cqw;
+  height: 26cqw;
+}
+.isla-label {
+  position: absolute;
+  left: -13cqw;
+  top: 15.5cqw;
+  color: #1f3fa8;
+  font-family: 'Caveat', cursive;
+  font-size: 4cqw;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: rotate(-6deg);
+}
+.arrow {
+  position: absolute;
+  left: 2.5cqw;
+  top: 12.5cqw;
+  width: 9cqw;
+  overflow: visible;
+}
+.goat {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 28cqw;
+  overflow: visible;
+  transform: rotate(6deg);
+}
+.goat path {
+  fill: none;
+  stroke: #6a4bc4;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+
+/* The inspection's stamp, inked onto the finished card at the close. */
+.stamp {
+  position: absolute;
+  left: 8cqw;
+  bottom: 6cqw;
+  padding: 0.4cqw 2cqw 0.8cqw;
+  border: 0.9cqw solid var(--color-accent);
+  border-radius: 1.2cqw;
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-size: 7cqw;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  transform: rotate(-12deg);
+  mix-blend-mode: multiply;
+}
+
+/* --------------------------------------------------------------- the act -- */
+.act {
+  position: relative;
+  height: 200svh;
+  background-color: var(--color-accent);
+}
+@media screen and (min-width: 1024px) {
+  .act {
+    height: 260svh;
+  }
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6svh;
+  padding: max(84px, 10svh) 5vw 6svh;
+}
+@media screen and (min-width: 1024px) {
+  .stage {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4vw;
+    padding: 12svh 5vw 8svh;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 34rem;
+}
+@media screen and (min-width: 1024px) {
+  .copy {
+    flex: 0 0 34vw;
+    max-width: none;
+  }
+}
+
+.heading {
+  padding: 0 0.15em 0.08em;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  outline: 3px solid var(--color-black);
+  transform: rotate(-2deg);
+  text-align: left;
+  font-size: clamp(2.2rem, 4.6vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.body {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgb(252 244 225 / 0.95);
+  color: var(--color-black);
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sticker {
+  padding: 0.2em 0.6em 0.3em;
+  border: 2px solid var(--color-black);
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  transform: rotate(3deg);
+}
+
+.act-card {
+  width: min(92vw, 70svh * 1.5);
+  align-self: center;
+}
+@media screen and (min-width: 1024px) {
+  .act-card {
+    width: min(54vw, 72svh * 1.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .act {
+    height: auto;
+  }
+  .stage {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+  }
+}

@@ -1,0 +1,112 @@
+.section {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 10vw;
+  padding: 16vw 5vw;
+  background-color: var(--color-primary);
+}
+@media screen and (min-width: 992px) {
+  .section {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 5vw;
+    padding: 9vw 6vw;
+  }
+}
+
+.crate {
+  justify-self: center;
+  width: min(100%, 640px);
+  padding: 14px 14px 18px;
+  background: var(--color-white);
+  box-shadow: 0 18px 30px rgb(20 50 50 / 0.3);
+  transform: rotate(-3deg);
+}
+.crate-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.caption {
+  margin-top: 12px;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.copy {
+  display: grid;
+  gap: 28px;
+}
+
+.title {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+.aside {
+  display: inline-block;
+  color: var(--color-secondary);
+  transform: rotate(-4deg);
+}
+
+.reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+.reason {
+  padding: 8px 16px;
+  border: 2px solid var(--color-black);
+  border-radius: 9999px;
+  background: var(--color-secondary);
+  color: var(--color-black);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.reason:nth-child(odd) {
+  rotate: -1.5deg;
+}
+.reason:nth-child(even) {
+  rotate: 1.5deg;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 18px 10px;
+  border: 2px solid var(--color-black);
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  rotate: -4deg;
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 14px 100%, 0 50%);
+  padding-left: 26px;
+}
+.price-amount {
+  font-family: var(--font-sans);
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+.price-note {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stockists {
+  color: var(--color-black);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+}

@@ -1,0 +1,144 @@
+.close {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background-color: #f6eccb;
+}
+
+.plate {
+  position: absolute;
+  inset: 0;
+}
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 8svh;
+  min-height: 100svh;
+  padding: 12svh 6vw 10svh;
+}
+@media screen and (min-width: 1024px) {
+  .inner {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5vw;
+    padding: 12svh 12vw 10svh 9vw;
+  }
+}
+
+.pinned {
+  position: relative;
+  width: min(88vw, 30rem);
+}
+@media screen and (min-width: 1024px) {
+  .pinned {
+    width: 40vw;
+  }
+}
+.card {
+  transform: rotate(-4deg);
+}
+.magnet {
+  position: absolute;
+  left: 50%;
+  top: -7%;
+  width: 18%;
+  height: auto;
+  transform: translateX(-50%) rotate(8deg);
+  filter: drop-shadow(0 0.5vw 0.6vw rgb(80 60 30 / 0.35));
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+  max-width: 34rem;
+}
+
+.heading {
+  color: var(--color-black);
+  text-align: left;
+  font-size: clamp(2.6rem, 11vw, 5.4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+@media screen and (min-width: 1024px) {
+  .heading {
+    font-size: 5vw;
+  }
+}
+.stamp {
+  display: inline-block;
+  margin-top: 0.1em;
+  padding: 0 0.14em 0.08em;
+  background-color: var(--color-accent);
+  outline: 0.35vw solid var(--color-black);
+  color: var(--color-secondary);
+  transform: rotate(2.5deg);
+}
+
+.body {
+  color: var(--color-black);
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Fridge magnets: glossy, chunky, and they lift off the door when you reach for them. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 1.5em;
+  border: 3px solid var(--color-black);
+  border-radius: 999px;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 6px 0 rgb(255 255 255 / 0.35),
+    0 5px 0 var(--color-black);
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
+}
+.cta-primary {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+}
+.cta-secondary {
+  background: var(--color-primary);
+}
+.cta:hover,
+.cta:focus-visible {
+  transform: translateY(-4px) rotate(-3deg);
+  box-shadow:
+    inset 0 6px 0 rgb(255 255 255 / 0.35),
+    0 9px 0 var(--color-black);
+}
+.cta:focus-visible {
+  outline: 3px solid var(--color-teal-dark);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}

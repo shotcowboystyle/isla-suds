@@ -1,0 +1,15 @@
+.dock {
+  position: absolute;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1.6vw 1.4vw rgb(30 40 40 / 0.3));
+}
+/* The traveler is flying: it draws the bar, the dock just marks the spot. */
+.dock[data-live] .img {
+  visibility: hidden;
+}

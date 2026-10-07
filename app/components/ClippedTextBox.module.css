@@ -38,7 +38,9 @@
   justify-content: center;
   align-items: center;
   display: flex;
-  top: 2vw;
+  /* Low enough overlap that the longest sticker ("No added fragrance") still
+     reads with the next one slapped over its edge. */
+  top: 0.6vw;
   width: auto;
   overflow: hidden;
   transform: rotate(-1deg);

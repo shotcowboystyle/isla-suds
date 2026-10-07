@@ -1,0 +1,200 @@
+.hero {
+  position: relative;
+  z-index: 1;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+/* Entrance gate, same contract as the other heroes: nothing animated paints in
+   its final spot before the timeline owns it. The failsafe reveals it anyway
+   if the entrance never runs (no JS). */
+.hero[data-hero-state='pending'] .lead,
+.hero[data-hero-state='pending'] .sticker,
+.hero[data-hero-state='pending'] .body {
+  visibility: hidden;
+  animation: hero-entrance-failsafe 0s linear 6s forwards;
+}
+@keyframes hero-entrance-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* The wall's aqua, so nothing gaps while the planes travel. */
+  background-color: #6dbdbb;
+}
+
+/* --------------------------------------------------------------- the wall -- */
+.plate-travel {
+  position: absolute;
+  inset: -6% -3% -10%;
+}
+.plate {
+  position: absolute;
+  inset: 0;
+}
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------- the copy -- */
+.copy {
+  position: absolute;
+  z-index: 2;
+  top: max(96px, 12svh);
+  left: 6vw;
+  right: 6vw;
+}
+@media screen and (min-width: 768px) {
+  .copy {
+    top: 22svh;
+    right: auto;
+    width: 46vw;
+  }
+}
+
+/* Own size, leading and tracking: the global h1 sets vw sizes and -0.35vw. */
+.title {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.lead {
+  display: block;
+  font-size: clamp(4.4rem, 19vw, 7rem);
+}
+@media screen and (min-width: 768px) {
+  .lead {
+    /* Wide enough that the goat's ear overlaps the full stop: type between planes. */
+    font-size: clamp(6rem, 11.5vw, 13rem);
+    white-space: nowrap;
+  }
+}
+
+.sticker-tilt {
+  display: inline-block;
+  margin-top: 0.4rem;
+  transform: rotate(-2deg);
+}
+.sticker {
+  display: inline-block;
+  padding: 0.05em 0.25em 0.1em;
+  outline: 3px solid var(--color-black);
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  font-size: clamp(1.7rem, 7.6vw, 2.6rem);
+  line-height: 1.05;
+  box-shadow: 5px 5px 0 var(--color-black);
+}
+@media screen and (min-width: 768px) {
+  .sticker {
+    font-size: clamp(2rem, 3.6vw, 3.6rem);
+  }
+}
+
+/* Contrast is fixed where the text sits: a cream bubble, not a wall overlay. */
+.body {
+  max-width: 26rem;
+  margin: 1.4rem 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgb(252 244 225 / 0.94);
+  color: var(--color-black);
+  font-family: var(--font-paragraph);
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* -------------------------------------------------------------- the goat -- */
+.goat-travel {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 9svh;
+  width: min(74vw, 44svh * 1000 / 1322);
+  margin-left: calc(min(74vw, 44svh * 1000 / 1322) / -2);
+}
+@media screen and (min-width: 768px) {
+  .goat-travel {
+    left: auto;
+    right: 15vw;
+    bottom: 6svh;
+    width: calc(66svh * 1000 / 1322);
+    margin-left: 0;
+  }
+}
+.goat {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: 50% 100%;
+}
+
+/* -------------------------------------------------------------- the desk -- */
+.desk-travel {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: -9svh;
+  width: 128vw;
+  margin-left: -64vw;
+}
+@media screen and (min-width: 768px) {
+  .desk-travel {
+    left: auto;
+    right: 4vw;
+    bottom: -18svh;
+    width: min(60vw, 112svh);
+    margin-left: 0;
+  }
+}
+.desk-box {
+  position: relative;
+}
+.desk {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 18px 24px rgb(20 60 60 / 0.25));
+}
+
+/* "Ring!" stickers pop off the phone (the phone sits at 57-83% of the desk art). */
+.ring {
+  position: absolute;
+  top: -9%;
+  left: 60%;
+  padding: 0.2em 0.6em 0.28em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.6vw, 1.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+.ring + .ring {
+  top: -17%;
+  left: 74%;
+  rotate: 10deg;
+}
+.ring:first-of-type {
+  rotate: -8deg;
+}

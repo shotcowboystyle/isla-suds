@@ -92,7 +92,7 @@ export const TestimonialsSection = () => {
   );
 
   return (
-    <div ref={scrollContainerRef} className={styles['testimonials-section']}>
+    <div ref={scrollContainerRef} data-wear-at="testimonials" className={styles['testimonials-section']}>
       <div className={styles['testimonials-section-wrapper']}>
         <div ref={cardsContainerRef} className={styles['social-sticky-wrapper']}>
           {testimonialsData.map((testimonial, index) => (
@@ -107,15 +107,15 @@ export const TestimonialsSection = () => {
 
         <div className={styles['social-text-wrapper']}>
           <h1 ref={text1Ref} className={styles['social-heading']}>
-            What&apos;s
+            Suds
           </h1>
 
           <h1 ref={text2Ref} className={cn(styles['social-heading'], styles['social-heading-2'])}>
-            everyone
+            happen
           </h1>
 
           <h1 ref={text3Ref} className={cn(styles['social-heading'], styles['social-heading-3'])}>
-            Saying
+            everywhere
           </h1>
         </div>
       </div>

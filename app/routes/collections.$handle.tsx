@@ -1,24 +1,24 @@
-import {useRef} from 'react';
 import {redirect, useLoaderData} from 'react-router';
-import {useGSAP} from '@gsap/react';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import GSAP from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {LocalStores} from '~/components/LocalStores';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {ProductCard} from '~/components/ProductCard';
-import {TestimonialsSection} from '~/components/Testimonials';
+import {CollectionClose} from '~/components/collection/CollectionClose';
+import {CollectionHero} from '~/components/collection/CollectionHero';
+import {ScentShelf} from '~/components/collection/ScentShelf';
 import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/collections.$handle';
-import type {ProductItemFragment} from 'storefrontapi.generated';
-
-if (typeof document !== 'undefined') {
-  GSAP.registerPlugin(ScrollTrigger);
-}
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  const collection = data?.collection;
+  const title = collection?.handle === 'frontpage' ? 'Shop the bars' : (collection?.title ?? 'Collection');
+  return [
+    {title: `${title} | Isla Suds`},
+    {
+      name: 'description',
+      content:
+        collection?.description ||
+        'Gentle goat milk soap with essential oils and no added fragrance. Four bars, four moods. Pick yours.',
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -39,7 +39,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 12,
   });
 
   if (!handle) {
@@ -79,82 +79,19 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const el = textRef.current;
-      if (!el) return;
-
-      const distance = el.offsetWidth / 2; // Assuming duplicated text for seamless loop
-
-      // Simple continuous scroll
-      GSAP.to(el, {
-        x: -distance,
-        duration: 20,
-        ease: 'none',
-        repeat: -1,
-      });
-    },
-    {scope: containerRef},
-  );
-
   return (
-    <div className="collection">
-      <div ref={containerRef} className="bg-milk pt-[20vw] pb-[60px] md:pt-[120px] lg:pt-[130px]">
-        {collection.title === 'Featured' ? (
-          <div ref={containerRef} className="overflow-hidden whitespace-nowrap py-4">
-            <div ref={textRef} className="inline-block">
-              <h1 className="-tracking-[1.1vw] uppercase mr-[6vw] text-[23.5vw] bolder leading-[105%] text-black text-nowrap inline-block">
-                Explore
-                <span className="text-accent mx-20">Our Full</span>
-                Collection
-              </h1>
-              <h1 className="-tracking-[1.1vw] uppercase mr-[6vw] text-[23.5vw] bolder leading-[105%] text-black text-nowrap inline-block">
-                Explore
-                <span className="text-accent">Our Full</span>
-                Collection
-              </h1>
-            </div>
-          </div>
-        ) : (
-          <h1 className="text-black">{collection.title}</h1>
-        )}
-
-        {collection.title === 'Featured' ? (
-          <div className="justify-center items-center mt-[3vw] flex sm:px-4 text-center">
-            <p className="collection-description text-[4.5vw] md:text-[1.04vw] leading-[115%] w-full px-[5vw] pb-[20vw] sm:pb-[5vw] text-black">
-              Browse all our bold and fresh cleansers, ready to fuel your next bath. Discover your favorite today!
-            </p>
-          </div>
-        ) : (
-          <p className="collection-description">{collection.description}</p>
-        )}
-
-        <div className="pb-[4vw] sm:px-4 md:px-[2vw] my-[4vw] md:my-[10vw]">
-          <PaginatedResourceSection<ProductItemFragment>
-            connection={collection.products}
-            resourcesClassName="products-grid grid gap-4 auto-cols-[1fr] grid-cols-[1fr] sm:grid-cols-[1fr_1fr] grid-rows-[auto_auto] items-center justify-center mx-auto"
-          >
-            {({node: product, index}) => (
-              <ProductCard key={product.id} product={product} loading={index < 8 ? 'eager' : undefined} />
-            )}
-          </PaginatedResourceSection>
-        </div>
-
-        <TestimonialsSection />
-        <LocalStores />
-
-        <Analytics.CollectionView
-          data={{
-            collection: {
-              id: collection.id,
-              handle: collection.handle,
-            },
-          }}
-        />
-      </div>
+    <div className="collection bg-milk">
+      <CollectionHero handle={collection.handle} title={collection.title} description={collection.description} />
+      <ScentShelf connection={collection.products} products={collection.products.nodes} />
+      <CollectionClose products={collection.products.nodes} />
+      <Analytics.CollectionView
+        data={{
+          collection: {
+            id: collection.id,
+            handle: collection.handle,
+          },
+        }}
+      />
     </div>
   );
 }

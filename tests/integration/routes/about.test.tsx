@@ -1,12 +1,15 @@
 import {describe, it, expect} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
+import {PreloaderProvider} from '~/contexts/preloader-context';
 import AboutPage from '~/routes/about';
 
 const renderPage = () =>
   render(
     <MemoryRouter>
-      <AboutPage />
+      <PreloaderProvider>
+        <AboutPage />
+      </PreloaderProvider>
     </MemoryRouter>,
   );
 
@@ -31,8 +34,9 @@ describe('About Page', () => {
     renderPage();
 
     expect(screen.getByRole('heading', {level: 2, name: /family recipe/i})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {level: 2, name: /from corporate desk/i})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {level: 2, name: /how we make/i})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {level: 2, name: /made by hand/i})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {level: 2, name: /one table/i})).toBeInTheDocument();
     expect(screen.getByRole('heading', {level: 2, name: /why isla suds/i})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {level: 2, name: /made for her/i})).toBeInTheDocument();
   });
 });

@@ -1,0 +1,146 @@
+.made {
+  position: relative;
+  padding: 14svh 5vw 16svh;
+  background-color: var(--color-secondary);
+  overflow: hidden;
+}
+
+.heading {
+  display: inline-block;
+  padding: 0 0.15em 0.08em;
+  background: var(--color-primary);
+  color: var(--color-black);
+  outline: 3px solid var(--color-black);
+  transform: rotate(-2deg);
+  text-align: left;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+/* -------------------------------------------------------- the polaroids -- */
+.polaroids {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7vw 5vw;
+  margin: 9svh 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media screen and (min-width: 1024px) {
+  .polaroids {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.6vw;
+  }
+}
+
+/* Each one sits at its own angle, like they were stuck down by hand. */
+.slot {
+  --tilt: -3deg;
+  /* The tilt lives on the slot: GSAP owns the polaroid's own transform. */
+  rotate: var(--tilt);
+}
+.slot:nth-child(2) {
+  --tilt: 2.5deg;
+  margin-top: 4vw;
+}
+.slot:nth-child(3) {
+  --tilt: -1.5deg;
+}
+.slot:nth-child(4) {
+  --tilt: 3.5deg;
+  margin-top: 4vw;
+}
+@media screen and (min-width: 1024px) {
+  .slot:nth-child(3) {
+    margin-top: 1.5vw;
+  }
+}
+
+.polaroid {
+  position: relative;
+  margin: 0;
+  padding: 4% 4% 0;
+  background: var(--color-white);
+  box-shadow:
+    0 0.4vw 0.6vw rgb(60 40 30 / 0.12),
+    0 1.4vw 2.6vw rgb(60 40 30 / 0.16);
+}
+/* A strip of tape over the top edge. */
+.polaroid::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: -0.9em;
+  left: 50%;
+  width: 38%;
+  height: 1.8em;
+  background: rgb(252 202 117 / 0.72);
+  transform: translateX(-50%) rotate(-4deg);
+}
+.polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.caption {
+  display: flex;
+  align-items: center;
+  min-height: 3.6em;
+  padding: 0.3em 0.1em 0.5em;
+  color: #1f3fa8;
+  font-family: 'Caveat', cursive;
+  font-size: clamp(1.15rem, 1.6vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+/* ------------------------------------------------------------ the count -- */
+.cure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin-top: 12svh;
+}
+@media screen and (min-width: 1024px) {
+  .cure {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3vw;
+  }
+}
+
+.count {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6vw;
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.8;
+}
+.number {
+  font-size: clamp(9rem, 26vw, 24rem);
+  font-variant-numeric: tabular-nums;
+}
+.unit {
+  margin-bottom: 0.25em;
+  padding: 0.1em 0.3em 0.18em;
+  border: 3px solid var(--color-black);
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  transform: rotate(-6deg);
+}
+.cure-body {
+  max-width: 26rem;
+  color: var(--color-black);
+  font-size: clamp(1.1rem, 1.4vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.4;
+}

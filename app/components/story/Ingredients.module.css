@@ -167,10 +167,16 @@
   }
 }
 @media screen and (min-width: 992px) {
+  /* A label stuck on the tiles: it carries its own ground, so the copy stays
+     legible whatever part of the photo drifts underneath it. */
   .paragraph-text-wrapper {
-    /* position: absolute; */
-    inset: 24vw 2vw auto auto;
-    max-width: 20vw;
+    inset: 22vw 3vw auto auto;
+    max-width: 22vw;
+    padding: 1.1vw 1.4vw;
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-black);
+    border-radius: 1.2vw;
+    transform: rotate(2deg);
   }
 }
 
@@ -192,8 +198,8 @@
 }
 @media screen and (min-width: 992px) {
   .paragraph-text {
-    font-size: 1.04vw;
-    /* text-align: right; */
+    font-size: 1.25vw;
+    text-align: left;
   }
 }
 

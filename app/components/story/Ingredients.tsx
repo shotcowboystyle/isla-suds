@@ -3,7 +3,7 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
-import ingredientsImage from '~/assets/images/ingredients-section-bg.webp';
+import ingredientsImage from '~/assets/images/home/ingredients.webp';
 import ingredientsDripImage from '~/assets/images/slider-dip.png';
 import {
   CHAR_STAGGER,
@@ -28,6 +28,7 @@ export function IngredientsSection() {
   const title1Ref = useRef<HTMLHeadingElement>(null);
   const clippedBoxRef = useRef<HTMLDivElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useGSAP(
     () => {
@@ -43,6 +44,18 @@ export function IngredientsSection() {
       const mm = GSAP.matchMedia();
 
       mm.add(MOTION_QUERY, () => {
+        // The bath ledge drifts slower than the page, so the copy slides over it.
+        const parallax = GSAP.fromTo(
+          imageRef.current,
+          {yPercent: -6, scale: 1.08},
+          {
+            yPercent: 6,
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: {trigger: section, start: 'top bottom', end: 'bottom top', scrub: SCRUB_REVEAL},
+          },
+        );
+
         // `autoSplit` re-splits on font load and on resize. Rebuild the timeline
         // when that happens so the scrubbed trigger never points at dead nodes.
         const splits: {title?: SplitText; paragraph?: SplitText} = {};
@@ -66,11 +79,7 @@ export function IngredientsSection() {
           });
 
           contentTl
-            .fromTo(
-              titleSplit.chars,
-              {yPercent: 100},
-              {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE},
-            )
+            .fromTo(titleSplit.chars, {yPercent: 100}, {yPercent: 0, stagger: CHAR_STAGGER, ease: ENTER_EASE})
             .fromTo(
               clippedBox,
               {opacity: 0, width: 0},
@@ -108,6 +117,8 @@ export function IngredientsSection() {
         build();
 
         return () => {
+          parallax.scrollTrigger?.kill();
+          parallax.kill();
           contentTl?.scrollTrigger?.kill();
           contentTl?.kill();
           splits.title?.revert();
@@ -149,16 +160,17 @@ export function IngredientsSection() {
 
         <div className={styles['paragraph-text-wrapper']}>
           <p ref={paragraphRef} className={styles['paragraph-text']}>
-            Allergies and skin sensitivities have met their match. We skip the performance additives, dyes or scents,
-            and always 100% clean and natural.
+            Allergies and skin sensitivities have met their match. We skip the performance additives, the dyes and the
+            added fragrance. Just a short list of things you can pronounce.
           </p>
         </div>
 
         <img
+          ref={imageRef}
           src={ingredientsImage}
           alt=""
-          width={1344}
-          height={768}
+          width={2560}
+          height={1430}
           loading="lazy"
           decoding="async"
           className={styles['ingredients-section-image']}

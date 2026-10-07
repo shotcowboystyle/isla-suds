@@ -32,7 +32,7 @@ export function PageLayout({cart, children = null, footer, header, isLoggedIn, p
 
       {header && <Header header={header} cart={cart} isLoggedIn={isLoggedIn} publicStoreDomain={publicStoreDomain} />}
 
-      {/* Footer reveal: main needs z-index > footer (0 or 1) and background color to cover footer. */}
+      {/* Main paints above the footer wrapper (z-1); the footer follows in normal flow. */}
       {/* `overflow-x: clip` contains horizontal bleed without creating a scroll
           container — `overflow: hidden` here clips ScrollTrigger's pin-spacers
           and changes how it resolves pinType for the three pinned scenes. */}

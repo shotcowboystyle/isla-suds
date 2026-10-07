@@ -3,7 +3,6 @@ import {
   getSelectedProductOptions,
   Analytics,
   useOptimisticVariant,
-  getProductOptions,
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
@@ -13,12 +12,11 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import type {Route} from './+types/products.$handle';
 
 export const meta: Route.MetaFunction = ({data}) => {
+  const product = data?.product;
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
-    {
-      rel: 'canonical',
-      href: `/products/${data?.product.handle}`,
-    },
+    {title: `${product?.seo?.title || product?.title || 'Soap'} | Isla Suds`},
+    {name: 'description', content: product?.seo?.description || product?.description?.slice(0, 160) || ''},
+    {tagName: 'link', rel: 'canonical', href: `/products/${product?.handle}`},
   ];
 };
 
@@ -87,14 +85,6 @@ export default function Product() {
   // Sets the search param to the selected variant without navigation
   // only when no search params are set in the url
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
-
-  // Get the product options array
-  const productOptions = getProductOptions({
-    ...product,
-    selectedOrFirstAvailableVariant: selectedVariant,
-  });
-
-  const {title, descriptionHtml} = product;
 
   return (
     <>
