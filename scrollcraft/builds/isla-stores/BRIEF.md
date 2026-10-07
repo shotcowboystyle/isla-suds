@@ -106,3 +106,31 @@ micro-texture; shallow depth of field; medium-format clarity; joyful and slightl
 absurd, never cartoonish. Palette: soft aqua teal, warm cream, coral red, butter
 yellow. No added text, no watermark.
 ```
+
+## Build notes
+
+- The map is plain Leaflet (`app/components/Map.client.tsx`). react-leaflet 5 needs React 19 and
+  this app runs React 18.3.1 ("render2 is not a function"), which had also broken the old map tab.
+- The postcard grids need `grid-template-columns: minmax(0, 1fr)`. Without it the 3/2
+  `aspect-ratio` widened the auto column, so the cards ran under the sticky map.
+- The map fits on quarter zoom steps (`zoomSnap: 0.25`) with extra right padding, because the
+  town labels sit to the right of their pins. Whole steps left the pins bunched a level out.
+
+## Feel check (2026-10-07, desktop 1440x900 and phone 390x844 sweeps)
+
+- **Hero:** reads as a postcard straight away. The goat tourist with the sunglasses is the grin.
+  Matches "sunny grin".
+- **Rack (peak):** the goat hops North Charleston, Summerville, Awendaw as each card crosses the
+  middle, and the dashed route stays behind him. Flipping a card shows "Greetings from" with the
+  town. The felt word was "oh, cute", close to the intended delight. On phones the map is a
+  strip under the header, so the hop stays in view while the cards scroll.
+- **Close:** "Too far to drive?" with the card addressed to "You" lands as looked after. The
+  card's lower half is quiet, like a real postcard.
+- **Not verified in a browser:** the settled phone hero, the reduced-motion sweep and axe. Run
+  them on a quiet machine before shipping.
+
+## Spend
+
+kie.ai balance 6,833 before, 6,705 after: **128 credits** (stills for the plates, three postcard
+pictures and the palmetto, cutouts for the goat tourist and the goat pin, two rerolls to remove
+generated soap boxes).

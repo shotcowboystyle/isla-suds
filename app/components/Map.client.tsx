@@ -63,6 +63,8 @@ export function Map({stops, active, onPick, interactive}: MapProps) {
 
     const leaflet = createMap(container, {
       scrollWheelZoom: false,
+      // Quarter steps, so fitBounds can sit close to the pins instead of a whole level out.
+      zoomSnap: 0.25,
       dragging: interactive,
       touchZoom: interactive,
       doubleClickZoom: interactive,
@@ -73,7 +75,11 @@ export function Map({stops, active, onPick, interactive}: MapProps) {
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(leaflet);
-    leaflet.fitBounds(latLngBounds(stops.map((s) => [s.lat, s.lng])), {padding: [56, 56]});
+    leaflet.fitBounds(latLngBounds(stops.map((s) => [s.lat, s.lng])), {
+      // Town labels sit right of their pins: leave them room on that side.
+      paddingTopLeft: [56, 56],
+      paddingBottomRight: [120, 56],
+    });
 
     stops.forEach((stop, i) => {
       marker([stop.lat, stop.lng], {icon: shopIcon, title: `${stop.storeName}, ${stop.city}`})

@@ -37,7 +37,7 @@ for (let i = 0; i <= STOPS; i++) {
     const el = document.querySelector('.store-map-goat');
     return el ? el.style.transform : 'no goat';
   });
-  await page.screenshot({path: `${out}/${String(i).padStart(2, '0')}-${y}.png`});
+  await page.screenshot({path: `${out}/${String(i).padStart(2, '0')}-${y}.png`, timeout: 90000});
   console.log(`${i} y=${y} goat: ${goat}`);
 }
 
@@ -46,7 +46,7 @@ await first.scrollIntoViewIfNeeded();
 await page.evaluate(() => window.scrollBy(0, -120));
 await first.getByRole('button', {name: /flip/i}).click();
 await page.waitForTimeout(1200);
-await page.screenshot({path: `${out}/flipped.png`});
+await page.screenshot({path: `${out}/flipped.png`, timeout: 90000});
 
 console.log(errors.length ? `errors:\n${errors.join('\n')}` : 'no errors');
 await browser.close();
