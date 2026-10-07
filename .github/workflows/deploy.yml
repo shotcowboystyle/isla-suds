@@ -25,7 +25,13 @@ jobs:
   deploy:
     name: Deploy to Oxygen
     # workflow_dispatch has no workflow_run payload, so it deploys unconditionally.
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # `branches: main` above matches the triggering run's *head branch name*, which a
+    # fork PR can also call `main`. Only deploy CI runs from a push to this repo.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -33,6 +39,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
 
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
@@ -43,44 +50,27 @@ jobs:
           node-version: "24"
           cache: "pnpm"
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build production bundle
-        run: pnpm build
+      # `hydrogen deploy` builds before uploading; a separate build step built twice.
+      - name: Build and deploy to Oxygen
+        run: pnpm exec shopify hydrogen deploy --build-command "pnpm build"
         env:
           NODE_ENV: production
-
-      - name: Deploy to Oxygen
-        run: npx shopify hydrogen deploy
-        env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000087092 }}
 
       - name: Notify deployment success
         if: success()
+        env:
+          BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+          COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ACTOR: ${{ github.actor }}
         run: |
           echo "✅ Deployment to Shopify Oxygen successful"
-          echo "Branch: ${{ github.event.workflow_run.head_branch || github.ref_name }}"
-          echo "Commit: ${{ github.event.workflow_run.head_sha || github.sha }}"
-          echo "Deployed by: ${{ github.actor }}"
+          echo "Branch: $BRANCH"
+          echo "Commit: $COMMIT"
+          echo "Deployed by: $ACTOR"
 
       - name: Notify deployment failure
         if: failure()
