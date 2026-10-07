@@ -34,6 +34,7 @@ export default [
       '**/packages/hydrogen/dist/',
       '._bmad/',
       '._bmad-output/',
+      '.agents/',
       '.claude/',
       '.cursor/',
       '.gemini/',
