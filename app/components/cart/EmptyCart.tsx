@@ -22,7 +22,7 @@ export function EmptyCart() {
       <Link
         to="/collections/all"
         onClick={handleExplore}
-        className={cn(chunky.chunky, 'inline-flex h-11 w-full px-6 text-lg sm:w-auto')}
+        className={cn(chunky.chunky, 'inline-flex h-11 w-full px-6 text-xl sm:w-auto')}
         aria-label="Explore the Collection, closes cart"
       >
         Explore the Collection

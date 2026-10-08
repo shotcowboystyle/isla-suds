@@ -75,8 +75,9 @@
 .failure {
   padding: 0.6rem 0.9rem;
   border-radius: 12px;
-  background: var(--color-accent);
-  color: var(--color-secondary);
+  border: 3px solid var(--color-accent);
+  background: #ffffff;
+  color: var(--color-black);
   font-weight: 700;
 }
 
@@ -190,8 +191,9 @@
   max-width: 200px;
   padding: 0.4rem 0.7rem;
   border-radius: 10px;
-  background: var(--color-accent);
-  color: var(--color-secondary);
+  border: 3px solid var(--color-accent);
+  background: #ffffff;
+  color: var(--color-black);
   font-size: 0.875rem;
   font-weight: 700;
 }
