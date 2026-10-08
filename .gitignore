@@ -157,3 +157,7 @@ test-results/.last-run.json
 
 # Scroll-position contact sheets from scripts/shoot-about.mjs
 lab/
+
+# Lighthouse CI output
+.lighthouseci/
+lighthouse-desktop/

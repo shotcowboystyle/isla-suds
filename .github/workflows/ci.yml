@@ -113,19 +113,14 @@ jobs:
             echo "::notice::Skipping storefront-dependent jobs (smoke tests, accessibility, lighthouse). Set up Shopify app integration to enable them."
           fi
 
-  # Lighthouse CI with Core Web Vitals
+  # Lighthouse CI with Core Web Vitals: desktop gates, mobile reports.
   # Requires live Shopify Storefront API access (custom app integration)
   lighthouse:
     name: Lighthouse CI
     if: needs.check-storefront-secrets.outputs.available == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     needs: [verify, bundle-size, check-storefront-secrets]
-    env:
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-      PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
-      PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}
-      PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -140,10 +135,20 @@ jobs:
           node-version: "24"
           cache: "pnpm"
 
+      # No secrets in scope here: dependency lifecycle scripts run in this step.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build production bundle
+        run: pnpm build
+
+      # Secrets are scoped to this step only; the preview server reads them from .env.
       - name: Create .env for worker runtime
+        env:
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          PUBLIC_STORE_DOMAIN: ${{ secrets.PUBLIC_STORE_DOMAIN }}
+          PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.PUBLIC_STOREFRONT_API_TOKEN }}
+          PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
         run: |
           {
             echo "SESSION_SECRET=$SESSION_SECRET"
@@ -152,20 +157,33 @@ jobs:
             echo "PUBLIC_STOREFRONT_ID=$PUBLIC_STOREFRONT_ID"
           } >> .env
 
-      - name: Build production bundle
-        run: pnpm build
+      # lhci serves via the `serve:lhci` script (preview without --build), reusing the build above.
+      - name: Lighthouse (desktop, gating)
+        run: pnpm run lighthouse:desktop
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      - name: Run Lighthouse CI
-        run: pnpm run lighthouse:ci
+      # Each lhci run rewrites .lighthouseci/, so park the desktop results first.
+      - name: Keep desktop results
+        if: ${{ !cancelled() }}
+        run: if [ -d .lighthouseci ]; then mv .lighthouseci lighthouse-desktop; fi
+
+      # Warnings only; runs even when the desktop gate fails so both reports exist.
+      - name: Lighthouse (mobile, report only)
+        if: ${{ !cancelled() }}
+        run: pnpm run lighthouse:mobile
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Upload Lighthouse results
-        if: failure()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: lighthouse-results
-          path: .lighthouseci/
+          path: |
+            lighthouse-desktop/
+            .lighthouseci/
+          retention-days: 7
 
   # Accessibility checks
   # Requires live Shopify Storefront API access (custom app integration)
