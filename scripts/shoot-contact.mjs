@@ -7,7 +7,7 @@
 import {mkdir, rm} from 'node:fs/promises';
 import {chromium} from 'playwright-core';
 
-const origin = process.argv[2] ?? 'http://localhost:3000';
+const origin = process.argv[2] ?? 'http://isla-suds.localhost:1355';
 const out = process.argv[3] ?? 'lab/contact';
 const width = Number(process.argv[4] ?? 1440);
 const height = Number(process.argv[5] ?? 900);

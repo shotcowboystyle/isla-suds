@@ -10,6 +10,9 @@ import {defineConfig, devices} from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration
  */
 
+// Stable URL from `pnpm preview` (portless), so parallel sessions never fight over ports.
+const previewUrl = 'http://isla-suds-preview.localhost:1355';
+
 export default defineConfig({
   testDir: './tests',
 
@@ -33,7 +36,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || previewUrl,
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -112,13 +115,15 @@ export default defineConfig({
     },
   ],
 
-  // Run your local dev server before starting the tests
-  webServer: process.env.CI
-    ? {
+  // Start the preview server unless BASE_URL points at one already running.
+  webServer: process.env.BASE_URL
+    ? undefined
+    : {
         command: 'pnpm preview',
-        url: 'http://localhost:3000',
-        reuseExistingServer: false,
-        timeout: 120 * 1000,
-      }
-    : undefined,
+        // Not `url`: Node can't resolve *.localhost on macOS, only browsers can.
+        wait: {stderr: /server running/},
+        // portless only tears down its child tree on SIGINT; the default SIGKILL orphans it.
+        gracefulShutdown: {signal: 'SIGINT', timeout: 10_000},
+        timeout: 300 * 1000,
+      },
 });

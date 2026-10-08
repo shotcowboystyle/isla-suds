@@ -11,7 +11,7 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['http://localhost:3000'],
+      url: ['http://isla-suds-preview.localhost:1355'],
       // The server comes from the `serve:lhci` package script: lhci autorun
       // passes it as a flag, which overrides any startServerCommand here.
       startServerReadyPattern: 'server running',
