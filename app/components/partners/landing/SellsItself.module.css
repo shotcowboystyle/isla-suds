@@ -54,7 +54,9 @@
 }
 .aside {
   display: inline-block;
-  color: var(--color-secondary);
+  padding: 0 0.15em 0.08em;
+  background: var(--color-accent-secondary);
+  color: var(--color-black);
   transform: rotate(-4deg);
 }
 

@@ -72,7 +72,7 @@ export function AboutHero() {
     void document.fonts.ready.then(() => {
       if (cancelled) return;
       ctx = GSAP.context(() => {
-        const split = SplitText.create('[data-line]', {type: 'words,chars', mask: 'chars', autoSplit: true});
+        const split = SplitText.create('[data-line]', {type: 'words,chars', mask: 'chars', autoSplit: true, aria: 'none'});
         GSAP.timeline()
           .fromTo('[data-eyebrow]', {opacity: 0, y: 12}, {opacity: 1, y: 0, duration: 0.5, ease: ENTER_EASE}, 0)
           .fromTo(
@@ -134,13 +134,16 @@ export function AboutHero() {
               {hero.eyebrow}
             </p>
             <h1 ref={titleRef} className={styles['title']}>
-              <span data-line className={styles['line']}>
+              <span className="sr-only">
+                {hero.lead} {hero.stamp} {hero.trail}
+              </span>
+              <span data-line aria-hidden="true" className={styles['line']}>
                 {hero.lead}{' '}
                 <span data-stamp className={styles['stamp']}>
                   {hero.stamp}
                 </span>
               </span>{' '}
-              <span data-line className={styles['line']}>
+              <span data-line aria-hidden="true" className={styles['line']}>
                 {hero.trail}
               </span>
             </h1>
