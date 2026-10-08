@@ -95,7 +95,7 @@
   align-items: center;
   position: absolute;
   inset: 0%;
-  height: 3.1vw;
+  height: max(44px, 3.1vw);
   flex: 0 auto;
   margin: 0 auto;
   isolation: isolate;
@@ -109,30 +109,17 @@
 
 .menu-button {
   z-index: 9999;
-  background-color: var(--color-white);
-  border-radius: 100vw;
   flex-flow: column;
   flex: none;
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  width: 3.1vw;
-  height: 3.1vw;
+  width: max(44px, 3.1vw);
+  height: max(44px, 3.1vw);
   display: flex;
   position: relative;
-  padding: 1vw;
+  padding: 0;
   cursor: pointer;
-}
-
-.menu-button:active {
-  background-color: var(--color-white);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .menu-button:hover,
-  .menu-button:active {
-    background-color: var(--color-coral-light);
-  }
 }
 
 .menu-button-line {
@@ -227,8 +214,6 @@
 }
 
 .menu-button-mobile {
-  cursor: pointer;
-  border-radius: 100vw;
   flex-flow: column;
   flex: none;
   justify-content: center;
@@ -237,17 +222,10 @@
   height: 48px;
   display: flex;
   margin: 0;
-  background-color: var(--color-white);
 }
 @media screen and (min-width: 481px) {
   .menu-button-mobile {
     display: none;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .menu-button-mobile:hover {
-    background-color: var(--color-coral-light);
   }
 }
 
@@ -294,30 +272,11 @@
 }
 
 .navbar-button {
-  cursor: pointer;
-  color: var(--color-dark-brown);
   letter-spacing: -0.01vw;
-  text-transform: uppercase;
-  background-color: var(--color-white);
-  border-radius: 30vw;
-  border: 0;
-  justify-content: center;
-  align-items: center;
   height: 48px;
   padding: 0 16px;
-  font-family: var(--font-sans);
   font-size: 16px;
-  font-weight: 700;
   line-height: 120%;
-  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-  text-decoration: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .navbar-button:hover {
-    background-color: var(--color-coral-light);
-    text-decoration: none;
-  }
 }
 
 @media screen and (min-width: 768px) {
@@ -337,11 +296,12 @@
 
 .navbar-icon-button {
   width: 48px;
+  padding: 0;
 }
 @media screen and (min-width: 768px) {
   .navbar-icon-button {
     width: 56px;
-    padding: 16px;
+    padding: 0;
   }
 }
 @media screen and (min-width: 992px) {
@@ -351,14 +311,12 @@
 }
 
 .navbar-icon-button-icon {
-  /* --navbar-icon-button-icon: 13vw; */
-
-  width: var(--navbar-icon-button-icon, 13vw);
-  height: var(--navbar-icon-button-icon, 13vw);
+  width: var(--navbar-icon-button-icon, 22px);
+  height: var(--navbar-icon-button-icon, 22px);
 }
 @media screen and (min-width: 768px) {
   .navbar-icon-button-icon {
-    --navbar-icon-button-icon: 10vw;
+    --navbar-icon-button-icon: 24px;
   }
 }
 @media screen and (min-width: 992px) {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useRouteLoaderData, Await} from 'react-router';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {useOptimisticCart} from '@shopify/hydrogen';
+import chunky from '~/components/ui/ChunkyButton.module.css';
 import {CHECKOUT_ERROR_MESSAGE} from '~/content/errors';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -31,7 +32,6 @@ export function CartDrawer() {
           aria-labelledby="cart-title"
           className={cn(
             'fixed right-0 top-0 z-999999 h-full',
-            'bg-white shadow-xl',
             'flex flex-col',
             'motion-reduce:animation-none',
             styles.drawer,
@@ -121,49 +121,23 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
           : `Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
       </div>
 
-      <div className="flex items-center justify-between border-b border-neutral-200 p-4">
-        <div>
-          <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
-            Cart{' '}
-            <span className="text-(--text-muted)">
-              ({itemCount} {itemCount === 1 ? 'item' : 'items'})
-            </span>
-          </DialogPrimitive.Title>
-        </div>
+      <div className={styles.header}>
+        <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
+          Cart{' '}
+          <span className={styles.count}>
+            {itemCount} {itemCount === 1 ? 'item' : 'items'}
+          </span>
+        </DialogPrimitive.Title>
 
-        <DialogPrimitive.Close
-          aria-label="Close cart"
-          className={cn(
-            'h-11 w-11 rounded-full text-neutral-700',
-            'flex items-center justify-center',
-            'hover:bg-neutral-800 hover:text-neutral-100 cursor-pointer transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-black',
-          )}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </DialogPrimitive.Close>
+        <CloseButton />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading ? (
           <div className="space-y-4 animate-pulse">
-            <div className="h-20 bg-neutral-200 rounded" />
-            <div className="h-20 bg-neutral-200 rounded" />
-            <div className="h-20 bg-neutral-200 rounded" />
+            <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
+            <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
+            <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
           </div>
         ) : itemCount === 0 ? (
           <EmptyCart />
@@ -173,14 +147,14 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
       </div>
 
       {itemCount > 0 && (
-        <div className="border-t border-neutral-200 p-4 space-y-4">
-          <div className="flex justify-between items-center">
-            <span className="text-(--text-muted)">Subtotal</span>
-            <span className="font-medium text-(--text-primary)">{formatSubtotal()}</span>
+        <div className={styles.footer}>
+          <div className={styles.subtotal}>
+            <span className={styles['subtotal-label']}>Subtotal</span>
+            <span className={styles['subtotal-amount']}>{formatSubtotal()}</span>
           </div>
 
           {checkoutError && (
-            <div role="alert" aria-live="assertive" className="text-sm text-red-600">
+            <div role="alert" aria-live="assertive" className={styles.failure}>
               {checkoutError}
             </div>
           )}
@@ -189,17 +163,7 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
             type="button"
             onClick={handleCheckout}
             disabled={isCheckingOut}
-            className={cn(
-              'w-full h-14 rounded',
-              'bg-accent text-white',
-              'font-medium text-base',
-              'hover:opacity-90',
-              'active:scale-[0.98] active:opacity-80',
-              'disabled:opacity-50 disabled:cursor-not-allowed',
-              'transition-all duration-150',
-              'flex items-center justify-center gap-2',
-              'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent',
-            )}
+            className={cn(chunky.chunky, styles.checkout, 'h-14')}
             aria-label="Checkout button, proceed to payment"
           >
             {isCheckingOut ? (
@@ -215,7 +179,7 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
           <button
             type="button"
             onClick={() => setCartDrawerOpen(false)}
-            className="w-full text-center text-accent underline hover:no-underline"
+            className={cn(chunky.chunky, chunky.cream, styles.secondary)}
           >
             Continue Shopping
           </button>
@@ -230,50 +194,21 @@ function CartDrawerContent({originalCart}: {originalCart: CartApiQueryFragment |
 }
 
 function CartDrawerLoading() {
-  const {setCartDrawerOpen} = useExplorationStore();
-
   return (
     <>
-      <div className="flex items-center justify-between border-b border-neutral-200 p-4">
-        <div>
-          <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
-            Cart
-          </DialogPrimitive.Title>
-        </div>
+      <div className={styles.header}>
+        <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
+          Cart
+        </DialogPrimitive.Title>
 
-        <DialogPrimitive.Close
-          aria-label="Close cart"
-          onClick={() => setCartDrawerOpen(false)}
-          className={cn(
-            'h-11 w-11 rounded-full text-neutral-700',
-            'flex items-center justify-center',
-            'hover:bg-neutral-800 hover:text-neutral-100 cursor-pointer transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-accent',
-          )}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </DialogPrimitive.Close>
+        <CloseButton />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4 animate-pulse">
-          <div className="h-20 bg-neutral-200 rounded" />
-          <div className="h-20 bg-neutral-200 rounded" />
-          <div className="h-20 bg-neutral-200 rounded" />
+          <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
+          <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
+          <div className="h-20 rounded-[14px] bg-(--color-black)/10" />
         </div>
       </div>
     </>
@@ -281,41 +216,50 @@ function CartDrawerLoading() {
 }
 
 function CartDrawerError() {
-  const {setCartDrawerOpen} = useExplorationStore();
-
   return (
     <>
-      <div className="flex items-center justify-between border-b border-neutral-200 p-4">
+      <div className={styles.header}>
         <DialogPrimitive.Title id="cart-title" className={styles['cart-title']}>
           Cart
         </DialogPrimitive.Title>
-        <DialogPrimitive.Close
-          aria-label="Close cart"
-          onClick={() => setCartDrawerOpen(false)}
-          className={cn(
-            'h-11 w-11 rounded-full text-neutral-700',
-            'flex items-center justify-center',
-            'hover:bg-neutral-800 hover:text-neutral-100 cursor-pointer transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-accent',
-          )}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </DialogPrimitive.Close>
+        <CloseButton />
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-3 p-8 text-center">
-        <p className="text-base text-neutral-600">Couldn&rsquo;t load your cart &mdash; try refreshing.</p>
+        <p className="text-base font-bold">Couldn&rsquo;t load your cart &mdash; try refreshing.</p>
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="text-sm underline hover:no-underline text-accent"
+          className={cn(chunky.chunky, chunky.cream, 'flex min-h-12 px-6 text-lg')}
         >
           Refresh page
         </button>
       </div>
     </>
+  );
+}
+
+function CloseButton() {
+  return (
+    <DialogPrimitive.Close
+      aria-label="Close cart"
+      className={cn(chunky.chunky, chunky.cream, styles['icon-button'], 'h-11 w-11')}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </DialogPrimitive.Close>
   );
 }
 

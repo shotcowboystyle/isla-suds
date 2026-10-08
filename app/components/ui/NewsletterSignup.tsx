@@ -1,5 +1,7 @@
 import {useFetcher} from 'react-router';
 import {FOOTER} from '~/content/footer';
+import {cn} from '~/utils/cn';
+import chunky from './ChunkyButton.module.css';
 import styles from './NewsletterSignup.module.css';
 
 interface NewsletterResponse {
@@ -43,7 +45,7 @@ export const NewsletterSignup = () => {
             required
             disabled={isSubmitting}
           />
-          <button type="submit" className={styles.submit} disabled={isSubmitting}>
+          <button type="submit" className={cn(chunky.chunky, styles.submit)} disabled={isSubmitting}>
             {isSubmitting ? COPY.submitting : COPY.submit}
           </button>
         </fetcher.Form>

@@ -1,5 +1,7 @@
 import {forwardRef, useId} from 'react';
 import {useNavigate} from 'react-router';
+import {cn} from '~/utils/cn';
+import chunky from './ChunkyButton.module.css';
 import styles from './LiquidButton.module.css';
 
 export interface LiquidButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,13 +19,15 @@ const LiquidButton = forwardRef<HTMLDivElement, LiquidButtonProps>(
       <div
         ref={ref}
         id={id ?? fallbackId}
-        className={`${styles['liquid-button-wrapper']} ${className || ''}`}
+        className={cn(styles['liquid-button-wrapper'], className)}
         style={backgroundColor ? ({'--button-bg': backgroundColor} as React.CSSProperties) : undefined}
       >
-        <button className={styles['liquid-button']} onClick={href ? () => void navigate(href) : undefined} {...props}>
-          <div className={styles['liquid-button-bg']}>
-            <span className={styles['button-text']}>{text}</span>
-          </div>
+        <button
+          className={cn(chunky.chunky, styles['liquid-button'])}
+          onClick={href ? () => void navigate(href) : undefined}
+          {...props}
+        >
+          {text}
         </button>
       </div>
     );

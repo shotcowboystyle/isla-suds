@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Link, useFetcher} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import GSAP from 'gsap';
+import chunky from '~/components/ui/ChunkyButton.module.css';
 import {
   CART_QUANTITY_UPDATE_ERROR_MESSAGE,
   CART_QUANTITY_INVENTORY_ERROR_MESSAGE,
@@ -10,6 +11,7 @@ import {
 } from '~/content/errors';
 import {cn} from '~/utils/cn';
 import {formatMoney} from '~/utils/format-money';
+import styles from './CartDrawer.module.css';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 export function CartLineItem({
@@ -237,7 +239,7 @@ export function CartLineItem({
   const altText = `${product.title} thumbnail`;
 
   return (
-    <li ref={liRef} className="flex gap-4 py-6 border-b border-neutral-200 last:border-b-0">
+    <li ref={liRef} className={styles.line}>
       {successMessage && (
         <div role="status" aria-live="polite" className="sr-only">
           {successMessage}
@@ -245,7 +247,7 @@ export function CartLineItem({
       )}
 
       {/* Product Image */}
-      <div className="shrink-0 size-[6.25vw] min-w-[80px] aspect-square">
+      <div className={styles.thumb}>
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -258,13 +260,13 @@ export function CartLineItem({
                 (fallback as HTMLElement).style.display = 'flex';
               }
             }}
-            className={cn('rounded object-contain', 'size-full', 'bg-neutral-100')}
+            className="size-full rounded-[8px] object-contain"
           />
         ) : null}
 
         <div
           style={{display: imageUrl ? 'none' : 'flex'}}
-          className={cn('rounded flex items-center justify-center', 'size-full', 'bg-neutral-100 text-neutral-400')}
+          className="flex size-full items-center justify-center rounded-[8px] text-(--color-black)/40"
           aria-label="No image available"
           role="img"
         >
@@ -291,11 +293,7 @@ export function CartLineItem({
       <div className="flex-1 flex flex-col justify-between gap-4 sm:flex-row sm:gap-6">
         {/* Title and Remove Button */}
         <div className="flex items-start justify-between flex-1 gap-4">
-          <Link
-            to={productUrl}
-            className={cn('text-primary hover:text-primary/80', 'transition-colors', 'text-base font-medium')}
-            aria-label={`View details for ${product.title}`}
-          >
+          <Link to={productUrl} className={styles['line-title']} aria-label={`View details for ${product.title}`}>
             {product.title}
           </Link>
 
@@ -304,13 +302,7 @@ export function CartLineItem({
             type="button"
             onClick={handleRemove}
             disabled={isUpdating}
-            className={cn(
-              'inline-flex items-center justify-center rounded-sm transition-colors',
-              'h-8 w-8 shrink-0',
-              isUpdating
-                ? 'text-neutral-300 cursor-not-allowed'
-                : 'text-neutral-400 hover:text-red-600 hover:bg-neutral-50',
-            )}
+            className={cn(chunky.chunky, chunky.cream, styles['icon-button'], 'h-11 w-11')}
             aria-label={`Remove ${product.title} from cart`}
           >
             {isUpdating ? (
@@ -341,11 +333,11 @@ export function CartLineItem({
         <div className="flex flex-col gap-3 sm:items-end">
           {/* Prices */}
           <div className="flex flex-row items-center justify-between sm:flex-col sm:items-end sm:justify-start gap-1">
-            <div className="text-base font-semibold text-primary" aria-label={`Total price: ${formattedLineTotal}`}>
+            <div className={styles['line-price']} aria-label={`Total price: ${formattedLineTotal}`}>
               {formattedLineTotal}
             </div>
             {(quantity > 1 || compareAtPrice) && (
-              <div className="flex items-center gap-2 text-sm text-neutral-500">
+              <div className="flex items-center gap-2 text-sm font-bold text-(--color-black)/60">
                 {formattedComparePrice && (
                   <span
                     className="line-through sr-only sm:not-sr-only"
@@ -363,18 +355,12 @@ export function CartLineItem({
 
           {/* Quantity Controls */}
           <div className="flex flex-col sm:items-end gap-1">
-            <div className="inline-flex items-center border border-neutral-200 rounded shrink-0">
+            <div className={cn(styles.stepper, 'w-fit shrink-0')}>
               <button
                 type="button"
                 onClick={handleDecrement}
                 disabled={quantity <= 1 || isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center transition-colors',
-                  'h-9 w-9 text-lg',
-                  quantity <= 1 || isUpdating
-                    ? 'text-neutral-300 bg-neutral-50 cursor-not-allowed'
-                    : 'text-primary bg-neutral-100 hover:bg-neutral-200',
-                )}
+                className={styles.step}
                 aria-label={`Decrease quantity for ${product.title}`}
                 aria-disabled={quantity <= 1 || isUpdating}
               >
@@ -392,24 +378,14 @@ export function CartLineItem({
                 disabled={isUpdating}
                 onChange={handleQuantityChange}
                 onBlur={handleQuantityBlur}
-                className={cn(
-                  'text-base font-medium w-12 text-center bg-transparent border-0 p-0 text-primary',
-                  'focus:ring-2 focus:ring-primary focus:outline-none focus:z-10',
-                  '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-                )}
+                className={styles.qty}
               />
 
               <button
                 type="button"
                 onClick={handleIncrement}
                 disabled={isUpdating}
-                className={cn(
-                  'inline-flex items-center justify-center transition-colors',
-                  'h-9 w-9 text-lg',
-                  isUpdating
-                    ? 'text-neutral-300 bg-neutral-50 cursor-wait'
-                    : 'text-primary bg-neutral-100 hover:bg-neutral-200',
-                )}
+                className={cn(styles.step, isUpdating && 'cursor-wait')}
                 aria-label={`Increase quantity for ${product.title}`}
                 aria-disabled={isUpdating}
               >
@@ -419,11 +395,7 @@ export function CartLineItem({
 
             {/* Error Message */}
             {errorMessage && (
-              <div
-                role="alert"
-                aria-live="assertive"
-                className="text-sm text-red-600 font-medium max-w-[200px] text-right"
-              >
+              <div role="alert" aria-live="assertive" className={styles['line-error']}>
                 {errorMessage}
               </div>
             )}

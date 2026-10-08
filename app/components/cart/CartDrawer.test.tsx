@@ -813,9 +813,7 @@ describe('CartDrawer', () => {
         name: /checkout/i,
       });
 
-      // Button should have h-12 (48px) or h-14 (56px) class
-      const hasAdequateHeight = checkoutButton.classList.contains('h-12') || checkoutButton.classList.contains('h-14');
-      expect(hasAdequateHeight).toBe(true);
+      expect(checkoutButton).toHaveClass('h-14');
     });
 
     it('checkout button can be activated with Enter key (AC8)', async () => {

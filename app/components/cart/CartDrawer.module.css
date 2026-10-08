@@ -1,41 +1,201 @@
-.cart-drawer {
-  height: 100%;
-  pointer-events: inherit;
-  visibility: visible;
-  position: fixed;
-  top: 0;
-  right: 0;
-  transition: all 0.8s cubic-bezier(0.18, 0.71, 0.11, 1);
-  transform: translate3d(100%, 0, 0);
-  transition-delay: 0s;
-  transition-timing-function: ease;
-  width: 100vw;
-  z-index: 1000;
-  background-color: var(--color-white);
-}
-@media (min-width: 767.99px) {
-  .cart-drawer {
-    display: flex;
-    justify-content: flex-end;
-  }
+.drawer {
+  width: min(100vw, 34rem);
+  border-left: 3px solid var(--color-black);
+  background: var(--color-secondary);
+  color: var(--color-black);
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  border-bottom: 3px solid var(--color-black);
+}
+
+/* Label box sticker. Own size + spacing: the global h2 vw sizing crushes it otherwise. */
 .cart-title {
-  padding-inline: 0;
+  display: inline-block;
+  margin: 0;
+  padding: 0 0.15em 0.08em;
+  background: var(--color-primary);
+  outline: 3px solid var(--color-black);
   color: var(--color-black);
   font-family: var(--font-sans);
-  font-size: 9vw;
+  font-size: clamp(2rem, 3vw, 2.75rem);
   font-weight: 700;
-  letter-spacing: -0.05em;
-  text-align: center;
-  line-height: 110%;
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+
+.count {
+  display: inline-block;
+  margin-left: 0.75rem;
+  padding: 0.15em 0.6em 0.2em;
+  border: 2px solid var(--color-black);
+  border-radius: 999px;
+  background: var(--color-accent-secondary);
+  font-size: 1rem;
+  vertical-align: middle;
+  transform: rotate(6deg);
+}
+
+.icon-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 3px solid var(--color-black);
+}
+
+.subtotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.subtotal-label {
+  font-size: 1.25rem;
+}
+.subtotal-amount {
+  font-size: 1.6rem;
+}
+
+.failure {
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  border: 3px solid var(--color-accent);
+  background: #ffffff;
+  color: var(--color-black);
+  font-weight: 700;
+}
+
+.checkout {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  font-size: 1.4rem;
+}
+
+.secondary {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 1.2em;
+  font-size: 1.1rem;
+}
+
+/* Line item */
+.line {
+  display: flex;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  border-bottom: 2px dashed rgb(41 41 52 / 0.35);
+}
+.line:last-child {
+  border-bottom: 0;
+}
+
+.thumb {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  padding: 4px;
+  border: 3px solid var(--color-black);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 3px 3px 0 var(--color-black);
+  transform: rotate(-2deg);
+}
+
+.line-title {
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.line-title:hover {
+  color: var(--color-accent);
+}
+
+.line-price {
+  font-family: var(--font-sans);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  border: 3px solid var(--color-black);
+  border-radius: 9999px;
+  background: var(--color-secondary);
   overflow: hidden;
 }
-@media (min-width: 767.99px) {
-  .cart-title {
-    font-size: 4.2vw;
-    text-align: left;
-  }
+.step {
+  width: 44px;
+  height: 100%;
+  color: var(--color-black);
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.step:hover:not(:disabled) {
+  background: var(--color-accent-secondary);
+}
+.step:focus-visible {
+  outline: 3px solid var(--color-teal-dark);
+  outline-offset: -3px;
+}
+.qty {
+  width: 2.5rem;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  appearance: textfield;
+}
+.qty::-webkit-outer-spin-button,
+.qty::-webkit-inner-spin-button {
+  appearance: none;
+}
+.qty:focus-visible {
+  outline: 3px solid var(--color-teal-dark);
+  outline-offset: -3px;
+}
+
+.line-error {
+  max-width: 200px;
+  padding: 0.4rem 0.7rem;
+  border-radius: 10px;
+  border: 3px solid var(--color-accent);
+  background: #ffffff;
+  color: var(--color-black);
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 @keyframes slideInRight {

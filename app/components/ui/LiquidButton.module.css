@@ -3,40 +3,19 @@
   z-index: 10;
   position: relative;
 }
-@media screen and (max-width: 991px) {
-  .liquid-button-wrapper {
-    display: none;
-    display: flex;
-  }
-}
 
 .liquid-button {
-  text-align: center;
-  padding-block-end: 0.2vw;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 110%;
-  display: flex;
-  justify-content: center;
-  width: 165px;
-  height: 48px;
   position: relative;
-  border: none;
-  border-radius: 100vw;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  /* margin-inline: 20%; */
-  background: hsla(0, 77%, 64%, 1);
-  background: linear-gradient(0deg, hsla(0, 77%, 64%, 1) 66%, hsla(0, 48%, 53%, 1) 100%);
-  background: -moz-linear-gradient(0deg, hsla(0, 77%, 64%, 1) 66%, hsla(0, 48%, 53%, 1) 100%);
-  background: -webkit-linear-gradient(0deg, hsla(0, 77%, 64%, 1) 66%, hsla(0, 48%, 53%, 1) 100%);
-  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#EA5D5D", endColorstr="#C04C4C", GradientType=1 );
-  color: var(--color-secondary);
-  max-width: 100%;
   z-index: 3;
+  width: 165px;
+  max-width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 1.2em;
+  background: var(--button-bg, var(--color-accent));
+  /* Cream on coral is ~3.1:1, so text must stay WCAG "large" (>= 18.66px bold). */
+  font-size: 1.2rem;
+  line-height: 110%;
 }
 @media screen and (min-width: 768px) {
   .liquid-button {
@@ -45,39 +24,10 @@
     font-size: 3.1vw;
   }
 }
-
 @media screen and (min-width: 992px) {
   .liquid-button {
     width: 12.5vw;
     height: 3.7vw;
-    font-size: 1.05vw;
+    font-size: max(1.2rem, 1.05vw);
   }
 }
-
-.liquid-button-bg {
-  border-radius: 12px;
-  padding: 10px 15px;
-  z-index: 2;
-  width: 100%;
-  color: var(--color-secondary);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.liquid-button-bg:hover {
-  text-shadow: 0px 0px 4px var(--color-accent);
-}
-.liquid-button-bg:active {
-  background: #c04c4c;
-}
-
-.button-text {
-  z-index: 2;
-  text-transform: uppercase;
-  letter-spacing: -0.01vw;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  position: absolute;
-}
-
