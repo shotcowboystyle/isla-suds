@@ -21,7 +21,7 @@ jobs:
   # Fast checks share one install; steps still fail fast in order.
   verify:
     name: Lint, Type Check, Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -34,8 +34,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: '24'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -61,7 +61,7 @@ jobs:
   # Bundle size verification
   bundle-size:
     name: Bundle Size Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -74,8 +74,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: '24'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -96,7 +96,7 @@ jobs:
   # Check if Shopify Storefront API credentials are available
   check-storefront-secrets:
     name: Check Storefront Credentials
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 1
     outputs:
       available: ${{ steps.check.outputs.available }}
@@ -118,7 +118,7 @@ jobs:
   lighthouse:
     name: Lighthouse CI
     if: needs.check-storefront-secrets.outputs.available == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     needs: [verify, bundle-size, check-storefront-secrets]
     steps:
@@ -132,8 +132,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: '24'
+          cache: 'pnpm'
 
       # No secrets in scope here: dependency lifecycle scripts run in this step.
       - name: Install dependencies
@@ -190,7 +190,7 @@ jobs:
   accessibility:
     name: Accessibility (axe-core)
     if: needs.check-storefront-secrets.outputs.available == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     needs: [verify, bundle-size, check-storefront-secrets]
     steps:
@@ -204,8 +204,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: '24'
+          cache: 'pnpm'
 
       # No secrets in scope here: dependency lifecycle scripts run in this step.
       - name: Install dependencies

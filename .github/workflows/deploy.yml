@@ -5,7 +5,7 @@ name: Deploy to Shopify Oxygen
 # list at that moment and passed vacuously, so a red build still shipped.
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     branches:
       - main
     types:
@@ -32,7 +32,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:
       # Build the exact commit CI validated, not whatever main points at now.
@@ -47,8 +47,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: '24'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
