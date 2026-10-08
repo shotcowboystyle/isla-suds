@@ -1,0 +1,6 @@
+[tasks.setup]
+description = "Install deps and trust the portless local CA"
+run = [
+  "pnpm install",
+  "pnpm exec portless trust",
+]
