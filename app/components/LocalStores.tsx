@@ -3,7 +3,7 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
-import SliverImage from '~/assets/images/home/wear-4.webp';
+import SliverImage from '~/assets/images/home/wear-4-240.webp';
 import StoreMap from '~/assets/images/store-map.svg';
 import {LiquidButton} from '~/components/ui/LiquidButton';
 import {

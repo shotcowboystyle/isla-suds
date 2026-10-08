@@ -12,8 +12,10 @@ import {
 } from 'react-router';
 import {Analytics, getShopAnalytics, useNonce, type ShopAnalytics} from '@shopify/hydrogen';
 import favicon from '~/assets/favicon.svg';
+import antonioFont from '~/assets/fonts/Antonio-VariableFont_wght.woff2?url';
 import {CartDrawer} from '~/components/cart/CartDrawer';
-import {Preloader} from '~/components/Preloader';
+// Preloader disabled (perf): it held the hero hidden for ~2s on every load.
+// import {Preloader} from '~/components/Preloader';
 import {PreloaderProvider, usePreloader} from '~/contexts/preloader-context';
 import {useInitializeSession} from '~/hooks/use-exploration-state';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
@@ -56,9 +58,12 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({formMethod, currentU
  */
 export function links() {
   return [
+    // Fonts and module assets load from the CDN in CORS mode; without
+    // `crossOrigin` the browser opens a second connection and this one idles.
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
+      crossOrigin: 'anonymous',
     },
     {
       rel: 'preconnect',
@@ -66,10 +71,13 @@ export function links() {
     },
     // Antonio is font-display: swap and display headings are sized in vw, so a
     // late swap reflows the tallest elements on the page and invalidates every
-    // ScrollTrigger measurement below the fold.
+    // ScrollTrigger measurement below the fold. Imported through Vite (not
+    // /public) so this URL and the @font-face URL in tailwind.css resolve to
+    // the same CDN asset; a /public path preloaded one URL while the CSS
+    // fetched another, downloading the font twice.
     {
       rel: 'preload',
-      href: '/fonts/Antonio-VariableFont_wght.woff2',
+      href: antonioFont,
       as: 'font',
       type: 'font/woff2',
       crossOrigin: 'anonymous',
@@ -265,9 +273,17 @@ export default function App() {
 function AppContent({layoutContent}: {layoutContent: React.ReactNode}) {
   const {setPreloaderComplete} = usePreloader();
 
+  // Preloader disabled (perf). The page heroes still gate their entrance on
+  // `preloaderComplete`, so mark it done on mount; without this they would stay
+  // hidden until the 6s CSS failsafe. To restore, re-enable the import and the
+  // <Preloader> line and delete this effect.
+  useEffect(() => {
+    setPreloaderComplete(true);
+  }, [setPreloaderComplete]);
+
   return (
     <>
-      <Preloader onComplete={() => setPreloaderComplete(true)} />
+      {/* <Preloader onComplete={() => setPreloaderComplete(true)} /> */}
       {layoutContent}
       <CartDrawer />
     </>

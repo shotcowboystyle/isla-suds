@@ -3,9 +3,13 @@ import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {SplitText} from 'gsap/SplitText';
+import BarEucalyptusSmall from '~/assets/images/home/bar-eucalyptus-480.webp';
 import BarEucalyptus from '~/assets/images/home/bar-eucalyptus.webp';
+import BarLavenderSmall from '~/assets/images/home/bar-lavender-480.webp';
 import BarLavender from '~/assets/images/home/bar-lavender.webp';
+import BarLemongrassSmall from '~/assets/images/home/bar-lemongrass-480.webp';
 import BarLemongrass from '~/assets/images/home/bar-lemongrass.webp';
+import BarRosemarySmall from '~/assets/images/home/bar-rosemary-480.webp';
 import BarRosemary from '~/assets/images/home/bar-rosemary.webp';
 import HeroFoam from '~/assets/images/home/hero-foam.webp';
 import HeroPlateMobile from '~/assets/images/home/hero-plate-m.webp';
@@ -29,14 +33,18 @@ type Depth = 'far' | 'mid' | 'near';
  * The floating bars, back to front. `slot` names the CSS position; `depth`
  * decides how far the bar travels on scroll and how hard it leans toward the
  * pointer. Far bars sit behind the headline, mid and near bars in front of it.
+ *
+ * `small` is a 480w copy (scripts/resize-home-images.mjs) and `sizes` mirrors
+ * the slot widths in HeroSection.module.css, so most screens skip the full
+ * ~1100px source. Keep `sizes` in step with the CSS.
  */
-const BARS: {src: string; slot: string; depth: Depth; w: number; h: number}[] = [
-  {src: BarRosemary, slot: 'far-a', depth: 'far', w: 906, h: 1100},
-  {src: BarLemongrass, slot: 'far-b', depth: 'far', w: 932, h: 1100},
-  {src: BarEucalyptus, slot: 'far-c', depth: 'far', w: 1100, h: 875},
-  {src: BarLavender, slot: 'mid-a', depth: 'mid', w: 1037, h: 1100},
-  {src: BarLemongrass, slot: 'mid-b', depth: 'mid', w: 932, h: 1100},
-  {src: BarRosemary, slot: 'near', depth: 'near', w: 906, h: 1100},
+const BARS: {src: string; small: string; slot: string; depth: Depth; w: number; h: number; sizes: string}[] = [
+  {src: BarRosemary, small: BarRosemarySmall, slot: 'far-a', depth: 'far', w: 906, h: 1100, sizes: '(min-width: 768px) 8vw, 13vw'},
+  {src: BarLemongrass, small: BarLemongrassSmall, slot: 'far-b', depth: 'far', w: 932, h: 1100, sizes: '(min-width: 768px) 6.5vw, 10vw'},
+  {src: BarEucalyptus, small: BarEucalyptusSmall, slot: 'far-c', depth: 'far', w: 1100, h: 875, sizes: '8vw'},
+  {src: BarLavender, small: BarLavenderSmall, slot: 'mid-a', depth: 'mid', w: 1037, h: 1100, sizes: '(min-width: 768px) 21vw, 44vw'},
+  {src: BarLemongrass, small: BarLemongrassSmall, slot: 'mid-b', depth: 'mid', w: 932, h: 1100, sizes: '(min-width: 768px) 14vw, 36vw'},
+  {src: BarRosemary, small: BarRosemarySmall, slot: 'near', depth: 'near', w: 906, h: 1100, sizes: '(min-width: 768px) 22vw, 36vw'},
 ];
 
 /** Scroll travel per plane across the hero's exit, in viewport heights. */
@@ -134,10 +142,14 @@ export function HeroSection({className}: HeroSectionProps) {
           },
         )
           .fromTo('[data-foam]', {yPercent: 60}, {yPercent: 0, duration: 1.2, ease: 'power3.out'}, 0.1)
+          // A clip-path reveal grows the box from its centre like the old
+          // `width: 0 → auto` tween, but without re-laying out the copy column
+          // every frame (that tween also showed up as layout shift). The
+          // negative inset keeps the outline, which sits outside the box, in.
           .fromTo(
             clippedBox1,
-            {opacity: 0, width: 0},
-            {opacity: 1, width: 'auto', duration: 0.5, ease: 'circ.out'},
+            {opacity: 0, clipPath: 'inset(-1vw 50%)'},
+            {opacity: 1, clipPath: 'inset(-1vw -1vw)', duration: 0.5, ease: 'circ.out', clearProps: 'clipPath'},
             0.25,
           )
           .fromTo(
@@ -165,7 +177,18 @@ export function HeroSection({className}: HeroSectionProps) {
     <div key={bar.slot} data-travel={bar.depth} className={cn(styles['bar'], styles[`bar-${bar.slot}`])}>
       <div data-lean={bar.depth} className={styles['bar-lean']}>
         <div data-burst className={styles['bar-burst']}>
-          <img src={bar.src} alt="" width={bar.w} height={bar.h} decoding="async" className={styles['bar-img']} />
+          <img
+            src={bar.small}
+            srcSet={`${bar.small} 480w, ${bar.src} ${bar.w}w`}
+            sizes={bar.sizes}
+            alt=""
+            width={bar.w}
+            height={bar.h}
+            decoding="async"
+            // The near bar is the largest paint in the first viewport.
+            fetchPriority={bar.depth === 'near' ? 'high' : undefined}
+            className={styles['bar-img']}
+          />
         </div>
       </div>
     </div>
@@ -183,7 +206,7 @@ export function HeroSection({className}: HeroSectionProps) {
         <div className={styles['scene-back']} aria-hidden="true">
           <picture data-travel="plate" className={styles['plate']}>
             <source media="(max-width: 767px)" srcSet={HeroPlateMobile} width={1080} height={1944} />
-            <img src={HeroPlate} alt="" width={2560} height={1430} />
+            <img src={HeroPlate} alt="" width={2560} height={1430} fetchPriority="high" />
           </picture>
           {BARS.filter((bar) => bar.depth === 'far').map(renderBar)}
         </div>
