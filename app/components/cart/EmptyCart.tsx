@@ -1,4 +1,5 @@
 import {Link} from 'react-router';
+import chunky from '~/components/ui/ChunkyButton.module.css';
 import {CART_MESSAGES} from '~/content/cart';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
@@ -17,20 +18,11 @@ export function EmptyCart() {
 
   return (
     <div className={cn('flex flex-col items-center justify-center', 'h-full p-6 text-center', 'space-y-6')}>
-      <p className={cn('text-(--text-primary)', 'text-lg sm:text-xl', 'max-w-sm')}>{CART_MESSAGES.empty}</p>
+      <p className={cn('text-(--text-primary)', 'text-lg font-bold sm:text-xl', 'max-w-sm')}>{CART_MESSAGES.empty}</p>
       <Link
         to="/collections/all"
         onClick={handleExplore}
-        className={cn(
-          'inline-flex items-center justify-center',
-          'bg-(--accent-primary) text-white',
-          'hover:bg-(--accent-primary)/90 active:bg-(--accent-primary)/80',
-          'rounded px-6 h-11',
-          'w-full sm:w-auto',
-          'transition-colors',
-          'font-medium',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-(--accent-primary)',
-        )}
+        className={cn(chunky.chunky, 'inline-flex h-11 w-full px-6 text-lg sm:w-auto')}
         aria-label="Explore the Collection, closes cart"
       >
         Explore the Collection

@@ -51,6 +51,14 @@ vi.mock('gsap', () => ({
   },
 }));
 
+// Mock CSS modules so class names are readable
+vi.mock('./CartDrawer.module.css', () => ({
+  default: new Proxy({}, {get: (_target, prop) => String(prop)}),
+}));
+vi.mock('~/components/ui/ChunkyButton.module.css', () => ({
+  default: new Proxy({}, {get: (_target, prop) => String(prop)}),
+}));
+
 // Import mocks after vi.mock
 import {useRouteLoaderData, useFetcher} from 'react-router';
 import {useOptimisticCart} from '@shopify/hydrogen';
@@ -668,8 +676,8 @@ describe('CartLineItems', () => {
 
       const {container} = render(<CartLineItems originalCart={cart} />);
 
-      // Buttons and quantity should be in a flex container
-      const quantityControls = container.querySelectorAll('.inline-flex.items-center.border');
+      // Buttons and quantity share the pill stepper
+      const quantityControls = container.querySelectorAll('.stepper');
       expect(quantityControls.length).toBeGreaterThan(0);
     });
 
@@ -687,11 +695,9 @@ describe('CartLineItems', () => {
         name: /decrease quantity/i,
       });
 
-      // Buttons are sized h-9 w-9 (36px)
-      expect(plusButtons[0].className).toMatch(/h-9/);
-      expect(plusButtons[0].className).toMatch(/w-9/);
-      expect(minusButtons[0].className).toMatch(/h-9/);
-      expect(minusButtons[0].className).toMatch(/w-9/);
+      // .step is 44px wide in a 44px-tall stepper (CartDrawer.module.css)
+      expect(plusButtons[0]).toHaveClass('step');
+      expect(minusButtons[0]).toHaveClass('step');
     });
 
     it('buttons are visually styled consistently with design system', () => {
@@ -705,8 +711,8 @@ describe('CartLineItems', () => {
         name: /increase quantity/i,
       });
 
-      // Check for transition class
-      expect(plusButtons[0].className).toMatch(/transition/);
+      // Same stepper recipe as the product page BuyControls
+      expect(plusButtons[0].closest('.stepper')).not.toBeNull();
     });
 
     it('buttons have hover and active states', () => {
@@ -720,8 +726,8 @@ describe('CartLineItems', () => {
         name: /increase quantity/i,
       });
 
-      // Check for hover state classes
-      expect(plusButtons[0].className).toMatch(/hover:/);
+      // Hover/active states live on .step in CartDrawer.module.css
+      expect(plusButtons[0]).toHaveClass('step');
     });
 
     it('buttons are keyboard-accessible with proper ARIA labels', () => {
@@ -840,8 +846,8 @@ describe('CartLineItems', () => {
       const {container} = render(<CartLineItems originalCart={cart} />);
 
       const image = screen.getByRole('img');
-      // Image fills its container which provides responsive sizing via min-w-[80px]
-      expect(image.parentElement?.className).toMatch(/min-w-\[80px\]/);
+      // Image fills its fixed-size polaroid frame
+      expect(image.parentElement).toHaveClass('thumb');
     });
   });
 
@@ -1126,9 +1132,7 @@ describe('CartLineItems', () => {
       const removeButton = screen.getByRole('button', {
         name: /remove.*from cart/i,
       });
-      // Remove button is sized h-8 w-8
-      expect(removeButton.className).toMatch(/h-8/);
-      expect(removeButton.className).toMatch(/w-8/);
+      expect(removeButton).toHaveClass('h-11', 'w-11');
     });
 
     it('remove button has hover state', () => {
@@ -1141,7 +1145,8 @@ describe('CartLineItems', () => {
       const removeButton = screen.getByRole('button', {
         name: /remove.*from cart/i,
       });
-      expect(removeButton.className).toMatch(/hover:/);
+      // Hover lift + coral fill come from the shared chunky button
+      expect(removeButton).toHaveClass('chunky', 'cream');
     });
 
     it('remove button has correct ARIA label with product name', () => {

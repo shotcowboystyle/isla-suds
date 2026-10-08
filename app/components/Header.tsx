@@ -6,6 +6,7 @@ import {Logo} from '~/components/Logo';
 import {useExplorationStore} from '~/stores/exploration';
 import {cn} from '~/utils/cn';
 import styles from './Header.module.css';
+import chunky from './ui/ChunkyButton.module.css';
 import type GSAP from 'gsap';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 
@@ -176,7 +177,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           <button
             ref={buttonRef}
             onClick={toggleMenu}
-            className={styles['menu-button']}
+            className={cn(chunky.chunky, chunky.cream, styles['menu-button'])}
             aria-expanded={open}
             aria-label="Toggle menu"
           >
@@ -189,7 +190,11 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
         <div className={styles['menu-cta-buttons-wrapper']}>
           <div className={styles['cta-buttons']}>
             <div className={cn(styles['menu-buttons-wrapper'], styles['menu-button-abs'])}>
-              <NavLink to="/locations" prefetch="intent" className={cn(styles['navbar-button'], 'hidden sm:flex')}>
+              <NavLink
+                to="/locations"
+                prefetch="intent"
+                className={cn(chunky.chunky, chunky.cream, styles['navbar-button'], 'hidden sm:flex')}
+              >
                 Find in stores
               </NavLink>
 
@@ -205,7 +210,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
           <button
             onClick={toggleMenu}
-            className={cn(styles['menu-button-mobile'], styles['menu-button-abs'])}
+            className={cn(chunky.chunky, chunky.cream, styles['menu-button-mobile'], styles['menu-button-abs'])}
             aria-expanded={open}
             aria-label="Toggle menu"
           >
@@ -231,8 +236,7 @@ function HeaderCtas() {
       <NavLink
         prefetch="intent"
         to="/account"
-        style={activeLinkStyle}
-        className={cn(styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
+        className={cn(chunky.chunky, chunky.cream, styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
         aria-label="Account"
       >
         {/* Always render the icon to avoid CLS from Suspense text→icon swap */}
@@ -260,7 +264,7 @@ function CartIconButton({itemCount}: {itemCount: number}) {
     <button
       type="button"
       onClick={handleCartClick}
-      className={cn(styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
+      className={cn(chunky.chunky, chunky.cream, styles['navbar-button'], styles['navbar-icon-button'], 'flex')}
       aria-label={
         hasItems ? `Shopping cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Shopping cart, empty'
       }
@@ -271,10 +275,10 @@ function CartIconButton({itemCount}: {itemCount: number}) {
         <span
           className={cn(
             'absolute -top-2 -right-2',
-            'flex content-center items-center justify-center size-7 pb-1',
-            'bg-red-700 text-secondary',
-            'rounded-full',
-            'text-sm font-medium leading-none',
+            'flex content-center items-center justify-center size-7 pb-0.5',
+            'bg-accent-secondary text-(--color-black)',
+            'rounded-full border-2 border-(--color-black)',
+            'font-sans text-sm font-bold leading-none',
           )}
           aria-hidden="true"
         >
