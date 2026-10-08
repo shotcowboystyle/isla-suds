@@ -51,7 +51,7 @@ export function Hero({scent, title, price, selectedVariant}: HeroProps) {
       if (cancelled) return;
       ctx = GSAP.context(() => {
         // Words first, so a line can only break between words, never inside "Lemongrass".
-        const split = SplitText.create(name, {type: 'words,chars', mask: 'chars', autoSplit: true});
+        const split = SplitText.create(name, {type: 'words,chars', mask: 'chars', autoSplit: true, aria: 'none'});
         GSAP.timeline()
           .fromTo(split.chars, {yPercent: 120}, {yPercent: 0, duration: 0.8, stagger: CHAR_STAGGER, ease: ENTER_EASE})
           .fromTo(
@@ -96,7 +96,8 @@ export function Hero({scent, title, price, selectedVariant}: HeroProps) {
 
         <div className={styles['copy']}>
           <h1 id="product-title" className={styles['title']}>
-            <span ref={nameRef} className={cn(styles['name'], scent.name.length >= 10 && styles['name-long'])}>
+            <span className="sr-only">{scent.name}</span>
+            <span ref={nameRef} aria-hidden="true" className={cn(styles['name'], scent.name.length >= 10 && styles['name-long'])}>
               {scent.name}
             </span>
             <span data-hero-rest className={styles['full-title']}>

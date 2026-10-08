@@ -42,7 +42,7 @@ export function Inspection() {
       const mm = GSAP.matchMedia();
 
       mm.add(MOTION_QUERY, () => {
-        const quote = SplitText.create('[data-quote]', {type: 'words', mask: 'words'});
+        const quote = SplitText.create('[data-quote]', {type: 'words', mask: 'words', aria: 'none'});
 
         // A staggered fromTo only renders its first target's start state up
         // front; set the rest so no box is ticked before the inspection.

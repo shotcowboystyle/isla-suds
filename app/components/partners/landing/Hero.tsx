@@ -157,7 +157,7 @@ export function Hero({venue, onChoose, onApply}: HeroProps) {
     void document.fonts.ready.then(() => {
       if (cancelled) return;
       ctx = GSAP.context(() => {
-        const split = SplitText.create(title, {type: 'chars', mask: 'chars', autoSplit: true});
+        const split = SplitText.create(title, {type: 'chars', mask: 'chars', autoSplit: true, aria: 'none'});
         const tl = GSAP.timeline();
         tl.fromTo(
           '[data-hop]',
@@ -239,7 +239,8 @@ export function Hero({venue, onChoose, onApply}: HeroProps) {
 
         <div className={styles['copy']}>
           <h1 id="partners-hero-title" className={styles['title']}>
-            <span ref={titleRef} className={styles['title-line']}>
+            <span className="sr-only">Get started</span>
+            <span ref={titleRef} aria-hidden="true" className={styles['title-line']}>
               Get started
             </span>
             <span ref={stickerRef} className={styles['sticker']}>

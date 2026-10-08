@@ -19,6 +19,9 @@ if (typeof document !== 'undefined') {
 
 let frame: number | null = null;
 
+/** Quiet period after the last content-height change before re-measuring. */
+const RESIZE_SETTLE_MS = 150;
+
 /**
  * Queue a refresh. Repeated calls collapse into one — a later call supersedes
  * the frame an earlier one queued.
@@ -31,6 +34,7 @@ let frame: number | null = null;
  */
 export function requestScrollRefresh(): void {
   if (typeof window === 'undefined') return;
+  if (holds > 0) return;
 
   if (frame !== null) {
     cancelAnimationFrame(frame);
@@ -40,6 +44,26 @@ export function requestScrollRefresh(): void {
     frame = null;
     ScrollTrigger.refresh();
   });
+}
+
+let holds = 0;
+
+/**
+ * Suspend refreshes until the returned release runs, which then queues one.
+ *
+ * For a scroll lock that collapses the page (the preloader's `overflow:
+ * hidden`): every refresh inside it measures a page that is about to change
+ * and costs a full forced layout for nothing. Releasing is idempotent.
+ */
+export function holdScrollRefresh(): () => void {
+  holds += 1;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    holds -= 1;
+    requestScrollRefresh();
+  };
 }
 
 /**
@@ -64,14 +88,22 @@ export function observeLayoutShifts(): () => void {
   const main = document.getElementById('main-content');
   if (main && 'ResizeObserver' in window) {
     let lastHeight = main.offsetHeight;
+    let settle: ReturnType<typeof setTimeout> | undefined;
     const observer = new ResizeObserver(() => {
       // Ignore width-only changes; ScrollTrigger already handles window resize.
       if (main.offsetHeight === lastHeight) return;
       lastHeight = main.offsetHeight;
-      requestScrollRefresh();
+      // Images and sections land in bursts during load; one rAF only merges
+      // the changes inside a single frame, so each decode still cost a full
+      // refresh (a forced layout of every trigger). Wait for the burst to end.
+      clearTimeout(settle);
+      settle = setTimeout(requestScrollRefresh, RESIZE_SETTLE_MS);
     });
     observer.observe(main);
-    teardown.push(() => observer.disconnect());
+    teardown.push(() => {
+      clearTimeout(settle);
+      observer.disconnect();
+    });
   }
 
   if (document.readyState === 'complete') {

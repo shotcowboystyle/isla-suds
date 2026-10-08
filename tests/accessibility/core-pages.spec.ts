@@ -12,8 +12,8 @@ const PAGES_TO_TEST = [
   {name: 'Home', path: '/'},
   {name: 'About', path: '/about'},
   {name: 'Contact', path: '/contact'},
-  // Wholesale login not yet implemented (Epic 7, Story 7.3)
-  // Will be added when /wholesale/login route is created
+  {name: 'Locations', path: '/locations'},
+  {name: 'Partners', path: '/partners'},
 ];
 
 for (const page of PAGES_TO_TEST) {

@@ -2,11 +2,11 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import GSAP from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import Wear0 from '~/assets/images/home/wear-0.webp';
-import Wear1 from '~/assets/images/home/wear-1.webp';
-import Wear2 from '~/assets/images/home/wear-2.webp';
-import Wear3 from '~/assets/images/home/wear-3.webp';
-import Wear4 from '~/assets/images/home/wear-4.webp';
+import Wear0 from '~/assets/images/home/wear-0-240.webp';
+import Wear1 from '~/assets/images/home/wear-1-240.webp';
+import Wear2 from '~/assets/images/home/wear-2-240.webp';
+import Wear3 from '~/assets/images/home/wear-3-240.webp';
+import Wear4 from '~/assets/images/home/wear-4-240.webp';
 import {MOTION_QUERY} from '~/lib/motion/tokens';
 import styles from './UsedUpBar.module.css';
 

@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
-import {requestScrollRefresh} from '~/lib/motion/refresh';
+import {holdScrollRefresh} from '~/lib/motion/refresh';
 import {getLenis} from '~/lib/scroll';
 import {LETTERS, OVER_RIM_FOAM, UNDER_RIM_FOAM} from './bathtub-shapes';
 import styles from './Preloader.module.css';
@@ -40,14 +40,14 @@ const ENTRANCE_MS = ENTER_HOLD_MS + ENTER_BODY_MS;
 /** Sink, portal close, burst, floor fade, overlay fade. */
 const EXIT_MS = 900;
 /**
- * Ceiling on the wait for `window.load`. That event waits on every image and
- * video on the page, so on a slow connection it can hold the overlay long past
- * the point where the content behind it is usable.
+ * When the overlay starts fading (must match the overlay-fade delay in the
+ * stylesheet). `onComplete` fires here so the hero entrance plays while the
+ * overlay lifts instead of after it is gone.
  */
-const MAX_LOAD_WAIT_MS = 5000;
+const OVERLAY_FADE_MS = 700;
 
 export function Preloader({
-  minDisplayTime = 2500,
+  minDisplayTime = ENTRANCE_MS,
   onComplete,
   scrubMs,
   forcePopping,
@@ -71,35 +71,14 @@ export function Preloader({
     return () => clearTimeout(timer);
   }, [isScrubMode]);
 
+  // Pop as soon as the entrance has played. Waiting for `window.load` (every
+  // image and video on the page) or a fixed minimum held the hero hidden for
+  // seconds and dominated LCP / Speed Index.
   useEffect(() => {
     if (isScrubMode) return;
-    const startTime = Date.now();
-    const timers: Array<ReturnType<typeof setTimeout>> = [];
-    let popped = false;
 
-    const triggerPop = () => {
-      if (popped) return;
-      popped = true;
-
-      const elapsed = Date.now() - startTime;
-      // A fast load must still let the entrance play out — the exit is the
-      // entrance's counterpart, not a replacement for it.
-      const remaining = Math.max(0, minDisplayTime - elapsed, ENTRANCE_MS - elapsed);
-
-      timers.push(setTimeout(() => setAutoPopping(true), remaining));
-    };
-
-    if (document.readyState === 'complete') {
-      triggerPop();
-    } else {
-      window.addEventListener('load', triggerPop);
-      timers.push(setTimeout(triggerPop, MAX_LOAD_WAIT_MS));
-    }
-
-    return () => {
-      window.removeEventListener('load', triggerPop);
-      timers.forEach(clearTimeout);
-    };
+    const timer = setTimeout(() => setAutoPopping(true), minDisplayTime);
+    return () => clearTimeout(timer);
   }, [minDisplayTime, isScrubMode]);
 
   // The overlay is a fixed layer, not a scroll lock — without this the page
@@ -114,13 +93,14 @@ export function Preloader({
     if (isScrubMode || !isVisible) return;
 
     getLenis()?.stop();
+    const releaseRefresh = holdScrollRefresh();
     const previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
 
     return () => {
       document.documentElement.style.overflow = previousOverflow;
       getLenis()?.start();
-      requestScrollRefresh();
+      releaseRefresh();
     };
   }, [isScrubMode, isVisible]);
 
@@ -128,12 +108,13 @@ export function Preloader({
     if (isScrubMode) return;
     if (!autoPopping) return;
 
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      onCompleteRef.current?.();
-    }, EXIT_MS);
+    const fadeTimer = setTimeout(() => onCompleteRef.current?.(), OVERLAY_FADE_MS);
+    const exitTimer = setTimeout(() => setIsVisible(false), EXIT_MS);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(exitTimer);
+    };
   }, [autoPopping, isScrubMode]);
 
   if (!isVisible) return null;
