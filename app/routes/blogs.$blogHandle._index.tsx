@@ -2,12 +2,15 @@ import {Link, useLoaderData} from 'react-router';
 import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {seoTags} from '~/utils/meta';
 import type {Route} from './+types/blogs.$blogHandle._index';
 import type {ArticleItemFragment} from 'storefrontapi.generated';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];
-};
+export const meta: Route.MetaFunction = ({data}) =>
+  seoTags({
+    title: `${data?.blog.seo?.title || data?.blog.title || 'Journal'} | Isla Suds`,
+    description: data?.blog.seo?.description,
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

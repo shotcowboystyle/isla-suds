@@ -10,7 +10,6 @@ import {cn} from '~/utils/cn';
 import {AddToCartButton} from './cart/AddToCartButton';
 import styles from './ProductCard.module.css';
 import type {
-  CollectionItemFragment,
   ProductItemFragment,
   RecommendedProductFragment,
   ProductsListQuery,
@@ -18,7 +17,6 @@ import type {
 
 interface ProductCardProps {
   product:
-    | CollectionItemFragment
     | ProductItemFragment
     | RecommendedProductFragment
     | ProductsListQuery['products']['nodes'][0];
@@ -131,9 +129,9 @@ export const ProductCard = ({product, loading = 'lazy', isHomePage = false}: Pro
 
         <div className="w-full flex items-center justify-between flex-col sm:flex-row">
           <div className="flex flex-col">
-            <h1 className={cn(styles['card-heading'], color === 'sea-salt' ? 'text-black!' : 'text-secondary')}>
+            <h3 className={cn('h1-style', styles['card-heading'], color === 'sea-salt' ? 'text-black!' : 'text-secondary')}>
               {product.title}
-            </h1>
+            </h3>
 
             {'priceRange' in product && (
               <small

@@ -3,14 +3,11 @@ import {PartnersLandingPage} from '~/components/partners/landing/PartnersLanding
 import {PARTNERS_PAGE} from '~/content/partners';
 import {submitToShopify} from '~/lib/shopify-admin.server';
 import {extractFields, validateFields, emailValidator} from '~/utils/form-validation';
+import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/partners';
 
-export const meta: Route.MetaFunction = ({location}) => [
-  {title: PARTNERS_PAGE.meta.title},
-  {name: 'description', content: PARTNERS_PAGE.meta.description},
-  // `?shop=gym` and friends are the same page; point every variant at one URL.
-  {tagName: 'link', rel: 'canonical', href: location.pathname},
-];
+// `?shop=gym` and friends are the same page; the root's query-free canonical covers them.
+export const meta: Route.MetaFunction = createMeta(PARTNERS_PAGE.meta);
 
 /**
  * The wholesale application. It posts here, from the form at the bottom of the

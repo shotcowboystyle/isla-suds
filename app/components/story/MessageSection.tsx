@@ -140,25 +140,25 @@ export const MessageSection = () => {
         <div className={styles['text-wrapper']}>
           <div className={styles['grid']}>
             <div className={styles['heading-text-wrapper']}>
-              <h1 ref={text1Ref} className={cn(styles['heading-text'])}>
+              <h2 ref={text1Ref} className={cn('h1-style', styles['heading-text'])}>
                 Freshen up and feel great in your
-              </h1>
+              </h2>
             </div>
 
             <div className={styles['clipped-text-wrapper']}>
               <div className={styles['clipped-text-inner']}>
                 <div className={styles['clipped-text-content-wrapper']}>
                   <div ref={clippedBox1Ref} className={styles['clipped-text-content']}>
-                    <h1 className={cn(styles['clipped-text'])}>own skin</h1>
+                    <h2 className={cn('h1-style', styles['clipped-text'])}>own skin</h2>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className={styles['heading-text-wrapper']}>
-              <h1 ref={text2Ref} className={cn(styles['heading-text'])}>
+              <h2 ref={text2Ref} className={cn('h1-style', styles['heading-text'])}>
                 and glow with every cleanse from Isla Suds
-              </h1>
+              </h2>
             </div>
           </div>
 

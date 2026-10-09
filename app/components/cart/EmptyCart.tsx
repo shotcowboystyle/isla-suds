@@ -20,7 +20,7 @@ export function EmptyCart() {
     <div className={cn('flex flex-col items-center justify-center', 'h-full p-6 text-center', 'space-y-6')}>
       <p className={cn('text-(--text-primary)', 'text-lg font-bold sm:text-xl', 'max-w-sm')}>{CART_MESSAGES.empty}</p>
       <Link
-        to="/collections/all"
+        to="/collections/frontpage"
         onClick={handleExplore}
         className={cn(chunky.chunky, 'inline-flex h-11 w-full px-6 text-xl sm:w-auto')}
         aria-label="Explore the Collection, closes cart"

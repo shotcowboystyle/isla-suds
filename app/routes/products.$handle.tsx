@@ -9,14 +9,38 @@ import {
 import {ProductLandingPage} from '~/components/product/landing/ProductLandingPage';
 import {PRODUCT_QUERY} from '~/graphql/product/ProductDetail';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {seoTags, SITE_NAME} from '~/utils/meta';
 import type {Route} from './+types/products.$handle';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const product = data?.product;
+  if (!product) return seoTags({title: `Soap | ${SITE_NAME}`});
+  const variant = product.selectedOrFirstAvailableVariant;
+  const image = variant?.image?.url;
   return [
-    {title: `${product?.seo?.title || product?.title || 'Soap'} | Isla Suds`},
-    {name: 'description', content: product?.seo?.description || product?.description?.slice(0, 160) || ''},
-    {tagName: 'link', rel: 'canonical', href: `/products/${product?.handle}`},
+    ...seoTags({
+      title: `${product.seo?.title || product.title} | ${SITE_NAME}`,
+      description: product.seo?.description || product.description.slice(0, 160),
+      image,
+      type: 'product',
+    }),
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.title,
+        description: product.description,
+        image,
+        sku: variant?.sku || undefined,
+        brand: {'@type': 'Brand', name: product.vendor || SITE_NAME},
+        offers: variant && {
+          '@type': 'Offer',
+          price: variant.price.amount,
+          priceCurrency: variant.price.currencyCode,
+          availability: variant.availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        },
+      },
+    },
   ];
 };
 

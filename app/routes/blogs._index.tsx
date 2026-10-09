@@ -7,7 +7,7 @@ import type {BlogsQuery} from 'storefrontapi.generated';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
-export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Blogs'});
+export const meta: Route.MetaFunction = createMeta({title: 'Journal | Isla Suds'});
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

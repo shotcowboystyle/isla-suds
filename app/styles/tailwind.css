@@ -224,7 +224,9 @@
     overflow: clip;
   }
 
-  h1 {
+  /* .h1-style: display-heading look for section headings that are not the page's h1. */
+  h1,
+  .h1-style {
     color: var(--color-black);
     letter-spacing: -0.35vw;
     text-transform: uppercase;
@@ -236,20 +238,22 @@
   }
 
   @media screen and (min-width: 768px) {
-    h1 {
+    h1,
+    .h1-style {
       letter-spacing: -0.35vw;
       font-size: 13vw;
       line-height: 9vw;
     }
   }
   @media screen and (min-width: 992px) {
-    h1 {
+    h1,
+    .h1-style {
       font-size: 7.8vw;
       line-height: 9vw;
     }
   }
 
-  h2 {
+  h2:not(.h1-style) {
     color: var(--color-black);
     text-align: center;
     letter-spacing: -0.35vw;

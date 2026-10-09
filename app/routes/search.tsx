@@ -7,7 +7,7 @@ import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/search';
 import type {RegularSearchQuery, PredictiveSearchQuery} from 'storefrontapi.generated';
 
-export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Search'});
+export const meta: Route.MetaFunction = createMeta({title: 'Search | Isla Suds'});
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const url = new URL(request.url);

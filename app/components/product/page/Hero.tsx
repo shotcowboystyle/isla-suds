@@ -96,10 +96,11 @@ export function Hero({scent, title, price, selectedVariant}: HeroProps) {
 
         <div className={styles['copy']}>
           <h1 id="product-title" className={styles['title']}>
-            <span className="sr-only">{scent.name}</span>
+            {/* Spaces keep the three spans from fusing into one word in text extraction. */}
+            <span className="sr-only">{scent.name}</span>{' '}
             <span ref={nameRef} aria-hidden="true" className={cn(styles['name'], scent.name.length >= 10 && styles['name-long'])}>
               {scent.name}
-            </span>
+            </span>{' '}
             <span data-hero-rest className={styles['full-title']}>
               {title}
             </span>

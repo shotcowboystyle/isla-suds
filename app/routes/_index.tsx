@@ -10,14 +10,32 @@ import {VideoSection} from '~/components/story/VideoSection';
 import {TestimonialsSection} from '~/components/Testimonials';
 import {productsListHandles} from '~/content/products';
 import {PRODUCTS_LIST_QUERY, FEATURED_COLLECTION_QUERY} from '~/graphql/product/ProductList';
-import {createMeta} from '~/utils/meta';
+import {createMeta, SITE_NAME} from '~/utils/meta';
 import type {Route} from './+types/_index';
 
-export const meta: Route.MetaFunction = createMeta({
+const homeMeta = createMeta({
   title: 'Isla Suds | Gentle Goat Milk Soap for Sensitive Skin',
   description:
     'Isla Suds crafts gentle goat milk soap for sensitive and reactive skin. Essential oils, no added fragrance, no dyes, just nourishing care.',
 });
+
+export const meta: Route.MetaFunction = ({matches}) => {
+  const origin = matches[0]?.loaderData.origin;
+  if (!origin) return homeMeta();
+  const url = `${origin}/`;
+  return [
+    ...homeMeta(),
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {'@type': 'Organization', '@id': `${url}#organization`, name: SITE_NAME, url, logo: `${origin}/logo.png`},
+          {'@type': 'WebSite', '@id': `${url}#website`, name: SITE_NAME, url, publisher: {'@id': `${url}#organization`}},
+        ],
+      },
+    },
+  ];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   return loadCriticalData(args);

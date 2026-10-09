@@ -172,17 +172,17 @@ export const ProductsList = ({products}: {products: ProductsListQuery['products'
           <div className={styles['frame']}>
             <div ref={sliderRef} className={styles['item']}>
               <div className={styles['text-wrapper']}>
-                <h1 ref={text1Ref} className={styles['heading-text']}>
+                <h2 ref={text1Ref} className={cn('h1-style', styles['heading-text'])}>
                   We have 4
-                </h1>
+                </h2>
 
                 <div ref={clippedBox1Ref} className={styles['clipped-box']}>
-                  <h1 className={styles['clipped-heading-text']}>Silky Smooth</h1>
+                  <h2 className={cn('h1-style', styles['clipped-heading-text'])}>Silky Smooth</h2>
                 </div>
 
-                <h1 ref={text2Ref} className={styles['heading-text']}>
+                <h2 ref={text2Ref} className={cn('h1-style', styles['heading-text'])}>
                   Sudsy Soap Bars
-                </h1>
+                </h2>
               </div>
 
               <div className="hidden"></div>

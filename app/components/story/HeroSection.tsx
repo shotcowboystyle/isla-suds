@@ -219,7 +219,7 @@ export function HeroSection({className}: HeroSectionProps) {
           </div>
 
           <div ref={clippedBox1Ref} className={styles['clipped-text-box']}>
-            <h1 className={styles['clipped-text']}>{HERO_TAGLINE_END}</h1>
+            <p className={cn('h1-style', styles['clipped-text'])}>{HERO_TAGLINE_END}</p>
           </div>
 
           <p ref={paragraphRef} className={styles['paragraph']}>

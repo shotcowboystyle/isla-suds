@@ -106,17 +106,17 @@ export const TestimonialsSection = () => {
         </div>
 
         <div className={styles['social-text-wrapper']}>
-          <h1 ref={text1Ref} className={styles['social-heading']}>
+          <h2 ref={text1Ref} className={cn('h1-style', styles['social-heading'])}>
             Suds
-          </h1>
+          </h2>
 
-          <h1 ref={text2Ref} className={cn(styles['social-heading'], styles['social-heading-2'])}>
+          <h2 ref={text2Ref} className={cn('h1-style', styles['social-heading'], styles['social-heading-2'])}>
             happen
-          </h1>
+          </h2>
 
-          <h1 ref={text3Ref} className={cn(styles['social-heading'], styles['social-heading-3'])}>
+          <h2 ref={text3Ref} className={cn('h1-style', styles['social-heading'], styles['social-heading-3'])}>
             everywhere
-          </h1>
+          </h2>
         </div>
       </div>
 

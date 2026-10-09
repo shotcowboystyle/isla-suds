@@ -1,11 +1,22 @@
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData} from 'react-router';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {sanitizeStorefrontHtml} from '~/lib/sanitize';
+import {seoTags} from '~/utils/meta';
 import type {Route} from './+types/pages.$handle';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
+// Shopify pages that duplicate a custom route. Redirect so links and search
+// results consolidate on the real page.
+const PAGE_REDIRECTS: Record<string, string> = {
+  contact: '/contact',
+  stores: '/locations',
+  wholesale: '/partners',
 };
+
+export const meta: Route.MetaFunction = ({data}) =>
+  seoTags({
+    title: `${data?.page.seo?.title || data?.page.title || 'Page'} | Isla Suds`,
+    description: data?.page.seo?.description,
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -25,6 +36,9 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
   if (!params.handle) {
     throw new Error('Missing page handle');
   }
+
+  const target = PAGE_REDIRECTS[params.handle];
+  if (target) throw redirect(target, 301);
 
   const [{page}] = await Promise.all([
     context.storefront.query(PAGE_QUERY, {
