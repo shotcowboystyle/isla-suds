@@ -5,7 +5,7 @@ import {createMeta} from '~/utils/meta';
 import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 
-export const meta: Route.MetaFunction = createMeta({title: 'Hydrogen | Cart'});
+export const meta: Route.MetaFunction = createMeta({title: 'Cart | Isla Suds'});
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
 

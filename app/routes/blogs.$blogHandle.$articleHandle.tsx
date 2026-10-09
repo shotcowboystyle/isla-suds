@@ -2,11 +2,16 @@ import {useLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {sanitizeStorefrontHtml} from '~/lib/sanitize';
+import {seoTags} from '~/utils/meta';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.article.title ?? ''} article`}];
-};
+export const meta: Route.MetaFunction = ({data}) =>
+  seoTags({
+    title: `${data?.article.seo?.title || data?.article.title || 'Article'} | Isla Suds`,
+    description: data?.article.seo?.description,
+    image: data?.article.image?.url,
+    type: 'article',
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte

@@ -134,7 +134,7 @@ export function LocalStores({withSliver = false}: LocalStoresProps) {
           </div>
 
           <div ref={clippedBoxRef} className={styles['clipped-text-box']}>
-            <h1 className={styles['clipped-text']}>the corner</h1>
+            <h2 className={`h1-style ${styles['clipped-text']}`}>the corner</h2>
           </div>
 
           <div className={styles['paragraph-text-wrapper']}>

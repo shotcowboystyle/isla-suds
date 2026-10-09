@@ -5,20 +5,18 @@ import {CollectionHero} from '~/components/collection/CollectionHero';
 import {ScentShelf} from '~/components/collection/ScentShelf';
 import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {seoTags} from '~/utils/meta';
 import type {Route} from './+types/collections.$handle';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const collection = data?.collection;
   const title = collection?.handle === 'frontpage' ? 'Shop the bars' : (collection?.title ?? 'Collection');
-  return [
-    {title: `${title} | Isla Suds`},
-    {
-      name: 'description',
-      content:
-        collection?.description ||
-        'Gentle goat milk soap with essential oils and no added fragrance. Four bars, four moods. Pick yours.',
-    },
-  ];
+  return seoTags({
+    title: `${title} | Isla Suds`,
+    description:
+      collection?.description ||
+      'Gentle goat milk soap with essential oils and no added fragrance. Four bars, four moods. Pick yours.',
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

@@ -56,7 +56,7 @@ describe('EmptyCart', () => {
     );
 
     const button = screen.getByRole('link', {name: /Explore the Collection/i});
-    expect(button).toHaveAttribute('href', '/collections/all');
+    expect(button).toHaveAttribute('href', '/collections/frontpage');
   });
 
   it('closes cart drawer when button is clicked', async () => {

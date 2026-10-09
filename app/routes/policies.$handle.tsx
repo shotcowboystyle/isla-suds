@@ -1,13 +1,12 @@
 import {Link, useLoaderData} from 'react-router';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
 import {sanitizeStorefrontHtml} from '~/lib/sanitize';
+import {seoTags} from '~/utils/meta';
 import type {Route} from './+types/policies.$handle';
 
 type SelectedPolicies = keyof Pick<Shop, 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy'>;
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.policy.title ?? ''}`}];
-};
+export const meta: Route.MetaFunction = ({data}) => seoTags({title: `${data?.policy.title ?? 'Policy'} | Isla Suds`});
 
 export async function loader({params, context}: Route.LoaderArgs) {
   if (!params.handle) {

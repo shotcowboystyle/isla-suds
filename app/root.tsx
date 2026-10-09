@@ -22,6 +22,7 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import {observeLayoutShifts, requestScrollRefresh} from '~/lib/motion/refresh';
 import {isB2BRoute} from '~/lib/motion-guard';
 import {initLenis, destroyLenis, getLenis} from '~/lib/scroll';
+import {canonicalUrl, isNoindexPath, SITE_NAME} from '~/utils/meta';
 import {PageLayout} from './components/PageLayout';
 import tailwindCss from './styles/tailwind.css?url';
 import type {Route} from './+types/root';
@@ -98,6 +99,7 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ...criticalData,
+    origin: new URL(args.request.url).origin,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
@@ -163,6 +165,10 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
+  const origin = useRouteLoaderData<RootLoader>('root')?.origin;
+  const {pathname} = useLocation();
+  const noindex = isNoindexPath(pathname);
+  const url = origin && canonicalUrl(origin, pathname);
 
   return (
     <html lang="en">
@@ -171,6 +177,13 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={tailwindCss}></link>
         <Meta />
+        {noindex && <meta name="robots" content="noindex" />}
+        {url && !noindex && <link rel="canonical" href={url} />}
+        {url && <meta property="og:url" content={url} />}
+        <meta property="og:site_name" content={SITE_NAME} />
+        {/* Fallback card image; a route's own og:image is emitted first by <Meta />. */}
+        {origin && <meta property="og:image" content={`${origin}/logo.png`} />}
+        <meta name="twitter:card" content="summary" />
         <Links />
       </head>
       <body>

@@ -3,6 +3,12 @@ import {createPortal} from 'react-dom';
 import {Preloader} from '~/components/Preloader';
 import type {Route} from './+types/dev.preloader-scene';
 
+// Dev sandbox: 404 in production builds so it never reaches crawlers or customers.
+export function loader() {
+  if (!import.meta.env.DEV) throw new Response('Not Found', {status: 404});
+  return null;
+}
+
 export const meta: Route.MetaFunction = () => [
   {title: 'Isla Suds — Preloader Scene Viewer'},
 ];
